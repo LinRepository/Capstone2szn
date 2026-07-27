@@ -28,31 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
+            lblTitle = new Label();
             flpFloors = new FlowLayoutPanel();
+            pnlFloor = new Panel();
+            nudRooms = new NumericUpDown();
+            lblRooms = new Label();
+            lblFloor = new Label();
             lblDescription = new Label();
             lblBuildingName = new Label();
             btnBack = new Button();
             btnCreate = new Button();
-            pnlFloor = new Panel();
-            lblFloor = new Label();
-            lblRooms = new Label();
-            nudRooms = new NumericUpDown();
             flpFloors.SuspendLayout();
             pnlFloor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudRooms).BeginInit();
             SuspendLayout();
             // 
-            // label1
+            // lblTitle
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(251, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(276, 38);
-            label1.TabIndex = 0;
-            label1.Text = "Configure The Floors";
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(251, 9);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(276, 38);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Configure The Floors";
             // 
             // flpFloors
             // 
@@ -66,6 +66,44 @@
             flpFloors.TabIndex = 1;
             flpFloors.WrapContents = false;
             flpFloors.Paint += flpFloors_Paint;
+            // 
+            // pnlFloor
+            // 
+            pnlFloor.BackColor = Color.White;
+            pnlFloor.Controls.Add(nudRooms);
+            pnlFloor.Controls.Add(lblRooms);
+            pnlFloor.Controls.Add(lblFloor);
+            pnlFloor.Location = new Point(3, 3);
+            pnlFloor.Name = "pnlFloor";
+            pnlFloor.Size = new Size(642, 100);
+            pnlFloor.TabIndex = 0;
+            // 
+            // nudRooms
+            // 
+            nudRooms.Location = new Point(88, 54);
+            nudRooms.Name = "nudRooms";
+            nudRooms.Size = new Size(85, 27);
+            nudRooms.TabIndex = 2;
+            // 
+            // lblRooms
+            // 
+            lblRooms.AutoSize = true;
+            lblRooms.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRooms.Location = new Point(14, 52);
+            lblRooms.Name = "lblRooms";
+            lblRooms.Size = new Size(72, 25);
+            lblRooms.TabIndex = 1;
+            lblRooms.Text = "Rooms:";
+            // 
+            // lblFloor
+            // 
+            lblFloor.AutoSize = true;
+            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFloor.Location = new Point(14, 11);
+            lblFloor.Name = "lblFloor";
+            lblFloor.Size = new Size(68, 25);
+            lblFloor.TabIndex = 0;
+            lblFloor.Text = "Floor 1";
             // 
             // lblDescription
             // 
@@ -110,44 +148,6 @@
             btnCreate.UseVisualStyleBackColor = true;
             btnCreate.Click += btnCreate_Click;
             // 
-            // pnlFloor
-            // 
-            pnlFloor.BackColor = Color.White;
-            pnlFloor.Controls.Add(nudRooms);
-            pnlFloor.Controls.Add(lblRooms);
-            pnlFloor.Controls.Add(lblFloor);
-            pnlFloor.Location = new Point(3, 3);
-            pnlFloor.Name = "pnlFloor";
-            pnlFloor.Size = new Size(642, 100);
-            pnlFloor.TabIndex = 0;
-            // 
-            // lblFloor
-            // 
-            lblFloor.AutoSize = true;
-            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFloor.Location = new Point(14, 11);
-            lblFloor.Name = "lblFloor";
-            lblFloor.Size = new Size(68, 25);
-            lblFloor.TabIndex = 0;
-            lblFloor.Text = "Floor 1";
-            // 
-            // lblRooms
-            // 
-            lblRooms.AutoSize = true;
-            lblRooms.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRooms.Location = new Point(14, 52);
-            lblRooms.Name = "lblRooms";
-            lblRooms.Size = new Size(72, 25);
-            lblRooms.TabIndex = 1;
-            lblRooms.Text = "Rooms:";
-            // 
-            // nudRooms
-            // 
-            nudRooms.Location = new Point(88, 54);
-            nudRooms.Name = "nudRooms";
-            nudRooms.Size = new Size(85, 27);
-            nudRooms.TabIndex = 2;
-            // 
             // FloorConfigurationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -159,7 +159,7 @@
             Controls.Add(lblBuildingName);
             Controls.Add(lblDescription);
             Controls.Add(flpFloors);
-            Controls.Add(label1);
+            Controls.Add(lblTitle);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -176,7 +176,7 @@
 
         #endregion
 
-        private Label label1;
+        private Label lblTitle;
         private FlowLayoutPanel flpFloors;
         private Label lblDescription;
         private Label lblBuildingName;

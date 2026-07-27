@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lblTitleBuilding = new Label();
-            InputBuilding = new TextBox();
+            lblTitle = new Label();
+            txtBuildingName = new TextBox();
             lblBuildingName = new Label();
-            InputFloors = new NumericUpDown();
+            nudFloors = new NumericUpDown();
             btnCancel = new Button();
             btnNext = new Button();
-            lblFloors = new Label();
-            ((System.ComponentModel.ISupportInitialize)InputFloors).BeginInit();
+            lblEnterFloors = new Label();
+            ((System.ComponentModel.ISupportInitialize)nudFloors).BeginInit();
             SuspendLayout();
             // 
-            // lblTitleBuilding
+            // lblTitle
             // 
-            lblTitleBuilding.AutoSize = true;
-            lblTitleBuilding.Font = new Font("Segoe UI", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTitleBuilding.ForeColor = Color.White;
-            lblTitleBuilding.Location = new Point(308, 48);
-            lblTitleBuilding.Name = "lblTitleBuilding";
-            lblTitleBuilding.Size = new Size(272, 50);
-            lblTitleBuilding.TabIndex = 0;
-            lblTitleBuilding.Text = "Create Building";
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Segoe UI", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(308, 48);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(272, 50);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Create Building";
             // 
-            // InputBuilding
+            // txtBuildingName
             // 
-            InputBuilding.Location = new Point(276, 168);
-            InputBuilding.Multiline = true;
-            InputBuilding.Name = "InputBuilding";
-            InputBuilding.Size = new Size(400, 50);
-            InputBuilding.TabIndex = 1;
-            InputBuilding.Text = "Enter Building Name";
-            InputBuilding.TextAlign = HorizontalAlignment.Center;
+            txtBuildingName.Location = new Point(276, 168);
+            txtBuildingName.Multiline = true;
+            txtBuildingName.Name = "txtBuildingName";
+            txtBuildingName.Size = new Size(400, 50);
+            txtBuildingName.TabIndex = 1;
+            txtBuildingName.Text = "Enter Building Name";
+            txtBuildingName.TextAlign = HorizontalAlignment.Center;
             // 
             // lblBuildingName
             // 
@@ -70,12 +70,12 @@
             lblBuildingName.TabIndex = 2;
             lblBuildingName.Text = "Building Name";
             // 
-            // InputFloors
+            // nudFloors
             // 
-            InputFloors.Location = new Point(414, 251);
-            InputFloors.Name = "InputFloors";
-            InputFloors.Size = new Size(100, 27);
-            InputFloors.TabIndex = 3;
+            nudFloors.Location = new Point(414, 251);
+            nudFloors.Name = "nudFloors";
+            nudFloors.Size = new Size(100, 27);
+            nudFloors.TabIndex = 3;
             // 
             // btnCancel
             // 
@@ -97,16 +97,16 @@
             btnNext.UseVisualStyleBackColor = true;
             btnNext.Click += btnNext_Click;
             // 
-            // lblFloors
+            // lblEnterFloors
             // 
-            lblFloors.AutoSize = true;
-            lblFloors.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFloors.ForeColor = Color.White;
-            lblFloors.Location = new Point(274, 247);
-            lblFloors.Name = "lblFloors";
-            lblFloors.Size = new Size(134, 31);
-            lblFloors.TabIndex = 7;
-            lblFloors.Text = "Enter Floors";
+            lblEnterFloors.AutoSize = true;
+            lblEnterFloors.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEnterFloors.ForeColor = Color.White;
+            lblEnterFloors.Location = new Point(274, 247);
+            lblEnterFloors.Name = "lblEnterFloors";
+            lblEnterFloors.Size = new Size(134, 31);
+            lblEnterFloors.TabIndex = 7;
+            lblEnterFloors.Text = "Enter Floors";
             // 
             // AddBuildingForm
             // 
@@ -114,13 +114,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             ClientSize = new Size(882, 453);
-            Controls.Add(lblFloors);
+            Controls.Add(lblEnterFloors);
             Controls.Add(btnNext);
             Controls.Add(btnCancel);
-            Controls.Add(InputFloors);
+            Controls.Add(nudFloors);
             Controls.Add(lblBuildingName);
-            Controls.Add(InputBuilding);
-            Controls.Add(lblTitleBuilding);
+            Controls.Add(txtBuildingName);
+            Controls.Add(lblTitle);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -128,19 +128,19 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "AddBuildingForm";
             Load += AddBuildingForm_Load;
-            ((System.ComponentModel.ISupportInitialize)InputFloors).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudFloors).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Label lblTitleBuilding;
-        private TextBox InputBuilding;
+        private Label lblTitle;
+        private TextBox txtBuildingName;
         private Label lblBuildingName;
-        private NumericUpDown InputFloors;
+        private NumericUpDown nudFloors;
         private Button btnCancel;
         private Button btnNext;
-        private Label lblFloors;
+        private Label lblEnterFloors;
     }
 }

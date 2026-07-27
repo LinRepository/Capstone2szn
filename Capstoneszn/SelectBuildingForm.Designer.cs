@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             lblTitle = new Label();
-            PanelAddBuilding = new Panel();
+            pnlAddBuilding = new Panel();
             lblPlus = new Label();
             lblAddBuilding = new Label();
             flpBuildings = new FlowLayoutPanel();
-            PanelAddBuilding.SuspendLayout();
+            pnlAddBuilding.SuspendLayout();
             flpBuildings.SuspendLayout();
             SuspendLayout();
             // 
@@ -50,18 +50,18 @@
             lblTitle.Text = "Select a Building";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // PanelAddBuilding
+            // pnlAddBuilding
             // 
-            PanelAddBuilding.BackColor = Color.LightSlateGray;
-            PanelAddBuilding.BorderStyle = BorderStyle.FixedSingle;
-            PanelAddBuilding.Controls.Add(lblPlus);
-            PanelAddBuilding.Controls.Add(lblAddBuilding);
-            PanelAddBuilding.Cursor = Cursors.Hand;
-            PanelAddBuilding.Location = new Point(3, 3);
-            PanelAddBuilding.Name = "PanelAddBuilding";
-            PanelAddBuilding.Size = new Size(250, 200);
-            PanelAddBuilding.TabIndex = 1;
-            PanelAddBuilding.Paint += PanelAddBuilding_Paint;
+            pnlAddBuilding.BackColor = Color.LightSlateGray;
+            pnlAddBuilding.BorderStyle = BorderStyle.FixedSingle;
+            pnlAddBuilding.Controls.Add(lblPlus);
+            pnlAddBuilding.Controls.Add(lblAddBuilding);
+            pnlAddBuilding.Cursor = Cursors.Hand;
+            pnlAddBuilding.Location = new Point(3, 3);
+            pnlAddBuilding.Name = "pnlAddBuilding";
+            pnlAddBuilding.Size = new Size(250, 200);
+            pnlAddBuilding.TabIndex = 1;
+            pnlAddBuilding.Paint += PanelAddBuilding_Paint;
             // 
             // lblPlus
             // 
@@ -94,7 +94,7 @@
             flpBuildings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flpBuildings.AutoScroll = true;
             flpBuildings.BackColor = Color.Transparent;
-            flpBuildings.Controls.Add(PanelAddBuilding);
+            flpBuildings.Controls.Add(pnlAddBuilding);
             flpBuildings.Location = new Point(210, 132);
             flpBuildings.Name = "flpBuildings";
             flpBuildings.Size = new Size(1200, 600);
@@ -116,8 +116,8 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Select Building";
             Load += SelectBuildingForm_Load;
-            PanelAddBuilding.ResumeLayout(false);
-            PanelAddBuilding.PerformLayout();
+            pnlAddBuilding.ResumeLayout(false);
+            pnlAddBuilding.PerformLayout();
             flpBuildings.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -126,7 +126,7 @@
         #endregion
 
         private Label lblTitle;
-        private Panel PanelAddBuilding;
+        private Panel pnlAddBuilding;
         private Label lblAddBuilding;
         private Label lblPlus;
         private FlowLayoutPanel flpBuildings;
