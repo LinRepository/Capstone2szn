@@ -302,7 +302,7 @@
             lblSystemName.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblSystemName.ForeColor = Color.White;
             lblSystemName.ImageAlign = ContentAlignment.MiddleRight;
-            lblSystemName.Location = new Point(149, 61);
+            lblSystemName.Location = new Point(148, 49);
             lblSystemName.Name = "lblSystemName";
             lblSystemName.Size = new Size(128, 25);
             lblSystemName.TabIndex = 1;
@@ -311,7 +311,7 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(23, 23);
+            pictureBox1.Location = new Point(21, 12);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(100, 100);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -330,7 +330,7 @@
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Location = new Point(220, 0);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(1130, 150);
+            pnlHeader.Size = new Size(1130, 124);
             pnlHeader.TabIndex = 1;
             // 
             // lblUserRole
@@ -339,7 +339,7 @@
             lblUserRole.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUserRole.ForeColor = Color.White;
             lblUserRole.ImageAlign = ContentAlignment.MiddleRight;
-            lblUserRole.Location = new Point(931, 84);
+            lblUserRole.Location = new Point(930, 72);
             lblUserRole.Name = "lblUserRole";
             lblUserRole.Size = new Size(86, 25);
             lblUserRole.TabIndex = 6;
@@ -352,7 +352,7 @@
             lblCurrentUser.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblCurrentUser.ForeColor = Color.White;
             lblCurrentUser.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentUser.Location = new Point(949, 50);
+            lblCurrentUser.Location = new Point(948, 38);
             lblCurrentUser.Name = "lblCurrentUser";
             lblCurrentUser.Size = new Size(47, 25);
             lblCurrentUser.TabIndex = 5;
@@ -361,7 +361,7 @@
             // 
             // btnNotification
             // 
-            btnNotification.Location = new Point(1044, 50);
+            btnNotification.Location = new Point(1043, 38);
             btnNotification.Name = "btnNotification";
             btnNotification.Size = new Size(50, 50);
             btnNotification.TabIndex = 4;
@@ -374,7 +374,7 @@
             lblDate.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDate.ForeColor = Color.White;
             lblDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblDate.Location = new Point(562, 61);
+            lblDate.Location = new Point(561, 49);
             lblDate.Name = "lblDate";
             lblDate.Size = new Size(118, 25);
             lblDate.TabIndex = 3;
@@ -387,7 +387,7 @@
             lblTime.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTime.ForeColor = Color.White;
             lblTime.ImageAlign = ContentAlignment.MiddleRight;
-            lblTime.Location = new Point(470, 61);
+            lblTime.Location = new Point(469, 49);
             lblTime.Name = "lblTime";
             lblTime.Size = new Size(56, 25);
             lblTime.TabIndex = 2;
@@ -397,9 +397,9 @@
             // pnlContent
             // 
             pnlContent.Dock = DockStyle.Fill;
-            pnlContent.Location = new Point(220, 150);
+            pnlContent.Location = new Point(220, 124);
             pnlContent.Name = "pnlContent";
-            pnlContent.Size = new Size(1130, 571);
+            pnlContent.Size = new Size(1130, 597);
             pnlContent.TabIndex = 2;
             pnlContent.Paint += pnlContent_Paint;
             // 
