@@ -29,21 +29,28 @@
         private void InitializeComponent()
         {
             pnlRoomsHeader = new Panel();
+            lblRoomsTitle = new Label();
+            btnManageRooms = new Button();
             lblLegendMaintenance = new Label();
             lblLegendOccupied = new Label();
             lblLegendAvailable = new Label();
             pnlLegendMaintenance = new Panel();
             pnlLegendOccupied = new Panel();
             pnlLegendAvailable = new Panel();
-            btnManageRooms = new Button();
-            pnlRoomsContent = new Panel();
             flpRoomsOverview = new FlowLayoutPanel();
+            pnlFloorSection = new Panel();
+            flpFloorRooms = new FlowLayoutPanel();
+            lblFloor = new Label();
+            pnlRoomsContent = new Panel();
             pnlRoomsHeader.SuspendLayout();
+            flpRoomsOverview.SuspendLayout();
+            pnlFloorSection.SuspendLayout();
             pnlRoomsContent.SuspendLayout();
             SuspendLayout();
             // 
             // pnlRoomsHeader
             // 
+            pnlRoomsHeader.Controls.Add(lblRoomsTitle);
             pnlRoomsHeader.Controls.Add(btnManageRooms);
             pnlRoomsHeader.Controls.Add(lblLegendMaintenance);
             pnlRoomsHeader.Controls.Add(lblLegendOccupied);
@@ -55,8 +62,31 @@
             pnlRoomsHeader.Location = new Point(15, 15);
             pnlRoomsHeader.Margin = new Padding(0);
             pnlRoomsHeader.Name = "pnlRoomsHeader";
-            pnlRoomsHeader.Size = new Size(1270, 125);
+            pnlRoomsHeader.Size = new Size(1270, 95);
             pnlRoomsHeader.TabIndex = 0;
+            // 
+            // lblRoomsTitle
+            // 
+            lblRoomsTitle.AutoSize = true;
+            lblRoomsTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoomsTitle.ForeColor = Color.White;
+            lblRoomsTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblRoomsTitle.Location = new Point(26, 29);
+            lblRoomsTitle.Margin = new Padding(0);
+            lblRoomsTitle.Name = "lblRoomsTitle";
+            lblRoomsTitle.Size = new Size(122, 46);
+            lblRoomsTitle.TabIndex = 23;
+            lblRoomsTitle.Text = "Rooms";
+            lblRoomsTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnManageRooms
+            // 
+            btnManageRooms.Location = new Point(1120, 19);
+            btnManageRooms.Name = "btnManageRooms";
+            btnManageRooms.Size = new Size(94, 56);
+            btnManageRooms.TabIndex = 22;
+            btnManageRooms.Text = "Manage Rooms";
+            btnManageRooms.UseVisualStyleBackColor = true;
             // 
             // lblLegendMaintenance
             // 
@@ -64,7 +94,7 @@
             lblLegendMaintenance.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblLegendMaintenance.ForeColor = Color.White;
             lblLegendMaintenance.ImageAlign = ContentAlignment.MiddleRight;
-            lblLegendMaintenance.Location = new Point(771, 50);
+            lblLegendMaintenance.Location = new Point(764, 33);
             lblLegendMaintenance.Margin = new Padding(0);
             lblLegendMaintenance.Name = "lblLegendMaintenance";
             lblLegendMaintenance.Size = new Size(112, 25);
@@ -78,7 +108,7 @@
             lblLegendOccupied.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblLegendOccupied.ForeColor = Color.White;
             lblLegendOccupied.ImageAlign = ContentAlignment.MiddleRight;
-            lblLegendOccupied.Location = new Point(601, 50);
+            lblLegendOccupied.Location = new Point(594, 33);
             lblLegendOccupied.Margin = new Padding(0);
             lblLegendOccupied.Name = "lblLegendOccupied";
             lblLegendOccupied.Size = new Size(87, 25);
@@ -92,7 +122,7 @@
             lblLegendAvailable.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblLegendAvailable.ForeColor = Color.White;
             lblLegendAvailable.ImageAlign = ContentAlignment.MiddleRight;
-            lblLegendAvailable.Location = new Point(415, 50);
+            lblLegendAvailable.Location = new Point(408, 33);
             lblLegendAvailable.Margin = new Padding(0);
             lblLegendAvailable.Name = "lblLegendAvailable";
             lblLegendAvailable.Size = new Size(83, 25);
@@ -102,53 +132,78 @@
             // 
             // pnlLegendMaintenance
             // 
-            pnlLegendMaintenance.Location = new Point(743, 50);
+            pnlLegendMaintenance.Location = new Point(736, 33);
             pnlLegendMaintenance.Name = "pnlLegendMaintenance";
             pnlLegendMaintenance.Size = new Size(25, 25);
             pnlLegendMaintenance.TabIndex = 18;
             // 
             // pnlLegendOccupied
             // 
-            pnlLegendOccupied.Location = new Point(573, 50);
+            pnlLegendOccupied.Location = new Point(566, 33);
             pnlLegendOccupied.Name = "pnlLegendOccupied";
             pnlLegendOccupied.Size = new Size(25, 25);
             pnlLegendOccupied.TabIndex = 17;
             // 
             // pnlLegendAvailable
             // 
-            pnlLegendAvailable.Location = new Point(387, 50);
+            pnlLegendAvailable.Location = new Point(380, 33);
             pnlLegendAvailable.Name = "pnlLegendAvailable";
             pnlLegendAvailable.Size = new Size(25, 25);
             pnlLegendAvailable.TabIndex = 16;
             // 
-            // btnManageRooms
+            // flpRoomsOverview
             // 
-            btnManageRooms.Location = new Point(1121, 36);
-            btnManageRooms.Name = "btnManageRooms";
-            btnManageRooms.Size = new Size(94, 56);
-            btnManageRooms.TabIndex = 22;
-            btnManageRooms.Text = "Manage Rooms";
-            btnManageRooms.UseVisualStyleBackColor = true;
+            flpRoomsOverview.AutoScroll = true;
+            flpRoomsOverview.Controls.Add(pnlFloorSection);
+            flpRoomsOverview.Dock = DockStyle.Fill;
+            flpRoomsOverview.FlowDirection = FlowDirection.TopDown;
+            flpRoomsOverview.Location = new Point(0, 0);
+            flpRoomsOverview.Name = "flpRoomsOverview";
+            flpRoomsOverview.Size = new Size(1270, 625);
+            flpRoomsOverview.TabIndex = 0;
+            flpRoomsOverview.WrapContents = false;
+            // 
+            // pnlFloorSection
+            // 
+            pnlFloorSection.Controls.Add(flpFloorRooms);
+            pnlFloorSection.Controls.Add(lblFloor);
+            pnlFloorSection.Location = new Point(3, 3);
+            pnlFloorSection.Name = "pnlFloorSection";
+            pnlFloorSection.Size = new Size(1111, 140);
+            pnlFloorSection.TabIndex = 0;
+            // 
+            // flpFloorRooms
+            // 
+            flpFloorRooms.Dock = DockStyle.Fill;
+            flpFloorRooms.Location = new Point(0, 25);
+            flpFloorRooms.Margin = new Padding(0);
+            flpFloorRooms.Name = "flpFloorRooms";
+            flpFloorRooms.Size = new Size(1111, 115);
+            flpFloorRooms.TabIndex = 22;
+            // 
+            // lblFloor
+            // 
+            lblFloor.AutoSize = true;
+            lblFloor.Dock = DockStyle.Top;
+            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFloor.ForeColor = Color.White;
+            lblFloor.ImageAlign = ContentAlignment.MiddleRight;
+            lblFloor.Location = new Point(0, 0);
+            lblFloor.Margin = new Padding(0);
+            lblFloor.Name = "lblFloor";
+            lblFloor.Size = new Size(69, 25);
+            lblFloor.TabIndex = 20;
+            lblFloor.Text = "Floor #";
+            lblFloor.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlRoomsContent
             // 
             pnlRoomsContent.Controls.Add(flpRoomsOverview);
             pnlRoomsContent.Dock = DockStyle.Fill;
-            pnlRoomsContent.Location = new Point(15, 140);
+            pnlRoomsContent.Location = new Point(15, 110);
             pnlRoomsContent.Name = "pnlRoomsContent";
-            pnlRoomsContent.Size = new Size(1270, 595);
+            pnlRoomsContent.Size = new Size(1270, 625);
             pnlRoomsContent.TabIndex = 1;
-            // 
-            // flpRoomsOverview
-            // 
-            flpRoomsOverview.AutoScroll = true;
-            flpRoomsOverview.Dock = DockStyle.Fill;
-            flpRoomsOverview.FlowDirection = FlowDirection.TopDown;
-            flpRoomsOverview.Location = new Point(0, 0);
-            flpRoomsOverview.Name = "flpRoomsOverview";
-            flpRoomsOverview.Size = new Size(1270, 595);
-            flpRoomsOverview.TabIndex = 0;
-            flpRoomsOverview.WrapContents = false;
             // 
             // RoomsControl
             // 
@@ -163,6 +218,9 @@
             Size = new Size(1300, 750);
             pnlRoomsHeader.ResumeLayout(false);
             pnlRoomsHeader.PerformLayout();
+            flpRoomsOverview.ResumeLayout(false);
+            pnlFloorSection.ResumeLayout(false);
+            pnlFloorSection.PerformLayout();
             pnlRoomsContent.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -177,7 +235,11 @@
         private Panel pnlLegendMaintenance;
         private Panel pnlLegendOccupied;
         private Panel pnlLegendAvailable;
-        private Panel pnlRoomsContent;
+        private Label lblRoomsTitle;
         private FlowLayoutPanel flpRoomsOverview;
+        private Panel pnlFloorSection;
+        private Label lblFloor;
+        private Panel pnlRoomsContent;
+        private FlowLayoutPanel flpFloorRooms;
     }
 }
