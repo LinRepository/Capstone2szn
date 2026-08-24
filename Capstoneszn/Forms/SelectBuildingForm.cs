@@ -25,7 +25,8 @@ namespace Capstoneszn
 
         private void lblPlus_Click(object sender, EventArgs e)
         {
-
+            MainForm mainForm = new MainForm();
+            mainForm.Show();
         }
 
         private void lblAddBuilding_Click(object sender, EventArgs e)
