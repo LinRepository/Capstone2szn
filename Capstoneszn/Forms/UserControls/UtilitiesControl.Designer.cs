@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             pnlUtilitiesContent = new Panel();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
@@ -80,10 +80,9 @@
             // pnlUtilitiesContent
             // 
             pnlUtilitiesContent.Controls.Add(tabControl1);
-            pnlUtilitiesContent.Dock = DockStyle.Fill;
-            pnlUtilitiesContent.Location = new Point(20, 20);
+            pnlUtilitiesContent.Location = new Point(0, 0);
             pnlUtilitiesContent.Name = "pnlUtilitiesContent";
-            pnlUtilitiesContent.Size = new Size(1260, 710);
+            pnlUtilitiesContent.Size = new Size(1300, 750);
             pnlUtilitiesContent.TabIndex = 0;
             // 
             // tabControl1
@@ -91,12 +90,12 @@
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
-            tabControl1.Font = new Font("Segoe UI", 12F);
+            tabControl1.Font = new Font("Segoe UI", 14F);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.Padding = new Point(10, 3);
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1294, 744);
+            tabControl1.Size = new Size(1297, 747);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -114,10 +113,10 @@
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(label6);
             tabPage1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            tabPage1.Location = new Point(4, 37);
+            tabPage1.Location = new Point(4, 40);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1286, 703);
+            tabPage1.Size = new Size(1289, 703);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Water Utility";
             tabPage1.UseVisualStyleBackColor = true;
@@ -125,20 +124,20 @@
             // dataGridView1
             // 
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5 });
             dataGridView1.Location = new Point(17, 212);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1215, 435);
+            dataGridView1.Size = new Size(1253, 472);
             dataGridView1.TabIndex = 10;
             // 
             // Column1
@@ -211,7 +210,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(755, 118);
+            label5.Location = new Point(753, 108);
             label5.Name = "label5";
             label5.Size = new Size(255, 28);
             label5.TabIndex = 8;
@@ -220,7 +219,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(436, 119);
+            label4.Location = new Point(436, 108);
             label4.Name = "label4";
             label4.Size = new Size(155, 28);
             label4.TabIndex = 7;
@@ -229,7 +228,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(159, 118);
+            label3.Location = new Point(152, 110);
             label3.Name = "label3";
             label3.Size = new Size(53, 28);
             label3.TabIndex = 6;
@@ -238,18 +237,19 @@
             // textBox2
             // 
             textBox2.BorderStyle = BorderStyle.FixedSingle;
-            textBox2.Location = new Point(787, 151);
+            textBox2.Font = new Font("Segoe UI", 14F);
+            textBox2.Location = new Point(791, 138);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "Value Read Only";
             textBox2.ReadOnly = true;
-            textBox2.Size = new Size(184, 34);
+            textBox2.Size = new Size(184, 39);
             textBox2.TabIndex = 5;
             textBox2.TextAlign = HorizontalAlignment.Center;
             // 
             // button2
             // 
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(1074, 117);
+            button2.Location = new Point(1108, 110);
             button2.Name = "button2";
             button2.Size = new Size(144, 67);
             button2.TabIndex = 4;
@@ -259,9 +259,10 @@
             // button1
             // 
             button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(616, 150);
+            button1.Font = new Font("Segoe UI", 14F);
+            button1.Location = new Point(616, 139);
             button1.Name = "button1";
-            button1.Size = new Size(64, 34);
+            button1.Size = new Size(64, 38);
             button1.TabIndex = 3;
             button1.Text = "Edit";
             button1.UseVisualStyleBackColor = true;
@@ -269,17 +270,18 @@
             // textBox1
             // 
             textBox1.BorderStyle = BorderStyle.FixedSingle;
-            textBox1.Location = new Point(420, 150);
+            textBox1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox1.Location = new Point(419, 139);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "Double";
-            textBox1.Size = new Size(181, 34);
+            textBox1.Size = new Size(181, 38);
             textBox1.TabIndex = 2;
             textBox1.TextAlign = HorizontalAlignment.Center;
             // 
             // dateTimePicker1
             // 
             dateTimePicker1.Font = new Font("Segoe UI", 10F);
-            dateTimePicker1.Location = new Point(27, 154);
+            dateTimePicker1.Location = new Point(44, 147);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(293, 30);
             dateTimePicker1.TabIndex = 1;
@@ -289,7 +291,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
-            label1.Location = new Point(539, 32);
+            label1.Location = new Point(538, 19);
             label1.Name = "label1";
             label1.Size = new Size(207, 54);
             label1.TabIndex = 0;
@@ -298,19 +300,19 @@
             // label6
             // 
             label6.BorderStyle = BorderStyle.FixedSingle;
-            label6.Location = new Point(17, 92);
+            label6.Location = new Point(17, 73);
             label6.Name = "label6";
-            label6.Size = new Size(1215, 104);
+            label6.Size = new Size(1253, 123);
             label6.TabIndex = 11;
             // 
             // tabPage2
             // 
             tabPage2.Controls.Add(dataGridView2);
             tabPage2.Controls.Add(label2);
-            tabPage2.Location = new Point(4, 37);
+            tabPage2.Location = new Point(4, 40);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1283, 703);
+            tabPage2.Size = new Size(1289, 703);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Electricity Utility";
             tabPage2.UseVisualStyleBackColor = true;
@@ -323,7 +325,7 @@
             dataGridView2.Location = new Point(23, 82);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1213, 570);
+            dataGridView2.Size = new Size(1247, 602);
             dataGridView2.TabIndex = 1;
             // 
             // Column6
@@ -372,10 +374,10 @@
             // 
             tabPage3.Controls.Add(button3);
             tabPage3.Controls.Add(dataGridView3);
-            tabPage3.Location = new Point(4, 37);
+            tabPage3.Location = new Point(4, 40);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1283, 703);
+            tabPage3.Size = new Size(1289, 703);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Other";
             tabPage3.UseVisualStyleBackColor = true;
@@ -397,10 +399,10 @@
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView3.Columns.AddRange(new DataGridViewColumn[] { Column10, Column11, Column12, Column13, Column14 });
-            dataGridView3.Location = new Point(36, 111);
+            dataGridView3.Location = new Point(16, 111);
             dataGridView3.Name = "dataGridView3";
             dataGridView3.RowHeadersWidth = 51;
-            dataGridView3.Size = new Size(1196, 539);
+            dataGridView3.Size = new Size(1254, 573);
             dataGridView3.TabIndex = 0;
             // 
             // Column10
