@@ -29,18 +29,16 @@
         private void InitializeComponent()
         {
             pnlAuditHeader = new Panel();
-            pnlAuditContent = new Panel();
             pnlAuditDate = new Panel();
-            pnlAuditModule = new Panel();
-            pnlAuditSearch = new Panel();
-            pnlAuditFooter = new Panel();
-            lblAuditArchiveNotice = new Label();
-            label3 = new Label();
-            lblAuditModule = new Label();
-            label1 = new Label();
-            txtSearchAudit = new TextBox();
-            comboBox1 = new ComboBox();
             dateTimePicker1 = new DateTimePicker();
+            label1 = new Label();
+            pnlAuditModule = new Panel();
+            comboBox1 = new ComboBox();
+            lblAuditModule = new Label();
+            pnlAuditSearch = new Panel();
+            txtSearchAudit = new TextBox();
+            label3 = new Label();
+            pnlAuditContent = new Panel();
             dgvAuditLogs = new DataGridView();
             colAuditDateTime = new DataGridViewTextBoxColumn();
             colAuditUser = new DataGridViewTextBoxColumn();
@@ -48,13 +46,15 @@
             colAuditModule = new DataGridViewTextBoxColumn();
             colAuditAction = new DataGridViewTextBoxColumn();
             colAuditDescription = new DataGridViewTextBoxColumn();
+            pnlAuditFooter = new Panel();
+            lblAuditArchiveNotice = new Label();
             pnlAuditHeader.SuspendLayout();
-            pnlAuditContent.SuspendLayout();
             pnlAuditDate.SuspendLayout();
             pnlAuditModule.SuspendLayout();
             pnlAuditSearch.SuspendLayout();
-            pnlAuditFooter.SuspendLayout();
+            pnlAuditContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAuditLogs).BeginInit();
+            pnlAuditFooter.SuspendLayout();
             SuspendLayout();
             // 
             // pnlAuditHeader
@@ -68,15 +68,6 @@
             pnlAuditHeader.Size = new Size(1300, 90);
             pnlAuditHeader.TabIndex = 0;
             // 
-            // pnlAuditContent
-            // 
-            pnlAuditContent.Controls.Add(dgvAuditLogs);
-            pnlAuditContent.Dock = DockStyle.Fill;
-            pnlAuditContent.Location = new Point(0, 90);
-            pnlAuditContent.Name = "pnlAuditContent";
-            pnlAuditContent.Size = new Size(1300, 660);
-            pnlAuditContent.TabIndex = 1;
-            // 
             // pnlAuditDate
             // 
             pnlAuditDate.Controls.Add(dateTimePicker1);
@@ -87,76 +78,13 @@
             pnlAuditDate.Size = new Size(400, 90);
             pnlAuditDate.TabIndex = 2;
             // 
-            // pnlAuditModule
+            // dateTimePicker1
             // 
-            pnlAuditModule.Controls.Add(comboBox1);
-            pnlAuditModule.Controls.Add(lblAuditModule);
-            pnlAuditModule.Dock = DockStyle.Left;
-            pnlAuditModule.Location = new Point(450, 0);
-            pnlAuditModule.Name = "pnlAuditModule";
-            pnlAuditModule.Size = new Size(450, 90);
-            pnlAuditModule.TabIndex = 0;
-            // 
-            // pnlAuditSearch
-            // 
-            pnlAuditSearch.Controls.Add(txtSearchAudit);
-            pnlAuditSearch.Controls.Add(label3);
-            pnlAuditSearch.Dock = DockStyle.Left;
-            pnlAuditSearch.Location = new Point(0, 0);
-            pnlAuditSearch.Name = "pnlAuditSearch";
-            pnlAuditSearch.Size = new Size(450, 90);
-            pnlAuditSearch.TabIndex = 1;
-            // 
-            // pnlAuditFooter
-            // 
-            pnlAuditFooter.Controls.Add(lblAuditArchiveNotice);
-            pnlAuditFooter.Dock = DockStyle.Bottom;
-            pnlAuditFooter.Location = new Point(0, 690);
-            pnlAuditFooter.Name = "pnlAuditFooter";
-            pnlAuditFooter.Size = new Size(1300, 60);
-            pnlAuditFooter.TabIndex = 2;
-            // 
-            // lblAuditArchiveNotice
-            // 
-            lblAuditArchiveNotice.Dock = DockStyle.Fill;
-            lblAuditArchiveNotice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAuditArchiveNotice.ForeColor = Color.White;
-            lblAuditArchiveNotice.ImageAlign = ContentAlignment.MiddleRight;
-            lblAuditArchiveNotice.Location = new Point(0, 0);
-            lblAuditArchiveNotice.Name = "lblAuditArchiveNotice";
-            lblAuditArchiveNotice.Size = new Size(1300, 60);
-            lblAuditArchiveNotice.TabIndex = 37;
-            lblAuditArchiveNotice.Text = "Logs older than 30 days are automatically archived.";
-            lblAuditArchiveNotice.TextAlign = ContentAlignment.MiddleCenter;
-            lblAuditArchiveNotice.Visible = false;
-            // 
-            // label3
-            // 
-            label3.Dock = DockStyle.Top;
-            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.White;
-            label3.ImageAlign = ContentAlignment.MiddleRight;
-            label3.Location = new Point(0, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(450, 40);
-            label3.TabIndex = 40;
-            label3.Text = "Search";
-            label3.TextAlign = ContentAlignment.MiddleCenter;
-            label3.Visible = false;
-            // 
-            // lblAuditModule
-            // 
-            lblAuditModule.Dock = DockStyle.Top;
-            lblAuditModule.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAuditModule.ForeColor = Color.White;
-            lblAuditModule.ImageAlign = ContentAlignment.MiddleRight;
-            lblAuditModule.Location = new Point(0, 0);
-            lblAuditModule.Name = "lblAuditModule";
-            lblAuditModule.Size = new Size(450, 40);
-            lblAuditModule.TabIndex = 40;
-            lblAuditModule.Text = "Module";
-            lblAuditModule.TextAlign = ContentAlignment.MiddleCenter;
-            lblAuditModule.Visible = false;
+            dateTimePicker1.Dock = DockStyle.Fill;
+            dateTimePicker1.Location = new Point(0, 40);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(400, 27);
+            dateTimePicker1.TabIndex = 40;
             // 
             // label1
             // 
@@ -172,15 +100,15 @@
             label1.TextAlign = ContentAlignment.MiddleCenter;
             label1.Visible = false;
             // 
-            // txtSearchAudit
+            // pnlAuditModule
             // 
-            txtSearchAudit.Dock = DockStyle.Fill;
-            txtSearchAudit.Location = new Point(0, 40);
-            txtSearchAudit.Name = "txtSearchAudit";
-            txtSearchAudit.Size = new Size(450, 27);
-            txtSearchAudit.TabIndex = 41;
-            txtSearchAudit.Text = "Search Audit Logs";
-            txtSearchAudit.TextAlign = HorizontalAlignment.Center;
+            pnlAuditModule.Controls.Add(comboBox1);
+            pnlAuditModule.Controls.Add(lblAuditModule);
+            pnlAuditModule.Dock = DockStyle.Left;
+            pnlAuditModule.Location = new Point(450, 0);
+            pnlAuditModule.Name = "pnlAuditModule";
+            pnlAuditModule.Size = new Size(450, 90);
+            pnlAuditModule.TabIndex = 0;
             // 
             // comboBox1
             // 
@@ -192,13 +120,62 @@
             comboBox1.Size = new Size(450, 28);
             comboBox1.TabIndex = 41;
             // 
-            // dateTimePicker1
+            // lblAuditModule
             // 
-            dateTimePicker1.Dock = DockStyle.Fill;
-            dateTimePicker1.Location = new Point(0, 40);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(400, 27);
-            dateTimePicker1.TabIndex = 40;
+            lblAuditModule.Dock = DockStyle.Top;
+            lblAuditModule.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAuditModule.ForeColor = Color.White;
+            lblAuditModule.ImageAlign = ContentAlignment.MiddleRight;
+            lblAuditModule.Location = new Point(0, 0);
+            lblAuditModule.Name = "lblAuditModule";
+            lblAuditModule.Size = new Size(450, 40);
+            lblAuditModule.TabIndex = 40;
+            lblAuditModule.Text = "Module";
+            lblAuditModule.TextAlign = ContentAlignment.MiddleCenter;
+            lblAuditModule.Visible = false;
+            // 
+            // pnlAuditSearch
+            // 
+            pnlAuditSearch.Controls.Add(txtSearchAudit);
+            pnlAuditSearch.Controls.Add(label3);
+            pnlAuditSearch.Dock = DockStyle.Left;
+            pnlAuditSearch.Location = new Point(0, 0);
+            pnlAuditSearch.Name = "pnlAuditSearch";
+            pnlAuditSearch.Size = new Size(450, 90);
+            pnlAuditSearch.TabIndex = 1;
+            // 
+            // txtSearchAudit
+            // 
+            txtSearchAudit.Dock = DockStyle.Fill;
+            txtSearchAudit.Location = new Point(0, 40);
+            txtSearchAudit.Name = "txtSearchAudit";
+            txtSearchAudit.Size = new Size(450, 27);
+            txtSearchAudit.TabIndex = 41;
+            txtSearchAudit.Text = "Search Audit Logs";
+            txtSearchAudit.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label3
+            // 
+            label3.Dock = DockStyle.Top;
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.White;
+            label3.ImageAlign = ContentAlignment.MiddleRight;
+            label3.Location = new Point(0, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(450, 40);
+            label3.TabIndex = 40;
+            label3.Text = "Search";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
+            label3.Visible = false;
+            // 
+            // pnlAuditContent
+            // 
+            pnlAuditContent.Controls.Add(dgvAuditLogs);
+            pnlAuditContent.Dock = DockStyle.Fill;
+            pnlAuditContent.Location = new Point(0, 90);
+            pnlAuditContent.Name = "pnlAuditContent";
+            pnlAuditContent.Size = new Size(1300, 660);
+            pnlAuditContent.TabIndex = 1;
             // 
             // dgvAuditLogs
             // 
@@ -262,6 +239,29 @@
             colAuditDescription.Name = "colAuditDescription";
             colAuditDescription.ReadOnly = true;
             // 
+            // pnlAuditFooter
+            // 
+            pnlAuditFooter.Controls.Add(lblAuditArchiveNotice);
+            pnlAuditFooter.Dock = DockStyle.Bottom;
+            pnlAuditFooter.Location = new Point(0, 690);
+            pnlAuditFooter.Name = "pnlAuditFooter";
+            pnlAuditFooter.Size = new Size(1300, 60);
+            pnlAuditFooter.TabIndex = 2;
+            // 
+            // lblAuditArchiveNotice
+            // 
+            lblAuditArchiveNotice.Dock = DockStyle.Fill;
+            lblAuditArchiveNotice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAuditArchiveNotice.ForeColor = Color.White;
+            lblAuditArchiveNotice.ImageAlign = ContentAlignment.MiddleRight;
+            lblAuditArchiveNotice.Location = new Point(0, 0);
+            lblAuditArchiveNotice.Name = "lblAuditArchiveNotice";
+            lblAuditArchiveNotice.Size = new Size(1300, 60);
+            lblAuditArchiveNotice.TabIndex = 37;
+            lblAuditArchiveNotice.Text = "Logs older than 30 days are automatically archived.";
+            lblAuditArchiveNotice.TextAlign = ContentAlignment.MiddleCenter;
+            lblAuditArchiveNotice.Visible = false;
+            // 
             // AuditLogsControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -273,13 +273,13 @@
             Name = "AuditLogsControl";
             Size = new Size(1300, 750);
             pnlAuditHeader.ResumeLayout(false);
-            pnlAuditContent.ResumeLayout(false);
             pnlAuditDate.ResumeLayout(false);
             pnlAuditModule.ResumeLayout(false);
             pnlAuditSearch.ResumeLayout(false);
             pnlAuditSearch.PerformLayout();
-            pnlAuditFooter.ResumeLayout(false);
+            pnlAuditContent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvAuditLogs).EndInit();
+            pnlAuditFooter.ResumeLayout(false);
             ResumeLayout(false);
         }
 

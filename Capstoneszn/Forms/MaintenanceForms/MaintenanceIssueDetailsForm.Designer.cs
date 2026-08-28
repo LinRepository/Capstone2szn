@@ -36,6 +36,12 @@
             lblDescriptionValue = new Label();
             lblDescriptionTitle = new Label();
             pnlIssueStatusRow = new Panel();
+            pnlStatus = new Panel();
+            lblStatusTitle = new Label();
+            lblStatusValue = new Label();
+            pnlIssue = new Panel();
+            lblIssueTitle = new Label();
+            lblIssueValue = new Label();
             pnlResponsible = new Panel();
             lblResponsibleValue = new Label();
             lblResponsibleTitle = new Label();
@@ -49,23 +55,17 @@
             pnlDate = new Panel();
             lblDateTitle = new Label();
             lblDateValue = new Label();
-            pnlIssue = new Panel();
-            lblIssueTitle = new Label();
-            lblIssueValue = new Label();
-            pnlStatus = new Panel();
-            lblStatusTitle = new Label();
-            lblStatusValue = new Label();
             pnlIssueDetailsHeader.SuspendLayout();
             pnlIssueDetailsContent.SuspendLayout();
             pnlDescription.SuspendLayout();
             pnlIssueStatusRow.SuspendLayout();
+            pnlStatus.SuspendLayout();
+            pnlIssue.SuspendLayout();
             pnlResponsible.SuspendLayout();
             pnlAffectedTenants.SuspendLayout();
             pnlUnitDateRow.SuspendLayout();
             pnlUnit.SuspendLayout();
             pnlDate.SuspendLayout();
-            pnlIssue.SuspendLayout();
-            pnlStatus.SuspendLayout();
             SuspendLayout();
             // 
             // pnlIssueDetailsHeader
@@ -167,6 +167,82 @@
             pnlIssueStatusRow.Name = "pnlIssueStatusRow";
             pnlIssueStatusRow.Size = new Size(682, 100);
             pnlIssueStatusRow.TabIndex = 3;
+            // 
+            // pnlStatus
+            // 
+            pnlStatus.Controls.Add(lblStatusTitle);
+            pnlStatus.Controls.Add(lblStatusValue);
+            pnlStatus.Dock = DockStyle.Right;
+            pnlStatus.Location = new Point(412, 0);
+            pnlStatus.Name = "pnlStatus";
+            pnlStatus.Size = new Size(270, 100);
+            pnlStatus.TabIndex = 44;
+            // 
+            // lblStatusTitle
+            // 
+            lblStatusTitle.AutoSize = true;
+            lblStatusTitle.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblStatusTitle.ForeColor = Color.White;
+            lblStatusTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblStatusTitle.Location = new Point(108, 3);
+            lblStatusTitle.Name = "lblStatusTitle";
+            lblStatusTitle.Size = new Size(56, 23);
+            lblStatusTitle.TabIndex = 39;
+            lblStatusTitle.Text = "Status";
+            lblStatusTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblStatusTitle.Visible = false;
+            // 
+            // lblStatusValue
+            // 
+            lblStatusValue.AutoSize = true;
+            lblStatusValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblStatusValue.ForeColor = Color.White;
+            lblStatusValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblStatusValue.Location = new Point(124, 49);
+            lblStatusValue.Name = "lblStatusValue";
+            lblStatusValue.Size = new Size(40, 23);
+            lblStatusValue.TabIndex = 40;
+            lblStatusValue.Text = "###";
+            lblStatusValue.TextAlign = ContentAlignment.MiddleCenter;
+            lblStatusValue.Visible = false;
+            // 
+            // pnlIssue
+            // 
+            pnlIssue.Controls.Add(lblIssueTitle);
+            pnlIssue.Controls.Add(lblIssueValue);
+            pnlIssue.Dock = DockStyle.Left;
+            pnlIssue.Location = new Point(0, 0);
+            pnlIssue.Name = "pnlIssue";
+            pnlIssue.Size = new Size(410, 100);
+            pnlIssue.TabIndex = 43;
+            // 
+            // lblIssueTitle
+            // 
+            lblIssueTitle.AutoSize = true;
+            lblIssueTitle.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblIssueTitle.ForeColor = Color.White;
+            lblIssueTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblIssueTitle.Location = new Point(150, 3);
+            lblIssueTitle.Name = "lblIssueTitle";
+            lblIssueTitle.Size = new Size(48, 23);
+            lblIssueTitle.TabIndex = 39;
+            lblIssueTitle.Text = "Issue";
+            lblIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblIssueTitle.Visible = false;
+            // 
+            // lblIssueValue
+            // 
+            lblIssueValue.AutoSize = true;
+            lblIssueValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblIssueValue.ForeColor = Color.White;
+            lblIssueValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblIssueValue.Location = new Point(152, 39);
+            lblIssueValue.Name = "lblIssueValue";
+            lblIssueValue.Size = new Size(40, 23);
+            lblIssueValue.TabIndex = 40;
+            lblIssueValue.Text = "###";
+            lblIssueValue.TextAlign = ContentAlignment.MiddleCenter;
+            lblIssueValue.Visible = false;
             // 
             // pnlResponsible
             // 
@@ -330,82 +406,6 @@
             lblDateValue.TextAlign = ContentAlignment.MiddleCenter;
             lblDateValue.Visible = false;
             // 
-            // pnlIssue
-            // 
-            pnlIssue.Controls.Add(lblIssueTitle);
-            pnlIssue.Controls.Add(lblIssueValue);
-            pnlIssue.Dock = DockStyle.Left;
-            pnlIssue.Location = new Point(0, 0);
-            pnlIssue.Name = "pnlIssue";
-            pnlIssue.Size = new Size(410, 100);
-            pnlIssue.TabIndex = 43;
-            // 
-            // lblIssueTitle
-            // 
-            lblIssueTitle.AutoSize = true;
-            lblIssueTitle.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblIssueTitle.ForeColor = Color.White;
-            lblIssueTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblIssueTitle.Location = new Point(150, 3);
-            lblIssueTitle.Name = "lblIssueTitle";
-            lblIssueTitle.Size = new Size(48, 23);
-            lblIssueTitle.TabIndex = 39;
-            lblIssueTitle.Text = "Issue";
-            lblIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueTitle.Visible = false;
-            // 
-            // lblIssueValue
-            // 
-            lblIssueValue.AutoSize = true;
-            lblIssueValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblIssueValue.ForeColor = Color.White;
-            lblIssueValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblIssueValue.Location = new Point(152, 39);
-            lblIssueValue.Name = "lblIssueValue";
-            lblIssueValue.Size = new Size(40, 23);
-            lblIssueValue.TabIndex = 40;
-            lblIssueValue.Text = "###";
-            lblIssueValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueValue.Visible = false;
-            // 
-            // pnlStatus
-            // 
-            pnlStatus.Controls.Add(lblStatusTitle);
-            pnlStatus.Controls.Add(lblStatusValue);
-            pnlStatus.Dock = DockStyle.Right;
-            pnlStatus.Location = new Point(412, 0);
-            pnlStatus.Name = "pnlStatus";
-            pnlStatus.Size = new Size(270, 100);
-            pnlStatus.TabIndex = 44;
-            // 
-            // lblStatusTitle
-            // 
-            lblStatusTitle.AutoSize = true;
-            lblStatusTitle.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblStatusTitle.ForeColor = Color.White;
-            lblStatusTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblStatusTitle.Location = new Point(124, 3);
-            lblStatusTitle.Name = "lblStatusTitle";
-            lblStatusTitle.Size = new Size(56, 23);
-            lblStatusTitle.TabIndex = 39;
-            lblStatusTitle.Text = "Status";
-            lblStatusTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatusTitle.Visible = false;
-            // 
-            // lblStatusValue
-            // 
-            lblStatusValue.AutoSize = true;
-            lblStatusValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblStatusValue.ForeColor = Color.White;
-            lblStatusValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblStatusValue.Location = new Point(140, 39);
-            lblStatusValue.Name = "lblStatusValue";
-            lblStatusValue.Size = new Size(40, 23);
-            lblStatusValue.TabIndex = 40;
-            lblStatusValue.Text = "###";
-            lblStatusValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatusValue.Visible = false;
-            // 
             // MaintenanceIssueDetailsForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -426,6 +426,10 @@
             pnlDescription.ResumeLayout(false);
             pnlDescription.PerformLayout();
             pnlIssueStatusRow.ResumeLayout(false);
+            pnlStatus.ResumeLayout(false);
+            pnlStatus.PerformLayout();
+            pnlIssue.ResumeLayout(false);
+            pnlIssue.PerformLayout();
             pnlResponsible.ResumeLayout(false);
             pnlResponsible.PerformLayout();
             pnlAffectedTenants.ResumeLayout(false);
@@ -435,10 +439,6 @@
             pnlUnit.PerformLayout();
             pnlDate.ResumeLayout(false);
             pnlDate.PerformLayout();
-            pnlIssue.ResumeLayout(false);
-            pnlIssue.PerformLayout();
-            pnlStatus.ResumeLayout(false);
-            pnlStatus.PerformLayout();
             ResumeLayout(false);
         }
 
