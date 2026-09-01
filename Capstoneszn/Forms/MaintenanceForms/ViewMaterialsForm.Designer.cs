@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             pnlMaterialsHeader = new Panel();
+            btnCloseMaterials = new Button();
             lblMaterialsContext = new Label();
             lblMaterialsTitle = new Label();
             pnlMaterialsActions = new Panel();
+            btnClose = new Button();
             btnAddMaterial = new Button();
             pnlMaterialsContent = new Panel();
-            btnCloseMaterials = new Button();
             dgvMaterials = new DataGridView();
             colMaterialName = new DataGridViewTextBoxColumn();
             colQuantity = new DataGridViewTextBoxColumn();
             colUnitPrice = new DataGridViewTextBoxColumn();
             colTotalCost = new DataGridViewTextBoxColumn();
-            btnClose = new Button();
             pnlMaterialsHeader.SuspendLayout();
             pnlMaterialsActions.SuspendLayout();
             pnlMaterialsContent.SuspendLayout();
@@ -57,6 +57,19 @@
             pnlMaterialsHeader.Name = "pnlMaterialsHeader";
             pnlMaterialsHeader.Size = new Size(582, 50);
             pnlMaterialsHeader.TabIndex = 0;
+            // 
+            // btnCloseMaterials
+            // 
+            btnCloseMaterials.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCloseMaterials.FlatStyle = FlatStyle.Flat;
+            btnCloseMaterials.ForeColor = Color.White;
+            btnCloseMaterials.Location = new Point(540, 12);
+            btnCloseMaterials.Name = "btnCloseMaterials";
+            btnCloseMaterials.Size = new Size(30, 30);
+            btnCloseMaterials.TabIndex = 39;
+            btnCloseMaterials.TabStop = false;
+            btnCloseMaterials.Text = "X";
+            btnCloseMaterials.UseVisualStyleBackColor = true;
             // 
             // lblMaterialsContext
             // 
@@ -96,13 +109,22 @@
             pnlMaterialsActions.Size = new Size(582, 50);
             pnlMaterialsActions.TabIndex = 1;
             // 
+            // btnClose
+            // 
+            btnClose.Location = new Point(285, 9);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(130, 29);
+            btnClose.TabIndex = 1;
+            btnClose.Text = "Close";
+            btnClose.UseVisualStyleBackColor = true;
+            // 
             // btnAddMaterial
             // 
             btnAddMaterial.Location = new Point(440, 9);
             btnAddMaterial.Name = "btnAddMaterial";
             btnAddMaterial.Size = new Size(130, 29);
             btnAddMaterial.TabIndex = 0;
-            btnAddMaterial.Text = "Add Materials";
+            btnAddMaterial.Text = "Add Material";
             btnAddMaterial.UseVisualStyleBackColor = true;
             // 
             // pnlMaterialsContent
@@ -113,19 +135,6 @@
             pnlMaterialsContent.Name = "pnlMaterialsContent";
             pnlMaterialsContent.Size = new Size(582, 253);
             pnlMaterialsContent.TabIndex = 2;
-            // 
-            // btnCloseMaterials
-            // 
-            btnCloseMaterials.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnCloseMaterials.FlatStyle = FlatStyle.Flat;
-            btnCloseMaterials.ForeColor = Color.White;
-            btnCloseMaterials.Location = new Point(540, 12);
-            btnCloseMaterials.Name = "btnCloseMaterials";
-            btnCloseMaterials.Size = new Size(30, 30);
-            btnCloseMaterials.TabIndex = 39;
-            btnCloseMaterials.TabStop = false;
-            btnCloseMaterials.Text = "X";
-            btnCloseMaterials.UseVisualStyleBackColor = true;
             // 
             // dgvMaterials
             // 
@@ -173,15 +182,6 @@
             colTotalCost.MinimumWidth = 6;
             colTotalCost.Name = "colTotalCost";
             colTotalCost.ReadOnly = true;
-            // 
-            // btnClose
-            // 
-            btnClose.Location = new Point(285, 9);
-            btnClose.Name = "btnClose";
-            btnClose.Size = new Size(130, 29);
-            btnClose.TabIndex = 1;
-            btnClose.Text = "Close";
-            btnClose.UseVisualStyleBackColor = true;
             // 
             // ViewMaterialsForm
             // 

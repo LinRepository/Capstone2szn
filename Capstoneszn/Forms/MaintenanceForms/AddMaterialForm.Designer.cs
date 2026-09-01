@@ -29,23 +29,23 @@
         private void InitializeComponent()
         {
             pnlAddMaterialHeader = new Panel();
-            pnlAddMaterialActions = new Panel();
-            pnlAddMaterialContent = new Panel();
             lblAddMaterialTitle = new Label();
-            lblMaterialName = new Label();
-            lblAddMaterialDescription = new Label();
-            lblUnitPrice = new Label();
-            lblQuantity = new Label();
-            btnCancelMaterial = new Button();
+            pnlAddMaterialActions = new Panel();
             btnAddMaterial = new Button();
-            txtMaterialName = new TextBox();
-            nudQuantity = new NumericUpDown();
+            btnCancelMaterial = new Button();
+            pnlAddMaterialContent = new Panel();
             nudUnitPrice = new NumericUpDown();
+            nudQuantity = new NumericUpDown();
+            txtMaterialName = new TextBox();
+            lblQuantity = new Label();
+            lblUnitPrice = new Label();
+            lblAddMaterialDescription = new Label();
+            lblMaterialName = new Label();
             pnlAddMaterialHeader.SuspendLayout();
             pnlAddMaterialActions.SuspendLayout();
             pnlAddMaterialContent.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)nudQuantity).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudUnitPrice).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudQuantity).BeginInit();
             SuspendLayout();
             // 
             // pnlAddMaterialHeader
@@ -57,6 +57,20 @@
             pnlAddMaterialHeader.Size = new Size(432, 50);
             pnlAddMaterialHeader.TabIndex = 0;
             // 
+            // lblAddMaterialTitle
+            // 
+            lblAddMaterialTitle.AutoSize = true;
+            lblAddMaterialTitle.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddMaterialTitle.ForeColor = Color.White;
+            lblAddMaterialTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblAddMaterialTitle.Location = new Point(181, 15);
+            lblAddMaterialTitle.Name = "lblAddMaterialTitle";
+            lblAddMaterialTitle.Size = new Size(96, 20);
+            lblAddMaterialTitle.TabIndex = 38;
+            lblAddMaterialTitle.Text = "Add Material";
+            lblAddMaterialTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblAddMaterialTitle.Visible = false;
+            // 
             // pnlAddMaterialActions
             // 
             pnlAddMaterialActions.Controls.Add(btnAddMaterial);
@@ -66,6 +80,24 @@
             pnlAddMaterialActions.Name = "pnlAddMaterialActions";
             pnlAddMaterialActions.Size = new Size(432, 55);
             pnlAddMaterialActions.TabIndex = 1;
+            // 
+            // btnAddMaterial
+            // 
+            btnAddMaterial.Location = new Point(300, 14);
+            btnAddMaterial.Name = "btnAddMaterial";
+            btnAddMaterial.Size = new Size(120, 29);
+            btnAddMaterial.TabIndex = 1;
+            btnAddMaterial.Text = "Add Material";
+            btnAddMaterial.UseVisualStyleBackColor = true;
+            // 
+            // btnCancelMaterial
+            // 
+            btnCancelMaterial.Location = new Point(190, 14);
+            btnCancelMaterial.Name = "btnCancelMaterial";
+            btnCancelMaterial.Size = new Size(94, 29);
+            btnCancelMaterial.TabIndex = 0;
+            btnCancelMaterial.Text = "Cancel";
+            btnCancelMaterial.UseVisualStyleBackColor = true;
             // 
             // pnlAddMaterialContent
             // 
@@ -82,61 +114,33 @@
             pnlAddMaterialContent.Size = new Size(432, 248);
             pnlAddMaterialContent.TabIndex = 2;
             // 
-            // lblAddMaterialTitle
+            // nudUnitPrice
             // 
-            lblAddMaterialTitle.AutoSize = true;
-            lblAddMaterialTitle.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAddMaterialTitle.ForeColor = Color.White;
-            lblAddMaterialTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddMaterialTitle.Location = new Point(181, 15);
-            lblAddMaterialTitle.Name = "lblAddMaterialTitle";
-            lblAddMaterialTitle.Size = new Size(96, 20);
-            lblAddMaterialTitle.TabIndex = 38;
-            lblAddMaterialTitle.Text = "Add Material";
-            lblAddMaterialTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddMaterialTitle.Visible = false;
+            nudUnitPrice.DecimalPlaces = 2;
+            nudUnitPrice.Location = new Point(124, 203);
+            nudUnitPrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nudUnitPrice.Name = "nudUnitPrice";
+            nudUnitPrice.Size = new Size(199, 27);
+            nudUnitPrice.TabIndex = 44;
+            nudUnitPrice.ThousandsSeparator = true;
             // 
-            // lblMaterialName
+            // nudQuantity
             // 
-            lblMaterialName.AutoSize = true;
-            lblMaterialName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblMaterialName.ForeColor = Color.White;
-            lblMaterialName.ImageAlign = ContentAlignment.MiddleRight;
-            lblMaterialName.Location = new Point(124, 27);
-            lblMaterialName.Name = "lblMaterialName";
-            lblMaterialName.Size = new Size(141, 28);
-            lblMaterialName.TabIndex = 38;
-            lblMaterialName.Text = "Material Name";
-            lblMaterialName.TextAlign = ContentAlignment.MiddleCenter;
-            lblMaterialName.Visible = false;
+            nudQuantity.Location = new Point(124, 136);
+            nudQuantity.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudQuantity.Name = "nudQuantity";
+            nudQuantity.Size = new Size(199, 27);
+            nudQuantity.TabIndex = 43;
+            nudQuantity.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // lblAddMaterialDescription
+            // txtMaterialName
             // 
-            lblAddMaterialDescription.AutoSize = true;
-            lblAddMaterialDescription.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAddMaterialDescription.ForeColor = Color.White;
-            lblAddMaterialDescription.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddMaterialDescription.Location = new Point(120, 0);
-            lblAddMaterialDescription.Name = "lblAddMaterialDescription";
-            lblAddMaterialDescription.Size = new Size(203, 20);
-            lblAddMaterialDescription.TabIndex = 39;
-            lblAddMaterialDescription.Text = "Enter Materials Details Below";
-            lblAddMaterialDescription.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddMaterialDescription.Visible = false;
-            // 
-            // lblUnitPrice
-            // 
-            lblUnitPrice.AutoSize = true;
-            lblUnitPrice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUnitPrice.ForeColor = Color.White;
-            lblUnitPrice.ImageAlign = ContentAlignment.MiddleRight;
-            lblUnitPrice.Location = new Point(124, 172);
-            lblUnitPrice.Name = "lblUnitPrice";
-            lblUnitPrice.Size = new Size(96, 28);
-            lblUnitPrice.TabIndex = 40;
-            lblUnitPrice.Text = "Unit Price";
-            lblUnitPrice.TextAlign = ContentAlignment.MiddleCenter;
-            lblUnitPrice.Visible = false;
+            txtMaterialName.Location = new Point(124, 58);
+            txtMaterialName.Multiline = true;
+            txtMaterialName.Name = "txtMaterialName";
+            txtMaterialName.Size = new Size(199, 34);
+            txtMaterialName.TabIndex = 42;
             // 
             // lblQuantity
             // 
@@ -152,51 +156,47 @@
             lblQuantity.TextAlign = ContentAlignment.MiddleCenter;
             lblQuantity.Visible = false;
             // 
-            // btnCancelMaterial
+            // lblUnitPrice
             // 
-            btnCancelMaterial.Location = new Point(190, 14);
-            btnCancelMaterial.Name = "btnCancelMaterial";
-            btnCancelMaterial.Size = new Size(94, 29);
-            btnCancelMaterial.TabIndex = 0;
-            btnCancelMaterial.Text = "Cancel";
-            btnCancelMaterial.UseVisualStyleBackColor = true;
+            lblUnitPrice.AutoSize = true;
+            lblUnitPrice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUnitPrice.ForeColor = Color.White;
+            lblUnitPrice.ImageAlign = ContentAlignment.MiddleRight;
+            lblUnitPrice.Location = new Point(124, 172);
+            lblUnitPrice.Name = "lblUnitPrice";
+            lblUnitPrice.Size = new Size(96, 28);
+            lblUnitPrice.TabIndex = 40;
+            lblUnitPrice.Text = "Unit Price";
+            lblUnitPrice.TextAlign = ContentAlignment.MiddleCenter;
+            lblUnitPrice.Visible = false;
             // 
-            // btnAddMaterial
+            // lblAddMaterialDescription
             // 
-            btnAddMaterial.Location = new Point(300, 14);
-            btnAddMaterial.Name = "btnAddMaterial";
-            btnAddMaterial.Size = new Size(120, 29);
-            btnAddMaterial.TabIndex = 1;
-            btnAddMaterial.Text = "Add Material";
-            btnAddMaterial.UseVisualStyleBackColor = true;
+            lblAddMaterialDescription.AutoSize = true;
+            lblAddMaterialDescription.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddMaterialDescription.ForeColor = Color.White;
+            lblAddMaterialDescription.ImageAlign = ContentAlignment.MiddleRight;
+            lblAddMaterialDescription.Location = new Point(120, 0);
+            lblAddMaterialDescription.Name = "lblAddMaterialDescription";
+            lblAddMaterialDescription.Size = new Size(197, 20);
+            lblAddMaterialDescription.TabIndex = 39;
+            lblAddMaterialDescription.Text = "Enter Material Details Below";
+            lblAddMaterialDescription.TextAlign = ContentAlignment.MiddleCenter;
+            lblAddMaterialDescription.Visible = false;
             // 
-            // txtMaterialName
+            // lblMaterialName
             // 
-            txtMaterialName.Location = new Point(124, 58);
-            txtMaterialName.Multiline = true;
-            txtMaterialName.Name = "txtMaterialName";
-            txtMaterialName.Size = new Size(199, 34);
-            txtMaterialName.TabIndex = 42;
-            // 
-            // nudQuantity
-            // 
-            nudQuantity.Location = new Point(124, 136);
-            nudQuantity.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            nudQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            nudQuantity.Name = "nudQuantity";
-            nudQuantity.Size = new Size(199, 27);
-            nudQuantity.TabIndex = 43;
-            nudQuantity.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
-            // nudUnitPrice
-            // 
-            nudUnitPrice.DecimalPlaces = 2;
-            nudUnitPrice.Location = new Point(124, 203);
-            nudUnitPrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            nudUnitPrice.Name = "nudUnitPrice";
-            nudUnitPrice.Size = new Size(199, 27);
-            nudUnitPrice.TabIndex = 44;
-            nudUnitPrice.ThousandsSeparator = true;
+            lblMaterialName.AutoSize = true;
+            lblMaterialName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMaterialName.ForeColor = Color.White;
+            lblMaterialName.ImageAlign = ContentAlignment.MiddleRight;
+            lblMaterialName.Location = new Point(124, 27);
+            lblMaterialName.Name = "lblMaterialName";
+            lblMaterialName.Size = new Size(141, 28);
+            lblMaterialName.TabIndex = 38;
+            lblMaterialName.Text = "Material Name";
+            lblMaterialName.TextAlign = ContentAlignment.MiddleCenter;
+            lblMaterialName.Visible = false;
             // 
             // AddMaterialForm
             // 
@@ -218,8 +218,8 @@
             pnlAddMaterialActions.ResumeLayout(false);
             pnlAddMaterialContent.ResumeLayout(false);
             pnlAddMaterialContent.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)nudQuantity).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudUnitPrice).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudQuantity).EndInit();
             ResumeLayout(false);
         }
 
