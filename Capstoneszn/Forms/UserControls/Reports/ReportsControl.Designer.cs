@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            label9 = new Label();
+            dataGridView1 = new DataGridView();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewTextBoxColumn();
+            label13 = new Label();
+            label12 = new Label();
             label11 = new Label();
             button2 = new Button();
             label8 = new Label();
@@ -43,19 +50,22 @@
             label2 = new Label();
             button1 = new Button();
             label1 = new Label();
-            label12 = new Label();
-            label13 = new Label();
-            dataGridView1 = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column3 = new DataGridViewTextBoxColumn();
-            label9 = new Label();
+            dataGridView2 = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+            label10 = new Label();
+            label14 = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(label14);
+            panel1.Controls.Add(label10);
+            panel1.Controls.Add(dataGridView2);
             panel1.Controls.Add(label9);
             panel1.Controls.Add(dataGridView1);
             panel1.Controls.Add(label13);
@@ -79,6 +89,72 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1300, 750);
             panel1.TabIndex = 0;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.BackColor = Color.FromArgb(11, 20, 60);
+            label9.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label9.ForeColor = Color.White;
+            label9.Location = new Point(135, 159);
+            label9.Name = "label9";
+            label9.Size = new Size(33, 38);
+            label9.TabIndex = 17;
+            label9.Text = "0";
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
+            dataGridView1.Location = new Point(46, 241);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.Size = new Size(598, 468);
+            dataGridView1.TabIndex = 16;
+            // 
+            // Column1
+            // 
+            Column1.HeaderText = "Date";
+            Column1.MinimumWidth = 6;
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Tenant";
+            Column2.MinimumWidth = 6;
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            // 
+            // Column3
+            // 
+            Column3.HeaderText = "Amount";
+            Column3.MinimumWidth = 6;
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.BackColor = Color.FromArgb(11, 20, 60);
+            label13.ForeColor = Color.White;
+            label13.Location = new Point(547, 133);
+            label13.Name = "label13";
+            label13.Size = new Size(56, 20);
+            label13.TabIndex = 15;
+            label13.Text = "Margin";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.BackColor = Color.FromArgb(11, 20, 60);
+            label12.ForeColor = Color.White;
+            label12.Location = new Point(320, 133);
+            label12.Name = "label12";
+            label12.Size = new Size(106, 20);
+            label12.TabIndex = 14;
+            label12.Text = "Total Expenses";
             // 
             // label11
             // 
@@ -227,71 +303,61 @@
             label1.TabIndex = 0;
             label1.Text = "   ";
             // 
-            // label12
+            // dataGridView2
             // 
-            label12.AutoSize = true;
-            label12.BackColor = Color.FromArgb(11, 20, 60);
-            label12.ForeColor = Color.White;
-            label12.Location = new Point(320, 133);
-            label12.Name = "label12";
-            label12.Size = new Size(106, 20);
-            label12.TabIndex = 14;
-            label12.Text = "Total Expenses";
+            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
+            dataGridView2.Location = new Point(658, 241);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.Size = new Size(598, 468);
+            dataGridView2.TabIndex = 18;
             // 
-            // label13
+            // dataGridViewTextBoxColumn1
             // 
-            label13.AutoSize = true;
-            label13.BackColor = Color.FromArgb(11, 20, 60);
-            label13.ForeColor = Color.White;
-            label13.Location = new Point(547, 133);
-            label13.Name = "label13";
-            label13.Size = new Size(56, 20);
-            label13.TabIndex = 15;
-            label13.Text = "Margin";
+            dataGridViewTextBoxColumn1.HeaderText = "Date";
+            dataGridViewTextBoxColumn1.MinimumWidth = 6;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
-            // dataGridView1
+            // dataGridViewTextBoxColumn2
             // 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
-            dataGridView1.Location = new Point(46, 241);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(598, 468);
-            dataGridView1.TabIndex = 16;
+            dataGridViewTextBoxColumn2.HeaderText = "Tenant";
+            dataGridViewTextBoxColumn2.MinimumWidth = 6;
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
-            // Column1
+            // dataGridViewTextBoxColumn3
             // 
-            Column1.HeaderText = "Date";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
+            dataGridViewTextBoxColumn3.HeaderText = "Amount";
+            dataGridViewTextBoxColumn3.MinimumWidth = 6;
+            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
-            // Column2
+            // label10
             // 
-            Column2.HeaderText = "Tenant";
-            Column2.MinimumWidth = 6;
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
+            label10.AutoSize = true;
+            label10.BackColor = Color.FromArgb(11, 20, 60);
+            label10.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label10.ForeColor = Color.White;
+            label10.Location = new Point(350, 159);
+            label10.Name = "label10";
+            label10.Size = new Size(33, 38);
+            label10.TabIndex = 19;
+            label10.Text = "0";
             // 
-            // Column3
+            // label14
             // 
-            Column3.HeaderText = "Amount";
-            Column3.MinimumWidth = 6;
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.BackColor = Color.FromArgb(11, 20, 60);
-            label9.Font = new Font("Segoe UI", 15F);
-            label9.ForeColor = Color.White;
-            label9.Location = new Point(147, 163);
-            label9.Name = "label9";
-            label9.Size = new Size(81, 35);
-            label9.TabIndex = 17;
-            label9.Text = "label9";
+            label14.AutoSize = true;
+            label14.BackColor = Color.FromArgb(11, 20, 60);
+            label14.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label14.ForeColor = Color.White;
+            label14.Location = new Point(560, 159);
+            label14.Name = "label14";
+            label14.Size = new Size(33, 38);
+            label14.TabIndex = 20;
+            label14.Text = "0";
             // 
             // ReportsControl
             // 
@@ -304,6 +370,7 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
         }
 
@@ -331,5 +398,11 @@
         private Label label13;
         private Label label12;
         private Label label9;
+        private Label label14;
+        private Label label10;
+        private DataGridView dataGridView2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
     }
 }
