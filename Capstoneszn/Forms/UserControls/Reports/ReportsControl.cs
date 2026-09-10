@@ -38,5 +38,10 @@ namespace Capstoneszn.UserControls
             button1.BackColor = Color.SteelBlue;
             button1.ForeColor = Color.White;
         }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

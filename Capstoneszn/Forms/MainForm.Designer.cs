@@ -295,6 +295,7 @@
             btnLogout.Text = "Logout";
             btnLogout.TextAlign = ContentAlignment.MiddleLeft;
             btnLogout.UseVisualStyleBackColor = true;
+            btnLogout.Click += btnLogout_Click;
             // 
             // lblSystemName
             // 
@@ -367,6 +368,7 @@
             btnNotification.TabIndex = 4;
             btnNotification.Text = "Notification";
             btnNotification.UseVisualStyleBackColor = true;
+            btnNotification.Click += btnNotification_Click;
             // 
             // lblDate
             // 

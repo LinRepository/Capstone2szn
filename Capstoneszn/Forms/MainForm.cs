@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms;
 using Capstoneszn.UserControls;
 
 namespace Capstoneszn
@@ -159,6 +160,16 @@ namespace Capstoneszn
             isSidebarExpanded = true;
         }
 
-        
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            LogoutConfirmation lc = new LogoutConfirmation();
+
+            lc.ShowDialog();
+        }
+
+        private void btnNotification_Click(object sender, EventArgs e)
+        {
+            LoadControl(new Capstoneszn.Forms.UserControls.NotificationControl());
+        }
     }
 }
