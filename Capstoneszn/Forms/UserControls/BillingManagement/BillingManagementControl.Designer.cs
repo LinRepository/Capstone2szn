@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             pnlBillingHeader = new Panel();
-            pnlBillingContent = new Panel();
             lblBillingTitle = new Label();
+            pnlBillingContent = new Panel();
             tblBillingOptions = new TableLayoutPanel();
             pnlRoomAccount = new Panel();
-            pnlExpenses = new Panel();
             lblRoomAccount = new Label();
+            pnlExpenses = new Panel();
             lblExpenses = new Label();
             pnlBillingHeader.SuspendLayout();
             pnlBillingContent.SuspendLayout();
@@ -52,15 +52,6 @@
             pnlBillingHeader.Size = new Size(1300, 100);
             pnlBillingHeader.TabIndex = 1;
             // 
-            // pnlBillingContent
-            // 
-            pnlBillingContent.Controls.Add(tblBillingOptions);
-            pnlBillingContent.Dock = DockStyle.Fill;
-            pnlBillingContent.Location = new Point(0, 100);
-            pnlBillingContent.Name = "pnlBillingContent";
-            pnlBillingContent.Size = new Size(1300, 650);
-            pnlBillingContent.TabIndex = 2;
-            // 
             // lblBillingTitle
             // 
             lblBillingTitle.Dock = DockStyle.Fill;
@@ -74,6 +65,16 @@
             lblBillingTitle.Text = "Billing Management";
             lblBillingTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // pnlBillingContent
+            // 
+            pnlBillingContent.Controls.Add(tblBillingOptions);
+            pnlBillingContent.Dock = DockStyle.Fill;
+            pnlBillingContent.Location = new Point(0, 100);
+            pnlBillingContent.Name = "pnlBillingContent";
+            pnlBillingContent.Padding = new Padding(10);
+            pnlBillingContent.Size = new Size(1300, 650);
+            pnlBillingContent.TabIndex = 2;
+            // 
             // tblBillingOptions
             // 
             tblBillingOptions.AutoScroll = true;
@@ -82,12 +83,12 @@
             tblBillingOptions.Controls.Add(pnlRoomAccount, 0, 0);
             tblBillingOptions.Controls.Add(pnlExpenses, 0, 1);
             tblBillingOptions.Dock = DockStyle.Fill;
-            tblBillingOptions.Location = new Point(0, 0);
+            tblBillingOptions.Location = new Point(10, 10);
             tblBillingOptions.Name = "tblBillingOptions";
             tblBillingOptions.RowCount = 2;
             tblBillingOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tblBillingOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tblBillingOptions.Size = new Size(1300, 650);
+            tblBillingOptions.Size = new Size(1280, 630);
             tblBillingOptions.TabIndex = 0;
             // 
             // pnlRoomAccount
@@ -98,19 +99,8 @@
             pnlRoomAccount.Location = new Point(15, 15);
             pnlRoomAccount.Margin = new Padding(15);
             pnlRoomAccount.Name = "pnlRoomAccount";
-            pnlRoomAccount.Size = new Size(1270, 295);
+            pnlRoomAccount.Size = new Size(1250, 285);
             pnlRoomAccount.TabIndex = 0;
-            // 
-            // pnlExpenses
-            // 
-            pnlExpenses.Controls.Add(lblExpenses);
-            pnlExpenses.Cursor = Cursors.Hand;
-            pnlExpenses.Dock = DockStyle.Fill;
-            pnlExpenses.Location = new Point(15, 340);
-            pnlExpenses.Margin = new Padding(15);
-            pnlExpenses.Name = "pnlExpenses";
-            pnlExpenses.Size = new Size(1270, 295);
-            pnlExpenses.TabIndex = 1;
             // 
             // lblRoomAccount
             // 
@@ -120,10 +110,21 @@
             lblRoomAccount.ImageAlign = ContentAlignment.MiddleRight;
             lblRoomAccount.Location = new Point(0, 0);
             lblRoomAccount.Name = "lblRoomAccount";
-            lblRoomAccount.Size = new Size(1270, 295);
+            lblRoomAccount.Size = new Size(1250, 285);
             lblRoomAccount.TabIndex = 5;
             lblRoomAccount.Text = "Room Account";
             lblRoomAccount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlExpenses
+            // 
+            pnlExpenses.Controls.Add(lblExpenses);
+            pnlExpenses.Cursor = Cursors.Hand;
+            pnlExpenses.Dock = DockStyle.Fill;
+            pnlExpenses.Location = new Point(15, 330);
+            pnlExpenses.Margin = new Padding(15);
+            pnlExpenses.Name = "pnlExpenses";
+            pnlExpenses.Size = new Size(1250, 285);
+            pnlExpenses.TabIndex = 1;
             // 
             // lblExpenses
             // 
@@ -133,7 +134,7 @@
             lblExpenses.ImageAlign = ContentAlignment.MiddleRight;
             lblExpenses.Location = new Point(0, 0);
             lblExpenses.Name = "lblExpenses";
-            lblExpenses.Size = new Size(1270, 295);
+            lblExpenses.Size = new Size(1250, 285);
             lblExpenses.TabIndex = 6;
             lblExpenses.Text = "Expenses";
             lblExpenses.TextAlign = ContentAlignment.MiddleCenter;
