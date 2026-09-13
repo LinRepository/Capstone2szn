@@ -28,382 +28,581 @@
         /// </summary>
         private void InitializeComponent()
         {
+            pnlReportsHeader = new Panel();
+            lblReportsTitle = new Label();
+            pnlReportsContent = new Panel();
+            panel3 = new Panel();
+            panel5 = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            dgvExpenses = new DataGridView();
+            colReportsExpensesDate = new DataGridViewTextBoxColumn();
+            colReportsExpensesCategory = new DataGridViewTextBoxColumn();
+            colReportsExpensesAmount = new DataGridViewTextBoxColumn();
+            dgvReceived = new DataGridView();
+            colReportsReceivedDate = new DataGridViewTextBoxColumn();
+            colReportsReceivedTenant = new DataGridViewTextBoxColumn();
+            colReportsReceivedAmount = new DataGridViewTextBoxColumn();
+            pnlReportsSummaryCards = new Panel();
+            tblSummarCards = new TableLayoutPanel();
             panel1 = new Panel();
-            label14 = new Label();
-            label10 = new Label();
-            dataGridView2 = new DataGridView();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-            label9 = new Label();
-            dataGridView1 = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column3 = new DataGridViewTextBoxColumn();
-            label13 = new Label();
-            label12 = new Label();
-            label11 = new Label();
-            button2 = new Button();
-            label8 = new Label();
-            label7 = new Label();
-            label6 = new Label();
-            label5 = new Label();
-            comboBox1 = new ComboBox();
+            lblTotalReceivedValue = new Label();
+            lblTotalReceived = new Label();
+            panel2 = new Panel();
+            lblTotalExpensesValue = new Label();
+            lblTotalExpenses = new Label();
+            panel4 = new Panel();
+            lblEarningsValue = new Label();
+            lblEarnings = new Label();
+            pnlReportsHeaderContent = new Panel();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            panel6 = new Panel();
+            label2 = new Label();
+            label1 = new Label();
+            lblReportsTo = new Label();
             dateTimePicker2 = new DateTimePicker();
             dateTimePicker1 = new DateTimePicker();
-            label4 = new Label();
-            label3 = new Label();
-            label2 = new Label();
-            button1 = new Button();
-            label1 = new Label();
+            panel7 = new Panel();
+            lblReportsTenant = new Label();
+            comboBox1 = new ComboBox();
+            panel8 = new Panel();
+            btnReportsX = new Button();
+            btnGenerateReports = new Button();
+            pnlReportsHeader.SuspendLayout();
+            pnlReportsContent.SuspendLayout();
+            panel3.SuspendLayout();
+            panel5.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvExpenses).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvReceived).BeginInit();
+            pnlReportsSummaryCards.SuspendLayout();
+            tblSummarCards.SuspendLayout();
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            panel2.SuspendLayout();
+            panel4.SuspendLayout();
+            pnlReportsHeaderContent.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            panel6.SuspendLayout();
+            panel7.SuspendLayout();
+            panel8.SuspendLayout();
             SuspendLayout();
+            // 
+            // pnlReportsHeader
+            // 
+            pnlReportsHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlReportsHeader.Controls.Add(lblReportsTitle);
+            pnlReportsHeader.Dock = DockStyle.Top;
+            pnlReportsHeader.Location = new Point(10, 10);
+            pnlReportsHeader.Name = "pnlReportsHeader";
+            pnlReportsHeader.Size = new Size(1280, 85);
+            pnlReportsHeader.TabIndex = 0;
+            // 
+            // lblReportsTitle
+            // 
+            lblReportsTitle.Dock = DockStyle.Fill;
+            lblReportsTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblReportsTitle.ForeColor = Color.White;
+            lblReportsTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblReportsTitle.Location = new Point(0, 0);
+            lblReportsTitle.Name = "lblReportsTitle";
+            lblReportsTitle.Size = new Size(1278, 83);
+            lblReportsTitle.TabIndex = 7;
+            lblReportsTitle.Text = "Reports";
+            lblReportsTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlReportsContent
+            // 
+            pnlReportsContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlReportsContent.Controls.Add(panel3);
+            pnlReportsContent.Dock = DockStyle.Fill;
+            pnlReportsContent.Location = new Point(10, 95);
+            pnlReportsContent.Name = "pnlReportsContent";
+            pnlReportsContent.Size = new Size(1280, 645);
+            pnlReportsContent.TabIndex = 1;
+            // 
+            // panel3
+            // 
+            panel3.Controls.Add(panel5);
+            panel3.Controls.Add(pnlReportsSummaryCards);
+            panel3.Controls.Add(pnlReportsHeaderContent);
+            panel3.Dock = DockStyle.Fill;
+            panel3.Location = new Point(0, 0);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(1278, 643);
+            panel3.TabIndex = 2;
+            // 
+            // panel5
+            // 
+            panel5.BorderStyle = BorderStyle.FixedSingle;
+            panel5.Controls.Add(tableLayoutPanel1);
+            panel5.Dock = DockStyle.Fill;
+            panel5.Location = new Point(0, 190);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(1278, 453);
+            panel5.TabIndex = 2;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(dgvExpenses, 0, 1);
+            tableLayoutPanel1.Controls.Add(dgvReceived, 0, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(1276, 451);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
+            // dgvExpenses
+            // 
+            dgvExpenses.AllowUserToAddRows = false;
+            dgvExpenses.AllowUserToDeleteRows = false;
+            dgvExpenses.AllowUserToResizeRows = false;
+            dgvExpenses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvExpenses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvExpenses.Columns.AddRange(new DataGridViewColumn[] { colReportsExpensesDate, colReportsExpensesCategory, colReportsExpensesAmount });
+            dgvExpenses.Dock = DockStyle.Fill;
+            dgvExpenses.Location = new Point(3, 228);
+            dgvExpenses.MultiSelect = false;
+            dgvExpenses.Name = "dgvExpenses";
+            dgvExpenses.ReadOnly = true;
+            dgvExpenses.RowHeadersVisible = false;
+            dgvExpenses.RowHeadersWidth = 51;
+            dgvExpenses.ScrollBars = ScrollBars.Vertical;
+            dgvExpenses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvExpenses.Size = new Size(1270, 220);
+            dgvExpenses.TabIndex = 1;
+            // 
+            // colReportsExpensesDate
+            // 
+            colReportsExpensesDate.HeaderText = "Date";
+            colReportsExpensesDate.MinimumWidth = 6;
+            colReportsExpensesDate.Name = "colReportsExpensesDate";
+            colReportsExpensesDate.ReadOnly = true;
+            // 
+            // colReportsExpensesCategory
+            // 
+            colReportsExpensesCategory.HeaderText = "Category";
+            colReportsExpensesCategory.MinimumWidth = 6;
+            colReportsExpensesCategory.Name = "colReportsExpensesCategory";
+            colReportsExpensesCategory.ReadOnly = true;
+            // 
+            // colReportsExpensesAmount
+            // 
+            colReportsExpensesAmount.HeaderText = "Amount";
+            colReportsExpensesAmount.MinimumWidth = 6;
+            colReportsExpensesAmount.Name = "colReportsExpensesAmount";
+            colReportsExpensesAmount.ReadOnly = true;
+            // 
+            // dgvReceived
+            // 
+            dgvReceived.AllowUserToAddRows = false;
+            dgvReceived.AllowUserToDeleteRows = false;
+            dgvReceived.AllowUserToResizeRows = false;
+            dgvReceived.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvReceived.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvReceived.Columns.AddRange(new DataGridViewColumn[] { colReportsReceivedDate, colReportsReceivedTenant, colReportsReceivedAmount });
+            dgvReceived.Dock = DockStyle.Fill;
+            dgvReceived.Location = new Point(3, 3);
+            dgvReceived.MultiSelect = false;
+            dgvReceived.Name = "dgvReceived";
+            dgvReceived.ReadOnly = true;
+            dgvReceived.RowHeadersVisible = false;
+            dgvReceived.RowHeadersWidth = 51;
+            dgvReceived.ScrollBars = ScrollBars.Vertical;
+            dgvReceived.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvReceived.Size = new Size(1270, 219);
+            dgvReceived.TabIndex = 0;
+            // 
+            // colReportsReceivedDate
+            // 
+            colReportsReceivedDate.HeaderText = "Date";
+            colReportsReceivedDate.MinimumWidth = 6;
+            colReportsReceivedDate.Name = "colReportsReceivedDate";
+            colReportsReceivedDate.ReadOnly = true;
+            // 
+            // colReportsReceivedTenant
+            // 
+            colReportsReceivedTenant.HeaderText = "Tenant Name";
+            colReportsReceivedTenant.MinimumWidth = 6;
+            colReportsReceivedTenant.Name = "colReportsReceivedTenant";
+            colReportsReceivedTenant.ReadOnly = true;
+            // 
+            // colReportsReceivedAmount
+            // 
+            colReportsReceivedAmount.HeaderText = "Amount";
+            colReportsReceivedAmount.MinimumWidth = 6;
+            colReportsReceivedAmount.Name = "colReportsReceivedAmount";
+            colReportsReceivedAmount.ReadOnly = true;
+            // 
+            // pnlReportsSummaryCards
+            // 
+            pnlReportsSummaryCards.Controls.Add(tblSummarCards);
+            pnlReportsSummaryCards.Dock = DockStyle.Top;
+            pnlReportsSummaryCards.Location = new Point(0, 80);
+            pnlReportsSummaryCards.Name = "pnlReportsSummaryCards";
+            pnlReportsSummaryCards.Padding = new Padding(5);
+            pnlReportsSummaryCards.Size = new Size(1278, 110);
+            pnlReportsSummaryCards.TabIndex = 1;
+            // 
+            // tblSummarCards
+            // 
+            tblSummarCards.ColumnCount = 3;
+            tblSummarCards.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tblSummarCards.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tblSummarCards.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tblSummarCards.Controls.Add(panel1, 0, 0);
+            tblSummarCards.Controls.Add(panel2, 1, 0);
+            tblSummarCards.Controls.Add(panel4, 2, 0);
+            tblSummarCards.Dock = DockStyle.Fill;
+            tblSummarCards.Location = new Point(5, 5);
+            tblSummarCards.Name = "tblSummarCards";
+            tblSummarCards.RowCount = 1;
+            tblSummarCards.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tblSummarCards.Size = new Size(1268, 100);
+            tblSummarCards.TabIndex = 0;
             // 
             // panel1
             // 
-            panel1.Controls.Add(label14);
-            panel1.Controls.Add(label10);
-            panel1.Controls.Add(dataGridView2);
-            panel1.Controls.Add(label9);
-            panel1.Controls.Add(dataGridView1);
-            panel1.Controls.Add(label13);
-            panel1.Controls.Add(label12);
-            panel1.Controls.Add(label11);
-            panel1.Controls.Add(button2);
-            panel1.Controls.Add(label8);
-            panel1.Controls.Add(label7);
-            panel1.Controls.Add(label6);
-            panel1.Controls.Add(label5);
-            panel1.Controls.Add(comboBox1);
-            panel1.Controls.Add(dateTimePicker2);
-            panel1.Controls.Add(dateTimePicker1);
-            panel1.Controls.Add(label4);
-            panel1.Controls.Add(label3);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(button1);
-            panel1.Controls.Add(label1);
+            panel1.Controls.Add(lblTotalReceivedValue);
+            panel1.Controls.Add(lblTotalReceived);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
+            panel1.Location = new Point(3, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1300, 750);
+            panel1.Size = new Size(416, 94);
             panel1.TabIndex = 0;
             // 
-            // label14
+            // lblTotalReceivedValue
             // 
-            label14.AutoSize = true;
-            label14.BackColor = Color.FromArgb(11, 20, 60);
-            label14.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label14.ForeColor = Color.White;
-            label14.Location = new Point(560, 159);
-            label14.Name = "label14";
-            label14.Size = new Size(33, 38);
-            label14.TabIndex = 20;
-            label14.Text = "0";
+            lblTotalReceivedValue.BorderStyle = BorderStyle.FixedSingle;
+            lblTotalReceivedValue.Dock = DockStyle.Left;
+            lblTotalReceivedValue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalReceivedValue.ForeColor = Color.White;
+            lblTotalReceivedValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblTotalReceivedValue.Location = new Point(200, 0);
+            lblTotalReceivedValue.Name = "lblTotalReceivedValue";
+            lblTotalReceivedValue.Size = new Size(200, 94);
+            lblTotalReceivedValue.TabIndex = 44;
+            lblTotalReceivedValue.Text = "₱ ####";
+            lblTotalReceivedValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // label10
+            // lblTotalReceived
             // 
-            label10.AutoSize = true;
-            label10.BackColor = Color.FromArgb(11, 20, 60);
-            label10.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.ForeColor = Color.White;
-            label10.Location = new Point(350, 159);
-            label10.Name = "label10";
-            label10.Size = new Size(33, 38);
-            label10.TabIndex = 19;
-            label10.Text = "0";
+            lblTotalReceived.BorderStyle = BorderStyle.FixedSingle;
+            lblTotalReceived.Dock = DockStyle.Left;
+            lblTotalReceived.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalReceived.ForeColor = Color.White;
+            lblTotalReceived.ImageAlign = ContentAlignment.MiddleRight;
+            lblTotalReceived.Location = new Point(0, 0);
+            lblTotalReceived.Name = "lblTotalReceived";
+            lblTotalReceived.Size = new Size(200, 94);
+            lblTotalReceived.TabIndex = 43;
+            lblTotalReceived.Text = "Total Received";
+            lblTotalReceived.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // dataGridView2
+            // panel2
             // 
-            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
-            dataGridView2.Location = new Point(658, 241);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(598, 468);
-            dataGridView2.TabIndex = 18;
+            panel2.Controls.Add(lblTotalExpensesValue);
+            panel2.Controls.Add(lblTotalExpenses);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(425, 3);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(416, 94);
+            panel2.TabIndex = 1;
             // 
-            // dataGridViewTextBoxColumn1
+            // lblTotalExpensesValue
             // 
-            dataGridViewTextBoxColumn1.HeaderText = "Date";
-            dataGridViewTextBoxColumn1.MinimumWidth = 6;
-            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            dataGridViewTextBoxColumn1.ReadOnly = true;
+            lblTotalExpensesValue.BorderStyle = BorderStyle.FixedSingle;
+            lblTotalExpensesValue.Dock = DockStyle.Left;
+            lblTotalExpensesValue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalExpensesValue.ForeColor = Color.White;
+            lblTotalExpensesValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblTotalExpensesValue.Location = new Point(200, 0);
+            lblTotalExpensesValue.Name = "lblTotalExpensesValue";
+            lblTotalExpensesValue.Size = new Size(200, 94);
+            lblTotalExpensesValue.TabIndex = 45;
+            lblTotalExpensesValue.Text = "₱ ####";
+            lblTotalExpensesValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // dataGridViewTextBoxColumn2
+            // lblTotalExpenses
             // 
-            dataGridViewTextBoxColumn2.HeaderText = "Tenant";
-            dataGridViewTextBoxColumn2.MinimumWidth = 6;
-            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            dataGridViewTextBoxColumn2.ReadOnly = true;
+            lblTotalExpenses.BorderStyle = BorderStyle.FixedSingle;
+            lblTotalExpenses.Dock = DockStyle.Left;
+            lblTotalExpenses.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalExpenses.ForeColor = Color.White;
+            lblTotalExpenses.ImageAlign = ContentAlignment.MiddleRight;
+            lblTotalExpenses.Location = new Point(0, 0);
+            lblTotalExpenses.Name = "lblTotalExpenses";
+            lblTotalExpenses.Size = new Size(200, 94);
+            lblTotalExpenses.TabIndex = 44;
+            lblTotalExpenses.Text = " Total Expenses";
+            lblTotalExpenses.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // dataGridViewTextBoxColumn3
+            // panel4
             // 
-            dataGridViewTextBoxColumn3.HeaderText = "Amount";
-            dataGridViewTextBoxColumn3.MinimumWidth = 6;
-            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            dataGridViewTextBoxColumn3.ReadOnly = true;
+            panel4.Controls.Add(lblEarningsValue);
+            panel4.Controls.Add(lblEarnings);
+            panel4.Dock = DockStyle.Fill;
+            panel4.Location = new Point(847, 3);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(418, 94);
+            panel4.TabIndex = 2;
             // 
-            // label9
+            // lblEarningsValue
             // 
-            label9.AutoSize = true;
-            label9.BackColor = Color.FromArgb(11, 20, 60);
-            label9.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label9.ForeColor = Color.White;
-            label9.Location = new Point(135, 159);
-            label9.Name = "label9";
-            label9.Size = new Size(33, 38);
-            label9.TabIndex = 17;
-            label9.Text = "0";
+            lblEarningsValue.BorderStyle = BorderStyle.FixedSingle;
+            lblEarningsValue.Dock = DockStyle.Left;
+            lblEarningsValue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEarningsValue.ForeColor = Color.White;
+            lblEarningsValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblEarningsValue.Location = new Point(200, 0);
+            lblEarningsValue.Name = "lblEarningsValue";
+            lblEarningsValue.Size = new Size(200, 94);
+            lblEarningsValue.TabIndex = 45;
+            lblEarningsValue.Text = "₱ ####";
+            lblEarningsValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // dataGridView1
+            // lblEarnings
             // 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
-            dataGridView1.Location = new Point(46, 241);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(598, 468);
-            dataGridView1.TabIndex = 16;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            lblEarnings.BorderStyle = BorderStyle.FixedSingle;
+            lblEarnings.Dock = DockStyle.Left;
+            lblEarnings.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEarnings.ForeColor = Color.White;
+            lblEarnings.ImageAlign = ContentAlignment.MiddleRight;
+            lblEarnings.Location = new Point(0, 0);
+            lblEarnings.Name = "lblEarnings";
+            lblEarnings.Size = new Size(200, 94);
+            lblEarnings.TabIndex = 44;
+            lblEarnings.Text = "Earnings";
+            lblEarnings.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // Column1
+            // pnlReportsHeaderContent
             // 
-            Column1.HeaderText = "Date";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
+            pnlReportsHeaderContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlReportsHeaderContent.Controls.Add(tableLayoutPanel2);
+            pnlReportsHeaderContent.Dock = DockStyle.Top;
+            pnlReportsHeaderContent.Location = new Point(0, 0);
+            pnlReportsHeaderContent.Name = "pnlReportsHeaderContent";
+            pnlReportsHeaderContent.Size = new Size(1278, 80);
+            pnlReportsHeaderContent.TabIndex = 0;
             // 
-            // Column2
+            // tableLayoutPanel2
             // 
-            Column2.HeaderText = "Tenant";
-            Column2.MinimumWidth = 6;
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel2.Controls.Add(panel6, 0, 0);
+            tableLayoutPanel2.Controls.Add(panel7, 1, 0);
+            tableLayoutPanel2.Controls.Add(panel8, 2, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(0, 0);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new Size(1276, 78);
+            tableLayoutPanel2.TabIndex = 0;
             // 
-            // Column3
+            // panel6
             // 
-            Column3.HeaderText = "Amount";
-            Column3.MinimumWidth = 6;
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.BackColor = Color.FromArgb(11, 20, 60);
-            label13.ForeColor = Color.White;
-            label13.Location = new Point(547, 133);
-            label13.Name = "label13";
-            label13.Size = new Size(56, 20);
-            label13.TabIndex = 15;
-            label13.Text = "Margin";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.BackColor = Color.FromArgb(11, 20, 60);
-            label12.ForeColor = Color.White;
-            label12.Location = new Point(320, 133);
-            label12.Name = "label12";
-            label12.Size = new Size(106, 20);
-            label12.TabIndex = 14;
-            label12.Text = "Total Expenses";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.BackColor = Color.FromArgb(11, 20, 60);
-            label11.ForeColor = Color.White;
-            label11.Location = new Point(101, 133);
-            label11.Name = "label11";
-            label11.Size = new Size(106, 20);
-            label11.TabIndex = 13;
-            label11.Text = "Total Received";
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.FromArgb(64, 64, 64);
-            button2.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(1043, 60);
-            button2.Name = "button2";
-            button2.Size = new Size(213, 45);
-            button2.TabIndex = 12;
-            button2.Text = "Clear All";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
-            // 
-            // label8
-            // 
-            label8.BackColor = Color.FromArgb(11, 20, 60);
-            label8.BorderStyle = BorderStyle.FixedSingle;
-            label8.Location = new Point(482, 131);
-            label8.Name = "label8";
-            label8.Size = new Size(193, 79);
-            label8.TabIndex = 9;
-            label8.Text = "   ";
-            // 
-            // label7
-            // 
-            label7.BackColor = Color.FromArgb(11, 20, 60);
-            label7.BorderStyle = BorderStyle.FixedSingle;
-            label7.Location = new Point(271, 131);
-            label7.Name = "label7";
-            label7.Size = new Size(193, 79);
-            label7.TabIndex = 8;
-            label7.Text = "   ";
-            // 
-            // label6
-            // 
-            label6.BackColor = Color.FromArgb(11, 20, 60);
-            label6.BorderStyle = BorderStyle.FixedSingle;
-            label6.Location = new Point(60, 131);
-            label6.Name = "label6";
-            label6.Size = new Size(193, 79);
-            label6.TabIndex = 7;
-            label6.Text = "   ";
-            // 
-            // label5
-            // 
-            label5.BackColor = Color.FromArgb(11, 20, 60);
-            label5.BorderStyle = BorderStyle.FixedSingle;
-            label5.Location = new Point(46, 117);
-            label5.Name = "label5";
-            label5.Size = new Size(979, 112);
-            label5.TabIndex = 6;
-            label5.Text = "   ";
-            // 
-            // comboBox1
-            // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "All tenants", "Aldrin Carl", "Warren Austria" });
-            comboBox1.Location = new Point(859, 60);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(166, 28);
-            comboBox1.TabIndex = 5;
-            comboBox1.Text = "All tenant (default)";
-            // 
-            // dateTimePicker2
-            // 
-            dateTimePicker2.Location = new Point(482, 61);
-            dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(270, 27);
-            dateTimePicker2.TabIndex = 4;
-            // 
-            // dateTimePicker1
-            // 
-            dateTimePicker1.Location = new Point(156, 62);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(270, 27);
-            dateTimePicker1.TabIndex = 3;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.BackColor = Color.FromArgb(11, 20, 50);
-            label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.ForeColor = Color.White;
-            label4.Location = new Point(911, 29);
-            label4.Name = "label4";
-            label4.Size = new Size(69, 28);
-            label4.TabIndex = 2;
-            label4.Text = "Tenant";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.FromArgb(11, 20, 50);
-            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.White;
-            label3.Location = new Point(444, 61);
-            label3.Name = "label3";
-            label3.Size = new Size(32, 28);
-            label3.TabIndex = 2;
-            label3.Text = "To";
+            panel6.Controls.Add(label2);
+            panel6.Controls.Add(label1);
+            panel6.Controls.Add(lblReportsTo);
+            panel6.Controls.Add(dateTimePicker2);
+            panel6.Controls.Add(dateTimePicker1);
+            panel6.Dock = DockStyle.Fill;
+            panel6.Location = new Point(3, 3);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(632, 72);
+            panel6.TabIndex = 0;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.BackColor = Color.FromArgb(11, 20, 50);
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label2.ForeColor = Color.White;
-            label2.Location = new Point(46, 62);
+            label2.ImageAlign = ContentAlignment.MiddleRight;
+            label2.Location = new Point(392, 0);
             label2.Name = "label2";
-            label2.Size = new Size(104, 28);
-            label2.TabIndex = 2;
-            label2.Text = "Date from:";
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.RoyalBlue;
-            button1.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(1043, 117);
-            button1.Name = "button1";
-            button1.Size = new Size(213, 112);
-            button1.TabIndex = 1;
-            button1.Text = "Generate";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            label2.Size = new Size(78, 28);
+            label2.TabIndex = 43;
+            label2.Text = "Date To";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
-            label1.BackColor = Color.FromArgb(11, 20, 50);
-            label1.BorderStyle = BorderStyle.FixedSingle;
-            label1.Location = new Point(22, 16);
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.White;
+            label1.ImageAlign = ContentAlignment.MiddleRight;
+            label1.Location = new Point(84, 0);
             label1.Name = "label1";
-            label1.Size = new Size(1250, 709);
-            label1.TabIndex = 0;
-            label1.Text = "   ";
+            label1.Size = new Size(104, 28);
+            label1.TabIndex = 42;
+            label1.Text = "Date From";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblReportsTo
+            // 
+            lblReportsTo.AutoSize = true;
+            lblReportsTo.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblReportsTo.ForeColor = Color.White;
+            lblReportsTo.ImageAlign = ContentAlignment.MiddleRight;
+            lblReportsTo.Location = new Point(271, 30);
+            lblReportsTo.Name = "lblReportsTo";
+            lblReportsTo.Size = new Size(32, 28);
+            lblReportsTo.TabIndex = 40;
+            lblReportsTo.Text = "To";
+            lblReportsTo.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dateTimePicker2
+            // 
+            dateTimePicker2.Location = new Point(309, 31);
+            dateTimePicker2.Name = "dateTimePicker2";
+            dateTimePicker2.Size = new Size(250, 27);
+            dateTimePicker2.TabIndex = 1;
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.Location = new Point(15, 31);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(250, 27);
+            dateTimePicker1.TabIndex = 0;
+            // 
+            // panel7
+            // 
+            panel7.Controls.Add(lblReportsTenant);
+            panel7.Controls.Add(comboBox1);
+            panel7.Dock = DockStyle.Fill;
+            panel7.Location = new Point(641, 3);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(249, 72);
+            panel7.TabIndex = 1;
+            // 
+            // lblReportsTenant
+            // 
+            lblReportsTenant.AutoSize = true;
+            lblReportsTenant.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblReportsTenant.ForeColor = Color.White;
+            lblReportsTenant.ImageAlign = ContentAlignment.MiddleRight;
+            lblReportsTenant.Location = new Point(21, 0);
+            lblReportsTenant.Name = "lblReportsTenant";
+            lblReportsTenant.Size = new Size(77, 28);
+            lblReportsTenant.TabIndex = 41;
+            lblReportsTenant.Text = "Tenants";
+            lblReportsTenant.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(21, 30);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(210, 28);
+            comboBox1.TabIndex = 0;
+            // 
+            // panel8
+            // 
+            panel8.Controls.Add(btnReportsX);
+            panel8.Controls.Add(btnGenerateReports);
+            panel8.Dock = DockStyle.Fill;
+            panel8.Location = new Point(896, 3);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(377, 72);
+            panel8.TabIndex = 2;
+            // 
+            // btnReportsX
+            // 
+            btnReportsX.Location = new Point(114, 22);
+            btnReportsX.Name = "btnReportsX";
+            btnReportsX.Size = new Size(94, 28);
+            btnReportsX.TabIndex = 43;
+            btnReportsX.Text = "X";
+            btnReportsX.UseVisualStyleBackColor = true;
+            // 
+            // btnGenerateReports
+            // 
+            btnGenerateReports.Location = new Point(214, 22);
+            btnGenerateReports.Name = "btnGenerateReports";
+            btnGenerateReports.Size = new Size(159, 28);
+            btnGenerateReports.TabIndex = 42;
+            btnGenerateReports.Text = "GenerateReports";
+            btnGenerateReports.UseVisualStyleBackColor = true;
             // 
             // ReportsControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
-            Controls.Add(panel1);
+            BackColor = Color.FromArgb(11, 20, 50);
+            Controls.Add(pnlReportsContent);
+            Controls.Add(pnlReportsHeader);
             Name = "ReportsControl";
+            Padding = new Padding(10);
             Size = new Size(1300, 750);
+            pnlReportsHeader.ResumeLayout(false);
+            pnlReportsContent.ResumeLayout(false);
+            panel3.ResumeLayout(false);
+            panel5.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvExpenses).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvReceived).EndInit();
+            pnlReportsSummaryCards.ResumeLayout(false);
+            tblSummarCards.ResumeLayout(false);
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            panel2.ResumeLayout(false);
+            panel4.ResumeLayout(false);
+            pnlReportsHeaderContent.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            panel6.ResumeLayout(false);
+            panel6.PerformLayout();
+            panel7.ResumeLayout(false);
+            panel7.PerformLayout();
+            panel8.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
+        private Panel pnlReportsHeader;
+        private Label lblReportsTitle;
+        private Panel pnlReportsContent;
+        private Panel panel3;
+        private Panel pnlReportsSummaryCards;
+        private Panel pnlReportsHeaderContent;
+        private TableLayoutPanel tblSummarCards;
         private Panel panel1;
-        private Label label1;
-        private Label label2;
-        private Button button1;
-        private ComboBox comboBox1;
+        private Panel panel2;
+        private Panel panel4;
+        private Label lblTotalReceived;
+        private Label lblTotalReceivedValue;
+        private Label lblTotalExpensesValue;
+        private Label lblTotalExpenses;
+        private Label lblEarningsValue;
+        private Label lblEarnings;
+        private Panel panel5;
+        private TableLayoutPanel tableLayoutPanel1;
+        private DataGridView dgvReceived;
+        private DataGridView dgvExpenses;
+        private DataGridViewTextBoxColumn colReportsExpensesDate;
+        private DataGridViewTextBoxColumn colReportsExpensesCategory;
+        private DataGridViewTextBoxColumn colReportsExpensesAmount;
+        private DataGridViewTextBoxColumn colReportsReceivedDate;
+        private DataGridViewTextBoxColumn colReportsReceivedTenant;
+        private DataGridViewTextBoxColumn colReportsReceivedAmount;
         private DateTimePicker dateTimePicker2;
         private DateTimePicker dateTimePicker1;
-        private Label label4;
-        private Label label3;
-        private Label label5;
-        private Label label8;
-        private Label label7;
-        private Label label6;
-        private Button button2;
-        private Label label11;
-        private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn Column2;
-        private DataGridViewTextBoxColumn Column3;
-        private Label label13;
-        private Label label12;
-        private Label label9;
-        private Label label14;
-        private Label label10;
-        private DataGridView dataGridView2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private Label lblReportsTo;
+        private Button btnReportsX;
+        private Button btnGenerateReports;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Panel panel6;
+        private Panel panel7;
+        private ComboBox comboBox1;
+        private Panel panel8;
+        private Label label2;
+        private Label label1;
+        private Label lblReportsTenant;
     }
 }

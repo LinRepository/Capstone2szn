@@ -49,9 +49,8 @@
             Column9 = new DataGridViewButtonColumn();
             textBox1 = new TextBox();
             tabPage2 = new TabPage();
-            tabPage3 = new TabPage();
-            dataGridView2 = new DataGridView();
             textBox2 = new TextBox();
+            dataGridView2 = new DataGridView();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
@@ -59,7 +58,7 @@
             dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
             dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            textBox3 = new TextBox();
+            tabPage3 = new TabPage();
             dataGridView3 = new DataGridView();
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
@@ -68,12 +67,13 @@
             dataGridViewTextBoxColumn11 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn12 = new DataGridViewTextBoxColumn();
             dataGridViewButtonColumn2 = new DataGridViewButtonColumn();
+            textBox3 = new TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             tabPage2.SuspendLayout();
-            tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
             SuspendLayout();
             // 
@@ -219,16 +219,15 @@
             tabPage2.Text = "Maintenance";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // textBox2
             // 
-            tabPage3.Controls.Add(dataGridView3);
-            tabPage3.Controls.Add(textBox3);
-            tabPage3.Location = new Point(4, 40);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1290, 703);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Global";
-            tabPage3.UseVisualStyleBackColor = true;
+            textBox2.BorderStyle = BorderStyle.FixedSingle;
+            textBox2.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            textBox2.Location = new Point(15, 13);
+            textBox2.Name = "textBox2";
+            textBox2.PlaceholderText = "🔍Search";
+            textBox2.Size = new Size(1258, 52);
+            textBox2.TabIndex = 3;
             // 
             // dataGridView2
             // 
@@ -256,16 +255,6 @@
             dataGridView2.RowHeadersWidth = 51;
             dataGridView2.Size = new Size(1298, 632);
             dataGridView2.TabIndex = 2;
-            // 
-            // textBox2
-            // 
-            textBox2.BorderStyle = BorderStyle.FixedSingle;
-            textBox2.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            textBox2.Location = new Point(15, 13);
-            textBox2.Name = "textBox2";
-            textBox2.PlaceholderText = "🔍Search";
-            textBox2.Size = new Size(1258, 52);
-            textBox2.TabIndex = 3;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -314,15 +303,16 @@
             dataGridViewButtonColumn1.MinimumWidth = 6;
             dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
             // 
-            // textBox3
+            // tabPage3
             // 
-            textBox3.BorderStyle = BorderStyle.FixedSingle;
-            textBox3.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            textBox3.Location = new Point(15, 13);
-            textBox3.Name = "textBox3";
-            textBox3.PlaceholderText = "🔍Search";
-            textBox3.Size = new Size(1258, 52);
-            textBox3.TabIndex = 4;
+            tabPage3.Controls.Add(dataGridView3);
+            tabPage3.Controls.Add(textBox3);
+            tabPage3.Location = new Point(4, 40);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Size = new Size(1290, 703);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Global";
+            tabPage3.UseVisualStyleBackColor = true;
             // 
             // dataGridView3
             // 
@@ -399,11 +389,21 @@
             dataGridViewButtonColumn2.MinimumWidth = 6;
             dataGridViewButtonColumn2.Name = "dataGridViewButtonColumn2";
             // 
+            // textBox3
+            // 
+            textBox3.BorderStyle = BorderStyle.FixedSingle;
+            textBox3.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            textBox3.Location = new Point(15, 13);
+            textBox3.Name = "textBox3";
+            textBox3.PlaceholderText = "🔍Search";
+            textBox3.Size = new Size(1258, 52);
+            textBox3.TabIndex = 4;
+            // 
             // PaymentHistoryControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(11, 20, 50);
             Controls.Add(tabControl1);
             Controls.Add(label1);
             Name = "PaymentHistoryControl";
@@ -414,9 +414,9 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             tabPage3.ResumeLayout(false);
             tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -21,5 +21,29 @@ namespace Capstoneszn.UserControls
         {
 
         }
+
+        private void btnViewAllActivities_Click(object sender, EventArgs e)
+        {
+            if (this.ParentForm is MainForm mainForm)
+            {
+                mainForm.OpenAuditLogsModule();
+            }
+        }
+
+        private void btnViewAllMaintenance_Click(object sender, EventArgs e)
+        {
+            if (this.ParentForm is MainForm mainForm)
+            {
+                mainForm.OpenMaintenanceModule();
+            }
+        }
+
+        private void btnViewAllNotifications_Click(object sender, EventArgs e)
+        {
+            if (this.ParentForm is MainForm mainForm)
+            {
+                mainForm.OpenNotificationModule();
+            }
+        }
     }
 }

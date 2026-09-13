@@ -28,140 +28,137 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBox1 = new TextBox();
+            pnlNotificationHeader = new Panel();
+            lblNotificationTitle = new Label();
+            pnlNotificationHeaderContent = new Panel();
+            pnlNotificationSearchContainer = new Panel();
+            txtNotificationSearch = new TextBox();
+            picNotificationSearch = new PictureBox();
+            btnNotificationMarkAsRead = new Button();
+            btnNotificationDelete = new Button();
+            pnlNotificationContent = new Panel();
+            flpNotifications = new FlowLayoutPanel();
             panel1 = new Panel();
-            button5 = new Button();
-            button4 = new Button();
-            button3 = new Button();
-            button2 = new Button();
-            button1 = new Button();
-            button6 = new Button();
-            button7 = new Button();
-            flowLayoutPanel1 = new FlowLayoutPanel();
-            label1 = new Label();
+            pnlNotificationHeader.SuspendLayout();
+            pnlNotificationHeaderContent.SuspendLayout();
+            pnlNotificationSearchContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picNotificationSearch).BeginInit();
+            pnlNotificationContent.SuspendLayout();
             panel1.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // textBox1
+            // pnlNotificationHeader
             // 
-            textBox1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(18, 17);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "  🔍 Search";
-            textBox1.Size = new Size(223, 35);
-            textBox1.TabIndex = 0;
+            pnlNotificationHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlNotificationHeader.Controls.Add(lblNotificationTitle);
+            pnlNotificationHeader.Dock = DockStyle.Top;
+            pnlNotificationHeader.Location = new Point(10, 10);
+            pnlNotificationHeader.Name = "pnlNotificationHeader";
+            pnlNotificationHeader.Size = new Size(1280, 85);
+            pnlNotificationHeader.TabIndex = 0;
+            // 
+            // lblNotificationTitle
+            // 
+            lblNotificationTitle.Dock = DockStyle.Fill;
+            lblNotificationTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblNotificationTitle.ForeColor = Color.White;
+            lblNotificationTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblNotificationTitle.Location = new Point(0, 0);
+            lblNotificationTitle.Name = "lblNotificationTitle";
+            lblNotificationTitle.Size = new Size(1278, 83);
+            lblNotificationTitle.TabIndex = 7;
+            lblNotificationTitle.Text = "Notification";
+            lblNotificationTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlNotificationHeaderContent
+            // 
+            pnlNotificationHeaderContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlNotificationHeaderContent.Controls.Add(panel1);
+            pnlNotificationHeaderContent.Controls.Add(pnlNotificationSearchContainer);
+            pnlNotificationHeaderContent.Dock = DockStyle.Top;
+            pnlNotificationHeaderContent.Location = new Point(10, 95);
+            pnlNotificationHeaderContent.Name = "pnlNotificationHeaderContent";
+            pnlNotificationHeaderContent.Size = new Size(1280, 75);
+            pnlNotificationHeaderContent.TabIndex = 1;
+            // 
+            // pnlNotificationSearchContainer
+            // 
+            pnlNotificationSearchContainer.BackColor = Color.Transparent;
+            pnlNotificationSearchContainer.BorderStyle = BorderStyle.FixedSingle;
+            pnlNotificationSearchContainer.Controls.Add(txtNotificationSearch);
+            pnlNotificationSearchContainer.Controls.Add(picNotificationSearch);
+            pnlNotificationSearchContainer.Dock = DockStyle.Left;
+            pnlNotificationSearchContainer.Location = new Point(0, 0);
+            pnlNotificationSearchContainer.Name = "pnlNotificationSearchContainer";
+            pnlNotificationSearchContainer.Size = new Size(450, 73);
+            pnlNotificationSearchContainer.TabIndex = 4;
+            // 
+            // txtNotificationSearch
+            // 
+            txtNotificationSearch.Cursor = Cursors.IBeam;
+            txtNotificationSearch.Location = new Point(14, 14);
+            txtNotificationSearch.Multiline = true;
+            txtNotificationSearch.Name = "txtNotificationSearch";
+            txtNotificationSearch.Size = new Size(376, 40);
+            txtNotificationSearch.TabIndex = 0;
+            txtNotificationSearch.TextAlign = HorizontalAlignment.Center;
+            // 
+            // picNotificationSearch
+            // 
+            picNotificationSearch.BackColor = Color.White;
+            picNotificationSearch.Cursor = Cursors.Hand;
+            picNotificationSearch.Location = new Point(396, 14);
+            picNotificationSearch.Name = "picNotificationSearch";
+            picNotificationSearch.Size = new Size(40, 40);
+            picNotificationSearch.SizeMode = PictureBoxSizeMode.Zoom;
+            picNotificationSearch.TabIndex = 1;
+            picNotificationSearch.TabStop = false;
+            // 
+            // btnNotificationMarkAsRead
+            // 
+            btnNotificationMarkAsRead.Location = new Point(163, 26);
+            btnNotificationMarkAsRead.Name = "btnNotificationMarkAsRead";
+            btnNotificationMarkAsRead.Size = new Size(110, 29);
+            btnNotificationMarkAsRead.TabIndex = 1;
+            btnNotificationMarkAsRead.Text = "Mark as Read";
+            btnNotificationMarkAsRead.UseVisualStyleBackColor = true;
+            // 
+            // btnNotificationDelete
+            // 
+            btnNotificationDelete.Location = new Point(39, 26);
+            btnNotificationDelete.Name = "btnNotificationDelete";
+            btnNotificationDelete.Size = new Size(95, 29);
+            btnNotificationDelete.TabIndex = 0;
+            btnNotificationDelete.Text = "Delete";
+            btnNotificationDelete.UseVisualStyleBackColor = true;
+            // 
+            // pnlNotificationContent
+            // 
+            pnlNotificationContent.Controls.Add(flpNotifications);
+            pnlNotificationContent.Dock = DockStyle.Fill;
+            pnlNotificationContent.Location = new Point(10, 170);
+            pnlNotificationContent.Name = "pnlNotificationContent";
+            pnlNotificationContent.Padding = new Padding(10);
+            pnlNotificationContent.Size = new Size(1280, 570);
+            pnlNotificationContent.TabIndex = 2;
+            // 
+            // flpNotifications
+            // 
+            flpNotifications.Dock = DockStyle.Fill;
+            flpNotifications.Location = new Point(10, 10);
+            flpNotifications.Name = "flpNotifications";
+            flpNotifications.Size = new Size(1260, 550);
+            flpNotifications.TabIndex = 0;
             // 
             // panel1
             // 
-            panel1.Controls.Add(button5);
-            panel1.Controls.Add(button4);
-            panel1.Controls.Add(button3);
-            panel1.Controls.Add(button2);
-            panel1.Controls.Add(button1);
-            panel1.Location = new Point(565, 11);
+            panel1.Controls.Add(btnNotificationDelete);
+            panel1.Controls.Add(btnNotificationMarkAsRead);
+            panel1.Dock = DockStyle.Right;
+            panel1.Location = new Point(978, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(257, 45);
-            panel1.TabIndex = 1;
-            // 
-            // button5
-            // 
-            button5.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button5.Location = new Point(207, 3);
-            button5.Name = "button5";
-            button5.Size = new Size(45, 38);
-            button5.TabIndex = 4;
-            button5.Text = ">";
-            button5.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            button4.Font = new Font("Segoe UI", 13.8F);
-            button4.Location = new Point(156, 3);
-            button4.Name = "button4";
-            button4.Size = new Size(45, 38);
-            button4.TabIndex = 3;
-            button4.Text = "3";
-            button4.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            button3.Font = new Font("Segoe UI", 13.8F);
-            button3.Location = new Point(105, 3);
-            button3.Name = "button3";
-            button3.Size = new Size(45, 38);
-            button3.TabIndex = 2;
-            button3.Text = "2";
-            button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.DodgerBlue;
-            button2.Font = new Font("Segoe UI", 13.8F);
-            button2.Location = new Point(54, 3);
-            button2.Name = "button2";
-            button2.Size = new Size(45, 38);
-            button2.TabIndex = 1;
-            button2.Text = "1";
-            button2.UseVisualStyleBackColor = false;
-            // 
-            // button1
-            // 
-            button1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button1.Location = new Point(3, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(45, 38);
-            button1.TabIndex = 0;
-            button1.Text = "<";
-            button1.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            button6.BackColor = Color.MidnightBlue;
-            button6.FlatStyle = FlatStyle.Flat;
-            button6.ForeColor = Color.White;
-            button6.Location = new Point(1047, 17);
-            button6.Name = "button6";
-            button6.Size = new Size(96, 35);
-            button6.TabIndex = 2;
-            button6.Text = "Delete";
-            button6.UseVisualStyleBackColor = false;
-            // 
-            // button7
-            // 
-            button7.BackColor = Color.MidnightBlue;
-            button7.FlatStyle = FlatStyle.Flat;
-            button7.ForeColor = Color.White;
-            button7.Location = new Point(1159, 17);
-            button7.Name = "button7";
-            button7.Size = new Size(127, 35);
-            button7.TabIndex = 3;
-            button7.Text = "Mark as read";
-            button7.UseVisualStyleBackColor = false;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.AutoScroll = true;
-            flowLayoutPanel1.BackColor = Color.Transparent;
-            flowLayoutPanel1.Controls.Add(label1);
-            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-            flowLayoutPanel1.Location = new Point(3, 62);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(1297, 573);
-            flowLayoutPanel1.TabIndex = 4;
-            flowLayoutPanel1.WrapContents = false;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(3, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(170, 25);
-            label1.TabIndex = 0;
-            label1.Text = "Sample Notication";
+            panel1.Size = new Size(300, 73);
+            panel1.TabIndex = 5;
             // 
             // NotificationControl
             // 
@@ -169,33 +166,36 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             BorderStyle = BorderStyle.FixedSingle;
-            Controls.Add(flowLayoutPanel1);
-            Controls.Add(button7);
-            Controls.Add(button6);
-            Controls.Add(panel1);
-            Controls.Add(textBox1);
+            Controls.Add(pnlNotificationContent);
+            Controls.Add(pnlNotificationHeaderContent);
+            Controls.Add(pnlNotificationHeader);
             Font = new Font("Microsoft Sans Serif", 8.25F);
             Name = "NotificationControl";
-            Size = new Size(1298, 636);
+            Padding = new Padding(10);
+            Size = new Size(1300, 750);
+            Load += NotificationControl_Load;
+            pnlNotificationHeader.ResumeLayout(false);
+            pnlNotificationHeaderContent.ResumeLayout(false);
+            pnlNotificationSearchContainer.ResumeLayout(false);
+            pnlNotificationSearchContainer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picNotificationSearch).EndInit();
+            pnlNotificationContent.ResumeLayout(false);
             panel1.ResumeLayout(false);
-            flowLayoutPanel1.ResumeLayout(false);
-            flowLayoutPanel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private TextBox textBox1;
+        private Panel pnlNotificationHeader;
+        private Label lblNotificationTitle;
+        private Panel pnlNotificationHeaderContent;
+        private Panel pnlNotificationContent;
+        private FlowLayoutPanel flpNotifications;
+        private Button btnNotificationMarkAsRead;
+        private Button btnNotificationDelete;
+        private Panel pnlNotificationSearchContainer;
+        private TextBox txtNotificationSearch;
+        private PictureBox picNotificationSearch;
         private Panel panel1;
-        private Button button5;
-        private Button button4;
-        private Button button3;
-        private Button button2;
-        private Button button1;
-        private Button button6;
-        private Button button7;
-        private FlowLayoutPanel flowLayoutPanel1;
-        private Label label1;
     }
 }

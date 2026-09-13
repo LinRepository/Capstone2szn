@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Capstoneszn.Forms
 {
-    public partial class LogoutConfirmation : Form
+    public partial class LogoutConfirmationForm : Form
     {
-        public LogoutConfirmation()
+        public LogoutConfirmationForm()
         {
             InitializeComponent();
         }
@@ -22,6 +22,11 @@ namespace Capstoneszn.Forms
             SelectBuildingForm sbf = new SelectBuildingForm();
             sbf.Show();
             this.Hide();
+        }
+
+        private void LogoutConfirmationForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

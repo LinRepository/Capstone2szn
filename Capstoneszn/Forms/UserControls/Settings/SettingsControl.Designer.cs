@@ -56,10 +56,10 @@
             // 
             pnlSettingsContent.Controls.Add(tblSettingsOptions);
             pnlSettingsContent.Dock = DockStyle.Fill;
-            pnlSettingsContent.Location = new Point(0, 85);
+            pnlSettingsContent.Location = new Point(10, 95);
             pnlSettingsContent.Name = "pnlSettingsContent";
             pnlSettingsContent.Padding = new Padding(10);
-            pnlSettingsContent.Size = new Size(1300, 665);
+            pnlSettingsContent.Size = new Size(1280, 645);
             pnlSettingsContent.TabIndex = 1;
             // 
             // tblSettingsOptions
@@ -81,7 +81,7 @@
             tblSettingsOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tblSettingsOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tblSettingsOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tblSettingsOptions.Size = new Size(1280, 645);
+            tblSettingsOptions.Size = new Size(1260, 625);
             tblSettingsOptions.TabIndex = 0;
             // 
             // pnlProfileManagement
@@ -92,18 +92,19 @@
             pnlProfileManagement.Location = new Point(10, 10);
             pnlProfileManagement.Margin = new Padding(10);
             pnlProfileManagement.Name = "pnlProfileManagement";
-            pnlProfileManagement.Size = new Size(1260, 109);
+            pnlProfileManagement.Size = new Size(1240, 105);
             pnlProfileManagement.TabIndex = 0;
             // 
             // lblProfileManagement
             // 
+            lblProfileManagement.BorderStyle = BorderStyle.FixedSingle;
             lblProfileManagement.Dock = DockStyle.Fill;
             lblProfileManagement.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblProfileManagement.ForeColor = Color.White;
             lblProfileManagement.ImageAlign = ContentAlignment.MiddleRight;
             lblProfileManagement.Location = new Point(0, 0);
             lblProfileManagement.Name = "lblProfileManagement";
-            lblProfileManagement.Size = new Size(1260, 109);
+            lblProfileManagement.Size = new Size(1240, 105);
             lblProfileManagement.TabIndex = 6;
             lblProfileManagement.Text = "Profile Management";
             lblProfileManagement.TextAlign = ContentAlignment.MiddleCenter;
@@ -113,21 +114,22 @@
             pnlBackupRestore.Controls.Add(lblBackupRestore);
             pnlBackupRestore.Cursor = Cursors.Hand;
             pnlBackupRestore.Dock = DockStyle.Fill;
-            pnlBackupRestore.Location = new Point(10, 139);
+            pnlBackupRestore.Location = new Point(10, 135);
             pnlBackupRestore.Margin = new Padding(10);
             pnlBackupRestore.Name = "pnlBackupRestore";
-            pnlBackupRestore.Size = new Size(1260, 109);
+            pnlBackupRestore.Size = new Size(1240, 105);
             pnlBackupRestore.TabIndex = 1;
             // 
             // lblBackupRestore
             // 
+            lblBackupRestore.BorderStyle = BorderStyle.FixedSingle;
             lblBackupRestore.Dock = DockStyle.Fill;
             lblBackupRestore.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblBackupRestore.ForeColor = Color.White;
             lblBackupRestore.ImageAlign = ContentAlignment.MiddleRight;
             lblBackupRestore.Location = new Point(0, 0);
             lblBackupRestore.Name = "lblBackupRestore";
-            lblBackupRestore.Size = new Size(1260, 109);
+            lblBackupRestore.Size = new Size(1240, 105);
             lblBackupRestore.TabIndex = 6;
             lblBackupRestore.Text = "Backup and Restore";
             lblBackupRestore.TextAlign = ContentAlignment.MiddleCenter;
@@ -137,21 +139,22 @@
             pnlElectricWaterAccount.Controls.Add(lblUtilitiesAccount);
             pnlElectricWaterAccount.Cursor = Cursors.Hand;
             pnlElectricWaterAccount.Dock = DockStyle.Fill;
-            pnlElectricWaterAccount.Location = new Point(10, 268);
+            pnlElectricWaterAccount.Location = new Point(10, 260);
             pnlElectricWaterAccount.Margin = new Padding(10);
             pnlElectricWaterAccount.Name = "pnlElectricWaterAccount";
-            pnlElectricWaterAccount.Size = new Size(1260, 109);
+            pnlElectricWaterAccount.Size = new Size(1240, 105);
             pnlElectricWaterAccount.TabIndex = 2;
             // 
             // lblUtilitiesAccount
             // 
+            lblUtilitiesAccount.BorderStyle = BorderStyle.FixedSingle;
             lblUtilitiesAccount.Dock = DockStyle.Fill;
             lblUtilitiesAccount.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUtilitiesAccount.ForeColor = Color.White;
             lblUtilitiesAccount.ImageAlign = ContentAlignment.MiddleRight;
             lblUtilitiesAccount.Location = new Point(0, 0);
             lblUtilitiesAccount.Name = "lblUtilitiesAccount";
-            lblUtilitiesAccount.Size = new Size(1260, 109);
+            lblUtilitiesAccount.Size = new Size(1240, 105);
             lblUtilitiesAccount.TabIndex = 6;
             lblUtilitiesAccount.Text = "Utilities Account";
             lblUtilitiesAccount.TextAlign = ContentAlignment.MiddleCenter;
@@ -161,21 +164,22 @@
             pnlArchive.Controls.Add(lblArchive);
             pnlArchive.Cursor = Cursors.Hand;
             pnlArchive.Dock = DockStyle.Fill;
-            pnlArchive.Location = new Point(10, 397);
+            pnlArchive.Location = new Point(10, 385);
             pnlArchive.Margin = new Padding(10);
             pnlArchive.Name = "pnlArchive";
-            pnlArchive.Size = new Size(1260, 109);
+            pnlArchive.Size = new Size(1240, 105);
             pnlArchive.TabIndex = 3;
             // 
             // lblArchive
             // 
+            lblArchive.BorderStyle = BorderStyle.FixedSingle;
             lblArchive.Dock = DockStyle.Fill;
             lblArchive.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblArchive.ForeColor = Color.White;
             lblArchive.ImageAlign = ContentAlignment.MiddleRight;
             lblArchive.Location = new Point(0, 0);
             lblArchive.Name = "lblArchive";
-            lblArchive.Size = new Size(1260, 109);
+            lblArchive.Size = new Size(1240, 105);
             lblArchive.TabIndex = 6;
             lblArchive.Text = "Archive";
             lblArchive.TextAlign = ContentAlignment.MiddleCenter;
@@ -185,21 +189,22 @@
             pnlSalary.Controls.Add(lblSalary);
             pnlSalary.Cursor = Cursors.Hand;
             pnlSalary.Dock = DockStyle.Fill;
-            pnlSalary.Location = new Point(10, 526);
+            pnlSalary.Location = new Point(10, 510);
             pnlSalary.Margin = new Padding(10);
             pnlSalary.Name = "pnlSalary";
-            pnlSalary.Size = new Size(1260, 109);
+            pnlSalary.Size = new Size(1240, 105);
             pnlSalary.TabIndex = 4;
             // 
             // lblSalary
             // 
+            lblSalary.BorderStyle = BorderStyle.FixedSingle;
             lblSalary.Dock = DockStyle.Fill;
             lblSalary.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblSalary.ForeColor = Color.White;
             lblSalary.ImageAlign = ContentAlignment.MiddleRight;
             lblSalary.Location = new Point(0, 0);
             lblSalary.Name = "lblSalary";
-            lblSalary.Size = new Size(1260, 109);
+            lblSalary.Size = new Size(1240, 105);
             lblSalary.TabIndex = 6;
             lblSalary.Text = "Salary";
             lblSalary.TextAlign = ContentAlignment.MiddleCenter;
@@ -208,20 +213,21 @@
             // 
             pnlSettingsHeader.Controls.Add(lblSettingsTitle);
             pnlSettingsHeader.Dock = DockStyle.Top;
-            pnlSettingsHeader.Location = new Point(0, 0);
+            pnlSettingsHeader.Location = new Point(10, 10);
             pnlSettingsHeader.Name = "pnlSettingsHeader";
-            pnlSettingsHeader.Size = new Size(1300, 85);
+            pnlSettingsHeader.Size = new Size(1280, 85);
             pnlSettingsHeader.TabIndex = 0;
             // 
             // lblSettingsTitle
             // 
+            lblSettingsTitle.BorderStyle = BorderStyle.FixedSingle;
             lblSettingsTitle.Dock = DockStyle.Fill;
             lblSettingsTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblSettingsTitle.ForeColor = Color.White;
             lblSettingsTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblSettingsTitle.Location = new Point(0, 0);
             lblSettingsTitle.Name = "lblSettingsTitle";
-            lblSettingsTitle.Size = new Size(1300, 85);
+            lblSettingsTitle.Size = new Size(1280, 85);
             lblSettingsTitle.TabIndex = 5;
             lblSettingsTitle.Text = "Settings";
             lblSettingsTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -230,10 +236,11 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(11, 20, 50);
             Controls.Add(pnlSettingsContent);
             Controls.Add(pnlSettingsHeader);
             Name = "SettingsControl";
+            Padding = new Padding(10);
             Size = new Size(1300, 750);
             pnlSettingsContent.ResumeLayout(false);
             tblSettingsOptions.ResumeLayout(false);

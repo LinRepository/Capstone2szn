@@ -16,8 +16,8 @@ namespace Capstoneszn
     {
         private bool isSidebarExpanded = true;
 
-        private const int SidebarExpandedWidth = 240;
-        private const int SidebarCollapsedWidth = 70;
+        private const int SidebarExpandedWidth = 220;
+        private const int SidebarCollapsedWidth = 44;
 
         public MainForm()
         {
@@ -25,6 +25,8 @@ namespace Capstoneszn
 
             pnlSideBar.Width = SidebarExpandedWidth;
         }
+
+        //MAIN FORM 
         private void MainForm_Load(object sender, EventArgs e)
         {
             LoadControl(new HomeControl());
@@ -57,73 +59,6 @@ namespace Capstoneszn
             userControl.Dock = DockStyle.Fill;
 
             pnlContent.Controls.Add(userControl);
-        }
-
-        private void btnHome_Click(object sender, EventArgs e)
-        {
-            LoadControl(new HomeControl());
-        }
-
-        private void btnTenants_Click(object sender, EventArgs e)
-        {
-            LoadControl(new TenantsControl());
-        }
-
-        private void btnRooms_Click(object sender, EventArgs e)
-        {
-            LoadControl(new RoomsControl());
-        }
-
-        private void btnUtilities_Click(object sender, EventArgs e)
-        {
-            LoadControl(new UtilitiesControl());
-        }
-
-        private void btnMaintenance_Click(object sender, EventArgs e)
-        {
-            LoadControl(new MaintenanceControl());
-        }
-
-        private void btnBilling_Click(object sender, EventArgs e)
-        {
-            LoadControl(new BillingManagementControl());
-        }
-
-        private void btnReports_Click(object sender, EventArgs e)
-        {
-            LoadControl(new ReportsControl());
-        }
-
-        private void btnPaymentHistory_Click(object sender, EventArgs e)
-        {
-            LoadControl(new PaymentHistoryControl());
-        }
-
-        private void btnEmployee_Click(object sender, EventArgs e)
-        {
-            LoadControl(new EmployeeControl());
-        }
-
-        private void btnAuditLogs_Click(object sender, EventArgs e)
-        {
-            LoadControl(new AuditLogsControl());
-        }
-
-        private void btnSettings_Click(object sender, EventArgs e)
-        {
-            LoadControl(new SettingsControl());
-        }
-
-        private void btnHamburger_Click(object sender, EventArgs e)
-        {
-            if (isSidebarExpanded)
-            {
-                CollapseSidebar();
-            }
-            else
-            {
-                ExpandSidebar();
-            }
         }
 
         private void CollapseSidebar()
@@ -160,16 +95,112 @@ namespace Capstoneszn
             isSidebarExpanded = true;
         }
 
+        private void btnHamburger_Click(object sender, EventArgs e)
+        {
+            if (isSidebarExpanded)
+            {
+                CollapseSidebar();
+            }
+            else
+            {
+                ExpandSidebar();
+            }
+
+        }
+
+
+        //SIDE PANEL BUTTONS
+        /* SIDE PANEL BUTTONS */
+        private void btnHome_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new HomeControl());
+        }
+
+        private void btnTenants_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new TenantsControl());
+        }
+
+        private void btnRooms_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new RoomsControl());
+        }
+
+        private void btnUtilities_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new UtilitiesControl());
+        }
+
+        private void btnMaintenance_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new MaintenanceControl());
+        }
+
+        private void btnBillingManagement_Click(object sender, EventArgs e)
+        {
+            LoadControl(new BillingManagementControl());
+        }
+
+        private void btnReports_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new ReportsControl());
+        }
+
+        private void btnPaymentHistory_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new PaymentHistoryControl());
+        }
+
+        private void btnEmployee_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new EmployeeControl());
+        }
+
+        private void btnAuditLogs_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new AuditLogsControl());
+        }
+
+        private void btnSettings_Click_1(object sender, EventArgs e)
+        {
+            LoadControl(new SettingsControl());
+        }
+
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            LogoutConfirmation lc = new LogoutConfirmation();
+            LogoutConfirmationForm lc = new LogoutConfirmationForm();
 
             lc.ShowDialog();
         }
+        //SIDE PANEL BUTTONS
+        /* SIDE PANEL BUTTONS */
 
+        //NOTIFICATION BUTTON
         private void btnNotification_Click(object sender, EventArgs e)
         {
             LoadControl(new Capstoneszn.Forms.UserControls.NotificationControl());
         }
+        //NOTIFICATION BUTTON
+
+
+
+        #region Public Module Navigation Helpers (Called from Child UserControls)
+
+        public void OpenAuditLogsModule()
+        {
+            LoadControl(new AuditLogsControl());
+        }
+
+        public void OpenMaintenanceModule()
+        {
+            LoadControl(new MaintenanceControl());
+        }
+
+        public void OpenNotificationModule()
+        {
+            LoadControl(new Capstoneszn.Forms.UserControls.NotificationControl());
+        }
+
+        #endregion
     }
 }

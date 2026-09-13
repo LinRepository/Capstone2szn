@@ -21,8 +21,8 @@ namespace Capstoneszn.Forms.UserControls
 
         private void LoadNotifications()
         {
-            flowLayoutPanel1.BringToFront();
-            flowLayoutPanel1.Controls.Clear();
+            flpNotifications.BringToFront();
+            flpNotifications.Controls.Clear();
 
             for (int i = 0; i < 5; i++)
             {
@@ -33,8 +33,13 @@ namespace Capstoneszn.Forms.UserControls
                 item.Margin = new Padding(10);
                 item.BackColor = Color.Navy; // Bright color to guarantee visibility
 
-                flowLayoutPanel1.Controls.Add(item);
+                flpNotifications.Controls.Add(item);
             }
+        }
+
+        private void NotificationControl_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

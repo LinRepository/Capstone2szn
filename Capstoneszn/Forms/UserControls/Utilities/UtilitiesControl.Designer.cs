@@ -79,6 +79,7 @@
             // 
             // pnlUtilitiesContent
             // 
+            pnlUtilitiesContent.BackColor = Color.FromArgb(11, 20, 50);
             pnlUtilitiesContent.Controls.Add(tabControl1);
             pnlUtilitiesContent.Location = new Point(0, 0);
             pnlUtilitiesContent.Name = "pnlUtilitiesContent";
@@ -90,13 +91,14 @@
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
+            tabControl1.Dock = DockStyle.Fill;
             tabControl1.Font = new Font("Segoe UI", 14F);
-            tabControl1.Location = new Point(3, 3);
+            tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.Padding = new Point(10, 3);
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1297, 747);
-            tabControl1.TabIndex = 0;
+            tabControl1.Size = new Size(1300, 750);
+            tabControl1.TabIndex = 1;
             // 
             // tabPage1
             // 
@@ -116,7 +118,7 @@
             tabPage1.Location = new Point(4, 40);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1289, 703);
+            tabPage1.Size = new Size(1292, 706);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Water Utility";
             tabPage1.UseVisualStyleBackColor = true;
@@ -210,7 +212,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(753, 108);
+            label5.Location = new Point(756, 111);
             label5.Name = "label5";
             label5.Size = new Size(255, 28);
             label5.TabIndex = 8;
@@ -219,7 +221,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(436, 108);
+            label4.Location = new Point(439, 111);
             label4.Name = "label4";
             label4.Size = new Size(155, 28);
             label4.TabIndex = 7;
@@ -228,7 +230,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(152, 110);
+            label3.Location = new Point(155, 113);
             label3.Name = "label3";
             label3.Size = new Size(53, 28);
             label3.TabIndex = 6;
@@ -291,7 +293,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
-            label1.Location = new Point(538, 19);
+            label1.Location = new Point(541, 22);
             label1.Name = "label1";
             label1.Size = new Size(207, 54);
             label1.TabIndex = 0;
@@ -312,7 +314,7 @@
             tabPage2.Location = new Point(4, 40);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1289, 703);
+            tabPage2.Size = new Size(1292, 706);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Electricity Utility";
             tabPage2.UseVisualStyleBackColor = true;
@@ -364,7 +366,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(441, 22);
+            label2.Location = new Point(444, 25);
             label2.Name = "label2";
             label2.Size = new Size(379, 46);
             label2.TabIndex = 0;
@@ -377,7 +379,7 @@
             tabPage3.Location = new Point(4, 40);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1289, 703);
+            tabPage3.Size = new Size(1292, 706);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Other";
             tabPage3.UseVisualStyleBackColor = true;
@@ -469,33 +471,33 @@
         private Panel pnlUtilitiesContent;
         private TabControl tabControl1;
         private TabPage tabPage1;
-        private TabPage tabPage2;
-        private TabPage tabPage3;
-        private Label label1;
-        private Label label2;
-        private TextBox textBox1;
-        private DateTimePicker dateTimePicker1;
-        private TextBox textBox2;
-        private Button button2;
-        private Button button1;
-        private Label label5;
-        private Label label4;
-        private Label label3;
-        private TabControl tabControl2;
-        private TabPage tabPage4;
-        private TabPage tabPage5;
         private DataGridView dataGridView1;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn Column3;
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
+        private TabControl tabControl2;
+        private TabPage tabPage4;
+        private TabPage tabPage5;
+        private Label label5;
+        private Label label4;
+        private Label label3;
+        private TextBox textBox2;
+        private Button button2;
+        private Button button1;
+        private TextBox textBox1;
+        private DateTimePicker dateTimePicker1;
+        private Label label1;
         private Label label6;
+        private TabPage tabPage2;
         private DataGridView dataGridView2;
         private DataGridViewTextBoxColumn Column6;
         private DataGridViewTextBoxColumn Column7;
         private DataGridViewTextBoxColumn Column8;
         private DataGridViewComboBoxColumn Column9;
+        private Label label2;
+        private TabPage tabPage3;
         private Button button3;
         private DataGridView dataGridView3;
         private DataGridViewTextBoxColumn Column10;

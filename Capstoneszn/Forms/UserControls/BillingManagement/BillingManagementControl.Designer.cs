@@ -45,11 +45,12 @@
             // 
             // pnlBillingHeader
             // 
+            pnlBillingHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlBillingHeader.Controls.Add(lblBillingTitle);
             pnlBillingHeader.Dock = DockStyle.Top;
-            pnlBillingHeader.Location = new Point(0, 0);
+            pnlBillingHeader.Location = new Point(10, 10);
             pnlBillingHeader.Name = "pnlBillingHeader";
-            pnlBillingHeader.Size = new Size(1300, 100);
+            pnlBillingHeader.Size = new Size(1280, 85);
             pnlBillingHeader.TabIndex = 1;
             // 
             // lblBillingTitle
@@ -60,19 +61,20 @@
             lblBillingTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblBillingTitle.Location = new Point(0, 0);
             lblBillingTitle.Name = "lblBillingTitle";
-            lblBillingTitle.Size = new Size(1300, 100);
+            lblBillingTitle.Size = new Size(1278, 83);
             lblBillingTitle.TabIndex = 4;
             lblBillingTitle.Text = "Billing Management";
             lblBillingTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlBillingContent
             // 
+            pnlBillingContent.BorderStyle = BorderStyle.FixedSingle;
             pnlBillingContent.Controls.Add(tblBillingOptions);
             pnlBillingContent.Dock = DockStyle.Fill;
-            pnlBillingContent.Location = new Point(0, 100);
+            pnlBillingContent.Location = new Point(10, 95);
             pnlBillingContent.Name = "pnlBillingContent";
             pnlBillingContent.Padding = new Padding(10);
-            pnlBillingContent.Size = new Size(1300, 650);
+            pnlBillingContent.Size = new Size(1280, 645);
             pnlBillingContent.TabIndex = 2;
             // 
             // tblBillingOptions
@@ -88,18 +90,19 @@
             tblBillingOptions.RowCount = 2;
             tblBillingOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tblBillingOptions.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tblBillingOptions.Size = new Size(1280, 630);
+            tblBillingOptions.Size = new Size(1258, 623);
             tblBillingOptions.TabIndex = 0;
             // 
             // pnlRoomAccount
             // 
+            pnlRoomAccount.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomAccount.Controls.Add(lblRoomAccount);
             pnlRoomAccount.Cursor = Cursors.Hand;
             pnlRoomAccount.Dock = DockStyle.Fill;
             pnlRoomAccount.Location = new Point(15, 15);
             pnlRoomAccount.Margin = new Padding(15);
             pnlRoomAccount.Name = "pnlRoomAccount";
-            pnlRoomAccount.Size = new Size(1250, 285);
+            pnlRoomAccount.Size = new Size(1228, 281);
             pnlRoomAccount.TabIndex = 0;
             // 
             // lblRoomAccount
@@ -110,20 +113,21 @@
             lblRoomAccount.ImageAlign = ContentAlignment.MiddleRight;
             lblRoomAccount.Location = new Point(0, 0);
             lblRoomAccount.Name = "lblRoomAccount";
-            lblRoomAccount.Size = new Size(1250, 285);
+            lblRoomAccount.Size = new Size(1226, 279);
             lblRoomAccount.TabIndex = 5;
             lblRoomAccount.Text = "Room Account";
             lblRoomAccount.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlExpenses
             // 
+            pnlExpenses.BorderStyle = BorderStyle.FixedSingle;
             pnlExpenses.Controls.Add(lblExpenses);
             pnlExpenses.Cursor = Cursors.Hand;
             pnlExpenses.Dock = DockStyle.Fill;
-            pnlExpenses.Location = new Point(15, 330);
+            pnlExpenses.Location = new Point(15, 326);
             pnlExpenses.Margin = new Padding(15);
             pnlExpenses.Name = "pnlExpenses";
-            pnlExpenses.Size = new Size(1250, 285);
+            pnlExpenses.Size = new Size(1228, 282);
             pnlExpenses.TabIndex = 1;
             // 
             // lblExpenses
@@ -134,7 +138,7 @@
             lblExpenses.ImageAlign = ContentAlignment.MiddleRight;
             lblExpenses.Location = new Point(0, 0);
             lblExpenses.Name = "lblExpenses";
-            lblExpenses.Size = new Size(1250, 285);
+            lblExpenses.Size = new Size(1226, 280);
             lblExpenses.TabIndex = 6;
             lblExpenses.Text = "Expenses";
             lblExpenses.TextAlign = ContentAlignment.MiddleCenter;
@@ -143,10 +147,11 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(11, 20, 50);
             Controls.Add(pnlBillingContent);
             Controls.Add(pnlBillingHeader);
             Name = "BillingManagementControl";
+            Padding = new Padding(10);
             Size = new Size(1300, 750);
             pnlBillingHeader.ResumeLayout(false);
             pnlBillingContent.ResumeLayout(false);
