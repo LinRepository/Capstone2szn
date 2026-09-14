@@ -19,14 +19,22 @@ namespace Capstoneszn.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SelectBuildingForm sbf = new SelectBuildingForm();
-            sbf.Show();
-            this.Hide();
+            LoginForm lf = new LoginForm();
+            lf.Show();
+
+            Form? mf = Application.OpenForms["MainForm"];
+            mf?.Close();
+            this.Close();
         }
 
         private void LogoutConfirmationForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnLogoutCancel_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

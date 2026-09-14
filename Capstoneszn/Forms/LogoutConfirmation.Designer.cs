@@ -59,6 +59,7 @@
             btnLogoutCancel.TabIndex = 1;
             btnLogoutCancel.Text = "Cancel";
             btnLogoutCancel.UseVisualStyleBackColor = false;
+            btnLogoutCancel.Click += btnLogoutCancel_Click;
             // 
             // label1
             // 
@@ -84,6 +85,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "LogoutConfirmationForm";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Logout Confirmation";
             Load += LogoutConfirmationForm_Load;
             ResumeLayout(false);

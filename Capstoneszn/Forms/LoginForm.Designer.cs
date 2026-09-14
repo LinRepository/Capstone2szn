@@ -33,13 +33,13 @@
             pnlLoginBuildingName = new Panel();
             pictureBox1 = new PictureBox();
             pnlLoginContent = new Panel();
+            txtLoginPassword = new TextBox();
+            txtLoginUsername = new TextBox();
+            btnLogin = new Button();
+            lnkForgotPassword = new Label();
             lblPassword = new Label();
             lblUsername = new Label();
             chkShowPassword = new CheckBox();
-            lnkForgotPassword = new Label();
-            btnLogin = new Button();
-            txtLoginUsername = new TextBox();
-            txtLoginPassword = new TextBox();
             pnlLoginHeader.SuspendLayout();
             pnlLoginBuildingName.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -103,6 +103,53 @@
             pnlLoginContent.Size = new Size(682, 358);
             pnlLoginContent.TabIndex = 11;
             // 
+            // txtLoginPassword
+            // 
+            txtLoginPassword.Cursor = Cursors.IBeam;
+            txtLoginPassword.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtLoginPassword.Location = new Point(194, 141);
+            txtLoginPassword.Multiline = true;
+            txtLoginPassword.Name = "txtLoginPassword";
+            txtLoginPassword.Size = new Size(305, 40);
+            txtLoginPassword.TabIndex = 16;
+            txtLoginPassword.Text = "Password";
+            txtLoginPassword.UseSystemPasswordChar = true;
+            // 
+            // txtLoginUsername
+            // 
+            txtLoginUsername.Cursor = Cursors.IBeam;
+            txtLoginUsername.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtLoginUsername.Location = new Point(194, 52);
+            txtLoginUsername.Multiline = true;
+            txtLoginUsername.Name = "txtLoginUsername";
+            txtLoginUsername.Size = new Size(305, 40);
+            txtLoginUsername.TabIndex = 15;
+            txtLoginUsername.Text = "Username";
+            // 
+            // btnLogin
+            // 
+            btnLogin.Cursor = Cursors.Hand;
+            btnLogin.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLogin.Location = new Point(222, 236);
+            btnLogin.Name = "btnLogin";
+            btnLogin.Size = new Size(250, 60);
+            btnLogin.TabIndex = 14;
+            btnLogin.Text = "Login";
+            btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.Click += btnLogin_Click_1;
+            // 
+            // lnkForgotPassword
+            // 
+            lnkForgotPassword.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lnkForgotPassword.AutoSize = true;
+            lnkForgotPassword.Font = new Font("Segoe UI", 10.2F, FontStyle.Underline, GraphicsUnit.Point, 0);
+            lnkForgotPassword.ForeColor = Color.White;
+            lnkForgotPassword.Location = new Point(273, 299);
+            lnkForgotPassword.Name = "lnkForgotPassword";
+            lnkForgotPassword.Size = new Size(143, 23);
+            lnkForgotPassword.TabIndex = 13;
+            lnkForgotPassword.Text = "Forgot Password?";
+            // 
             // lblPassword
             // 
             lblPassword.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -138,52 +185,6 @@
             chkShowPassword.TabIndex = 10;
             chkShowPassword.Text = "ShowPassword";
             chkShowPassword.UseVisualStyleBackColor = true;
-            // 
-            // lnkForgotPassword
-            // 
-            lnkForgotPassword.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lnkForgotPassword.AutoSize = true;
-            lnkForgotPassword.Font = new Font("Segoe UI", 10.2F, FontStyle.Underline, GraphicsUnit.Point, 0);
-            lnkForgotPassword.ForeColor = Color.White;
-            lnkForgotPassword.Location = new Point(273, 299);
-            lnkForgotPassword.Name = "lnkForgotPassword";
-            lnkForgotPassword.Size = new Size(143, 23);
-            lnkForgotPassword.TabIndex = 13;
-            lnkForgotPassword.Text = "Forgot Password?";
-            // 
-            // btnLogin
-            // 
-            btnLogin.Cursor = Cursors.Hand;
-            btnLogin.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnLogin.Location = new Point(222, 236);
-            btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(250, 60);
-            btnLogin.TabIndex = 14;
-            btnLogin.Text = "Login";
-            btnLogin.UseVisualStyleBackColor = true;
-            // 
-            // txtLoginUsername
-            // 
-            txtLoginUsername.Cursor = Cursors.IBeam;
-            txtLoginUsername.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtLoginUsername.Location = new Point(194, 52);
-            txtLoginUsername.Multiline = true;
-            txtLoginUsername.Name = "txtLoginUsername";
-            txtLoginUsername.Size = new Size(305, 40);
-            txtLoginUsername.TabIndex = 15;
-            txtLoginUsername.Text = "Username";
-            // 
-            // txtLoginPassword
-            // 
-            txtLoginPassword.Cursor = Cursors.IBeam;
-            txtLoginPassword.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtLoginPassword.Location = new Point(194, 141);
-            txtLoginPassword.Multiline = true;
-            txtLoginPassword.Name = "txtLoginPassword";
-            txtLoginPassword.Size = new Size(305, 40);
-            txtLoginPassword.TabIndex = 16;
-            txtLoginPassword.Text = "Password";
-            txtLoginPassword.UseSystemPasswordChar = true;
             // 
             // LoginForm
             // 
