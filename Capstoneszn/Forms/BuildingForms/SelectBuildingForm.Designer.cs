@@ -65,13 +65,12 @@
             // 
             // lblPlus
             // 
-            lblPlus.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblPlus.AutoSize = true;
+            lblPlus.Dock = DockStyle.Fill;
             lblPlus.Font = new Font("Segoe UI", 72F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPlus.ForeColor = Color.White;
-            lblPlus.Location = new Point(56, -1);
+            lblPlus.Location = new Point(0, 0);
             lblPlus.Name = "lblPlus";
-            lblPlus.Size = new Size(149, 159);
+            lblPlus.Size = new Size(248, 162);
             lblPlus.TabIndex = 2;
             lblPlus.Text = "+";
             lblPlus.TextAlign = ContentAlignment.MiddleCenter;
@@ -79,14 +78,15 @@
             // 
             // lblAddBuilding
             // 
-            lblAddBuilding.AutoSize = true;
+            lblAddBuilding.Dock = DockStyle.Bottom;
             lblAddBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAddBuilding.ForeColor = Color.White;
-            lblAddBuilding.Location = new Point(56, 159);
+            lblAddBuilding.Location = new Point(0, 162);
             lblAddBuilding.Name = "lblAddBuilding";
-            lblAddBuilding.Size = new Size(126, 28);
+            lblAddBuilding.Size = new Size(248, 36);
             lblAddBuilding.TabIndex = 1;
             lblAddBuilding.Text = "Add Building";
+            lblAddBuilding.TextAlign = ContentAlignment.MiddleCenter;
             lblAddBuilding.Click += lblAddBuilding_Click;
             // 
             // flpBuildings
@@ -117,7 +117,6 @@
             Text = "Select Building";
             Load += SelectBuildingForm_Load;
             pnlAddBuilding.ResumeLayout(false);
-            pnlAddBuilding.PerformLayout();
             flpBuildings.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
