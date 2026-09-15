@@ -18,5 +18,10 @@ namespace Capstoneszn.UserControls
 
             flpFloorRooms.Controls.Add(new RoomCardControl());
         }
+
+        private void flpFloorRooms_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
