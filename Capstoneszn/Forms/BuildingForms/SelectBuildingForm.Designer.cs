@@ -33,8 +33,12 @@
             lblPlus = new Label();
             lblAddBuilding = new Label();
             flpBuildings = new FlowLayoutPanel();
+            pnlSampleAddBuilding = new Panel();
+            lblSamplePlusBuilding = new Label();
+            lblSampleBuilding = new Label();
             pnlAddBuilding.SuspendLayout();
             flpBuildings.SuspendLayout();
+            pnlSampleAddBuilding.SuspendLayout();
             SuspendLayout();
             // 
             // lblTitle
@@ -95,11 +99,49 @@
             flpBuildings.AutoScroll = true;
             flpBuildings.BackColor = Color.Transparent;
             flpBuildings.Controls.Add(pnlAddBuilding);
+            flpBuildings.Controls.Add(pnlSampleAddBuilding);
             flpBuildings.Location = new Point(210, 132);
             flpBuildings.Name = "flpBuildings";
             flpBuildings.Size = new Size(1200, 600);
             flpBuildings.TabIndex = 2;
             flpBuildings.Paint += flpBuildings_Paint;
+            // 
+            // pnlSampleAddBuilding
+            // 
+            pnlSampleAddBuilding.BackColor = Color.LightSlateGray;
+            pnlSampleAddBuilding.BorderStyle = BorderStyle.FixedSingle;
+            pnlSampleAddBuilding.Controls.Add(lblSamplePlusBuilding);
+            pnlSampleAddBuilding.Controls.Add(lblSampleBuilding);
+            pnlSampleAddBuilding.Cursor = Cursors.Hand;
+            pnlSampleAddBuilding.Location = new Point(259, 3);
+            pnlSampleAddBuilding.Name = "pnlSampleAddBuilding";
+            pnlSampleAddBuilding.Size = new Size(250, 200);
+            pnlSampleAddBuilding.TabIndex = 2;
+            // 
+            // lblSamplePlusBuilding
+            // 
+            lblSamplePlusBuilding.Dock = DockStyle.Fill;
+            lblSamplePlusBuilding.Font = new Font("Segoe UI", 72F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSamplePlusBuilding.ForeColor = Color.White;
+            lblSamplePlusBuilding.Location = new Point(0, 0);
+            lblSamplePlusBuilding.Name = "lblSamplePlusBuilding";
+            lblSamplePlusBuilding.Size = new Size(248, 162);
+            lblSamplePlusBuilding.TabIndex = 2;
+            lblSamplePlusBuilding.Text = "+";
+            lblSamplePlusBuilding.TextAlign = ContentAlignment.MiddleCenter;
+            lblSamplePlusBuilding.Click += lblSamplePlusBuilding_Click;
+            // 
+            // lblSampleBuilding
+            // 
+            lblSampleBuilding.Dock = DockStyle.Bottom;
+            lblSampleBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSampleBuilding.ForeColor = Color.White;
+            lblSampleBuilding.Location = new Point(0, 162);
+            lblSampleBuilding.Name = "lblSampleBuilding";
+            lblSampleBuilding.Size = new Size(248, 36);
+            lblSampleBuilding.TabIndex = 1;
+            lblSampleBuilding.Text = "Sample Building";
+            lblSampleBuilding.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SelectBuildingForm
             // 
@@ -118,6 +160,7 @@
             Load += SelectBuildingForm_Load;
             pnlAddBuilding.ResumeLayout(false);
             flpBuildings.ResumeLayout(false);
+            pnlSampleAddBuilding.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -129,5 +172,8 @@
         private Label lblAddBuilding;
         private Label lblPlus;
         private FlowLayoutPanel flpBuildings;
+        private Panel pnlSampleAddBuilding;
+        private Label lblSamplePlusBuilding;
+        private Label lblSampleBuilding;
     }
 }

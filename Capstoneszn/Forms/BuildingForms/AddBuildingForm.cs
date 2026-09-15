@@ -27,12 +27,30 @@ namespace Capstoneszn
 
         private void btnNext_Click(object sender, EventArgs e)
         {
+            FloorConfigurationForm floorForm = new FloorConfigurationForm();
+            floorForm.Show();
 
+            // HIDE this form instead of closing it, so we don't lose the user's typed data
+            this.Hide();
         }
+
 
         private void btnCancel_Click_1(object sender, EventArgs e)
         {
+            // Return to the Select Building Form
+            var selectForm = Application.OpenForms.OfType<SelectBuildingForm>().FirstOrDefault();
 
+            if (selectForm != null)
+            {
+                selectForm.Show();
+            }
+            else
+            {
+                new SelectBuildingForm().Show();
+            }
+
+            this.Close(); // Close the current AddBuildingForm
         }
+
     }
 }

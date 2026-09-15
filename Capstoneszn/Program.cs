@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace Capstoneszn
 {
     internal static class Program
@@ -11,6 +14,11 @@ namespace Capstoneszn
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
+            //DATABASE BTW
+            DatabaseHelper.InitializeDatabase();
+            //DATABASE BTW
+
             Application.Run(new SelectBuildingForm());
         }
     }

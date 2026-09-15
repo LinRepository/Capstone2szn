@@ -25,13 +25,14 @@ namespace Capstoneszn
 
         private void lblPlus_Click(object sender, EventArgs e)
         {
+            // Create and show the Login Form
             LoginForm loginForm = new LoginForm();
-            loginForm.ShowDialog();
+            loginForm.Show();
+
+            // Hide the current Select Building Form
+            this.Hide();
 
 
-            //Testing
-            //MainForm mainForm = new MainForm();
-            //mainForm.Show();
         }
 
         private void lblAddBuilding_Click(object sender, EventArgs e)
@@ -42,6 +43,15 @@ namespace Capstoneszn
         private void PanelAddBuilding_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void lblSamplePlusBuilding_Click(object sender, EventArgs e)
+        {
+            AddBuildingForm addForm = new AddBuildingForm();
+            addForm.Show();
+
+            // Hide the SelectBuildingForm
+            this.Hide();
         }
     }
 

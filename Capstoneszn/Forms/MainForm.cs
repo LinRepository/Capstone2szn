@@ -168,9 +168,29 @@ namespace Capstoneszn
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            LogoutConfirmationForm lc = new LogoutConfirmationForm();
+            LogoutConfirmationForm confirmForm = new LogoutConfirmationForm();
 
-            lc.ShowDialog();
+            // ShowDialog will pause execution here until the user clicks Yes or Cancel
+            if (confirmForm.ShowDialog() == DialogResult.Yes)
+            {
+                // If they clicked Yes, check if SelectBuildingForm is already open and hidden
+                var selectForm = Application.OpenForms.OfType<SelectBuildingForm>().FirstOrDefault();
+
+                if (selectForm != null)
+                {
+                    // Show the existing one
+                    selectForm.Show();
+                }
+                else
+                {
+                    // If it doesn't exist for some reason, create a new one
+                    new SelectBuildingForm().Show();
+                }
+
+                // Close the MainForm
+                this.Close();
+            }
+
         }
         //SIDE PANEL BUTTONS
         /* SIDE PANEL BUTTONS */

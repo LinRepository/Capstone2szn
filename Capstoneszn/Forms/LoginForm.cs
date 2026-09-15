@@ -47,19 +47,23 @@ namespace Capstoneszn
 
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnLogin_Click_1(object sender, EventArgs e)
         {
+            // Create and show the Main Form
             MainForm mainForm = new MainForm();
             mainForm.Show();
 
-            Form? sbf = Application.OpenForms["SelectBuildingForm"];
-            sbf?.Hide();
+            // Hide the Login Form
+            this.Hide();
+        }
 
+        private void btnSwitchBuilding_Click(object sender, EventArgs e)
+        {
+            SelectBuildingForm SBF = new SelectBuildingForm();
+            SBF.Show();
+
+            //
             this.Hide();
         }
     }

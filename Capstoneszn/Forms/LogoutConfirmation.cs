@@ -19,11 +19,8 @@ namespace Capstoneszn.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            LoginForm lf = new LoginForm();
-            lf.Show();
-
-            Form? mf = Application.OpenForms["MainForm"];
-            mf?.Close();
+            // Set the result to Yes and close this confirmation box
+            this.DialogResult = DialogResult.Yes;
             this.Close();
         }
 
@@ -34,7 +31,9 @@ namespace Capstoneszn.Forms
 
         private void btnLogoutCancel_Click(object sender, EventArgs e)
         {
-            Close();
+            // Set the result to Cancel (No) and close this confirmation box
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

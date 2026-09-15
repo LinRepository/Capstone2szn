@@ -29,10 +29,27 @@ namespace Capstoneszn
 
         private void btnBack_Click(object sender, EventArgs e)
         {
+            // Return to the Add Building Form
+            var addForm = Application.OpenForms.OfType<AddBuildingForm>().FirstOrDefault();
 
+            if (addForm != null)
+            {
+                addForm.Show();
+            }
+            else
+            {
+                new AddBuildingForm().Show();
+            }
+
+            this.Close(); // Close the current FloorConfigurationForm
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FloorConfigurationForm_Load(object sender, EventArgs e)
         {
 
         }

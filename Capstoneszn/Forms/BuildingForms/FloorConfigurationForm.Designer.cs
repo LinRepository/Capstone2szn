@@ -38,31 +38,39 @@
             lblBuildingName = new Label();
             btnBack = new Button();
             btnCreate = new Button();
+            pnlFloorConfigurationHeader = new Panel();
+            pnlFloorConfigurationActionButtons = new Panel();
+            pnlFloorConfigurationContent = new Panel();
             flpFloors.SuspendLayout();
             pnlFloor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudRooms).BeginInit();
+            pnlFloorConfigurationHeader.SuspendLayout();
+            pnlFloorConfigurationActionButtons.SuspendLayout();
+            pnlFloorConfigurationContent.SuspendLayout();
             SuspendLayout();
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
+            lblTitle.Dock = DockStyle.Fill;
             lblTitle.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(251, 9);
+            lblTitle.Location = new Point(0, 0);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(276, 38);
+            lblTitle.Size = new Size(680, 68);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Configure The Floors";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // flpFloors
             // 
+            flpFloors.Anchor = AnchorStyles.None;
             flpFloors.AutoScroll = true;
             flpFloors.BorderStyle = BorderStyle.FixedSingle;
             flpFloors.Controls.Add(pnlFloor);
             flpFloors.FlowDirection = FlowDirection.TopDown;
-            flpFloors.Location = new Point(64, 141);
+            flpFloors.Location = new Point(79, 66);
             flpFloors.Name = "flpFloors";
-            flpFloors.Size = new Size(650, 450);
+            flpFloors.Size = new Size(520, 450);
             flpFloors.TabIndex = 1;
             flpFloors.WrapContents = false;
             flpFloors.Paint += flpFloors_Paint;
@@ -75,7 +83,7 @@
             pnlFloor.Controls.Add(lblFloor);
             pnlFloor.Location = new Point(3, 3);
             pnlFloor.Name = "pnlFloor";
-            pnlFloor.Size = new Size(642, 100);
+            pnlFloor.Size = new Size(512, 100);
             pnlFloor.TabIndex = 0;
             // 
             // nudRooms
@@ -108,29 +116,30 @@
             // lblDescription
             // 
             lblDescription.AutoSize = true;
-            lblDescription.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDescription.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDescription.ForeColor = Color.White;
-            lblDescription.Location = new Point(64, 82);
+            lblDescription.Location = new Point(79, 10);
             lblDescription.Name = "lblDescription";
-            lblDescription.Size = new Size(354, 23);
+            lblDescription.Size = new Size(373, 25);
             lblDescription.TabIndex = 2;
             lblDescription.Text = "Specify how many rooms each floor contains.";
             // 
             // lblBuildingName
             // 
             lblBuildingName.AutoSize = true;
-            lblBuildingName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblBuildingName.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblBuildingName.ForeColor = Color.White;
-            lblBuildingName.Location = new Point(64, 115);
+            lblBuildingName.Location = new Point(79, 38);
             lblBuildingName.Name = "lblBuildingName";
-            lblBuildingName.Size = new Size(123, 23);
+            lblBuildingName.Size = new Size(128, 25);
             lblBuildingName.TabIndex = 3;
             lblBuildingName.Text = "Building Name";
             lblBuildingName.Click += lblBuildingName_Click;
             // 
             // btnBack
             // 
-            btnBack.Location = new Point(278, 609);
+            btnBack.Cursor = Cursors.Hand;
+            btnBack.Location = new Point(454, 18);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(94, 29);
             btnBack.TabIndex = 4;
@@ -140,7 +149,8 @@
             // 
             // btnCreate
             // 
-            btnCreate.Location = new Point(418, 609);
+            btnCreate.Cursor = Cursors.Hand;
+            btnCreate.Location = new Point(563, 18);
             btnCreate.Name = "btnCreate";
             btnCreate.Size = new Size(94, 29);
             btnCreate.TabIndex = 5;
@@ -148,30 +158,64 @@
             btnCreate.UseVisualStyleBackColor = true;
             btnCreate.Click += btnCreate_Click;
             // 
+            // pnlFloorConfigurationHeader
+            // 
+            pnlFloorConfigurationHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlFloorConfigurationHeader.Controls.Add(lblTitle);
+            pnlFloorConfigurationHeader.Dock = DockStyle.Top;
+            pnlFloorConfigurationHeader.Location = new Point(0, 0);
+            pnlFloorConfigurationHeader.Name = "pnlFloorConfigurationHeader";
+            pnlFloorConfigurationHeader.Size = new Size(682, 70);
+            pnlFloorConfigurationHeader.TabIndex = 6;
+            // 
+            // pnlFloorConfigurationActionButtons
+            // 
+            pnlFloorConfigurationActionButtons.BorderStyle = BorderStyle.FixedSingle;
+            pnlFloorConfigurationActionButtons.Controls.Add(btnCreate);
+            pnlFloorConfigurationActionButtons.Controls.Add(btnBack);
+            pnlFloorConfigurationActionButtons.Dock = DockStyle.Bottom;
+            pnlFloorConfigurationActionButtons.Location = new Point(0, 593);
+            pnlFloorConfigurationActionButtons.Name = "pnlFloorConfigurationActionButtons";
+            pnlFloorConfigurationActionButtons.Size = new Size(682, 60);
+            pnlFloorConfigurationActionButtons.TabIndex = 7;
+            // 
+            // pnlFloorConfigurationContent
+            // 
+            pnlFloorConfigurationContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlFloorConfigurationContent.Controls.Add(flpFloors);
+            pnlFloorConfigurationContent.Controls.Add(lblDescription);
+            pnlFloorConfigurationContent.Controls.Add(lblBuildingName);
+            pnlFloorConfigurationContent.Dock = DockStyle.Fill;
+            pnlFloorConfigurationContent.Location = new Point(0, 70);
+            pnlFloorConfigurationContent.Name = "pnlFloorConfigurationContent";
+            pnlFloorConfigurationContent.Size = new Size(682, 523);
+            pnlFloorConfigurationContent.TabIndex = 8;
+            // 
             // FloorConfigurationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(782, 653);
-            Controls.Add(btnCreate);
-            Controls.Add(btnBack);
-            Controls.Add(lblBuildingName);
-            Controls.Add(lblDescription);
-            Controls.Add(flpFloors);
-            Controls.Add(lblTitle);
+            ClientSize = new Size(682, 653);
+            Controls.Add(pnlFloorConfigurationContent);
+            Controls.Add(pnlFloorConfigurationActionButtons);
+            Controls.Add(pnlFloorConfigurationHeader);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "FloorConfigurationForm";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FloorConfigurationForm";
+            Load += FloorConfigurationForm_Load;
             flpFloors.ResumeLayout(false);
             pnlFloor.ResumeLayout(false);
             pnlFloor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)nudRooms).EndInit();
+            pnlFloorConfigurationHeader.ResumeLayout(false);
+            pnlFloorConfigurationActionButtons.ResumeLayout(false);
+            pnlFloorConfigurationContent.ResumeLayout(false);
+            pnlFloorConfigurationContent.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -186,5 +230,8 @@
         private Label lblFloor;
         private Label lblRooms;
         private NumericUpDown nudRooms;
+        private Panel pnlFloorConfigurationHeader;
+        private Panel pnlFloorConfigurationActionButtons;
+        private Panel pnlFloorConfigurationContent;
     }
 }
