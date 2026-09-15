@@ -108,6 +108,7 @@
             lblProfileManagement.TabIndex = 6;
             lblProfileManagement.Text = "Profile Management";
             lblProfileManagement.TextAlign = ContentAlignment.MiddleCenter;
+            lblProfileManagement.Click += lblProfileManagement_Click;
             // 
             // pnlBackupRestore
             // 
