@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms;
 
 namespace Capstoneszn.UserControls
 {
@@ -15,6 +16,14 @@ namespace Capstoneszn.UserControls
         public MaintenanceControl()
         {
             InitializeComponent();
+        }
+
+        private void btnAddIssue_Click(object sender, EventArgs e)
+        {
+            AddIssueForm aif = new AddIssueForm();
+            aif.Show();
+
+
         }
     }
 }

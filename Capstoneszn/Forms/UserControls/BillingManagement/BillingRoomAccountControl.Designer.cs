@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             pnlRoomAccountHeader = new Panel();
-            btnBackRoomAccount = new Button();
             lblRoomAccountTitle = new Label();
+            btnBackRoomAccount = new Button();
             pnlRoomAccountContent = new Panel();
             flpFloors = new FlowLayoutPanel();
             pnlFloorSection = new Panel();
-            lblFloorTitle = new Label();
             flpFloorRooms = new FlowLayoutPanel();
+            lblFloorTitle = new Label();
             pnlRoomAccountHeader.SuspendLayout();
             pnlRoomAccountContent.SuspendLayout();
             flpFloors.SuspendLayout();
@@ -44,6 +44,7 @@
             // 
             // pnlRoomAccountHeader
             // 
+            pnlRoomAccountHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomAccountHeader.Controls.Add(lblRoomAccountTitle);
             pnlRoomAccountHeader.Controls.Add(btnBackRoomAccount);
             pnlRoomAccountHeader.Dock = DockStyle.Top;
@@ -51,19 +52,6 @@
             pnlRoomAccountHeader.Name = "pnlRoomAccountHeader";
             pnlRoomAccountHeader.Size = new Size(1300, 90);
             pnlRoomAccountHeader.TabIndex = 0;
-            // 
-            // btnBackRoomAccount
-            // 
-            btnBackRoomAccount.Dock = DockStyle.Left;
-            btnBackRoomAccount.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackRoomAccount.Location = new Point(0, 0);
-            btnBackRoomAccount.Margin = new Padding(0);
-            btnBackRoomAccount.Name = "btnBackRoomAccount";
-            btnBackRoomAccount.Size = new Size(140, 90);
-            btnBackRoomAccount.TabIndex = 0;
-            btnBackRoomAccount.Text = "←";
-            btnBackRoomAccount.TextAlign = ContentAlignment.TopCenter;
-            btnBackRoomAccount.UseVisualStyleBackColor = true;
             // 
             // lblRoomAccountTitle
             // 
@@ -73,13 +61,28 @@
             lblRoomAccountTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblRoomAccountTitle.Location = new Point(140, 0);
             lblRoomAccountTitle.Name = "lblRoomAccountTitle";
-            lblRoomAccountTitle.Size = new Size(1160, 90);
+            lblRoomAccountTitle.Size = new Size(1158, 88);
             lblRoomAccountTitle.TabIndex = 5;
             lblRoomAccountTitle.Text = "Rooms";
             lblRoomAccountTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // btnBackRoomAccount
+            // 
+            btnBackRoomAccount.Dock = DockStyle.Left;
+            btnBackRoomAccount.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBackRoomAccount.Location = new Point(0, 0);
+            btnBackRoomAccount.Margin = new Padding(0);
+            btnBackRoomAccount.Name = "btnBackRoomAccount";
+            btnBackRoomAccount.Size = new Size(140, 88);
+            btnBackRoomAccount.TabIndex = 0;
+            btnBackRoomAccount.Text = "←";
+            btnBackRoomAccount.TextAlign = ContentAlignment.TopCenter;
+            btnBackRoomAccount.UseVisualStyleBackColor = true;
+            btnBackRoomAccount.Click += btnBackRoomAccount_Click;
+            // 
             // pnlRoomAccountContent
             // 
+            pnlRoomAccountContent.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomAccountContent.Controls.Add(flpFloors);
             pnlRoomAccountContent.Dock = DockStyle.Fill;
             pnlRoomAccountContent.Location = new Point(0, 90);
@@ -91,12 +94,13 @@
             // flpFloors
             // 
             flpFloors.AutoScroll = true;
+            flpFloors.BorderStyle = BorderStyle.FixedSingle;
             flpFloors.Controls.Add(pnlFloorSection);
             flpFloors.Dock = DockStyle.Fill;
             flpFloors.Location = new Point(15, 15);
             flpFloors.Name = "flpFloors";
             flpFloors.Padding = new Padding(5);
-            flpFloors.Size = new Size(1270, 630);
+            flpFloors.Size = new Size(1268, 628);
             flpFloors.TabIndex = 0;
             flpFloors.WrapContents = false;
             // 
@@ -108,6 +112,19 @@
             pnlFloorSection.Name = "pnlFloorSection";
             pnlFloorSection.Size = new Size(250, 600);
             pnlFloorSection.TabIndex = 0;
+            // 
+            // flpFloorRooms
+            // 
+            flpFloorRooms.AutoScroll = true;
+            flpFloorRooms.BorderStyle = BorderStyle.FixedSingle;
+            flpFloorRooms.Dock = DockStyle.Fill;
+            flpFloorRooms.FlowDirection = FlowDirection.TopDown;
+            flpFloorRooms.Location = new Point(0, 50);
+            flpFloorRooms.Name = "flpFloorRooms";
+            flpFloorRooms.Padding = new Padding(10);
+            flpFloorRooms.Size = new Size(250, 550);
+            flpFloorRooms.TabIndex = 21;
+            flpFloorRooms.WrapContents = false;
             // 
             // lblFloorTitle
             // 
@@ -122,18 +139,6 @@
             lblFloorTitle.TabIndex = 20;
             lblFloorTitle.Text = "FLOOR 1";
             lblFloorTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // flpFloorRooms
-            // 
-            flpFloorRooms.AutoScroll = true;
-            flpFloorRooms.Dock = DockStyle.Fill;
-            flpFloorRooms.FlowDirection = FlowDirection.TopDown;
-            flpFloorRooms.Location = new Point(0, 50);
-            flpFloorRooms.Name = "flpFloorRooms";
-            flpFloorRooms.Padding = new Padding(10);
-            flpFloorRooms.Size = new Size(250, 550);
-            flpFloorRooms.TabIndex = 21;
-            flpFloorRooms.WrapContents = false;
             // 
             // BillingRoomAccountControl
             // 

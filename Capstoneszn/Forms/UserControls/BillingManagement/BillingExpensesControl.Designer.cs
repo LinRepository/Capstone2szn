@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             pnlExpensesHeader = new Panel();
-            pnlExpenseFilters = new Panel();
-            pnlExpensesContent = new Panel();
-            btnBackExpenses = new Button();
             lblExpensesTitle = new Label();
-            btnAllExpenses = new Button();
-            btnMaintenanceExpenses = new Button();
+            btnBackExpenses = new Button();
+            pnlExpenseFilters = new Panel();
             btnUtilitiesExpenses = new Button();
+            btnMaintenanceExpenses = new Button();
+            btnAllExpenses = new Button();
+            pnlExpensesContent = new Panel();
             dgvExpenses = new DataGridView();
             colExpenseDate = new DataGridViewTextBoxColumn();
             colExpenseDescription = new DataGridViewTextBoxColumn();
@@ -48,6 +48,7 @@
             // 
             // pnlExpensesHeader
             // 
+            pnlExpensesHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlExpensesHeader.Controls.Add(lblExpensesTitle);
             pnlExpensesHeader.Controls.Add(btnBackExpenses);
             pnlExpensesHeader.Dock = DockStyle.Top;
@@ -56,8 +57,36 @@
             pnlExpensesHeader.Size = new Size(1300, 90);
             pnlExpensesHeader.TabIndex = 0;
             // 
+            // lblExpensesTitle
+            // 
+            lblExpensesTitle.Dock = DockStyle.Fill;
+            lblExpensesTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblExpensesTitle.ForeColor = Color.White;
+            lblExpensesTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblExpensesTitle.Location = new Point(140, 0);
+            lblExpensesTitle.Name = "lblExpensesTitle";
+            lblExpensesTitle.Size = new Size(1158, 88);
+            lblExpensesTitle.TabIndex = 7;
+            lblExpensesTitle.Text = "Expenses";
+            lblExpensesTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnBackExpenses
+            // 
+            btnBackExpenses.Dock = DockStyle.Left;
+            btnBackExpenses.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBackExpenses.Location = new Point(0, 0);
+            btnBackExpenses.Margin = new Padding(0);
+            btnBackExpenses.Name = "btnBackExpenses";
+            btnBackExpenses.Size = new Size(140, 88);
+            btnBackExpenses.TabIndex = 2;
+            btnBackExpenses.Text = "←";
+            btnBackExpenses.TextAlign = ContentAlignment.TopCenter;
+            btnBackExpenses.UseVisualStyleBackColor = true;
+            btnBackExpenses.Click += btnBackExpenses_Click;
+            // 
             // pnlExpenseFilters
             // 
+            pnlExpenseFilters.BorderStyle = BorderStyle.FixedSingle;
             pnlExpenseFilters.Controls.Add(btnUtilitiesExpenses);
             pnlExpenseFilters.Controls.Add(btnMaintenanceExpenses);
             pnlExpenseFilters.Controls.Add(btnAllExpenses);
@@ -68,70 +97,45 @@
             pnlExpenseFilters.Size = new Size(1300, 65);
             pnlExpenseFilters.TabIndex = 1;
             // 
-            // pnlExpensesContent
+            // btnUtilitiesExpenses
             // 
-            pnlExpensesContent.Controls.Add(dgvExpenses);
-            pnlExpensesContent.Dock = DockStyle.Fill;
-            pnlExpensesContent.Location = new Point(0, 155);
-            pnlExpensesContent.Name = "pnlExpensesContent";
-            pnlExpensesContent.Size = new Size(1300, 595);
-            pnlExpensesContent.TabIndex = 2;
-            // 
-            // btnBackExpenses
-            // 
-            btnBackExpenses.Dock = DockStyle.Left;
-            btnBackExpenses.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackExpenses.Location = new Point(0, 0);
-            btnBackExpenses.Margin = new Padding(0);
-            btnBackExpenses.Name = "btnBackExpenses";
-            btnBackExpenses.Size = new Size(140, 90);
-            btnBackExpenses.TabIndex = 2;
-            btnBackExpenses.Text = "←";
-            btnBackExpenses.TextAlign = ContentAlignment.TopCenter;
-            btnBackExpenses.UseVisualStyleBackColor = true;
-            // 
-            // lblExpensesTitle
-            // 
-            lblExpensesTitle.Dock = DockStyle.Fill;
-            lblExpensesTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblExpensesTitle.ForeColor = Color.White;
-            lblExpensesTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblExpensesTitle.Location = new Point(140, 0);
-            lblExpensesTitle.Name = "lblExpensesTitle";
-            lblExpensesTitle.Size = new Size(1160, 90);
-            lblExpensesTitle.TabIndex = 7;
-            lblExpensesTitle.Text = "Expenses";
-            lblExpensesTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnAllExpenses
-            // 
-            btnAllExpenses.Dock = DockStyle.Left;
-            btnAllExpenses.Location = new Point(10, 10);
-            btnAllExpenses.Name = "btnAllExpenses";
-            btnAllExpenses.Size = new Size(150, 45);
-            btnAllExpenses.TabIndex = 0;
-            btnAllExpenses.Text = "ALL";
-            btnAllExpenses.UseVisualStyleBackColor = true;
+            btnUtilitiesExpenses.Dock = DockStyle.Left;
+            btnUtilitiesExpenses.Location = new Point(310, 10);
+            btnUtilitiesExpenses.Name = "btnUtilitiesExpenses";
+            btnUtilitiesExpenses.Size = new Size(150, 43);
+            btnUtilitiesExpenses.TabIndex = 2;
+            btnUtilitiesExpenses.Text = "Utilities";
+            btnUtilitiesExpenses.UseVisualStyleBackColor = true;
             // 
             // btnMaintenanceExpenses
             // 
             btnMaintenanceExpenses.Dock = DockStyle.Left;
             btnMaintenanceExpenses.Location = new Point(160, 10);
             btnMaintenanceExpenses.Name = "btnMaintenanceExpenses";
-            btnMaintenanceExpenses.Size = new Size(150, 45);
+            btnMaintenanceExpenses.Size = new Size(150, 43);
             btnMaintenanceExpenses.TabIndex = 1;
             btnMaintenanceExpenses.Text = "Maintenance";
             btnMaintenanceExpenses.UseVisualStyleBackColor = true;
             // 
-            // btnUtilitiesExpenses
+            // btnAllExpenses
             // 
-            btnUtilitiesExpenses.Dock = DockStyle.Left;
-            btnUtilitiesExpenses.Location = new Point(310, 10);
-            btnUtilitiesExpenses.Name = "btnUtilitiesExpenses";
-            btnUtilitiesExpenses.Size = new Size(150, 45);
-            btnUtilitiesExpenses.TabIndex = 2;
-            btnUtilitiesExpenses.Text = "Utilities";
-            btnUtilitiesExpenses.UseVisualStyleBackColor = true;
+            btnAllExpenses.Dock = DockStyle.Left;
+            btnAllExpenses.Location = new Point(10, 10);
+            btnAllExpenses.Name = "btnAllExpenses";
+            btnAllExpenses.Size = new Size(150, 43);
+            btnAllExpenses.TabIndex = 0;
+            btnAllExpenses.Text = "ALL";
+            btnAllExpenses.UseVisualStyleBackColor = true;
+            // 
+            // pnlExpensesContent
+            // 
+            pnlExpensesContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlExpensesContent.Controls.Add(dgvExpenses);
+            pnlExpensesContent.Dock = DockStyle.Fill;
+            pnlExpensesContent.Location = new Point(0, 155);
+            pnlExpensesContent.Name = "pnlExpensesContent";
+            pnlExpensesContent.Size = new Size(1300, 595);
+            pnlExpensesContent.TabIndex = 2;
             // 
             // dgvExpenses
             // 
@@ -150,7 +154,7 @@
             dgvExpenses.RowHeadersWidth = 51;
             dgvExpenses.ScrollBars = ScrollBars.Vertical;
             dgvExpenses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvExpenses.Size = new Size(1300, 595);
+            dgvExpenses.Size = new Size(1298, 593);
             dgvExpenses.TabIndex = 0;
             // 
             // colExpenseDate

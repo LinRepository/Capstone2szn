@@ -96,6 +96,7 @@
             btnAddIssue.TabIndex = 1;
             btnAddIssue.Text = "Add Issue";
             btnAddIssue.UseVisualStyleBackColor = true;
+            btnAddIssue.Click += btnAddIssue_Click;
             // 
             // pnlMaintenanceContent
             // 

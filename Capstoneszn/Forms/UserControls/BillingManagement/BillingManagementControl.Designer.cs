@@ -117,6 +117,7 @@
             lblRoomAccount.TabIndex = 5;
             lblRoomAccount.Text = "Room Account";
             lblRoomAccount.TextAlign = ContentAlignment.MiddleCenter;
+            lblRoomAccount.Click += lblRoomAccount_Click;
             // 
             // pnlExpenses
             // 
@@ -142,6 +143,7 @@
             lblExpenses.TabIndex = 6;
             lblExpenses.Text = "Expenses";
             lblExpenses.TextAlign = ContentAlignment.MiddleCenter;
+            lblExpenses.Click += lblExpenses_Click;
             // 
             // BillingManagementControl
             // 

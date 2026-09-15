@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             pnlLoginHeader = new Panel();
+            lblTitle = new Label();
+            btnSwitchBuilding = new Button();
             pnlLoginBuildingName = new Panel();
             pictureBox1 = new PictureBox();
             pnlLoginContent = new Panel();
@@ -39,8 +41,6 @@
             lblPassword = new Label();
             lblUsername = new Label();
             chkShowPassword = new CheckBox();
-            btnSwitchBuilding = new Button();
-            lblTitle = new Label();
             pnlLoginHeader.SuspendLayout();
             pnlLoginBuildingName.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -58,9 +58,37 @@
             pnlLoginHeader.Size = new Size(682, 60);
             pnlLoginHeader.TabIndex = 9;
             // 
+            // lblTitle
+            // 
+            lblTitle.Dock = DockStyle.Fill;
+            lblTitle.Font = new Font("Segoe UI", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(0, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Padding = new Padding(175, 0, 0, 0);
+            lblTitle.Size = new Size(505, 58);
+            lblTitle.TabIndex = 3;
+            lblTitle.Text = "LOGIN";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnSwitchBuilding
+            // 
+            btnSwitchBuilding.BackColor = Color.FromArgb(11, 20, 38);
+            btnSwitchBuilding.Cursor = Cursors.Hand;
+            btnSwitchBuilding.Dock = DockStyle.Right;
+            btnSwitchBuilding.FlatStyle = FlatStyle.Popup;
+            btnSwitchBuilding.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSwitchBuilding.ForeColor = Color.Transparent;
+            btnSwitchBuilding.Location = new Point(505, 0);
+            btnSwitchBuilding.Name = "btnSwitchBuilding";
+            btnSwitchBuilding.Size = new Size(175, 58);
+            btnSwitchBuilding.TabIndex = 2;
+            btnSwitchBuilding.Text = "←  Switch Building";
+            btnSwitchBuilding.UseVisualStyleBackColor = false;
+            btnSwitchBuilding.Click += btnSwitchBuilding_Click;
+            // 
             // pnlLoginBuildingName
             // 
-            pnlLoginBuildingName.BorderStyle = BorderStyle.FixedSingle;
             pnlLoginBuildingName.Controls.Add(pictureBox1);
             pnlLoginBuildingName.Dock = DockStyle.Top;
             pnlLoginBuildingName.Location = new Point(0, 60);
@@ -71,9 +99,11 @@
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.None;
-            pictureBox1.Location = new Point(256, 14);
+            pictureBox1.Image = Properties.Resources.catlogin;
+            pictureBox1.Location = new Point(257, 15);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(170, 150);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -175,34 +205,6 @@
             chkShowPassword.TabIndex = 10;
             chkShowPassword.Text = "ShowPassword";
             chkShowPassword.UseVisualStyleBackColor = true;
-            // 
-            // btnSwitchBuilding
-            // 
-            btnSwitchBuilding.BackColor = Color.FromArgb(11, 20, 38);
-            btnSwitchBuilding.Cursor = Cursors.Hand;
-            btnSwitchBuilding.Dock = DockStyle.Right;
-            btnSwitchBuilding.FlatStyle = FlatStyle.Popup;
-            btnSwitchBuilding.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnSwitchBuilding.ForeColor = Color.Transparent;
-            btnSwitchBuilding.Location = new Point(505, 0);
-            btnSwitchBuilding.Name = "btnSwitchBuilding";
-            btnSwitchBuilding.Size = new Size(175, 58);
-            btnSwitchBuilding.TabIndex = 2;
-            btnSwitchBuilding.Text = "←  Switch Building";
-            btnSwitchBuilding.UseVisualStyleBackColor = false;
-            btnSwitchBuilding.Click += btnSwitchBuilding_Click;
-            // 
-            // lblTitle
-            // 
-            lblTitle.Dock = DockStyle.Fill;
-            lblTitle.Font = new Font("Segoe UI", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(0, 0);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(505, 58);
-            lblTitle.TabIndex = 3;
-            lblTitle.Text = "LOGIN";
-            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // LoginForm
             // 

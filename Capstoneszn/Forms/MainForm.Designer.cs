@@ -386,9 +386,9 @@
             lblUserRole.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUserRole.ForeColor = Color.White;
             lblUserRole.ImageAlign = ContentAlignment.MiddleRight;
-            lblUserRole.Location = new Point(5, 54);
+            lblUserRole.Location = new Point(5, 59);
             lblUserRole.Name = "lblUserRole";
-            lblUserRole.Size = new Size(229, 60);
+            lblUserRole.Size = new Size(229, 55);
             lblUserRole.TabIndex = 7;
             lblUserRole.Text = "User Role";
             lblUserRole.TextAlign = ContentAlignment.MiddleCenter;
@@ -402,7 +402,7 @@
             lblCurrentUser.ImageAlign = ContentAlignment.MiddleRight;
             lblCurrentUser.Location = new Point(5, 5);
             lblCurrentUser.Name = "lblCurrentUser";
-            lblCurrentUser.Size = new Size(229, 60);
+            lblCurrentUser.Size = new Size(229, 55);
             lblCurrentUser.TabIndex = 6;
             lblCurrentUser.Text = "User";
             lblCurrentUser.TextAlign = ContentAlignment.MiddleCenter;
@@ -484,10 +484,11 @@
             // 
             Logo.Anchor = AnchorStyles.None;
             Logo.BackColor = Color.White;
+            Logo.Image = Properties.Resources.catlogin;
             Logo.Location = new Point(39, 8);
             Logo.Name = "Logo";
             Logo.Size = new Size(100, 100);
-            Logo.SizeMode = PictureBoxSizeMode.Zoom;
+            Logo.SizeMode = PictureBoxSizeMode.StretchImage;
             Logo.TabIndex = 1;
             Logo.TabStop = false;
             // 

@@ -91,7 +91,7 @@
             // 
             // flpDashBoardCards
             // 
-            flpDashBoardCards.BackColor = SystemColors.ActiveBorder;
+            flpDashBoardCards.BackColor = Color.WhiteSmoke;
             flpDashBoardCards.BorderStyle = BorderStyle.FixedSingle;
             flpDashBoardCards.Controls.Add(panel1);
             flpDashBoardCards.Controls.Add(panel2);
@@ -265,6 +265,7 @@
             // 
             // lvRecentActivities
             // 
+            lvRecentActivities.BackColor = SystemColors.ControlDark;
             lvRecentActivities.Columns.AddRange(new ColumnHeader[] { Time, Activity });
             lvRecentActivities.Dock = DockStyle.Fill;
             lvRecentActivities.Location = new Point(10, 55);
@@ -325,6 +326,7 @@
             // 
             // lvNotification
             // 
+            lvNotification.BackColor = SystemColors.ControlDark;
             lvNotification.Columns.AddRange(new ColumnHeader[] { Date, Description });
             lvNotification.Dock = DockStyle.Fill;
             lvNotification.Location = new Point(10, 55);
@@ -387,6 +389,7 @@
             // flpRoomOverview
             // 
             flpRoomOverview.AutoScroll = true;
+            flpRoomOverview.BackColor = SystemColors.ControlDark;
             flpRoomOverview.BorderStyle = BorderStyle.FixedSingle;
             flpRoomOverview.Dock = DockStyle.Fill;
             flpRoomOverview.Location = new Point(10, 56);
@@ -397,7 +400,8 @@
             // 
             // pnlNestedHeaderRoom
             // 
-            pnlNestedHeaderRoom.BackColor = Color.SlateGray;
+            pnlNestedHeaderRoom.BackColor = Color.FromArgb(11, 20, 38);
+            pnlNestedHeaderRoom.BorderStyle = BorderStyle.FixedSingle;
             pnlNestedHeaderRoom.Controls.Add(lblMaintenance);
             pnlNestedHeaderRoom.Controls.Add(lblOccupied);
             pnlNestedHeaderRoom.Controls.Add(lblAvailable);
@@ -488,7 +492,7 @@
             lblRoomOverviewTitle.Location = new Point(0, 0);
             lblRoomOverviewTitle.Margin = new Padding(0);
             lblRoomOverviewTitle.Name = "lblRoomOverviewTitle";
-            lblRoomOverviewTitle.Size = new Size(205, 46);
+            lblRoomOverviewTitle.Size = new Size(205, 44);
             lblRoomOverviewTitle.TabIndex = 9;
             lblRoomOverviewTitle.Text = "Room Overview";
             lblRoomOverviewTitle.TextAlign = ContentAlignment.MiddleLeft;

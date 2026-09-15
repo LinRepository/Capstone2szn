@@ -131,6 +131,7 @@
             btnAddIssue.TabIndex = 0;
             btnAddIssue.Text = "Add Issue";
             btnAddIssue.UseVisualStyleBackColor = true;
+            btnAddIssue.Click += btnAddIssue_Click;
             // 
             // btnCancelIssue
             // 
@@ -140,6 +141,7 @@
             btnCancelIssue.TabIndex = 0;
             btnCancelIssue.Text = "Cancel";
             btnCancelIssue.UseVisualStyleBackColor = true;
+            btnCancelIssue.Click += btnCancelIssue_Click;
             // 
             // pnlAddIssueContent
             // 
@@ -573,7 +575,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AddIssueForm";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Add Maintenance Issue";
             Load += AddIssueForm_Load;
             pnlAddIssueHeader.ResumeLayout(false);

@@ -64,7 +64,7 @@ namespace Capstoneszn
             SBF.Show();
 
             //
-            this.Hide();
+            this.Close();
         }
     }
 }

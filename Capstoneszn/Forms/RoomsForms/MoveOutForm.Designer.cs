@@ -49,33 +49,33 @@
             pnlTenantSelectionHeader.Dock = DockStyle.Top;
             pnlTenantSelectionHeader.Location = new Point(0, 0);
             pnlTenantSelectionHeader.Name = "pnlTenantSelectionHeader";
-            pnlTenantSelectionHeader.Size = new Size(782, 70);
+            pnlTenantSelectionHeader.Size = new Size(602, 75);
             pnlTenantSelectionHeader.TabIndex = 0;
             // 
             // lblMoveOutDescription
             // 
-            lblMoveOutDescription.AutoSize = true;
-            lblMoveOutDescription.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMoveOutDescription.Dock = DockStyle.Bottom;
+            lblMoveOutDescription.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblMoveOutDescription.ForeColor = Color.White;
             lblMoveOutDescription.ImageAlign = ContentAlignment.MiddleRight;
-            lblMoveOutDescription.Location = new Point(183, 39);
+            lblMoveOutDescription.Location = new Point(0, 38);
             lblMoveOutDescription.Margin = new Padding(0);
             lblMoveOutDescription.Name = "lblMoveOutDescription";
-            lblMoveOutDescription.Size = new Size(433, 25);
+            lblMoveOutDescription.Size = new Size(602, 37);
             lblMoveOutDescription.TabIndex = 26;
             lblMoveOutDescription.Text = "Select the tenant you want to move out of this room.";
             lblMoveOutDescription.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblMoveOutTitle
             // 
-            lblMoveOutTitle.AutoSize = true;
-            lblMoveOutTitle.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMoveOutTitle.Dock = DockStyle.Top;
+            lblMoveOutTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblMoveOutTitle.ForeColor = Color.White;
             lblMoveOutTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblMoveOutTitle.Location = new Point(295, 6);
+            lblMoveOutTitle.Location = new Point(0, 0);
             lblMoveOutTitle.Margin = new Padding(0);
             lblMoveOutTitle.Name = "lblMoveOutTitle";
-            lblMoveOutTitle.Size = new Size(189, 31);
+            lblMoveOutTitle.Size = new Size(602, 37);
             lblMoveOutTitle.TabIndex = 25;
             lblMoveOutTitle.Text = "Move Out Tenant";
             lblMoveOutTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -87,12 +87,13 @@
             pnlMoveOutActions.Dock = DockStyle.Bottom;
             pnlMoveOutActions.Location = new Point(0, 398);
             pnlMoveOutActions.Name = "pnlMoveOutActions";
-            pnlMoveOutActions.Size = new Size(782, 55);
+            pnlMoveOutActions.Size = new Size(602, 55);
             pnlMoveOutActions.TabIndex = 1;
             // 
             // btnMoveOut
             // 
-            btnMoveOut.Location = new Point(676, 14);
+            btnMoveOut.Cursor = Cursors.Hand;
+            btnMoveOut.Location = new Point(483, 14);
             btnMoveOut.Name = "btnMoveOut";
             btnMoveOut.Size = new Size(94, 29);
             btnMoveOut.TabIndex = 1;
@@ -101,7 +102,8 @@
             // 
             // btnCancelMoveOut
             // 
-            btnCancelMoveOut.Location = new Point(564, 14);
+            btnCancelMoveOut.Cursor = Cursors.Hand;
+            btnCancelMoveOut.Location = new Point(371, 14);
             btnCancelMoveOut.Name = "btnCancelMoveOut";
             btnCancelMoveOut.Size = new Size(94, 29);
             btnCancelMoveOut.TabIndex = 0;
@@ -113,9 +115,9 @@
             // 
             pnlTenantSelection.Controls.Add(dgvTenantsToMoveOut);
             pnlTenantSelection.Dock = DockStyle.Fill;
-            pnlTenantSelection.Location = new Point(0, 70);
+            pnlTenantSelection.Location = new Point(0, 75);
             pnlTenantSelection.Name = "pnlTenantSelection";
-            pnlTenantSelection.Size = new Size(782, 328);
+            pnlTenantSelection.Size = new Size(602, 323);
             pnlTenantSelection.TabIndex = 2;
             // 
             // dgvTenantsToMoveOut
@@ -132,7 +134,7 @@
             dgvTenantsToMoveOut.RowHeadersVisible = false;
             dgvTenantsToMoveOut.RowHeadersWidth = 51;
             dgvTenantsToMoveOut.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTenantsToMoveOut.Size = new Size(782, 328);
+            dgvTenantsToMoveOut.Size = new Size(602, 323);
             dgvTenantsToMoveOut.TabIndex = 0;
             // 
             // MoveOutForm
@@ -141,7 +143,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(782, 453);
+            ClientSize = new Size(602, 453);
             Controls.Add(pnlTenantSelection);
             Controls.Add(pnlMoveOutActions);
             Controls.Add(pnlTenantSelectionHeader);
@@ -152,7 +154,6 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "Move Out Tenant";
             pnlTenantSelectionHeader.ResumeLayout(false);
-            pnlTenantSelectionHeader.PerformLayout();
             pnlMoveOutActions.ResumeLayout(false);
             pnlTenantSelection.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTenantsToMoveOut).EndInit();

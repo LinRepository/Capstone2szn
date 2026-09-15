@@ -32,6 +32,19 @@ namespace Capstoneszn
             LoadControl(new HomeControl());
 
             SaveButtonTexts();
+
+            // Initialize time immediately
+            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt");
+            lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy");
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // Shows live time with AM/PM
+        }
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // Shows live time with AM/PM
+            lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy"); // Keeps the date current
         }
 
         private void SaveButtonTexts()
