@@ -231,7 +231,7 @@
             pnlFloorSection.Controls.Add(lblFloor);
             pnlFloorSection.Location = new Point(3, 3);
             pnlFloorSection.Name = "pnlFloorSection";
-            pnlFloorSection.Size = new Size(1111, 140);
+            pnlFloorSection.Size = new Size(514, 190);
             pnlFloorSection.TabIndex = 0;
             // 
             // flpFloorRooms
@@ -240,7 +240,7 @@
             flpFloorRooms.Location = new Point(0, 25);
             flpFloorRooms.Margin = new Padding(0);
             flpFloorRooms.Name = "flpFloorRooms";
-            flpFloorRooms.Size = new Size(1111, 115);
+            flpFloorRooms.Size = new Size(514, 165);
             flpFloorRooms.TabIndex = 22;
             // 
             // lblFloor

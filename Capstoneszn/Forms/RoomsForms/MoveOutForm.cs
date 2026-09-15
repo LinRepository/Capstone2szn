@@ -16,5 +16,10 @@ namespace Capstoneszn.UserControls
         {
             InitializeComponent();
         }
+
+        private void btnCancelMoveOut_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

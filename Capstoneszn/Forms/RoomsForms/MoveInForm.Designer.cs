@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             pnlMoveInHeader = new Panel();
-            lblMoveInTitle = new Label();
             lblMoveInDescription = new Label();
+            lblMoveInTitle = new Label();
             pnlMoveInActions = new Panel();
-            pnlMoveInContent = new Panel();
-            btnCancelMoveIn = new Button();
             btnConfirmMoveIn = new Button();
-            lblTenantName = new Label();
-            lblContactNumber = new Label();
-            lblMoveInDate = new Label();
-            txtTenantName = new TextBox();
-            txtContactNumber = new TextBox();
+            btnCancelMoveIn = new Button();
+            pnlMoveInContent = new Panel();
             dtpMoveInDate = new DateTimePicker();
+            txtContactNumber = new TextBox();
+            txtTenantName = new TextBox();
+            lblMoveInDate = new Label();
+            lblContactNumber = new Label();
+            lblTenantName = new Label();
             pnlMoveInHeader.SuspendLayout();
             pnlMoveInActions.SuspendLayout();
             pnlMoveInContent.SuspendLayout();
@@ -57,20 +57,6 @@
             pnlMoveInHeader.Size = new Size(782, 65);
             pnlMoveInHeader.TabIndex = 0;
             // 
-            // lblMoveInTitle
-            // 
-            lblMoveInTitle.AutoSize = true;
-            lblMoveInTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblMoveInTitle.ForeColor = Color.White;
-            lblMoveInTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblMoveInTitle.Location = new Point(324, 9);
-            lblMoveInTitle.Margin = new Padding(0);
-            lblMoveInTitle.Name = "lblMoveInTitle";
-            lblMoveInTitle.Size = new Size(142, 25);
-            lblMoveInTitle.TabIndex = 25;
-            lblMoveInTitle.Text = "Add New Tenant";
-            lblMoveInTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // lblMoveInDescription
             // 
             lblMoveInDescription.AutoSize = true;
@@ -85,6 +71,20 @@
             lblMoveInDescription.Text = "Enter the tenant information below";
             lblMoveInDescription.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lblMoveInTitle
+            // 
+            lblMoveInTitle.AutoSize = true;
+            lblMoveInTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMoveInTitle.ForeColor = Color.White;
+            lblMoveInTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblMoveInTitle.Location = new Point(324, 9);
+            lblMoveInTitle.Margin = new Padding(0);
+            lblMoveInTitle.Name = "lblMoveInTitle";
+            lblMoveInTitle.Size = new Size(142, 25);
+            lblMoveInTitle.TabIndex = 25;
+            lblMoveInTitle.Text = "Add New Tenant";
+            lblMoveInTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // pnlMoveInActions
             // 
             pnlMoveInActions.Controls.Add(btnConfirmMoveIn);
@@ -95,6 +95,25 @@
             pnlMoveInActions.Name = "pnlMoveInActions";
             pnlMoveInActions.Size = new Size(782, 65);
             pnlMoveInActions.TabIndex = 1;
+            // 
+            // btnConfirmMoveIn
+            // 
+            btnConfirmMoveIn.Location = new Point(634, 24);
+            btnConfirmMoveIn.Name = "btnConfirmMoveIn";
+            btnConfirmMoveIn.Size = new Size(94, 29);
+            btnConfirmMoveIn.TabIndex = 1;
+            btnConfirmMoveIn.Text = "Confirm";
+            btnConfirmMoveIn.UseVisualStyleBackColor = true;
+            // 
+            // btnCancelMoveIn
+            // 
+            btnCancelMoveIn.Location = new Point(503, 24);
+            btnCancelMoveIn.Name = "btnCancelMoveIn";
+            btnCancelMoveIn.Size = new Size(94, 29);
+            btnCancelMoveIn.TabIndex = 0;
+            btnCancelMoveIn.Text = "Cancel";
+            btnCancelMoveIn.UseVisualStyleBackColor = true;
+            btnCancelMoveIn.Click += btnCancelMoveIn_Click;
             // 
             // pnlMoveInContent
             // 
@@ -110,51 +129,27 @@
             pnlMoveInContent.Size = new Size(782, 323);
             pnlMoveInContent.TabIndex = 2;
             // 
-            // btnCancelMoveIn
+            // dtpMoveInDate
             // 
-            btnCancelMoveIn.Location = new Point(503, 24);
-            btnCancelMoveIn.Name = "btnCancelMoveIn";
-            btnCancelMoveIn.Size = new Size(94, 29);
-            btnCancelMoveIn.TabIndex = 0;
-            btnCancelMoveIn.Text = "Cancel";
-            btnCancelMoveIn.UseVisualStyleBackColor = true;
+            dtpMoveInDate.Format = DateTimePickerFormat.Short;
+            dtpMoveInDate.Location = new Point(92, 215);
+            dtpMoveInDate.Name = "dtpMoveInDate";
+            dtpMoveInDate.Size = new Size(250, 27);
+            dtpMoveInDate.TabIndex = 31;
             // 
-            // btnConfirmMoveIn
+            // txtContactNumber
             // 
-            btnConfirmMoveIn.Location = new Point(634, 24);
-            btnConfirmMoveIn.Name = "btnConfirmMoveIn";
-            btnConfirmMoveIn.Size = new Size(94, 29);
-            btnConfirmMoveIn.TabIndex = 1;
-            btnConfirmMoveIn.Text = "Confirm";
-            btnConfirmMoveIn.UseVisualStyleBackColor = true;
+            txtContactNumber.Location = new Point(92, 131);
+            txtContactNumber.Name = "txtContactNumber";
+            txtContactNumber.Size = new Size(125, 27);
+            txtContactNumber.TabIndex = 30;
             // 
-            // lblTenantName
+            // txtTenantName
             // 
-            lblTenantName.AutoSize = true;
-            lblTenantName.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTenantName.ForeColor = Color.White;
-            lblTenantName.ImageAlign = ContentAlignment.MiddleRight;
-            lblTenantName.Location = new Point(74, 40);
-            lblTenantName.Margin = new Padding(0);
-            lblTenantName.Name = "lblTenantName";
-            lblTenantName.Size = new Size(115, 25);
-            lblTenantName.TabIndex = 26;
-            lblTenantName.Text = "Tenant Name";
-            lblTenantName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblContactNumber
-            // 
-            lblContactNumber.AutoSize = true;
-            lblContactNumber.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblContactNumber.ForeColor = Color.White;
-            lblContactNumber.ImageAlign = ContentAlignment.MiddleRight;
-            lblContactNumber.Location = new Point(74, 103);
-            lblContactNumber.Margin = new Padding(0);
-            lblContactNumber.Name = "lblContactNumber";
-            lblContactNumber.Size = new Size(143, 25);
-            lblContactNumber.TabIndex = 27;
-            lblContactNumber.Text = "Contact Number";
-            lblContactNumber.TextAlign = ContentAlignment.MiddleCenter;
+            txtTenantName.Location = new Point(92, 68);
+            txtTenantName.Name = "txtTenantName";
+            txtTenantName.Size = new Size(125, 27);
+            txtTenantName.TabIndex = 29;
             // 
             // lblMoveInDate
             // 
@@ -170,27 +165,33 @@
             lblMoveInDate.Text = "Date";
             lblMoveInDate.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // txtTenantName
+            // lblContactNumber
             // 
-            txtTenantName.Location = new Point(92, 68);
-            txtTenantName.Name = "txtTenantName";
-            txtTenantName.Size = new Size(125, 27);
-            txtTenantName.TabIndex = 29;
+            lblContactNumber.AutoSize = true;
+            lblContactNumber.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblContactNumber.ForeColor = Color.White;
+            lblContactNumber.ImageAlign = ContentAlignment.MiddleRight;
+            lblContactNumber.Location = new Point(74, 103);
+            lblContactNumber.Margin = new Padding(0);
+            lblContactNumber.Name = "lblContactNumber";
+            lblContactNumber.Size = new Size(143, 25);
+            lblContactNumber.TabIndex = 27;
+            lblContactNumber.Text = "Contact Number";
+            lblContactNumber.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // txtContactNumber
+            // lblTenantName
             // 
-            txtContactNumber.Location = new Point(92, 131);
-            txtContactNumber.Name = "txtContactNumber";
-            txtContactNumber.Size = new Size(125, 27);
-            txtContactNumber.TabIndex = 30;
-            // 
-            // dtpMoveInDate
-            // 
-            dtpMoveInDate.Format = DateTimePickerFormat.Short;
-            dtpMoveInDate.Location = new Point(92, 215);
-            dtpMoveInDate.Name = "dtpMoveInDate";
-            dtpMoveInDate.Size = new Size(250, 27);
-            dtpMoveInDate.TabIndex = 31;
+            lblTenantName.AutoSize = true;
+            lblTenantName.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTenantName.ForeColor = Color.White;
+            lblTenantName.ImageAlign = ContentAlignment.MiddleRight;
+            lblTenantName.Location = new Point(74, 40);
+            lblTenantName.Margin = new Padding(0);
+            lblTenantName.Name = "lblTenantName";
+            lblTenantName.Size = new Size(115, 25);
+            lblTenantName.TabIndex = 26;
+            lblTenantName.Text = "Tenant Name";
+            lblTenantName.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // MoveInForm
             // 

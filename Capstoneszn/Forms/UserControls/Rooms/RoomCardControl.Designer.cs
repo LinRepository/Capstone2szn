@@ -34,22 +34,30 @@
             // 
             // lblRoomNumber
             // 
+            lblRoomNumber.BackColor = Color.Red;
+            lblRoomNumber.BorderStyle = BorderStyle.FixedSingle;
             lblRoomNumber.Dock = DockStyle.Top;
+            lblRoomNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblRoomNumber.ForeColor = Color.White;
             lblRoomNumber.Location = new Point(0, 0);
             lblRoomNumber.Name = "lblRoomNumber";
-            lblRoomNumber.Size = new Size(110, 40);
+            lblRoomNumber.Size = new Size(113, 58);
             lblRoomNumber.TabIndex = 0;
-            lblRoomNumber.Text = "###";
+            lblRoomNumber.Text = "101";
             lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
+            lblRoomNumber.Click += lblRoomNumber_Click;
             // 
             // lblOccupancy
             // 
+            lblOccupancy.BackColor = Color.Red;
+            lblOccupancy.BorderStyle = BorderStyle.FixedSingle;
             lblOccupancy.Dock = DockStyle.Fill;
-            lblOccupancy.Location = new Point(0, 40);
+            lblOccupancy.ForeColor = Color.White;
+            lblOccupancy.Location = new Point(0, 58);
             lblOccupancy.Name = "lblOccupancy";
-            lblOccupancy.Size = new Size(110, 40);
+            lblOccupancy.Size = new Size(113, 28);
             lblOccupancy.TabIndex = 1;
-            lblOccupancy.Text = "# / #";
+            lblOccupancy.Text = "1/1";
             lblOccupancy.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // RoomCardControl
@@ -60,7 +68,7 @@
             Controls.Add(lblRoomNumber);
             Cursor = Cursors.Hand;
             Name = "RoomCardControl";
-            Size = new Size(110, 80);
+            Size = new Size(113, 86);
             ResumeLayout(false);
         }
 

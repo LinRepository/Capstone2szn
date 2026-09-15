@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             pnlTenantSelectionHeader = new Panel();
-            lblMoveOutTitle = new Label();
             lblMoveOutDescription = new Label();
+            lblMoveOutTitle = new Label();
             pnlMoveOutActions = new Panel();
+            btnMoveOut = new Button();
+            btnCancelMoveOut = new Button();
             pnlTenantSelection = new Panel();
             dgvTenantsToMoveOut = new DataGridView();
-            btnCancelMoveOut = new Button();
-            btnMoveOut = new Button();
             pnlTenantSelectionHeader.SuspendLayout();
             pnlMoveOutActions.SuspendLayout();
             pnlTenantSelection.SuspendLayout();
@@ -52,20 +52,6 @@
             pnlTenantSelectionHeader.Size = new Size(782, 70);
             pnlTenantSelectionHeader.TabIndex = 0;
             // 
-            // lblMoveOutTitle
-            // 
-            lblMoveOutTitle.AutoSize = true;
-            lblMoveOutTitle.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblMoveOutTitle.ForeColor = Color.White;
-            lblMoveOutTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblMoveOutTitle.Location = new Point(295, 6);
-            lblMoveOutTitle.Margin = new Padding(0);
-            lblMoveOutTitle.Name = "lblMoveOutTitle";
-            lblMoveOutTitle.Size = new Size(189, 31);
-            lblMoveOutTitle.TabIndex = 25;
-            lblMoveOutTitle.Text = "Move Out Tenant";
-            lblMoveOutTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // lblMoveOutDescription
             // 
             lblMoveOutDescription.AutoSize = true;
@@ -80,6 +66,20 @@
             lblMoveOutDescription.Text = "Select the tenant you want to move out of this room.";
             lblMoveOutDescription.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lblMoveOutTitle
+            // 
+            lblMoveOutTitle.AutoSize = true;
+            lblMoveOutTitle.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMoveOutTitle.ForeColor = Color.White;
+            lblMoveOutTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblMoveOutTitle.Location = new Point(295, 6);
+            lblMoveOutTitle.Margin = new Padding(0);
+            lblMoveOutTitle.Name = "lblMoveOutTitle";
+            lblMoveOutTitle.Size = new Size(189, 31);
+            lblMoveOutTitle.TabIndex = 25;
+            lblMoveOutTitle.Text = "Move Out Tenant";
+            lblMoveOutTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // pnlMoveOutActions
             // 
             pnlMoveOutActions.Controls.Add(btnMoveOut);
@@ -89,6 +89,25 @@
             pnlMoveOutActions.Name = "pnlMoveOutActions";
             pnlMoveOutActions.Size = new Size(782, 55);
             pnlMoveOutActions.TabIndex = 1;
+            // 
+            // btnMoveOut
+            // 
+            btnMoveOut.Location = new Point(676, 14);
+            btnMoveOut.Name = "btnMoveOut";
+            btnMoveOut.Size = new Size(94, 29);
+            btnMoveOut.TabIndex = 1;
+            btnMoveOut.Text = "Move Out";
+            btnMoveOut.UseVisualStyleBackColor = true;
+            // 
+            // btnCancelMoveOut
+            // 
+            btnCancelMoveOut.Location = new Point(564, 14);
+            btnCancelMoveOut.Name = "btnCancelMoveOut";
+            btnCancelMoveOut.Size = new Size(94, 29);
+            btnCancelMoveOut.TabIndex = 0;
+            btnCancelMoveOut.Text = "Cancel";
+            btnCancelMoveOut.UseVisualStyleBackColor = true;
+            btnCancelMoveOut.Click += btnCancelMoveOut_Click;
             // 
             // pnlTenantSelection
             // 
@@ -115,24 +134,6 @@
             dgvTenantsToMoveOut.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvTenantsToMoveOut.Size = new Size(782, 328);
             dgvTenantsToMoveOut.TabIndex = 0;
-            // 
-            // btnCancelMoveOut
-            // 
-            btnCancelMoveOut.Location = new Point(564, 14);
-            btnCancelMoveOut.Name = "btnCancelMoveOut";
-            btnCancelMoveOut.Size = new Size(94, 29);
-            btnCancelMoveOut.TabIndex = 0;
-            btnCancelMoveOut.Text = "Cancel";
-            btnCancelMoveOut.UseVisualStyleBackColor = true;
-            // 
-            // btnMoveOut
-            // 
-            btnMoveOut.Location = new Point(676, 14);
-            btnMoveOut.Name = "btnMoveOut";
-            btnMoveOut.Size = new Size(94, 29);
-            btnMoveOut.TabIndex = 1;
-            btnMoveOut.Text = "Move Out";
-            btnMoveOut.UseVisualStyleBackColor = true;
             // 
             // MoveOutForm
             // 

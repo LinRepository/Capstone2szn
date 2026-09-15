@@ -82,6 +82,7 @@
             btnCloseRoomInfo.TabStop = false;
             btnCloseRoomInfo.Text = "X";
             btnCloseRoomInfo.UseVisualStyleBackColor = true;
+            btnCloseRoomInfo.Click += btnCloseRoomInfo_Click;
             // 
             // lblRoomTitle
             // 
@@ -105,6 +106,7 @@
             btnMoveOut.TabIndex = 1;
             btnMoveOut.Text = "Move Out";
             btnMoveOut.UseVisualStyleBackColor = true;
+            btnMoveOut.Click += btnMoveOut_Click;
             // 
             // btnMoveIn
             // 
@@ -114,6 +116,7 @@
             btnMoveIn.TabIndex = 0;
             btnMoveIn.Text = "Move In";
             btnMoveIn.UseVisualStyleBackColor = true;
+            btnMoveIn.Click += btnMoveIn_Click;
             // 
             // pnlRoomStatus
             // 

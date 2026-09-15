@@ -16,5 +16,11 @@ namespace Capstoneszn.UserControls
         {
             InitializeComponent();
         }
+
+        private void lblRoomNumber_Click(object sender, EventArgs e)
+        {
+            RoomInformationForm roomInfo = new RoomInformationForm();
+            roomInfo.ShowDialog();
+        }
     }
 }

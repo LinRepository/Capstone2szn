@@ -15,6 +15,8 @@ namespace Capstoneszn.UserControls
         public RoomsControl()
         {
             InitializeComponent();
+
+            flpFloorRooms.Controls.Add(new RoomCardControl());
         }
     }
 }
