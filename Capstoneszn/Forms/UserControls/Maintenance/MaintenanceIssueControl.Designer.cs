@@ -87,6 +87,7 @@
             // 
             // lblStatusValue
             // 
+            lblStatusValue.BorderStyle = BorderStyle.FixedSingle;
             lblStatusValue.Dock = DockStyle.Fill;
             lblStatusValue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblStatusValue.ForeColor = Color.White;
@@ -101,6 +102,7 @@
             // 
             // lblStatusTitle
             // 
+            lblStatusTitle.BorderStyle = BorderStyle.FixedSingle;
             lblStatusTitle.Dock = DockStyle.Left;
             lblStatusTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblStatusTitle.ForeColor = Color.White;
@@ -125,6 +127,7 @@
             // 
             // lblUnitValue
             // 
+            lblUnitValue.BorderStyle = BorderStyle.FixedSingle;
             lblUnitValue.Dock = DockStyle.Fill;
             lblUnitValue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUnitValue.ForeColor = Color.White;
@@ -139,6 +142,7 @@
             // 
             // lblUnitTitle
             // 
+            lblUnitTitle.BorderStyle = BorderStyle.FixedSingle;
             lblUnitTitle.Dock = DockStyle.Left;
             lblUnitTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUnitTitle.ForeColor = Color.White;
@@ -163,6 +167,7 @@
             // 
             // pnlIssueActions
             // 
+            pnlIssueActions.BorderStyle = BorderStyle.FixedSingle;
             pnlIssueActions.Controls.Add(btnDeleteIssue);
             pnlIssueActions.Controls.Add(btnEditIssue);
             pnlIssueActions.Controls.Add(btnViewMaterials);
@@ -201,6 +206,7 @@
             // 
             // pnlIssueDate
             // 
+            pnlIssueDate.BorderStyle = BorderStyle.FixedSingle;
             pnlIssueDate.Controls.Add(lblDateValue);
             pnlIssueDate.Controls.Add(lblDateTitle);
             pnlIssueDate.Dock = DockStyle.Left;
@@ -217,7 +223,7 @@
             lblDateValue.ImageAlign = ContentAlignment.MiddleRight;
             lblDateValue.Location = new Point(0, 25);
             lblDateValue.Name = "lblDateValue";
-            lblDateValue.Size = new Size(325, 30);
+            lblDateValue.Size = new Size(323, 28);
             lblDateValue.TabIndex = 42;
             lblDateValue.Text = "MM/DD/YYYY";
             lblDateValue.TextAlign = ContentAlignment.MiddleCenter;
@@ -231,7 +237,7 @@
             lblDateTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblDateTitle.Location = new Point(0, 0);
             lblDateTitle.Name = "lblDateTitle";
-            lblDateTitle.Size = new Size(325, 25);
+            lblDateTitle.Size = new Size(323, 25);
             lblDateTitle.TabIndex = 41;
             lblDateTitle.Text = "Date";
             lblDateTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -251,6 +257,7 @@
             // pnlDescription
             // 
             pnlDescription.AutoScroll = true;
+            pnlDescription.BorderStyle = BorderStyle.FixedSingle;
             pnlDescription.Controls.Add(lblDescriptionValue);
             pnlDescription.Controls.Add(lblDescriptionTitle);
             pnlDescription.Dock = DockStyle.Fill;
@@ -269,7 +276,7 @@
             lblDescriptionValue.Location = new Point(0, 28);
             lblDescriptionValue.Name = "lblDescriptionValue";
             lblDescriptionValue.Padding = new Padding(15, 0, 0, 0);
-            lblDescriptionValue.Size = new Size(850, 42);
+            lblDescriptionValue.Size = new Size(848, 40);
             lblDescriptionValue.TabIndex = 43;
             lblDescriptionValue.Text = "description details are displayed here";
             lblDescriptionValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -294,6 +301,7 @@
             // pnlResponsible
             // 
             pnlResponsible.AutoScroll = true;
+            pnlResponsible.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsible.Controls.Add(lblResponsibleValue);
             pnlResponsible.Controls.Add(lblResponsibleTitle);
             pnlResponsible.Dock = DockStyle.Bottom;
@@ -311,7 +319,7 @@
             lblResponsibleValue.Location = new Point(0, 28);
             lblResponsibleValue.Name = "lblResponsibleValue";
             lblResponsibleValue.Padding = new Padding(15, 0, 0, 0);
-            lblResponsibleValue.Size = new Size(850, 32);
+            lblResponsibleValue.Size = new Size(848, 30);
             lblResponsibleValue.TabIndex = 43;
             lblResponsibleValue.Text = "responsible person are displayed here";
             lblResponsibleValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -336,6 +344,7 @@
             // pnlIssue
             // 
             pnlIssue.AutoScroll = true;
+            pnlIssue.BorderStyle = BorderStyle.FixedSingle;
             pnlIssue.Controls.Add(lblIssueValue);
             pnlIssue.Controls.Add(lblIssueTitle);
             pnlIssue.Dock = DockStyle.Top;
@@ -353,7 +362,7 @@
             lblIssueValue.Location = new Point(0, 28);
             lblIssueValue.Name = "lblIssueValue";
             lblIssueValue.Padding = new Padding(15, 0, 0, 0);
-            lblIssueValue.Size = new Size(850, 32);
+            lblIssueValue.Size = new Size(848, 30);
             lblIssueValue.TabIndex = 43;
             lblIssueValue.Text = "issue details are displayed here";
             lblIssueValue.TextAlign = ContentAlignment.MiddleLeft;

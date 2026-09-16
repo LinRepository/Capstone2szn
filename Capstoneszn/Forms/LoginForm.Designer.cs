@@ -162,13 +162,15 @@
             // 
             lnkForgotPassword.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lnkForgotPassword.AutoSize = true;
-            lnkForgotPassword.Font = new Font("Segoe UI", 10.2F, FontStyle.Underline, GraphicsUnit.Point, 0);
+            lnkForgotPassword.Cursor = Cursors.Hand;
+            lnkForgotPassword.Font = new Font("Segoe UI", 10.8F, FontStyle.Underline, GraphicsUnit.Point, 0);
             lnkForgotPassword.ForeColor = Color.White;
-            lnkForgotPassword.Location = new Point(273, 299);
+            lnkForgotPassword.Location = new Point(272, 299);
             lnkForgotPassword.Name = "lnkForgotPassword";
-            lnkForgotPassword.Size = new Size(143, 23);
+            lnkForgotPassword.Size = new Size(154, 25);
             lnkForgotPassword.TabIndex = 13;
             lnkForgotPassword.Text = "Forgot Password?";
+            lnkForgotPassword.Click += lnkForgotPassword_Click;
             // 
             // lblPassword
             // 
@@ -219,6 +221,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "LoginForm";
+            ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "LoginForm";
             Load += LoginForm_Load;

@@ -31,11 +31,11 @@
             lblTitle = new Label();
             pnlAddBuilding = new Panel();
             lblPlus = new Label();
-            lblAddBuilding = new Label();
+            lblSampleBuilding = new Label();
             flpBuildings = new FlowLayoutPanel();
             pnlSampleAddBuilding = new Panel();
             lblSamplePlusBuilding = new Label();
-            lblSampleBuilding = new Label();
+            lblAddBuilding = new Label();
             pnlAddBuilding.SuspendLayout();
             flpBuildings.SuspendLayout();
             pnlSampleAddBuilding.SuspendLayout();
@@ -59,7 +59,7 @@
             pnlAddBuilding.BackColor = Color.LightSlateGray;
             pnlAddBuilding.BorderStyle = BorderStyle.FixedSingle;
             pnlAddBuilding.Controls.Add(lblPlus);
-            pnlAddBuilding.Controls.Add(lblAddBuilding);
+            pnlAddBuilding.Controls.Add(lblSampleBuilding);
             pnlAddBuilding.Cursor = Cursors.Hand;
             pnlAddBuilding.Location = new Point(3, 3);
             pnlAddBuilding.Name = "pnlAddBuilding";
@@ -80,18 +80,18 @@
             lblPlus.TextAlign = ContentAlignment.MiddleCenter;
             lblPlus.Click += lblPlus_Click;
             // 
-            // lblAddBuilding
+            // lblSampleBuilding
             // 
-            lblAddBuilding.Dock = DockStyle.Bottom;
-            lblAddBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAddBuilding.ForeColor = Color.White;
-            lblAddBuilding.Location = new Point(0, 162);
-            lblAddBuilding.Name = "lblAddBuilding";
-            lblAddBuilding.Size = new Size(248, 36);
-            lblAddBuilding.TabIndex = 1;
-            lblAddBuilding.Text = "Add Building";
-            lblAddBuilding.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddBuilding.Click += lblAddBuilding_Click;
+            lblSampleBuilding.Dock = DockStyle.Bottom;
+            lblSampleBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSampleBuilding.ForeColor = Color.White;
+            lblSampleBuilding.Location = new Point(0, 162);
+            lblSampleBuilding.Name = "lblSampleBuilding";
+            lblSampleBuilding.Size = new Size(248, 36);
+            lblSampleBuilding.TabIndex = 1;
+            lblSampleBuilding.Text = "Sample Building";
+            lblSampleBuilding.TextAlign = ContentAlignment.MiddleCenter;
+            lblSampleBuilding.Click += lblAddBuilding_Click;
             // 
             // flpBuildings
             // 
@@ -111,7 +111,7 @@
             pnlSampleAddBuilding.BackColor = Color.LightSlateGray;
             pnlSampleAddBuilding.BorderStyle = BorderStyle.FixedSingle;
             pnlSampleAddBuilding.Controls.Add(lblSamplePlusBuilding);
-            pnlSampleAddBuilding.Controls.Add(lblSampleBuilding);
+            pnlSampleAddBuilding.Controls.Add(lblAddBuilding);
             pnlSampleAddBuilding.Cursor = Cursors.Hand;
             pnlSampleAddBuilding.Location = new Point(259, 3);
             pnlSampleAddBuilding.Name = "pnlSampleAddBuilding";
@@ -131,17 +131,17 @@
             lblSamplePlusBuilding.TextAlign = ContentAlignment.MiddleCenter;
             lblSamplePlusBuilding.Click += lblSamplePlusBuilding_Click;
             // 
-            // lblSampleBuilding
+            // lblAddBuilding
             // 
-            lblSampleBuilding.Dock = DockStyle.Bottom;
-            lblSampleBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSampleBuilding.ForeColor = Color.White;
-            lblSampleBuilding.Location = new Point(0, 162);
-            lblSampleBuilding.Name = "lblSampleBuilding";
-            lblSampleBuilding.Size = new Size(248, 36);
-            lblSampleBuilding.TabIndex = 1;
-            lblSampleBuilding.Text = "Sample Building";
-            lblSampleBuilding.TextAlign = ContentAlignment.MiddleCenter;
+            lblAddBuilding.Dock = DockStyle.Bottom;
+            lblAddBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddBuilding.ForeColor = Color.White;
+            lblAddBuilding.Location = new Point(0, 162);
+            lblAddBuilding.Name = "lblAddBuilding";
+            lblAddBuilding.Size = new Size(248, 36);
+            lblAddBuilding.TabIndex = 1;
+            lblAddBuilding.Text = "Add Building";
+            lblAddBuilding.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SelectBuildingForm
             // 
@@ -169,11 +169,11 @@
 
         private Label lblTitle;
         private Panel pnlAddBuilding;
-        private Label lblAddBuilding;
+        private Label lblSampleBuilding;
         private Label lblPlus;
         private FlowLayoutPanel flpBuildings;
         private Panel pnlSampleAddBuilding;
         private Label lblSamplePlusBuilding;
-        private Label lblSampleBuilding;
+        private Label lblAddBuilding;
     }
 }

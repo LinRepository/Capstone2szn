@@ -8,31 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Capstoneszn
+namespace Capstoneszn.Forms
 {
-    public partial class ForgetForm : Form
+    public partial class PasswordSuccessForm : Form
     {
-        public ForgetForm()
+        public PasswordSuccessForm()
         {
             InitializeComponent();
         }
 
-        private void ForgetForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnVerify_Click(object sender, EventArgs e)
-        {
-            // Proceed to the Password Reset Form
-            PasswordResetForm resetForm = new PasswordResetForm();
-            resetForm.Show();
-
-            // Close this verification form
-            this.Close();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void btnReturn_Click(object sender, EventArgs e)
         {
             // Find the original hidden Login Form
             var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
@@ -43,11 +28,10 @@ namespace Capstoneszn
             }
             else
             {
-                // Fallback just in case it doesn't exist
                 new LoginForm().Show();
             }
 
-            // Close the current Forget Form
+            // Close the Success Form
             this.Close();
         }
     }

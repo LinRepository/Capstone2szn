@@ -127,6 +127,7 @@
             // 
             // btnContinuePayment
             // 
+            btnContinuePayment.Cursor = Cursors.Hand;
             btnContinuePayment.Location = new Point(659, 11);
             btnContinuePayment.Name = "btnContinuePayment";
             btnContinuePayment.Size = new Size(94, 29);
@@ -136,6 +137,7 @@
             // 
             // btnCancelPayment
             // 
+            btnCancelPayment.Cursor = Cursors.Hand;
             btnCancelPayment.Location = new Point(533, 11);
             btnCancelPayment.Name = "btnCancelPayment";
             btnCancelPayment.Size = new Size(94, 29);
@@ -195,9 +197,9 @@
             // txtReferenceNumber
             // 
             txtReferenceNumber.BorderStyle = BorderStyle.FixedSingle;
-            txtReferenceNumber.Location = new Point(60, 65);
+            txtReferenceNumber.Location = new Point(3, 34);
             txtReferenceNumber.Name = "txtReferenceNumber";
-            txtReferenceNumber.Size = new Size(125, 27);
+            txtReferenceNumber.Size = new Size(369, 27);
             txtReferenceNumber.TabIndex = 7;
             txtReferenceNumber.Visible = false;
             // 
@@ -214,9 +216,9 @@
             // txtPaymentAmount
             // 
             txtPaymentAmount.BorderStyle = BorderStyle.FixedSingle;
-            txtPaymentAmount.Location = new Point(55, 48);
+            txtPaymentAmount.Location = new Point(3, 34);
             txtPaymentAmount.Name = "txtPaymentAmount";
-            txtPaymentAmount.Size = new Size(125, 27);
+            txtPaymentAmount.Size = new Size(369, 27);
             txtPaymentAmount.TabIndex = 8;
             // 
             // lblPaymentAmount
@@ -258,9 +260,9 @@
             // 
             cboPaymentCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cboPaymentCategory.FormattingEnabled = true;
-            cboPaymentCategory.Location = new Point(103, 42);
+            cboPaymentCategory.Location = new Point(3, 34);
             cboPaymentCategory.Name = "cboPaymentCategory";
-            cboPaymentCategory.Size = new Size(151, 28);
+            cboPaymentCategory.Size = new Size(369, 28);
             cboPaymentCategory.TabIndex = 0;
             // 
             // lblPaymentCategory
@@ -307,9 +309,9 @@
             // 
             cboPaymentType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboPaymentType.FormattingEnabled = true;
-            cboPaymentType.Location = new Point(34, 42);
+            cboPaymentType.Location = new Point(0, 34);
             cboPaymentType.Name = "cboPaymentType";
-            cboPaymentType.Size = new Size(151, 28);
+            cboPaymentType.Size = new Size(372, 28);
             cboPaymentType.TabIndex = 7;
             // 
             // pnlDatePaymentMethod
@@ -336,7 +338,7 @@
             // 
             pnlPaymentMethodOptions.Controls.Add(RadioBtnGCash);
             pnlPaymentMethodOptions.Controls.Add(RadioBtnCash);
-            pnlPaymentMethodOptions.Location = new Point(65, 34);
+            pnlPaymentMethodOptions.Location = new Point(58, 34);
             pnlPaymentMethodOptions.Name = "pnlPaymentMethodOptions";
             pnlPaymentMethodOptions.Size = new Size(250, 50);
             pnlPaymentMethodOptions.TabIndex = 5;
@@ -407,9 +409,9 @@
             // 
             // dtpPaymentDate
             // 
-            dtpPaymentDate.Location = new Point(55, 38);
+            dtpPaymentDate.Location = new Point(3, 34);
             dtpPaymentDate.Name = "dtpPaymentDate";
-            dtpPaymentDate.Size = new Size(250, 27);
+            dtpPaymentDate.Size = new Size(369, 27);
             dtpPaymentDate.TabIndex = 0;
             // 
             // pnlPaymentRemarks

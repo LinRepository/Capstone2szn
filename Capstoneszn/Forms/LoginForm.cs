@@ -55,7 +55,7 @@ namespace Capstoneszn
             mainForm.Show();
 
             // Hide the Login Form
-            this.Hide();
+            this.Close();
         }
 
         private void btnSwitchBuilding_Click(object sender, EventArgs e)
@@ -65,6 +65,16 @@ namespace Capstoneszn
 
             //
             this.Close();
+        }
+
+        private void lnkForgotPassword_Click(object sender, EventArgs e)
+        {
+            // Create and show the Forget Form
+            ForgetForm forgetForm = new ForgetForm();
+            forgetForm.Show();
+
+            // Hide the Login Form
+            this.Hide();
         }
     }
 }

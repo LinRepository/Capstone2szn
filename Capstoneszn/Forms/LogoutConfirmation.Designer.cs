@@ -85,7 +85,8 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "LogoutConfirmationForm";
-            StartPosition = FormStartPosition.CenterParent;
+            ShowIcon = false;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Logout Confirmation";
             Load += LogoutConfirmationForm_Load;
             ResumeLayout(false);
