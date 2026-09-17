@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             pnlUtilitiesContent = new Panel();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
@@ -64,8 +64,8 @@
             Column10 = new DataGridViewTextBoxColumn();
             Column11 = new DataGridViewTextBoxColumn();
             Column12 = new DataGridViewTextBoxColumn();
-            Column13 = new DataGridViewComboBoxColumn();
             Column14 = new DataGridViewTextBoxColumn();
+            Column15 = new DataGridViewButtonColumn();
             pnlUtilitiesContent.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -126,14 +126,14 @@
             // dataGridView1
             // 
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5 });
             dataGridView1.Location = new Point(17, 212);
@@ -400,7 +400,7 @@
             // 
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { Column10, Column11, Column12, Column13, Column14 });
+            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { Column10, Column11, Column12, Column14, Column15 });
             dataGridView3.Location = new Point(16, 111);
             dataGridView3.Name = "dataGridView3";
             dataGridView3.RowHeadersWidth = 51;
@@ -428,20 +428,18 @@
             Column12.Name = "Column12";
             Column12.ReadOnly = true;
             // 
-            // Column13
-            // 
-            Column13.HeaderText = "Type";
-            Column13.Items.AddRange(new object[] { "Tenant", "Outsider" });
-            Column13.MinimumWidth = 6;
-            Column13.Name = "Column13";
-            Column13.ReadOnly = true;
-            // 
             // Column14
             // 
             Column14.HeaderText = "Amount";
             Column14.MinimumWidth = 6;
             Column14.Name = "Column14";
             Column14.ReadOnly = true;
+            // 
+            // Column15
+            // 
+            Column15.HeaderText = "Edit";
+            Column15.MinimumWidth = 6;
+            Column15.Name = "Column15";
             // 
             // UtilitiesControl
             // 
@@ -503,7 +501,7 @@
         private DataGridViewTextBoxColumn Column10;
         private DataGridViewTextBoxColumn Column11;
         private DataGridViewTextBoxColumn Column12;
-        private DataGridViewComboBoxColumn Column13;
         private DataGridViewTextBoxColumn Column14;
+        private DataGridViewButtonColumn Column15;
     }
 }

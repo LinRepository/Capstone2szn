@@ -511,12 +511,20 @@
             // 
             // dgvMaintenance
             // 
+            dgvMaintenance.AllowUserToAddRows = false;
+            dgvMaintenance.AllowUserToDeleteRows = false;
+            dgvMaintenance.AllowUserToResizeRows = false;
+            dgvMaintenance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvMaintenance.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMaintenance.Columns.AddRange(new DataGridViewColumn[] { Room, Issue, Status });
             dgvMaintenance.Dock = DockStyle.Fill;
             dgvMaintenance.Location = new Point(10, 55);
+            dgvMaintenance.MultiSelect = false;
             dgvMaintenance.Name = "dgvMaintenance";
+            dgvMaintenance.ReadOnly = true;
+            dgvMaintenance.RowHeadersVisible = false;
             dgvMaintenance.RowHeadersWidth = 51;
+            dgvMaintenance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvMaintenance.Size = new Size(348, 311);
             dgvMaintenance.TabIndex = 12;
             // 
@@ -525,21 +533,21 @@
             Room.HeaderText = "Room";
             Room.MinimumWidth = 6;
             Room.Name = "Room";
-            Room.Width = 125;
+            Room.ReadOnly = true;
             // 
             // Issue
             // 
             Issue.HeaderText = "Issue";
             Issue.MinimumWidth = 6;
             Issue.Name = "Issue";
-            Issue.Width = 125;
+            Issue.ReadOnly = true;
             // 
             // Status
             // 
             Status.HeaderText = "Status";
             Status.MinimumWidth = 6;
             Status.Name = "Status";
-            Status.Width = 125;
+            Status.ReadOnly = true;
             // 
             // pnlNestedHeaderMaintenanceView
             // 
