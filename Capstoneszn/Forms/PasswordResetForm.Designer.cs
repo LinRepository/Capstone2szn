@@ -179,6 +179,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "PasswordResetForm";
+            Load += PasswordResetForm_Load;
             pnlPasswordResetHeader.ResumeLayout(false);
             pnlPasswordResetActionButtons.ResumeLayout(false);
             pnlPasswordResetContent.ResumeLayout(false);

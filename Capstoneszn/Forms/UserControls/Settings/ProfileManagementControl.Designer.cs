@@ -70,6 +70,7 @@
             lblProfileManagementTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblProfileManagementTitle.Location = new Point(140, 0);
             lblProfileManagementTitle.Name = "lblProfileManagementTitle";
+            lblProfileManagementTitle.Padding = new Padding(0, 0, 150, 0);
             lblProfileManagementTitle.Size = new Size(1160, 100);
             lblProfileManagementTitle.TabIndex = 12;
             lblProfileManagementTitle.Text = "Profile Management";

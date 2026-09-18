@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             pnlSalaryHeader = new Panel();
+            lblSalaryTitle = new Label();
+            btnBackSalary = new Button();
             pnlSalaryContent = new Panel();
             pnlSalaryCenter = new Panel();
             pnlSalaryInput = new Panel();
@@ -39,8 +41,6 @@
             pnlSalaryCenterHeader = new Panel();
             lblCurrentSalary = new Label();
             lblSalaryEmployees = new Label();
-            btnBackSalary = new Button();
-            lblSalaryTitle = new Label();
             pnlSalaryHeader.SuspendLayout();
             pnlSalaryContent.SuspendLayout();
             pnlSalaryCenter.SuspendLayout();
@@ -59,8 +59,39 @@
             pnlSalaryHeader.Size = new Size(1300, 100);
             pnlSalaryHeader.TabIndex = 0;
             // 
+            // lblSalaryTitle
+            // 
+            lblSalaryTitle.BorderStyle = BorderStyle.FixedSingle;
+            lblSalaryTitle.Dock = DockStyle.Fill;
+            lblSalaryTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSalaryTitle.ForeColor = Color.White;
+            lblSalaryTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblSalaryTitle.Location = new Point(140, 0);
+            lblSalaryTitle.Name = "lblSalaryTitle";
+            lblSalaryTitle.Padding = new Padding(0, 0, 150, 0);
+            lblSalaryTitle.Size = new Size(1160, 100);
+            lblSalaryTitle.TabIndex = 9;
+            lblSalaryTitle.Text = "Salary";
+            lblSalaryTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnBackSalary
+            // 
+            btnBackSalary.Cursor = Cursors.Hand;
+            btnBackSalary.Dock = DockStyle.Left;
+            btnBackSalary.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBackSalary.Location = new Point(0, 0);
+            btnBackSalary.Margin = new Padding(0);
+            btnBackSalary.Name = "btnBackSalary";
+            btnBackSalary.Size = new Size(140, 100);
+            btnBackSalary.TabIndex = 8;
+            btnBackSalary.Text = "←";
+            btnBackSalary.TextAlign = ContentAlignment.TopCenter;
+            btnBackSalary.UseVisualStyleBackColor = true;
+            btnBackSalary.Click += btnBackSalary_Click;
+            // 
             // pnlSalaryContent
             // 
+            pnlSalaryContent.BorderStyle = BorderStyle.FixedSingle;
             pnlSalaryContent.Controls.Add(pnlSalaryCenter);
             pnlSalaryContent.Dock = DockStyle.Fill;
             pnlSalaryContent.Location = new Point(0, 100);
@@ -75,13 +106,14 @@
             pnlSalaryCenter.Controls.Add(pnlSalaryInput);
             pnlSalaryCenter.Controls.Add(pnlSalaryActionButtons);
             pnlSalaryCenter.Controls.Add(pnlSalaryCenterHeader);
-            pnlSalaryCenter.Location = new Point(352, 145);
+            pnlSalaryCenter.Location = new Point(351, 144);
             pnlSalaryCenter.Name = "pnlSalaryCenter";
             pnlSalaryCenter.Size = new Size(600, 300);
             pnlSalaryCenter.TabIndex = 13;
             // 
             // pnlSalaryInput
             // 
+            pnlSalaryInput.BorderStyle = BorderStyle.FixedSingle;
             pnlSalaryInput.Controls.Add(txtEmployeeSalary);
             pnlSalaryInput.Dock = DockStyle.Fill;
             pnlSalaryInput.Location = new Point(0, 100);
@@ -95,11 +127,12 @@
             txtEmployeeSalary.Location = new Point(180, 45);
             txtEmployeeSalary.Multiline = true;
             txtEmployeeSalary.Name = "txtEmployeeSalary";
-            txtEmployeeSalary.Size = new Size(250, 40);
+            txtEmployeeSalary.Size = new Size(248, 38);
             txtEmployeeSalary.TabIndex = 9;
             // 
             // pnlSalaryActionButtons
             // 
+            pnlSalaryActionButtons.BorderStyle = BorderStyle.FixedSingle;
             pnlSalaryActionButtons.Controls.Add(btnSalaryCancel);
             pnlSalaryActionButtons.Controls.Add(btnSalarySave);
             pnlSalaryActionButtons.Dock = DockStyle.Bottom;
@@ -161,33 +194,6 @@
             lblSalaryEmployees.TabIndex = 8;
             lblSalaryEmployees.Text = "Enter the salary of employess";
             lblSalaryEmployees.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnBackSalary
-            // 
-            btnBackSalary.Cursor = Cursors.Hand;
-            btnBackSalary.Dock = DockStyle.Left;
-            btnBackSalary.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackSalary.Location = new Point(0, 0);
-            btnBackSalary.Margin = new Padding(0);
-            btnBackSalary.Name = "btnBackSalary";
-            btnBackSalary.Size = new Size(140, 100);
-            btnBackSalary.TabIndex = 8;
-            btnBackSalary.Text = "←";
-            btnBackSalary.TextAlign = ContentAlignment.TopCenter;
-            btnBackSalary.UseVisualStyleBackColor = true;
-            // 
-            // lblSalaryTitle
-            // 
-            lblSalaryTitle.Dock = DockStyle.Fill;
-            lblSalaryTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSalaryTitle.ForeColor = Color.White;
-            lblSalaryTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblSalaryTitle.Location = new Point(140, 0);
-            lblSalaryTitle.Name = "lblSalaryTitle";
-            lblSalaryTitle.Size = new Size(1160, 100);
-            lblSalaryTitle.TabIndex = 9;
-            lblSalaryTitle.Text = "Salary";
-            lblSalaryTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SalaryControl
             // 

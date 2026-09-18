@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             pnlElectricWaterAccountHeader = new Panel();
-            pnlElectricWaterAccountContent = new Panel();
-            btnBackElectricWater = new Button();
             lblUtilitiesAccountTitle = new Label();
+            btnBackElectricWater = new Button();
+            pnlElectricWaterAccountContent = new Panel();
             tblUtilityAccounts = new TableLayoutPanel();
-            pnlElectricityAccounts = new Panel();
-            flpElectricityAccounts = new FlowLayoutPanel();
-            pnlElectricityHeader = new Panel();
-            lblElectricityTitle = new Label();
-            btnAddElectricityAccount = new Button();
             pnlWaterAccounts = new Panel();
             flpWaterAccounts = new FlowLayoutPanel();
             pnlWaterHeader = new Panel();
             lblWaterTitle = new Label();
             btnAddWaterAccount = new Button();
+            pnlElectricityAccounts = new Panel();
+            flpElectricityAccounts = new FlowLayoutPanel();
+            pnlElectricityHeader = new Panel();
+            lblElectricityTitle = new Label();
+            btnAddElectricityAccount = new Button();
             pnlElectricWaterAccountHeader.SuspendLayout();
             pnlElectricWaterAccountContent.SuspendLayout();
             tblUtilityAccounts.SuspendLayout();
-            pnlElectricityAccounts.SuspendLayout();
-            pnlElectricityHeader.SuspendLayout();
             pnlWaterAccounts.SuspendLayout();
             pnlWaterHeader.SuspendLayout();
+            pnlElectricityAccounts.SuspendLayout();
+            pnlElectricityHeader.SuspendLayout();
             SuspendLayout();
             // 
             // pnlElectricWaterAccountHeader
@@ -62,14 +62,20 @@
             pnlElectricWaterAccountHeader.Size = new Size(1300, 100);
             pnlElectricWaterAccountHeader.TabIndex = 0;
             // 
-            // pnlElectricWaterAccountContent
+            // lblUtilitiesAccountTitle
             // 
-            pnlElectricWaterAccountContent.Controls.Add(tblUtilityAccounts);
-            pnlElectricWaterAccountContent.Dock = DockStyle.Fill;
-            pnlElectricWaterAccountContent.Location = new Point(0, 100);
-            pnlElectricWaterAccountContent.Name = "pnlElectricWaterAccountContent";
-            pnlElectricWaterAccountContent.Size = new Size(1300, 650);
-            pnlElectricWaterAccountContent.TabIndex = 1;
+            lblUtilitiesAccountTitle.BorderStyle = BorderStyle.FixedSingle;
+            lblUtilitiesAccountTitle.Dock = DockStyle.Fill;
+            lblUtilitiesAccountTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUtilitiesAccountTitle.ForeColor = Color.White;
+            lblUtilitiesAccountTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblUtilitiesAccountTitle.Location = new Point(140, 0);
+            lblUtilitiesAccountTitle.Name = "lblUtilitiesAccountTitle";
+            lblUtilitiesAccountTitle.Padding = new Padding(0, 0, 150, 0);
+            lblUtilitiesAccountTitle.Size = new Size(1160, 100);
+            lblUtilitiesAccountTitle.TabIndex = 11;
+            lblUtilitiesAccountTitle.Text = "Utilities Account";
+            lblUtilitiesAccountTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnBackElectricWater
             // 
@@ -84,19 +90,16 @@
             btnBackElectricWater.Text = "←";
             btnBackElectricWater.TextAlign = ContentAlignment.TopCenter;
             btnBackElectricWater.UseVisualStyleBackColor = true;
+            btnBackElectricWater.Click += btnBackElectricWater_Click;
             // 
-            // lblUtilitiesAccountTitle
+            // pnlElectricWaterAccountContent
             // 
-            lblUtilitiesAccountTitle.Dock = DockStyle.Fill;
-            lblUtilitiesAccountTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUtilitiesAccountTitle.ForeColor = Color.White;
-            lblUtilitiesAccountTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblUtilitiesAccountTitle.Location = new Point(140, 0);
-            lblUtilitiesAccountTitle.Name = "lblUtilitiesAccountTitle";
-            lblUtilitiesAccountTitle.Size = new Size(1160, 100);
-            lblUtilitiesAccountTitle.TabIndex = 11;
-            lblUtilitiesAccountTitle.Text = "Utilities Account";
-            lblUtilitiesAccountTitle.TextAlign = ContentAlignment.MiddleCenter;
+            pnlElectricWaterAccountContent.Controls.Add(tblUtilityAccounts);
+            pnlElectricWaterAccountContent.Dock = DockStyle.Fill;
+            pnlElectricWaterAccountContent.Location = new Point(0, 100);
+            pnlElectricWaterAccountContent.Name = "pnlElectricWaterAccountContent";
+            pnlElectricWaterAccountContent.Size = new Size(1300, 650);
+            pnlElectricWaterAccountContent.TabIndex = 1;
             // 
             // tblUtilityAccounts
             // 
@@ -114,61 +117,6 @@
             tblUtilityAccounts.Size = new Size(1300, 650);
             tblUtilityAccounts.TabIndex = 0;
             // 
-            // pnlElectricityAccounts
-            // 
-            pnlElectricityAccounts.Controls.Add(flpElectricityAccounts);
-            pnlElectricityAccounts.Controls.Add(pnlElectricityHeader);
-            pnlElectricityAccounts.Dock = DockStyle.Right;
-            pnlElectricityAccounts.Location = new Point(3, 3);
-            pnlElectricityAccounts.Name = "pnlElectricityAccounts";
-            pnlElectricityAccounts.Padding = new Padding(10);
-            pnlElectricityAccounts.Size = new Size(644, 644);
-            pnlElectricityAccounts.TabIndex = 4;
-            // 
-            // flpElectricityAccounts
-            // 
-            flpElectricityAccounts.AutoScroll = true;
-            flpElectricityAccounts.Dock = DockStyle.Fill;
-            flpElectricityAccounts.FlowDirection = FlowDirection.TopDown;
-            flpElectricityAccounts.Location = new Point(10, 100);
-            flpElectricityAccounts.Name = "flpElectricityAccounts";
-            flpElectricityAccounts.Padding = new Padding(5);
-            flpElectricityAccounts.Size = new Size(624, 534);
-            flpElectricityAccounts.TabIndex = 1;
-            flpElectricityAccounts.WrapContents = false;
-            // 
-            // pnlElectricityHeader
-            // 
-            pnlElectricityHeader.Controls.Add(lblElectricityTitle);
-            pnlElectricityHeader.Controls.Add(btnAddElectricityAccount);
-            pnlElectricityHeader.Dock = DockStyle.Top;
-            pnlElectricityHeader.Location = new Point(10, 10);
-            pnlElectricityHeader.Name = "pnlElectricityHeader";
-            pnlElectricityHeader.Size = new Size(624, 90);
-            pnlElectricityHeader.TabIndex = 0;
-            // 
-            // lblElectricityTitle
-            // 
-            lblElectricityTitle.Dock = DockStyle.Left;
-            lblElectricityTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblElectricityTitle.ForeColor = Color.White;
-            lblElectricityTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityTitle.Location = new Point(0, 0);
-            lblElectricityTitle.Name = "lblElectricityTitle";
-            lblElectricityTitle.Size = new Size(415, 90);
-            lblElectricityTitle.TabIndex = 13;
-            lblElectricityTitle.Text = "Electricity Bill Account";
-            lblElectricityTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnAddElectricityAccount
-            // 
-            btnAddElectricityAccount.Location = new Point(410, 28);
-            btnAddElectricityAccount.Name = "btnAddElectricityAccount";
-            btnAddElectricityAccount.Size = new Size(200, 29);
-            btnAddElectricityAccount.TabIndex = 0;
-            btnAddElectricityAccount.Text = "Add Electricity Account";
-            btnAddElectricityAccount.UseVisualStyleBackColor = true;
-            // 
             // pnlWaterAccounts
             // 
             pnlWaterAccounts.Controls.Add(flpWaterAccounts);
@@ -183,6 +131,7 @@
             // flpWaterAccounts
             // 
             flpWaterAccounts.AutoScroll = true;
+            flpWaterAccounts.BorderStyle = BorderStyle.FixedSingle;
             flpWaterAccounts.Dock = DockStyle.Fill;
             flpWaterAccounts.FlowDirection = FlowDirection.TopDown;
             flpWaterAccounts.Location = new Point(10, 100);
@@ -194,6 +143,7 @@
             // 
             // pnlWaterHeader
             // 
+            pnlWaterHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlWaterHeader.Controls.Add(lblWaterTitle);
             pnlWaterHeader.Controls.Add(btnAddWaterAccount);
             pnlWaterHeader.Dock = DockStyle.Top;
@@ -210,7 +160,7 @@
             lblWaterTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblWaterTitle.Location = new Point(0, 0);
             lblWaterTitle.Name = "lblWaterTitle";
-            lblWaterTitle.Size = new Size(415, 90);
+            lblWaterTitle.Size = new Size(415, 88);
             lblWaterTitle.TabIndex = 12;
             lblWaterTitle.Text = "Water Bill Account";
             lblWaterTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -224,6 +174,63 @@
             btnAddWaterAccount.Text = "Add Water Account";
             btnAddWaterAccount.UseVisualStyleBackColor = true;
             // 
+            // pnlElectricityAccounts
+            // 
+            pnlElectricityAccounts.Controls.Add(flpElectricityAccounts);
+            pnlElectricityAccounts.Controls.Add(pnlElectricityHeader);
+            pnlElectricityAccounts.Dock = DockStyle.Right;
+            pnlElectricityAccounts.Location = new Point(3, 3);
+            pnlElectricityAccounts.Name = "pnlElectricityAccounts";
+            pnlElectricityAccounts.Padding = new Padding(10);
+            pnlElectricityAccounts.Size = new Size(644, 644);
+            pnlElectricityAccounts.TabIndex = 4;
+            // 
+            // flpElectricityAccounts
+            // 
+            flpElectricityAccounts.AutoScroll = true;
+            flpElectricityAccounts.BorderStyle = BorderStyle.FixedSingle;
+            flpElectricityAccounts.Dock = DockStyle.Fill;
+            flpElectricityAccounts.FlowDirection = FlowDirection.TopDown;
+            flpElectricityAccounts.Location = new Point(10, 100);
+            flpElectricityAccounts.Name = "flpElectricityAccounts";
+            flpElectricityAccounts.Padding = new Padding(5);
+            flpElectricityAccounts.Size = new Size(624, 534);
+            flpElectricityAccounts.TabIndex = 1;
+            flpElectricityAccounts.WrapContents = false;
+            // 
+            // pnlElectricityHeader
+            // 
+            pnlElectricityHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlElectricityHeader.Controls.Add(lblElectricityTitle);
+            pnlElectricityHeader.Controls.Add(btnAddElectricityAccount);
+            pnlElectricityHeader.Dock = DockStyle.Top;
+            pnlElectricityHeader.Location = new Point(10, 10);
+            pnlElectricityHeader.Name = "pnlElectricityHeader";
+            pnlElectricityHeader.Size = new Size(624, 90);
+            pnlElectricityHeader.TabIndex = 0;
+            // 
+            // lblElectricityTitle
+            // 
+            lblElectricityTitle.Dock = DockStyle.Left;
+            lblElectricityTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblElectricityTitle.ForeColor = Color.White;
+            lblElectricityTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblElectricityTitle.Location = new Point(0, 0);
+            lblElectricityTitle.Name = "lblElectricityTitle";
+            lblElectricityTitle.Size = new Size(415, 88);
+            lblElectricityTitle.TabIndex = 13;
+            lblElectricityTitle.Text = "Electricity Bill Account";
+            lblElectricityTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnAddElectricityAccount
+            // 
+            btnAddElectricityAccount.Location = new Point(410, 28);
+            btnAddElectricityAccount.Name = "btnAddElectricityAccount";
+            btnAddElectricityAccount.Size = new Size(200, 29);
+            btnAddElectricityAccount.TabIndex = 0;
+            btnAddElectricityAccount.Text = "Add Electricity Account";
+            btnAddElectricityAccount.UseVisualStyleBackColor = true;
+            // 
             // ElectricWaterAccountControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -236,10 +243,10 @@
             pnlElectricWaterAccountHeader.ResumeLayout(false);
             pnlElectricWaterAccountContent.ResumeLayout(false);
             tblUtilityAccounts.ResumeLayout(false);
-            pnlElectricityAccounts.ResumeLayout(false);
-            pnlElectricityHeader.ResumeLayout(false);
             pnlWaterAccounts.ResumeLayout(false);
             pnlWaterHeader.ResumeLayout(false);
+            pnlElectricityAccounts.ResumeLayout(false);
+            pnlElectricityHeader.ResumeLayout(false);
             ResumeLayout(false);
         }
 

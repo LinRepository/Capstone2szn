@@ -187,7 +187,7 @@ namespace Capstoneszn
             if (confirmForm.ShowDialog() == DialogResult.Yes)
             {
                 // If they clicked Yes, check if SelectBuildingForm is already open and hidden
-                var selectForm = Application.OpenForms.OfType<SelectBuildingForm>().FirstOrDefault();
+                var selectForm = Application.OpenForms.OfType<Login>().FirstOrDefault();
 
                 if (selectForm != null)
                 {
@@ -197,7 +197,7 @@ namespace Capstoneszn
                 else
                 {
                     // If it doesn't exist for some reason, create a new one
-                    new SelectBuildingForm().Show();
+                    new Login().Show();
                 }
 
                 // Close the MainForm

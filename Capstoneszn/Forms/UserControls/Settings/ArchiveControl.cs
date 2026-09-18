@@ -16,5 +16,11 @@ namespace Capstoneszn.Forms.UserControls.Settings
         {
             InitializeComponent();
         }
+
+        private void btnBackArchive_Click(object sender, EventArgs e)
+        {
+            this.Parent.Controls.Remove(this);
+            this.Dispose();
+        }
     }
 }

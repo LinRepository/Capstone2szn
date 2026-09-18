@@ -38,7 +38,7 @@ namespace Capstoneszn
         private void btnCancel_Click_1(object sender, EventArgs e)
         {
             // Return to the Select Building Form
-            var selectForm = Application.OpenForms.OfType<SelectBuildingForm>().FirstOrDefault();
+            var selectForm = Application.OpenForms.OfType<Login>().FirstOrDefault();
 
             if (selectForm != null)
             {
@@ -46,10 +46,10 @@ namespace Capstoneszn
             }
             else
             {
-                new SelectBuildingForm().Show();
+                new Login().Show();
             }
 
-            this.Close(); // Close the current AddBuildingForm
+            this.Close();
         }
 
     }

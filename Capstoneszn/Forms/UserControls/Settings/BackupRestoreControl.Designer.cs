@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             pnlBackupRestoreHeader = new Panel();
+            lblBackupRestoreTitle = new Label();
+            btnBackBackupRestore = new Button();
             pnlBackupRestoreContent = new Panel();
             pnlBackupRestoreCenter = new Panel();
             pnlBackupRestoreActions = new Panel();
@@ -36,8 +38,6 @@
             btnBackupData = new Button();
             pnlBackupRestoreCenterHeader = new Panel();
             lblBackUpUpdate = new Label();
-            btnBackBackupRestore = new Button();
-            lblBackupRestoreTitle = new Label();
             pnlBackupRestoreHeader.SuspendLayout();
             pnlBackupRestoreContent.SuspendLayout();
             pnlBackupRestoreCenter.SuspendLayout();
@@ -55,8 +55,39 @@
             pnlBackupRestoreHeader.Size = new Size(1300, 100);
             pnlBackupRestoreHeader.TabIndex = 0;
             // 
+            // lblBackupRestoreTitle
+            // 
+            lblBackupRestoreTitle.BorderStyle = BorderStyle.FixedSingle;
+            lblBackupRestoreTitle.Dock = DockStyle.Fill;
+            lblBackupRestoreTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblBackupRestoreTitle.ForeColor = Color.White;
+            lblBackupRestoreTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblBackupRestoreTitle.Location = new Point(140, 0);
+            lblBackupRestoreTitle.Name = "lblBackupRestoreTitle";
+            lblBackupRestoreTitle.Padding = new Padding(0, 0, 150, 0);
+            lblBackupRestoreTitle.Size = new Size(1160, 100);
+            lblBackupRestoreTitle.TabIndex = 8;
+            lblBackupRestoreTitle.Text = "Backup and Restore";
+            lblBackupRestoreTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnBackBackupRestore
+            // 
+            btnBackBackupRestore.Cursor = Cursors.Hand;
+            btnBackBackupRestore.Dock = DockStyle.Left;
+            btnBackBackupRestore.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBackBackupRestore.Location = new Point(0, 0);
+            btnBackBackupRestore.Margin = new Padding(0);
+            btnBackBackupRestore.Name = "btnBackBackupRestore";
+            btnBackBackupRestore.Size = new Size(140, 100);
+            btnBackBackupRestore.TabIndex = 7;
+            btnBackBackupRestore.Text = "←";
+            btnBackBackupRestore.TextAlign = ContentAlignment.TopCenter;
+            btnBackBackupRestore.UseVisualStyleBackColor = true;
+            btnBackBackupRestore.Click += btnBackBackupRestore_Click;
+            // 
             // pnlBackupRestoreContent
             // 
+            pnlBackupRestoreContent.BorderStyle = BorderStyle.FixedSingle;
             pnlBackupRestoreContent.Controls.Add(pnlBackupRestoreCenter);
             pnlBackupRestoreContent.Dock = DockStyle.Fill;
             pnlBackupRestoreContent.Location = new Point(0, 100);
@@ -70,7 +101,7 @@
             pnlBackupRestoreCenter.BorderStyle = BorderStyle.FixedSingle;
             pnlBackupRestoreCenter.Controls.Add(pnlBackupRestoreActions);
             pnlBackupRestoreCenter.Controls.Add(pnlBackupRestoreCenterHeader);
-            pnlBackupRestoreCenter.Location = new Point(349, 166);
+            pnlBackupRestoreCenter.Location = new Point(348, 165);
             pnlBackupRestoreCenter.Name = "pnlBackupRestoreCenter";
             pnlBackupRestoreCenter.Size = new Size(600, 275);
             pnlBackupRestoreCenter.TabIndex = 16;
@@ -130,33 +161,6 @@
             lblBackUpUpdate.TabIndex = 13;
             lblBackUpUpdate.Text = "Last Status of Backup and Restore:";
             lblBackUpUpdate.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnBackBackupRestore
-            // 
-            btnBackBackupRestore.Cursor = Cursors.Hand;
-            btnBackBackupRestore.Dock = DockStyle.Left;
-            btnBackBackupRestore.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackBackupRestore.Location = new Point(0, 0);
-            btnBackBackupRestore.Margin = new Padding(0);
-            btnBackBackupRestore.Name = "btnBackBackupRestore";
-            btnBackBackupRestore.Size = new Size(140, 100);
-            btnBackBackupRestore.TabIndex = 7;
-            btnBackBackupRestore.Text = "←";
-            btnBackBackupRestore.TextAlign = ContentAlignment.TopCenter;
-            btnBackBackupRestore.UseVisualStyleBackColor = true;
-            // 
-            // lblBackupRestoreTitle
-            // 
-            lblBackupRestoreTitle.Dock = DockStyle.Fill;
-            lblBackupRestoreTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblBackupRestoreTitle.ForeColor = Color.White;
-            lblBackupRestoreTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblBackupRestoreTitle.Location = new Point(140, 0);
-            lblBackupRestoreTitle.Name = "lblBackupRestoreTitle";
-            lblBackupRestoreTitle.Size = new Size(1160, 100);
-            lblBackupRestoreTitle.TabIndex = 8;
-            lblBackupRestoreTitle.Text = "Backup and Restore";
-            lblBackupRestoreTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // BackupRestoreControl
             // 

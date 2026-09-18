@@ -14,16 +14,15 @@ namespace Capstoneszn.Forms.UserControls.Settings
     public partial class ProfileManagementControl : UserControl
     {
         private SettingsControl sc;
-        public ProfileManagementControl(SettingsControl parent)
+        public ProfileManagementControl()
         {
             InitializeComponent();
-            sc = parent;
         }
 
         private void btnBackProfileManagement_Click(object sender, EventArgs e)
         {
-            sc.ShowMenuOptions();
-            sc.Controls.Remove(this);
+            this.Parent.Controls.Remove(this);
+            this.Dispose();
         }
 
     }

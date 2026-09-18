@@ -92,6 +92,7 @@
             // 
             // pnlAddIssueHeader
             // 
+            pnlAddIssueHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlAddIssueHeader.Controls.Add(lblAddIssueTitle);
             pnlAddIssueHeader.Dock = DockStyle.Top;
             pnlAddIssueHeader.Location = new Point(0, 0);
@@ -111,10 +112,10 @@
             lblAddIssueTitle.TabIndex = 39;
             lblAddIssueTitle.Text = "Add Maintenance Issue";
             lblAddIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddIssueTitle.Visible = false;
             // 
             // pnlAddIssueActions
             // 
+            pnlAddIssueActions.BorderStyle = BorderStyle.FixedSingle;
             pnlAddIssueActions.Controls.Add(btnAddIssue);
             pnlAddIssueActions.Controls.Add(btnCancelIssue);
             pnlAddIssueActions.Dock = DockStyle.Bottom;
@@ -125,6 +126,7 @@
             // 
             // btnAddIssue
             // 
+            btnAddIssue.Cursor = Cursors.Hand;
             btnAddIssue.Location = new Point(355, 11);
             btnAddIssue.Name = "btnAddIssue";
             btnAddIssue.Size = new Size(105, 29);
@@ -135,6 +137,7 @@
             // 
             // btnCancelIssue
             // 
+            btnCancelIssue.Cursor = Cursors.Hand;
             btnCancelIssue.Location = new Point(238, 11);
             btnCancelIssue.Name = "btnCancelIssue";
             btnCancelIssue.Size = new Size(94, 29);
@@ -171,11 +174,12 @@
             // 
             // pnlMaterialsNo
             // 
+            pnlMaterialsNo.BorderStyle = BorderStyle.FixedSingle;
             pnlMaterialsNo.Controls.Add(rdoMaterialsNo);
             pnlMaterialsNo.Dock = DockStyle.Right;
-            pnlMaterialsNo.Location = new Point(201, 40);
+            pnlMaterialsNo.Location = new Point(218, 40);
             pnlMaterialsNo.Name = "pnlMaterialsNo";
-            pnlMaterialsNo.Size = new Size(230, 45);
+            pnlMaterialsNo.Size = new Size(213, 45);
             pnlMaterialsNo.TabIndex = 57;
             // 
             // rdoMaterialsNo
@@ -192,11 +196,12 @@
             // 
             // pnlMaterialsYes
             // 
+            pnlMaterialsYes.BorderStyle = BorderStyle.FixedSingle;
             pnlMaterialsYes.Controls.Add(rdoMaterialsYes);
             pnlMaterialsYes.Dock = DockStyle.Left;
             pnlMaterialsYes.Location = new Point(0, 40);
             pnlMaterialsYes.Name = "pnlMaterialsYes";
-            pnlMaterialsYes.Size = new Size(230, 45);
+            pnlMaterialsYes.Size = new Size(212, 45);
             pnlMaterialsYes.TabIndex = 56;
             // 
             // rdoMaterialsYes
@@ -213,6 +218,7 @@
             // 
             // lblMaterialsNeeded
             // 
+            lblMaterialsNeeded.BorderStyle = BorderStyle.FixedSingle;
             lblMaterialsNeeded.Dock = DockStyle.Top;
             lblMaterialsNeeded.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblMaterialsNeeded.ForeColor = Color.White;
@@ -223,7 +229,6 @@
             lblMaterialsNeeded.TabIndex = 55;
             lblMaterialsNeeded.Text = "Materials Needed?";
             lblMaterialsNeeded.TextAlign = ContentAlignment.MiddleCenter;
-            lblMaterialsNeeded.Visible = false;
             // 
             // pnlIssueInformation
             // 
@@ -241,6 +246,7 @@
             // 
             // lblIssueDate
             // 
+            lblIssueDate.BorderStyle = BorderStyle.FixedSingle;
             lblIssueDate.Dock = DockStyle.Bottom;
             lblIssueDate.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblIssueDate.ForeColor = Color.White;
@@ -251,7 +257,6 @@
             lblIssueDate.TabIndex = 54;
             lblIssueDate.Text = "Date";
             lblIssueDate.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueDate.Visible = false;
             // 
             // dtpIssueDate
             // 
@@ -274,6 +279,7 @@
             // 
             // lblDescription
             // 
+            lblDescription.BorderStyle = BorderStyle.FixedSingle;
             lblDescription.Dock = DockStyle.Top;
             lblDescription.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDescription.ForeColor = Color.White;
@@ -284,7 +290,6 @@
             lblDescription.TabIndex = 51;
             lblDescription.Text = "Description";
             lblDescription.TextAlign = ContentAlignment.MiddleCenter;
-            lblDescription.Visible = false;
             // 
             // txtIssue
             // 
@@ -297,6 +302,7 @@
             // 
             // lblIssue
             // 
+            lblIssue.BorderStyle = BorderStyle.FixedSingle;
             lblIssue.Dock = DockStyle.Top;
             lblIssue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblIssue.ForeColor = Color.White;
@@ -307,7 +313,6 @@
             lblIssue.TabIndex = 48;
             lblIssue.Text = "Issue";
             lblIssue.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssue.Visible = false;
             // 
             // pnlResponsible
             // 
@@ -329,7 +334,6 @@
             clbResponsible.Name = "clbResponsible";
             clbResponsible.Size = new Size(431, 85);
             clbResponsible.TabIndex = 49;
-            clbResponsible.Visible = false;
             // 
             // pnlResponsibleOptions
             // 
@@ -344,6 +348,7 @@
             // 
             // pnlResponsibleSpecify
             // 
+            pnlResponsibleSpecify.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsibleSpecify.Controls.Add(rdoResponsibleSpecify);
             pnlResponsibleSpecify.Dock = DockStyle.Fill;
             pnlResponsibleSpecify.Location = new Point(150, 0);
@@ -355,7 +360,7 @@
             // 
             rdoResponsibleSpecify.AutoSize = true;
             rdoResponsibleSpecify.ForeColor = Color.Transparent;
-            rdoResponsibleSpecify.Location = new Point(52, 10);
+            rdoResponsibleSpecify.Location = new Point(29, 10);
             rdoResponsibleSpecify.Name = "rdoResponsibleSpecify";
             rdoResponsibleSpecify.Size = new Size(78, 24);
             rdoResponsibleSpecify.TabIndex = 3;
@@ -365,6 +370,7 @@
             // 
             // pnlResponsibleNone
             // 
+            pnlResponsibleNone.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsibleNone.Controls.Add(rdoResponsibleNone);
             pnlResponsibleNone.Dock = DockStyle.Right;
             pnlResponsibleNone.Location = new Point(281, 0);
@@ -386,6 +392,7 @@
             // 
             // pnlResponsibleAll
             // 
+            pnlResponsibleAll.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsibleAll.Controls.Add(rdoResponsibleAll);
             pnlResponsibleAll.Dock = DockStyle.Left;
             pnlResponsibleAll.Location = new Point(0, 0);
@@ -407,6 +414,7 @@
             // 
             // lblResponsible
             // 
+            lblResponsible.BorderStyle = BorderStyle.FixedSingle;
             lblResponsible.Dock = DockStyle.Top;
             lblResponsible.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblResponsible.ForeColor = Color.White;
@@ -417,7 +425,6 @@
             lblResponsible.TabIndex = 47;
             lblResponsible.Text = "Responsible";
             lblResponsible.TextAlign = ContentAlignment.MiddleCenter;
-            lblResponsible.Visible = false;
             // 
             // pnlAffectedTenants
             // 
@@ -439,7 +446,6 @@
             clbAffectedTenants.Name = "clbAffectedTenants";
             clbAffectedTenants.Size = new Size(431, 85);
             clbAffectedTenants.TabIndex = 46;
-            clbAffectedTenants.Visible = false;
             // 
             // pnlTenantOptions
             // 
@@ -454,6 +460,7 @@
             // 
             // pnlTenantSpecify
             // 
+            pnlTenantSpecify.BorderStyle = BorderStyle.FixedSingle;
             pnlTenantSpecify.Controls.Add(rdoTenantSpecify);
             pnlTenantSpecify.Dock = DockStyle.Fill;
             pnlTenantSpecify.Location = new Point(150, 0);
@@ -465,7 +472,7 @@
             // 
             rdoTenantSpecify.AutoSize = true;
             rdoTenantSpecify.ForeColor = Color.Transparent;
-            rdoTenantSpecify.Location = new Point(53, 10);
+            rdoTenantSpecify.Location = new Point(29, 10);
             rdoTenantSpecify.Name = "rdoTenantSpecify";
             rdoTenantSpecify.Size = new Size(78, 24);
             rdoTenantSpecify.TabIndex = 1;
@@ -475,6 +482,7 @@
             // 
             // pnlTenantNone
             // 
+            pnlTenantNone.BorderStyle = BorderStyle.FixedSingle;
             pnlTenantNone.Controls.Add(rdoTenantNone);
             pnlTenantNone.Dock = DockStyle.Right;
             pnlTenantNone.Location = new Point(281, 0);
@@ -496,6 +504,7 @@
             // 
             // pnlTenantAll
             // 
+            pnlTenantAll.BorderStyle = BorderStyle.FixedSingle;
             pnlTenantAll.Controls.Add(rdoTenantAll);
             pnlTenantAll.Dock = DockStyle.Left;
             pnlTenantAll.Location = new Point(0, 0);
@@ -517,6 +526,7 @@
             // 
             // lblAffectedTenants
             // 
+            lblAffectedTenants.BorderStyle = BorderStyle.FixedSingle;
             lblAffectedTenants.Dock = DockStyle.Top;
             lblAffectedTenants.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAffectedTenants.ForeColor = Color.White;
@@ -527,10 +537,10 @@
             lblAffectedTenants.TabIndex = 43;
             lblAffectedTenants.Text = "Affected Tenant(s)";
             lblAffectedTenants.TextAlign = ContentAlignment.MiddleCenter;
-            lblAffectedTenants.Visible = false;
             // 
             // pnlRoomSelection
             // 
+            pnlRoomSelection.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomSelection.Controls.Add(cboRoom);
             pnlRoomSelection.Controls.Add(lblRoom);
             pnlRoomSelection.Dock = DockStyle.Top;
@@ -543,7 +553,7 @@
             // 
             cboRoom.DropDownStyle = ComboBoxStyle.DropDownList;
             cboRoom.FormattingEnabled = true;
-            cboRoom.Location = new Point(202, 11);
+            cboRoom.Location = new Point(126, 11);
             cboRoom.Name = "cboRoom";
             cboRoom.Size = new Size(200, 28);
             cboRoom.TabIndex = 40;
@@ -554,13 +564,12 @@
             lblRoom.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoom.ForeColor = Color.White;
             lblRoom.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoom.Location = new Point(134, 13);
+            lblRoom.Location = new Point(60, 11);
             lblRoom.Name = "lblRoom";
             lblRoom.Size = new Size(60, 25);
             lblRoom.TabIndex = 39;
             lblRoom.Text = "Room";
             lblRoom.TextAlign = ContentAlignment.MiddleCenter;
-            lblRoom.Visible = false;
             // 
             // AddIssueForm
             // 

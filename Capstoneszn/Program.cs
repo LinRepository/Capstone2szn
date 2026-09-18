@@ -15,11 +15,7 @@ namespace Capstoneszn
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            //DATABASE BTW
-            DatabaseHelper.InitializeDatabase();
-            //DATABASE BTW
-
-            Application.Run(new SelectBuildingForm());
+            Application.Run(new Login());
         }
     }
 }

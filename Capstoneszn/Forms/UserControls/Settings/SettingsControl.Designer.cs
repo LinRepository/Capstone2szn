@@ -31,7 +31,6 @@
             pnlSettingsContent = new Panel();
             tblSettingsOptions = new TableLayoutPanel();
             pnlProfileManagement = new Panel();
-            lblProfileManagement = new Label();
             pnlBackupRestore = new Panel();
             lblBackupRestore = new Label();
             pnlElectricWaterAccount = new Panel();
@@ -42,6 +41,7 @@
             lblSalary = new Label();
             pnlSettingsHeader = new Panel();
             lblSettingsTitle = new Label();
+            lblProfileManagement = new Label();
             pnlSettingsContent.SuspendLayout();
             tblSettingsOptions.SuspendLayout();
             pnlProfileManagement.SuspendLayout();
@@ -95,21 +95,6 @@
             pnlProfileManagement.Size = new Size(1240, 105);
             pnlProfileManagement.TabIndex = 0;
             // 
-            // lblProfileManagement
-            // 
-            lblProfileManagement.BorderStyle = BorderStyle.FixedSingle;
-            lblProfileManagement.Dock = DockStyle.Fill;
-            lblProfileManagement.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblProfileManagement.ForeColor = Color.White;
-            lblProfileManagement.ImageAlign = ContentAlignment.MiddleRight;
-            lblProfileManagement.Location = new Point(0, 0);
-            lblProfileManagement.Name = "lblProfileManagement";
-            lblProfileManagement.Size = new Size(1240, 105);
-            lblProfileManagement.TabIndex = 6;
-            lblProfileManagement.Text = "Profile Management";
-            lblProfileManagement.TextAlign = ContentAlignment.MiddleCenter;
-            lblProfileManagement.Click += lblProfileManagement_Click;
-            // 
             // pnlBackupRestore
             // 
             pnlBackupRestore.Controls.Add(lblBackupRestore);
@@ -134,6 +119,7 @@
             lblBackupRestore.TabIndex = 6;
             lblBackupRestore.Text = "Backup and Restore";
             lblBackupRestore.TextAlign = ContentAlignment.MiddleCenter;
+            lblBackupRestore.Click += lblBackupRestore_Click;
             // 
             // pnlElectricWaterAccount
             // 
@@ -159,6 +145,7 @@
             lblUtilitiesAccount.TabIndex = 6;
             lblUtilitiesAccount.Text = "Utilities Account";
             lblUtilitiesAccount.TextAlign = ContentAlignment.MiddleCenter;
+            lblUtilitiesAccount.Click += lblUtilitiesAccount_Click;
             // 
             // pnlArchive
             // 
@@ -184,6 +171,7 @@
             lblArchive.TabIndex = 6;
             lblArchive.Text = "Archive";
             lblArchive.TextAlign = ContentAlignment.MiddleCenter;
+            lblArchive.Click += lblArchive_Click;
             // 
             // pnlSalary
             // 
@@ -209,6 +197,7 @@
             lblSalary.TabIndex = 6;
             lblSalary.Text = "Salary";
             lblSalary.TextAlign = ContentAlignment.MiddleCenter;
+            lblSalary.Click += lblSalary_Click;
             // 
             // pnlSettingsHeader
             // 
@@ -232,6 +221,21 @@
             lblSettingsTitle.TabIndex = 5;
             lblSettingsTitle.Text = "Settings";
             lblSettingsTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblProfileManagement
+            // 
+            lblProfileManagement.BorderStyle = BorderStyle.FixedSingle;
+            lblProfileManagement.Dock = DockStyle.Fill;
+            lblProfileManagement.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblProfileManagement.ForeColor = Color.White;
+            lblProfileManagement.ImageAlign = ContentAlignment.MiddleRight;
+            lblProfileManagement.Location = new Point(0, 0);
+            lblProfileManagement.Name = "lblProfileManagement";
+            lblProfileManagement.Size = new Size(1240, 105);
+            lblProfileManagement.TabIndex = 7;
+            lblProfileManagement.Text = "Profile Management";
+            lblProfileManagement.TextAlign = ContentAlignment.MiddleCenter;
+            lblProfileManagement.Click += lblProfileManagement_Click;
             // 
             // SettingsControl
             // 
@@ -262,12 +266,12 @@
         private Panel pnlElectricWaterAccount;
         private Panel pnlArchive;
         private Panel pnlSalary;
-        private Label lblProfileManagement;
         private Label lblBackupRestore;
         private Label lblUtilitiesAccount;
         private Label lblArchive;
         private Label lblSalary;
         private Panel pnlSettingsHeader;
         private Label lblSettingsTitle;
+        private Label lblProfileManagement;
     }
 }

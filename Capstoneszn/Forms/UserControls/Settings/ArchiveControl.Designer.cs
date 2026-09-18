@@ -34,36 +34,36 @@
             pnlArchiveContent = new Panel();
             tabArchive = new TabControl();
             tabRooms = new TabPage();
-            tabBillAccounts = new TabPage();
-            tabAudits = new TabPage();
-            tabTenants = new TabPage();
-            tabEmployee = new TabPage();
             dgvArchivedRooms = new DataGridView();
-            dgvArchivedBillAccounts = new DataGridView();
-            dgvArchivedAudits = new DataGridView();
-            dgvArchivedTenants = new DataGridView();
-            dgvArchivedEmployees = new DataGridView();
             colRoomArchiveID = new DataGridViewTextBoxColumn();
             colRoomArchivedAt = new DataGridViewTextBoxColumn();
             colArchivedRoom = new DataGridViewTextBoxColumn();
             colRoomArchiveAction = new DataGridViewButtonColumn();
+            tabBillAccounts = new TabPage();
+            dgvArchivedBillAccounts = new DataGridView();
             colBillAccountArchiveID = new DataGridViewTextBoxColumn();
             colBillAccountArchivedAt = new DataGridViewTextBoxColumn();
             colArchivedBillAccountType = new DataGridViewTextBoxColumn();
             colArchivedBillAccountRoom = new DataGridViewTextBoxColumn();
             colArchivedBillAccountNumber = new DataGridViewTextBoxColumn();
             colBillAccountArchiveAction = new DataGridViewButtonColumn();
+            tabAudits = new TabPage();
+            dgvArchivedAudits = new DataGridView();
             colAuditArchiveID = new DataGridViewTextBoxColumn();
             colAuditArchivedAt = new DataGridViewTextBoxColumn();
             colArchivedAuditCategory = new DataGridViewTextBoxColumn();
             colArchivedAuditDateTime = new DataGridViewTextBoxColumn();
             colAuditArchiveAction = new DataGridViewButtonColumn();
+            tabTenants = new TabPage();
+            dgvArchivedTenants = new DataGridView();
             colTenantArchiveID = new DataGridViewTextBoxColumn();
             colTenantArchivedAt = new DataGridViewTextBoxColumn();
             colArchivedTenantName = new DataGridViewTextBoxColumn();
             colArchivedTenantContact = new DataGridViewTextBoxColumn();
             colArchivedTenantMoveIn = new DataGridViewTextBoxColumn();
             colTenantArchiveAction = new DataGridViewButtonColumn();
+            tabEmployee = new TabPage();
+            dgvArchivedEmployees = new DataGridView();
             colEmployeeArchiveID = new DataGridViewTextBoxColumn();
             colEmployeeArchivedAt = new DataGridViewTextBoxColumn();
             colArchivedEmployeeName = new DataGridViewTextBoxColumn();
@@ -74,14 +74,14 @@
             pnlArchiveContent.SuspendLayout();
             tabArchive.SuspendLayout();
             tabRooms.SuspendLayout();
-            tabBillAccounts.SuspendLayout();
-            tabAudits.SuspendLayout();
-            tabTenants.SuspendLayout();
-            tabEmployee.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedRooms).BeginInit();
+            tabBillAccounts.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedBillAccounts).BeginInit();
+            tabAudits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedAudits).BeginInit();
+            tabTenants.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedTenants).BeginInit();
+            tabEmployee.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedEmployees).BeginInit();
             SuspendLayout();
             // 
@@ -97,12 +97,14 @@
             // 
             // lblArchiveTitle
             // 
+            lblArchiveTitle.BorderStyle = BorderStyle.FixedSingle;
             lblArchiveTitle.Dock = DockStyle.Fill;
             lblArchiveTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblArchiveTitle.ForeColor = Color.White;
             lblArchiveTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblArchiveTitle.Location = new Point(140, 0);
             lblArchiveTitle.Name = "lblArchiveTitle";
+            lblArchiveTitle.Padding = new Padding(0, 0, 125, 0);
             lblArchiveTitle.Size = new Size(1160, 100);
             lblArchiveTitle.TabIndex = 10;
             lblArchiveTitle.Text = "Archive";
@@ -121,9 +123,11 @@
             btnBackArchive.Text = "←";
             btnBackArchive.TextAlign = ContentAlignment.TopCenter;
             btnBackArchive.UseVisualStyleBackColor = true;
+            btnBackArchive.Click += btnBackArchive_Click;
             // 
             // pnlArchiveContent
             // 
+            pnlArchiveContent.BorderStyle = BorderStyle.FixedSingle;
             pnlArchiveContent.Controls.Add(tabArchive);
             pnlArchiveContent.Dock = DockStyle.Fill;
             pnlArchiveContent.Location = new Point(0, 100);
@@ -143,7 +147,7 @@
             tabArchive.Location = new Point(10, 10);
             tabArchive.Name = "tabArchive";
             tabArchive.SelectedIndex = 0;
-            tabArchive.Size = new Size(1280, 630);
+            tabArchive.Size = new Size(1278, 628);
             tabArchive.TabIndex = 0;
             // 
             // tabRooms
@@ -152,54 +156,10 @@
             tabRooms.Location = new Point(4, 29);
             tabRooms.Name = "tabRooms";
             tabRooms.Padding = new Padding(3);
-            tabRooms.Size = new Size(1272, 597);
+            tabRooms.Size = new Size(1270, 595);
             tabRooms.TabIndex = 0;
             tabRooms.Text = "Rooms";
             tabRooms.UseVisualStyleBackColor = true;
-            // 
-            // tabBillAccounts
-            // 
-            tabBillAccounts.Controls.Add(dgvArchivedBillAccounts);
-            tabBillAccounts.Location = new Point(4, 29);
-            tabBillAccounts.Name = "tabBillAccounts";
-            tabBillAccounts.Padding = new Padding(3);
-            tabBillAccounts.Size = new Size(1272, 597);
-            tabBillAccounts.TabIndex = 1;
-            tabBillAccounts.Text = "Bill Accounts";
-            tabBillAccounts.UseVisualStyleBackColor = true;
-            // 
-            // tabAudits
-            // 
-            tabAudits.Controls.Add(dgvArchivedAudits);
-            tabAudits.Location = new Point(4, 29);
-            tabAudits.Name = "tabAudits";
-            tabAudits.Padding = new Padding(3);
-            tabAudits.Size = new Size(1272, 597);
-            tabAudits.TabIndex = 2;
-            tabAudits.Text = "Audits";
-            tabAudits.UseVisualStyleBackColor = true;
-            // 
-            // tabTenants
-            // 
-            tabTenants.Controls.Add(dgvArchivedTenants);
-            tabTenants.Location = new Point(4, 29);
-            tabTenants.Name = "tabTenants";
-            tabTenants.Padding = new Padding(3);
-            tabTenants.Size = new Size(1272, 597);
-            tabTenants.TabIndex = 3;
-            tabTenants.Text = "Tenants";
-            tabTenants.UseVisualStyleBackColor = true;
-            // 
-            // tabEmployee
-            // 
-            tabEmployee.Controls.Add(dgvArchivedEmployees);
-            tabEmployee.Location = new Point(4, 29);
-            tabEmployee.Name = "tabEmployee";
-            tabEmployee.Padding = new Padding(3);
-            tabEmployee.Size = new Size(1272, 597);
-            tabEmployee.TabIndex = 4;
-            tabEmployee.Text = "Employee";
-            tabEmployee.UseVisualStyleBackColor = true;
             // 
             // dgvArchivedRooms
             // 
@@ -218,88 +178,8 @@
             dgvArchivedRooms.RowHeadersWidth = 51;
             dgvArchivedRooms.ScrollBars = ScrollBars.Vertical;
             dgvArchivedRooms.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedRooms.Size = new Size(1266, 591);
+            dgvArchivedRooms.Size = new Size(1264, 589);
             dgvArchivedRooms.TabIndex = 0;
-            // 
-            // dgvArchivedBillAccounts
-            // 
-            dgvArchivedBillAccounts.AllowUserToAddRows = false;
-            dgvArchivedBillAccounts.AllowUserToDeleteRows = false;
-            dgvArchivedBillAccounts.AllowUserToResizeRows = false;
-            dgvArchivedBillAccounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvArchivedBillAccounts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvArchivedBillAccounts.Columns.AddRange(new DataGridViewColumn[] { colBillAccountArchiveID, colBillAccountArchivedAt, colArchivedBillAccountType, colArchivedBillAccountRoom, colArchivedBillAccountNumber, colBillAccountArchiveAction });
-            dgvArchivedBillAccounts.Dock = DockStyle.Fill;
-            dgvArchivedBillAccounts.Location = new Point(3, 3);
-            dgvArchivedBillAccounts.MultiSelect = false;
-            dgvArchivedBillAccounts.Name = "dgvArchivedBillAccounts";
-            dgvArchivedBillAccounts.ReadOnly = true;
-            dgvArchivedBillAccounts.RowHeadersVisible = false;
-            dgvArchivedBillAccounts.RowHeadersWidth = 51;
-            dgvArchivedBillAccounts.ScrollBars = ScrollBars.Vertical;
-            dgvArchivedBillAccounts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedBillAccounts.Size = new Size(1266, 591);
-            dgvArchivedBillAccounts.TabIndex = 1;
-            // 
-            // dgvArchivedAudits
-            // 
-            dgvArchivedAudits.AllowUserToAddRows = false;
-            dgvArchivedAudits.AllowUserToDeleteRows = false;
-            dgvArchivedAudits.AllowUserToResizeRows = false;
-            dgvArchivedAudits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvArchivedAudits.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvArchivedAudits.Columns.AddRange(new DataGridViewColumn[] { colAuditArchiveID, colAuditArchivedAt, colArchivedAuditCategory, colArchivedAuditDateTime, colAuditArchiveAction });
-            dgvArchivedAudits.Dock = DockStyle.Fill;
-            dgvArchivedAudits.Location = new Point(3, 3);
-            dgvArchivedAudits.MultiSelect = false;
-            dgvArchivedAudits.Name = "dgvArchivedAudits";
-            dgvArchivedAudits.ReadOnly = true;
-            dgvArchivedAudits.RowHeadersVisible = false;
-            dgvArchivedAudits.RowHeadersWidth = 51;
-            dgvArchivedAudits.ScrollBars = ScrollBars.Vertical;
-            dgvArchivedAudits.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedAudits.Size = new Size(1266, 591);
-            dgvArchivedAudits.TabIndex = 1;
-            // 
-            // dgvArchivedTenants
-            // 
-            dgvArchivedTenants.AllowUserToAddRows = false;
-            dgvArchivedTenants.AllowUserToDeleteRows = false;
-            dgvArchivedTenants.AllowUserToResizeRows = false;
-            dgvArchivedTenants.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvArchivedTenants.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvArchivedTenants.Columns.AddRange(new DataGridViewColumn[] { colTenantArchiveID, colTenantArchivedAt, colArchivedTenantName, colArchivedTenantContact, colArchivedTenantMoveIn, colTenantArchiveAction });
-            dgvArchivedTenants.Dock = DockStyle.Fill;
-            dgvArchivedTenants.Location = new Point(3, 3);
-            dgvArchivedTenants.MultiSelect = false;
-            dgvArchivedTenants.Name = "dgvArchivedTenants";
-            dgvArchivedTenants.ReadOnly = true;
-            dgvArchivedTenants.RowHeadersVisible = false;
-            dgvArchivedTenants.RowHeadersWidth = 51;
-            dgvArchivedTenants.ScrollBars = ScrollBars.Vertical;
-            dgvArchivedTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedTenants.Size = new Size(1266, 591);
-            dgvArchivedTenants.TabIndex = 1;
-            // 
-            // dgvArchivedEmployees
-            // 
-            dgvArchivedEmployees.AllowUserToAddRows = false;
-            dgvArchivedEmployees.AllowUserToDeleteRows = false;
-            dgvArchivedEmployees.AllowUserToResizeRows = false;
-            dgvArchivedEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvArchivedEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvArchivedEmployees.Columns.AddRange(new DataGridViewColumn[] { colEmployeeArchiveID, colEmployeeArchivedAt, colArchivedEmployeeName, colArchivedEmployeeAddress, colArchivedEmployeeDateHired, colEmployeeArchiveAction });
-            dgvArchivedEmployees.Dock = DockStyle.Fill;
-            dgvArchivedEmployees.Location = new Point(3, 3);
-            dgvArchivedEmployees.MultiSelect = false;
-            dgvArchivedEmployees.Name = "dgvArchivedEmployees";
-            dgvArchivedEmployees.ReadOnly = true;
-            dgvArchivedEmployees.RowHeadersVisible = false;
-            dgvArchivedEmployees.RowHeadersWidth = 51;
-            dgvArchivedEmployees.ScrollBars = ScrollBars.Vertical;
-            dgvArchivedEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedEmployees.Size = new Size(1266, 591);
-            dgvArchivedEmployees.TabIndex = 1;
             // 
             // colRoomArchiveID
             // 
@@ -328,6 +208,37 @@
             colRoomArchiveAction.MinimumWidth = 6;
             colRoomArchiveAction.Name = "colRoomArchiveAction";
             colRoomArchiveAction.ReadOnly = true;
+            // 
+            // tabBillAccounts
+            // 
+            tabBillAccounts.Controls.Add(dgvArchivedBillAccounts);
+            tabBillAccounts.Location = new Point(4, 29);
+            tabBillAccounts.Name = "tabBillAccounts";
+            tabBillAccounts.Padding = new Padding(3);
+            tabBillAccounts.Size = new Size(1272, 597);
+            tabBillAccounts.TabIndex = 1;
+            tabBillAccounts.Text = "Bill Accounts";
+            tabBillAccounts.UseVisualStyleBackColor = true;
+            // 
+            // dgvArchivedBillAccounts
+            // 
+            dgvArchivedBillAccounts.AllowUserToAddRows = false;
+            dgvArchivedBillAccounts.AllowUserToDeleteRows = false;
+            dgvArchivedBillAccounts.AllowUserToResizeRows = false;
+            dgvArchivedBillAccounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvArchivedBillAccounts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvArchivedBillAccounts.Columns.AddRange(new DataGridViewColumn[] { colBillAccountArchiveID, colBillAccountArchivedAt, colArchivedBillAccountType, colArchivedBillAccountRoom, colArchivedBillAccountNumber, colBillAccountArchiveAction });
+            dgvArchivedBillAccounts.Dock = DockStyle.Fill;
+            dgvArchivedBillAccounts.Location = new Point(3, 3);
+            dgvArchivedBillAccounts.MultiSelect = false;
+            dgvArchivedBillAccounts.Name = "dgvArchivedBillAccounts";
+            dgvArchivedBillAccounts.ReadOnly = true;
+            dgvArchivedBillAccounts.RowHeadersVisible = false;
+            dgvArchivedBillAccounts.RowHeadersWidth = 51;
+            dgvArchivedBillAccounts.ScrollBars = ScrollBars.Vertical;
+            dgvArchivedBillAccounts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvArchivedBillAccounts.Size = new Size(1266, 591);
+            dgvArchivedBillAccounts.TabIndex = 1;
             // 
             // colBillAccountArchiveID
             // 
@@ -371,6 +282,37 @@
             colBillAccountArchiveAction.Name = "colBillAccountArchiveAction";
             colBillAccountArchiveAction.ReadOnly = true;
             // 
+            // tabAudits
+            // 
+            tabAudits.Controls.Add(dgvArchivedAudits);
+            tabAudits.Location = new Point(4, 29);
+            tabAudits.Name = "tabAudits";
+            tabAudits.Padding = new Padding(3);
+            tabAudits.Size = new Size(1272, 597);
+            tabAudits.TabIndex = 2;
+            tabAudits.Text = "Audits";
+            tabAudits.UseVisualStyleBackColor = true;
+            // 
+            // dgvArchivedAudits
+            // 
+            dgvArchivedAudits.AllowUserToAddRows = false;
+            dgvArchivedAudits.AllowUserToDeleteRows = false;
+            dgvArchivedAudits.AllowUserToResizeRows = false;
+            dgvArchivedAudits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvArchivedAudits.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvArchivedAudits.Columns.AddRange(new DataGridViewColumn[] { colAuditArchiveID, colAuditArchivedAt, colArchivedAuditCategory, colArchivedAuditDateTime, colAuditArchiveAction });
+            dgvArchivedAudits.Dock = DockStyle.Fill;
+            dgvArchivedAudits.Location = new Point(3, 3);
+            dgvArchivedAudits.MultiSelect = false;
+            dgvArchivedAudits.Name = "dgvArchivedAudits";
+            dgvArchivedAudits.ReadOnly = true;
+            dgvArchivedAudits.RowHeadersVisible = false;
+            dgvArchivedAudits.RowHeadersWidth = 51;
+            dgvArchivedAudits.ScrollBars = ScrollBars.Vertical;
+            dgvArchivedAudits.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvArchivedAudits.Size = new Size(1266, 591);
+            dgvArchivedAudits.TabIndex = 1;
+            // 
             // colAuditArchiveID
             // 
             colAuditArchiveID.HeaderText = "ID";
@@ -405,6 +347,37 @@
             colAuditArchiveAction.MinimumWidth = 6;
             colAuditArchiveAction.Name = "colAuditArchiveAction";
             colAuditArchiveAction.ReadOnly = true;
+            // 
+            // tabTenants
+            // 
+            tabTenants.Controls.Add(dgvArchivedTenants);
+            tabTenants.Location = new Point(4, 29);
+            tabTenants.Name = "tabTenants";
+            tabTenants.Padding = new Padding(3);
+            tabTenants.Size = new Size(1272, 597);
+            tabTenants.TabIndex = 3;
+            tabTenants.Text = "Tenants";
+            tabTenants.UseVisualStyleBackColor = true;
+            // 
+            // dgvArchivedTenants
+            // 
+            dgvArchivedTenants.AllowUserToAddRows = false;
+            dgvArchivedTenants.AllowUserToDeleteRows = false;
+            dgvArchivedTenants.AllowUserToResizeRows = false;
+            dgvArchivedTenants.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvArchivedTenants.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvArchivedTenants.Columns.AddRange(new DataGridViewColumn[] { colTenantArchiveID, colTenantArchivedAt, colArchivedTenantName, colArchivedTenantContact, colArchivedTenantMoveIn, colTenantArchiveAction });
+            dgvArchivedTenants.Dock = DockStyle.Fill;
+            dgvArchivedTenants.Location = new Point(3, 3);
+            dgvArchivedTenants.MultiSelect = false;
+            dgvArchivedTenants.Name = "dgvArchivedTenants";
+            dgvArchivedTenants.ReadOnly = true;
+            dgvArchivedTenants.RowHeadersVisible = false;
+            dgvArchivedTenants.RowHeadersWidth = 51;
+            dgvArchivedTenants.ScrollBars = ScrollBars.Vertical;
+            dgvArchivedTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvArchivedTenants.Size = new Size(1266, 591);
+            dgvArchivedTenants.TabIndex = 1;
             // 
             // colTenantArchiveID
             // 
@@ -447,6 +420,37 @@
             colTenantArchiveAction.MinimumWidth = 6;
             colTenantArchiveAction.Name = "colTenantArchiveAction";
             colTenantArchiveAction.ReadOnly = true;
+            // 
+            // tabEmployee
+            // 
+            tabEmployee.Controls.Add(dgvArchivedEmployees);
+            tabEmployee.Location = new Point(4, 29);
+            tabEmployee.Name = "tabEmployee";
+            tabEmployee.Padding = new Padding(3);
+            tabEmployee.Size = new Size(1272, 597);
+            tabEmployee.TabIndex = 4;
+            tabEmployee.Text = "Employee";
+            tabEmployee.UseVisualStyleBackColor = true;
+            // 
+            // dgvArchivedEmployees
+            // 
+            dgvArchivedEmployees.AllowUserToAddRows = false;
+            dgvArchivedEmployees.AllowUserToDeleteRows = false;
+            dgvArchivedEmployees.AllowUserToResizeRows = false;
+            dgvArchivedEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvArchivedEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvArchivedEmployees.Columns.AddRange(new DataGridViewColumn[] { colEmployeeArchiveID, colEmployeeArchivedAt, colArchivedEmployeeName, colArchivedEmployeeAddress, colArchivedEmployeeDateHired, colEmployeeArchiveAction });
+            dgvArchivedEmployees.Dock = DockStyle.Fill;
+            dgvArchivedEmployees.Location = new Point(3, 3);
+            dgvArchivedEmployees.MultiSelect = false;
+            dgvArchivedEmployees.Name = "dgvArchivedEmployees";
+            dgvArchivedEmployees.ReadOnly = true;
+            dgvArchivedEmployees.RowHeadersVisible = false;
+            dgvArchivedEmployees.RowHeadersWidth = 51;
+            dgvArchivedEmployees.ScrollBars = ScrollBars.Vertical;
+            dgvArchivedEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvArchivedEmployees.Size = new Size(1266, 591);
+            dgvArchivedEmployees.TabIndex = 1;
             // 
             // colEmployeeArchiveID
             // 
@@ -503,14 +507,14 @@
             pnlArchiveContent.ResumeLayout(false);
             tabArchive.ResumeLayout(false);
             tabRooms.ResumeLayout(false);
-            tabBillAccounts.ResumeLayout(false);
-            tabAudits.ResumeLayout(false);
-            tabTenants.ResumeLayout(false);
-            tabEmployee.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvArchivedRooms).EndInit();
+            tabBillAccounts.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvArchivedBillAccounts).EndInit();
+            tabAudits.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvArchivedAudits).EndInit();
+            tabTenants.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvArchivedTenants).EndInit();
+            tabEmployee.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvArchivedEmployees).EndInit();
             ResumeLayout(false);
         }

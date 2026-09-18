@@ -35,16 +35,16 @@ namespace Capstoneszn
         private void btnCancel_Click(object sender, EventArgs e)
         {
             // Find the original hidden Login Form
-            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            var login = Application.OpenForms.OfType<Login>().FirstOrDefault();
 
-            if (loginForm != null)
+            if (login != null)
             {
-                loginForm.Show();
+                login.Show();
             }
             else
             {
                 // Fallback just in case it doesn't exist
-                new LoginForm().Show();
+                new Login().Show();
             }
 
             // Close the current Forget Form

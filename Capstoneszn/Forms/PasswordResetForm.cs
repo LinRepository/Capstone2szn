@@ -21,18 +21,19 @@ namespace Capstoneszn
         private void btnReturnLogin_Click(object sender, EventArgs e)
         {
             // Find the original hidden Login Form
-            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            var login = Application.OpenForms.OfType<Login>().FirstOrDefault();
 
-            if (loginForm != null)
+            if (login != null)
             {
-                loginForm.Show();
+                login.Show();
             }
             else
             {
-                new LoginForm().Show();
+                // Fallback just in case it doesn't exist
+                new Login().Show();
             }
 
-            // Close the current Reset Form
+            // Close the current Forget Form
             this.Close();
         }
 
@@ -44,6 +45,11 @@ namespace Capstoneszn
 
             // Close this Reset Form
             this.Close();
+        }
+
+        private void PasswordResetForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -18,22 +18,53 @@ namespace Capstoneszn.UserControls
             InitializeComponent();
         }
 
+
+
+        private void lblBackupRestore_Click(object sender, EventArgs e)
+        {
+            BackupRestoreControl backupCtrl = new BackupRestoreControl();
+            backupCtrl.Dock = DockStyle.Fill;
+
+            pnlSettingsContent.Controls.Add(backupCtrl);
+            backupCtrl.BringToFront();
+        }
+
+        private void lblUtilitiesAccount_Click(object sender, EventArgs e)
+        {
+            // Assuming ElectricWaterAccountControl is the main utilities view
+            ElectricWaterAccountControl utilitiesCtrl = new ElectricWaterAccountControl();
+            utilitiesCtrl.Dock = DockStyle.Fill;
+
+            pnlSettingsContent.Controls.Add(utilitiesCtrl);
+            utilitiesCtrl.BringToFront();
+        }
+
+        private void lblArchive_Click(object sender, EventArgs e)
+        {
+            ArchiveControl archiveCtrl = new ArchiveControl();
+            archiveCtrl.Dock = DockStyle.Fill;
+
+            pnlSettingsContent.Controls.Add(archiveCtrl);
+            archiveCtrl.BringToFront();
+        }
+
+        private void lblSalary_Click(object sender, EventArgs e)
+        {
+            SalaryControl salaryCtrl = new SalaryControl();
+            salaryCtrl.Dock = DockStyle.Fill;
+
+            pnlSettingsContent.Controls.Add(salaryCtrl);
+            salaryCtrl.BringToFront();
+        }
+
         private void lblProfileManagement_Click(object sender, EventArgs e)
         {
-            // 1. Hide the options menu layout
-            tblSettingsOptions.Visible = false;
+            ProfileManagementControl profileCtrl = new ProfileManagementControl();
+            profileCtrl.Dock = DockStyle.Fill;
 
-            // 2. Instantiate and show the profile control instance
-            ProfileManagementControl profileControl = new ProfileManagementControl(this);
-            profileControl.Dock = DockStyle.Fill;
-
-            // 3. Add to SettingsControl and bring it to front
-            this.Controls.Add(profileControl);
-            profileControl.BringToFront();
-        }
-        public void ShowMenuOptions()
-        {
-            tblSettingsOptions.Visible = true;
+            // Add it directly inside the settings content panel
+            pnlSettingsContent.Controls.Add(profileCtrl);
+            profileCtrl.BringToFront();
         }
     }
 }
