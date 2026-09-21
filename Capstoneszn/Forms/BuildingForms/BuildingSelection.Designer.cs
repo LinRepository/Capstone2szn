@@ -28,57 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pnlSamplesAddBuilding = new Panel();
-            lblPlusSampleBuilding = new Label();
-            lblSampleBuilding = new Label();
             flpBuildings = new FlowLayoutPanel();
             pnlAddBuilding = new Panel();
             lblPlusBuilding = new Label();
             lblAddBuilding = new Label();
             pnlBuildingHeader = new Panel();
             lblTitle = new Label();
-            pnlSamplesAddBuilding.SuspendLayout();
             flpBuildings.SuspendLayout();
             pnlAddBuilding.SuspendLayout();
             pnlBuildingHeader.SuspendLayout();
             SuspendLayout();
-            // 
-            // pnlSamplesAddBuilding
-            // 
-            pnlSamplesAddBuilding.BackColor = Color.LightSlateGray;
-            pnlSamplesAddBuilding.BorderStyle = BorderStyle.FixedSingle;
-            pnlSamplesAddBuilding.Controls.Add(lblPlusSampleBuilding);
-            pnlSamplesAddBuilding.Controls.Add(lblSampleBuilding);
-            pnlSamplesAddBuilding.Cursor = Cursors.Hand;
-            pnlSamplesAddBuilding.Location = new Point(13, 13);
-            pnlSamplesAddBuilding.Name = "pnlSamplesAddBuilding";
-            pnlSamplesAddBuilding.Size = new Size(250, 200);
-            pnlSamplesAddBuilding.TabIndex = 1;
-            // 
-            // lblPlusSampleBuilding
-            // 
-            lblPlusSampleBuilding.Dock = DockStyle.Fill;
-            lblPlusSampleBuilding.Font = new Font("Segoe UI", 72F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPlusSampleBuilding.ForeColor = Color.White;
-            lblPlusSampleBuilding.Location = new Point(0, 0);
-            lblPlusSampleBuilding.Name = "lblPlusSampleBuilding";
-            lblPlusSampleBuilding.Size = new Size(248, 162);
-            lblPlusSampleBuilding.TabIndex = 2;
-            lblPlusSampleBuilding.Text = "+";
-            lblPlusSampleBuilding.TextAlign = ContentAlignment.MiddleCenter;
-            lblPlusSampleBuilding.Click += lblPlusSampleBuilding_Click;
-            // 
-            // lblSampleBuilding
-            // 
-            lblSampleBuilding.Dock = DockStyle.Bottom;
-            lblSampleBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSampleBuilding.ForeColor = Color.White;
-            lblSampleBuilding.Location = new Point(0, 162);
-            lblSampleBuilding.Name = "lblSampleBuilding";
-            lblSampleBuilding.Size = new Size(248, 36);
-            lblSampleBuilding.TabIndex = 1;
-            lblSampleBuilding.Text = "Sample Building";
-            lblSampleBuilding.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // flpBuildings
             // 
@@ -86,7 +45,6 @@
             flpBuildings.AutoScroll = true;
             flpBuildings.BackColor = Color.Transparent;
             flpBuildings.BorderStyle = BorderStyle.FixedSingle;
-            flpBuildings.Controls.Add(pnlSamplesAddBuilding);
             flpBuildings.Controls.Add(pnlAddBuilding);
             flpBuildings.Location = new Point(39, 91);
             flpBuildings.Name = "flpBuildings";
@@ -102,7 +60,7 @@
             pnlAddBuilding.Controls.Add(lblPlusBuilding);
             pnlAddBuilding.Controls.Add(lblAddBuilding);
             pnlAddBuilding.Cursor = Cursors.Hand;
-            pnlAddBuilding.Location = new Point(269, 13);
+            pnlAddBuilding.Location = new Point(13, 13);
             pnlAddBuilding.Name = "pnlAddBuilding";
             pnlAddBuilding.Size = new Size(250, 200);
             pnlAddBuilding.TabIndex = 2;
@@ -171,7 +129,6 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Select Building";
             Load += BuildingSelection_Load;
-            pnlSamplesAddBuilding.ResumeLayout(false);
             flpBuildings.ResumeLayout(false);
             pnlAddBuilding.ResumeLayout(false);
             pnlBuildingHeader.ResumeLayout(false);
@@ -179,9 +136,6 @@
         }
 
         #endregion
-        private Panel pnlSamplesAddBuilding;
-        private Label lblPlusSampleBuilding;
-        private Label lblSampleBuilding;
         private FlowLayoutPanel flpBuildings;
         private Panel pnlAddBuilding;
         private Label lblPlusBuilding;

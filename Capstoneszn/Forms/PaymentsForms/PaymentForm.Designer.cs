@@ -134,6 +134,7 @@
             btnContinuePayment.TabIndex = 1;
             btnContinuePayment.Text = "Confirm";
             btnContinuePayment.UseVisualStyleBackColor = true;
+            btnContinuePayment.Click += btnContinuePayment_Click;
             // 
             // btnCancelPayment
             // 
@@ -144,6 +145,7 @@
             btnCancelPayment.TabIndex = 0;
             btnCancelPayment.Text = "Cancel";
             btnCancelPayment.UseVisualStyleBackColor = true;
+            btnCancelPayment.Click += btnCancelPayment_Click;
             // 
             // pnlPaymentContent
             // 
@@ -193,6 +195,7 @@
             lblReferenceNumber.TabIndex = 6;
             lblReferenceNumber.Text = "Reference Gcash Number";
             lblReferenceNumber.TextAlign = ContentAlignment.MiddleCenter;
+            lblReferenceNumber.Visible = false;
             // 
             // txtReferenceNumber
             // 
@@ -465,6 +468,7 @@
             Name = "PaymentForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Make Payment";
+            Load += PaymentForm_Load;
             pnlPaymentHeader.ResumeLayout(false);
             pnlPaymentHeader.PerformLayout();
             pnlPaymentActions.ResumeLayout(false);

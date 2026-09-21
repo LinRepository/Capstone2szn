@@ -34,14 +34,14 @@
             // 
             // lblRoomNumber
             // 
-            lblRoomNumber.BackColor = Color.Red;
+            lblRoomNumber.BackColor = Color.Transparent;
             lblRoomNumber.BorderStyle = BorderStyle.FixedSingle;
             lblRoomNumber.Dock = DockStyle.Top;
-            lblRoomNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblRoomNumber.ForeColor = Color.White;
+            lblRoomNumber.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblRoomNumber.ForeColor = Color.Black;
             lblRoomNumber.Location = new Point(0, 0);
             lblRoomNumber.Name = "lblRoomNumber";
-            lblRoomNumber.Size = new Size(113, 58);
+            lblRoomNumber.Size = new Size(180, 75);
             lblRoomNumber.TabIndex = 0;
             lblRoomNumber.Text = "101";
             lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
@@ -49,16 +49,18 @@
             // 
             // lblOccupancy
             // 
-            lblOccupancy.BackColor = Color.Red;
+            lblOccupancy.BackColor = Color.Transparent;
             lblOccupancy.BorderStyle = BorderStyle.FixedSingle;
             lblOccupancy.Dock = DockStyle.Fill;
-            lblOccupancy.ForeColor = Color.White;
-            lblOccupancy.Location = new Point(0, 58);
+            lblOccupancy.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOccupancy.ForeColor = Color.Black;
+            lblOccupancy.Location = new Point(0, 75);
             lblOccupancy.Name = "lblOccupancy";
-            lblOccupancy.Size = new Size(113, 28);
+            lblOccupancy.Size = new Size(180, 75);
             lblOccupancy.TabIndex = 1;
             lblOccupancy.Text = "1/1";
             lblOccupancy.TextAlign = ContentAlignment.MiddleCenter;
+            lblOccupancy.Click += lblOccupancy_Click;
             // 
             // RoomCardControl
             // 
@@ -68,7 +70,8 @@
             Controls.Add(lblRoomNumber);
             Cursor = Cursors.Hand;
             Name = "RoomCardControl";
-            Size = new Size(113, 86);
+            Size = new Size(180, 150);
+            Load += RoomCardControl_Load;
             ResumeLayout(false);
         }
 

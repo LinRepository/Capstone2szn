@@ -107,6 +107,7 @@
             btnConfirmMoveIn.TabIndex = 1;
             btnConfirmMoveIn.Text = "Confirm";
             btnConfirmMoveIn.UseVisualStyleBackColor = true;
+            btnConfirmMoveIn.Click += btnConfirmMoveIn_Click;
             // 
             // btnCancelMoveIn
             // 
@@ -218,6 +219,7 @@
             Name = "MoveInForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Move In Tenant";
+            Load += MoveInForm_Load;
             pnlMoveInHeader.ResumeLayout(false);
             pnlMoveInActions.ResumeLayout(false);
             pnlMoveInContent.ResumeLayout(false);

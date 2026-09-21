@@ -509,7 +509,7 @@
             btnNotification.Name = "btnNotification";
             btnNotification.Size = new Size(60, 60);
             btnNotification.TabIndex = 12;
-            btnNotification.Text = "Notification";
+            btnNotification.Text = "🔔";
             btnNotification.UseVisualStyleBackColor = true;
             btnNotification.Click += btnNotification_Click;
             // 

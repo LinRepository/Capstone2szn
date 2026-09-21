@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             pnlAddRoomHeader = new Panel();
-            pnlAddRoomActions = new Panel();
-            btnCancelAddRoom = new Button();
-            btnConfirmAddRoom = new Button();
-            pnlAddRoomContent = new Panel();
             lblAddRoomTitle = new Label();
-            lblAddRoomNotice = new Label();
+            pnlAddRoomActions = new Panel();
+            btnConfirmAddRoom = new Button();
+            btnCancelAddRoom = new Button();
+            pnlAddRoomContent = new Panel();
             lblAddRoomQuestion = new Label();
+            lblAddRoomNotice = new Label();
             pnlAddRoomHeader.SuspendLayout();
             pnlAddRoomActions.SuspendLayout();
             pnlAddRoomContent.SuspendLayout();
@@ -49,44 +49,6 @@
             pnlAddRoomHeader.Name = "pnlAddRoomHeader";
             pnlAddRoomHeader.Size = new Size(332, 45);
             pnlAddRoomHeader.TabIndex = 0;
-            // 
-            // pnlAddRoomActions
-            // 
-            pnlAddRoomActions.Controls.Add(btnConfirmAddRoom);
-            pnlAddRoomActions.Controls.Add(btnCancelAddRoom);
-            pnlAddRoomActions.Dock = DockStyle.Bottom;
-            pnlAddRoomActions.Location = new Point(0, 208);
-            pnlAddRoomActions.Name = "pnlAddRoomActions";
-            pnlAddRoomActions.Size = new Size(332, 45);
-            pnlAddRoomActions.TabIndex = 1;
-            // 
-            // btnCancelAddRoom
-            // 
-            btnCancelAddRoom.Location = new Point(108, 8);
-            btnCancelAddRoom.Name = "btnCancelAddRoom";
-            btnCancelAddRoom.Size = new Size(94, 29);
-            btnCancelAddRoom.TabIndex = 0;
-            btnCancelAddRoom.Text = "Cancel";
-            btnCancelAddRoom.UseVisualStyleBackColor = true;
-            // 
-            // btnConfirmAddRoom
-            // 
-            btnConfirmAddRoom.Location = new Point(221, 8);
-            btnConfirmAddRoom.Name = "btnConfirmAddRoom";
-            btnConfirmAddRoom.Size = new Size(100, 29);
-            btnConfirmAddRoom.TabIndex = 1;
-            btnConfirmAddRoom.Text = "Add Room";
-            btnConfirmAddRoom.UseVisualStyleBackColor = true;
-            // 
-            // pnlAddRoomContent
-            // 
-            pnlAddRoomContent.Controls.Add(lblAddRoomQuestion);
-            pnlAddRoomContent.Controls.Add(lblAddRoomNotice);
-            pnlAddRoomContent.Dock = DockStyle.Fill;
-            pnlAddRoomContent.Location = new Point(0, 45);
-            pnlAddRoomContent.Name = "pnlAddRoomContent";
-            pnlAddRoomContent.Size = new Size(332, 163);
-            pnlAddRoomContent.TabIndex = 2;
             // 
             // lblAddRoomTitle
             // 
@@ -102,19 +64,43 @@
             lblAddRoomTitle.TextAlign = ContentAlignment.MiddleCenter;
             lblAddRoomTitle.Visible = false;
             // 
-            // lblAddRoomNotice
+            // pnlAddRoomActions
             // 
-            lblAddRoomNotice.Dock = DockStyle.Bottom;
-            lblAddRoomNotice.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAddRoomNotice.ForeColor = Color.White;
-            lblAddRoomNotice.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddRoomNotice.Location = new Point(0, 93);
-            lblAddRoomNotice.Name = "lblAddRoomNotice";
-            lblAddRoomNotice.Size = new Size(332, 70);
-            lblAddRoomNotice.TabIndex = 34;
-            lblAddRoomNotice.Text = "The room will be added to Floor #.";
-            lblAddRoomNotice.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddRoomNotice.Visible = false;
+            pnlAddRoomActions.Controls.Add(btnConfirmAddRoom);
+            pnlAddRoomActions.Controls.Add(btnCancelAddRoom);
+            pnlAddRoomActions.Dock = DockStyle.Bottom;
+            pnlAddRoomActions.Location = new Point(0, 208);
+            pnlAddRoomActions.Name = "pnlAddRoomActions";
+            pnlAddRoomActions.Size = new Size(332, 45);
+            pnlAddRoomActions.TabIndex = 1;
+            // 
+            // btnConfirmAddRoom
+            // 
+            btnConfirmAddRoom.Location = new Point(221, 8);
+            btnConfirmAddRoom.Name = "btnConfirmAddRoom";
+            btnConfirmAddRoom.Size = new Size(100, 29);
+            btnConfirmAddRoom.TabIndex = 1;
+            btnConfirmAddRoom.Text = "Add Room";
+            btnConfirmAddRoom.UseVisualStyleBackColor = true;
+            // 
+            // btnCancelAddRoom
+            // 
+            btnCancelAddRoom.Location = new Point(108, 8);
+            btnCancelAddRoom.Name = "btnCancelAddRoom";
+            btnCancelAddRoom.Size = new Size(94, 29);
+            btnCancelAddRoom.TabIndex = 0;
+            btnCancelAddRoom.Text = "Cancel";
+            btnCancelAddRoom.UseVisualStyleBackColor = true;
+            // 
+            // pnlAddRoomContent
+            // 
+            pnlAddRoomContent.Controls.Add(lblAddRoomQuestion);
+            pnlAddRoomContent.Controls.Add(lblAddRoomNotice);
+            pnlAddRoomContent.Dock = DockStyle.Fill;
+            pnlAddRoomContent.Location = new Point(0, 45);
+            pnlAddRoomContent.Name = "pnlAddRoomContent";
+            pnlAddRoomContent.Size = new Size(332, 163);
+            pnlAddRoomContent.TabIndex = 2;
             // 
             // lblAddRoomQuestion
             // 
@@ -129,6 +115,20 @@
             lblAddRoomQuestion.Text = "Are you sure you want\r\nto add this room?";
             lblAddRoomQuestion.TextAlign = ContentAlignment.MiddleCenter;
             lblAddRoomQuestion.Visible = false;
+            // 
+            // lblAddRoomNotice
+            // 
+            lblAddRoomNotice.Dock = DockStyle.Bottom;
+            lblAddRoomNotice.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddRoomNotice.ForeColor = Color.White;
+            lblAddRoomNotice.ImageAlign = ContentAlignment.MiddleRight;
+            lblAddRoomNotice.Location = new Point(0, 93);
+            lblAddRoomNotice.Name = "lblAddRoomNotice";
+            lblAddRoomNotice.Size = new Size(332, 70);
+            lblAddRoomNotice.TabIndex = 34;
+            lblAddRoomNotice.Text = "The room will be added to Floor #.";
+            lblAddRoomNotice.TextAlign = ContentAlignment.MiddleCenter;
+            lblAddRoomNotice.Visible = false;
             // 
             // AddRoomConfirmationForm
             // 
@@ -145,6 +145,7 @@
             Name = "AddRoomConfirmationForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Confirm Add Room";
+            Load += AddRoomConfirmationForm_Load;
             pnlAddRoomHeader.ResumeLayout(false);
             pnlAddRoomHeader.PerformLayout();
             pnlAddRoomActions.ResumeLayout(false);

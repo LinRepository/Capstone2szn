@@ -16,5 +16,10 @@ namespace Capstoneszn.Forms
         {
             InitializeComponent();
         }
+
+        private void ManageRoomsForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             pnlManageRoomsHeader = new Panel();
+            lblArchiveInstruction = new Label();
             btnCloseManageRooms = new Button();
             lblManageRoomsTitle = new Label();
             pnlManageRoomsActions = new Panel();
@@ -38,10 +39,9 @@
             pnlManageRoomsContent = new Panel();
             flpManageRooms = new FlowLayoutPanel();
             pnlFloorSection = new Panel();
-            lblFloor = new Label();
             flpFloorRooms = new FlowLayoutPanel();
             label2 = new Label();
-            lblArchiveInstruction = new Label();
+            lblFloor = new Label();
             pnlManageRoomsHeader.SuspendLayout();
             pnlManageRoomsActions.SuspendLayout();
             pnlManageRoomsContent.SuspendLayout();
@@ -60,6 +60,20 @@
             pnlManageRoomsHeader.Name = "pnlManageRoomsHeader";
             pnlManageRoomsHeader.Size = new Size(782, 69);
             pnlManageRoomsHeader.TabIndex = 0;
+            // 
+            // lblArchiveInstruction
+            // 
+            lblArchiveInstruction.AutoSize = true;
+            lblArchiveInstruction.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblArchiveInstruction.ForeColor = Color.White;
+            lblArchiveInstruction.ImageAlign = ContentAlignment.MiddleRight;
+            lblArchiveInstruction.Location = new Point(283, 42);
+            lblArchiveInstruction.Name = "lblArchiveInstruction";
+            lblArchiveInstruction.Size = new Size(199, 23);
+            lblArchiveInstruction.TabIndex = 23;
+            lblArchiveInstruction.Text = "Select a room to archive.";
+            lblArchiveInstruction.TextAlign = ContentAlignment.MiddleCenter;
+            lblArchiveInstruction.Visible = false;
             // 
             // btnCloseManageRooms
             // 
@@ -158,19 +172,6 @@
             pnlFloorSection.Size = new Size(752, 95);
             pnlFloorSection.TabIndex = 0;
             // 
-            // lblFloor
-            // 
-            lblFloor.Dock = DockStyle.Top;
-            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFloor.ForeColor = Color.White;
-            lblFloor.ImageAlign = ContentAlignment.MiddleRight;
-            lblFloor.Location = new Point(5, 5);
-            lblFloor.Name = "lblFloor";
-            lblFloor.Size = new Size(742, 25);
-            lblFloor.TabIndex = 8;
-            lblFloor.Text = "Floor 1";
-            lblFloor.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // flpFloorRooms
             // 
             flpFloorRooms.Controls.Add(label2);
@@ -196,19 +197,18 @@
             label2.Text = "101";
             label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblArchiveInstruction
+            // lblFloor
             // 
-            lblArchiveInstruction.AutoSize = true;
-            lblArchiveInstruction.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblArchiveInstruction.ForeColor = Color.White;
-            lblArchiveInstruction.ImageAlign = ContentAlignment.MiddleRight;
-            lblArchiveInstruction.Location = new Point(283, 42);
-            lblArchiveInstruction.Name = "lblArchiveInstruction";
-            lblArchiveInstruction.Size = new Size(199, 23);
-            lblArchiveInstruction.TabIndex = 23;
-            lblArchiveInstruction.Text = "Select a room to archive.";
-            lblArchiveInstruction.TextAlign = ContentAlignment.MiddleCenter;
-            lblArchiveInstruction.Visible = false;
+            lblFloor.Dock = DockStyle.Top;
+            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFloor.ForeColor = Color.White;
+            lblFloor.ImageAlign = ContentAlignment.MiddleRight;
+            lblFloor.Location = new Point(5, 5);
+            lblFloor.Name = "lblFloor";
+            lblFloor.Size = new Size(742, 25);
+            lblFloor.TabIndex = 8;
+            lblFloor.Text = "Floor 1";
+            lblFloor.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // ManageRoomsForm
             // 
@@ -225,6 +225,7 @@
             Name = "ManageRoomsForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Manage Rooms";
+            Load += ManageRoomsForm_Load;
             pnlManageRoomsHeader.ResumeLayout(false);
             pnlManageRoomsHeader.PerformLayout();
             pnlManageRoomsActions.ResumeLayout(false);

@@ -27,10 +27,21 @@ namespace Capstoneszn
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            FloorConfigurationForm floorForm = new FloorConfigurationForm();
-            floorForm.Show();
+            string buildingName = txtBuildingName.Text.Trim();
+            int floors = (int)nudFloors.Value;
 
-            // HIDE this form instead of closing it, so we don't lose the user's typed data
+            // Validate that the user actually entered data
+            if (string.IsNullOrEmpty(buildingName) || floors <= 0)
+            {
+                MessageBox.Show("Please enter a valid building name and at least 1 floor.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Instantiate the next form and pass the variables into its constructor
+            FloorConfigurationForm configForm = new FloorConfigurationForm(buildingName, floors);
+            configForm.Show();
+
+            // Hide this form so they can go 'Back' if needed
             this.Hide();
         }
 

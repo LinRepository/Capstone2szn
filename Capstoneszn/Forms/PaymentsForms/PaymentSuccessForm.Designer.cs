@@ -32,11 +32,11 @@
             lblConfirmationTitle = new Label();
             label1 = new Label();
             panel2 = new Panel();
+            btnClose = new Button();
+            btnAnotherTransaction = new Button();
+            btnPrintReceipt = new Button();
             panel3 = new Panel();
             label2 = new Label();
-            btnPrintReceipt = new Button();
-            btnAnotherTransaction = new Button();
-            btnClose = new Button();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -89,6 +89,33 @@
             panel2.Size = new Size(482, 80);
             panel2.TabIndex = 1;
             // 
+            // btnClose
+            // 
+            btnClose.Location = new Point(376, 27);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(94, 29);
+            btnClose.TabIndex = 2;
+            btnClose.Text = "Close";
+            btnClose.UseVisualStyleBackColor = true;
+            // 
+            // btnAnotherTransaction
+            // 
+            btnAnotherTransaction.Location = new Point(146, 27);
+            btnAnotherTransaction.Name = "btnAnotherTransaction";
+            btnAnotherTransaction.Size = new Size(220, 29);
+            btnAnotherTransaction.TabIndex = 1;
+            btnAnotherTransaction.Text = "Make Another Transaction";
+            btnAnotherTransaction.UseVisualStyleBackColor = true;
+            // 
+            // btnPrintReceipt
+            // 
+            btnPrintReceipt.Location = new Point(12, 27);
+            btnPrintReceipt.Name = "btnPrintReceipt";
+            btnPrintReceipt.Size = new Size(125, 29);
+            btnPrintReceipt.TabIndex = 0;
+            btnPrintReceipt.Text = "Print Receipt";
+            btnPrintReceipt.UseVisualStyleBackColor = true;
+            // 
             // panel3
             // 
             panel3.Controls.Add(label2);
@@ -106,37 +133,10 @@
             label2.ImageAlign = ContentAlignment.MiddleRight;
             label2.Location = new Point(112, 112);
             label2.Name = "label2";
-            label2.Size = new Size(149, 25);
+            label2.Size = new Size(199, 25);
             label2.TabIndex = 7;
-            label2.Text = "Confirm Payment";
+            label2.Text = "I haven't design this yet";
             label2.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnPrintReceipt
-            // 
-            btnPrintReceipt.Location = new Point(12, 27);
-            btnPrintReceipt.Name = "btnPrintReceipt";
-            btnPrintReceipt.Size = new Size(125, 29);
-            btnPrintReceipt.TabIndex = 0;
-            btnPrintReceipt.Text = "Print Receipt";
-            btnPrintReceipt.UseVisualStyleBackColor = true;
-            // 
-            // btnAnotherTransaction
-            // 
-            btnAnotherTransaction.Location = new Point(146, 27);
-            btnAnotherTransaction.Name = "btnAnotherTransaction";
-            btnAnotherTransaction.Size = new Size(220, 29);
-            btnAnotherTransaction.TabIndex = 1;
-            btnAnotherTransaction.Text = "Make Another Transaction";
-            btnAnotherTransaction.UseVisualStyleBackColor = true;
-            // 
-            // btnClose
-            // 
-            btnClose.Location = new Point(376, 27);
-            btnClose.Name = "btnClose";
-            btnClose.Size = new Size(94, 29);
-            btnClose.TabIndex = 2;
-            btnClose.Text = "Close";
-            btnClose.UseVisualStyleBackColor = true;
             // 
             // PaymentSuccessForm
             // 

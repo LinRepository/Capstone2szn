@@ -90,10 +90,9 @@
             txtLoginPassword.Location = new Point(161, 328);
             txtLoginPassword.Multiline = true;
             txtLoginPassword.Name = "txtLoginPassword";
+            txtLoginPassword.PasswordChar = '*';
             txtLoginPassword.Size = new Size(350, 40);
             txtLoginPassword.TabIndex = 23;
-            txtLoginPassword.Text = "Password";
-            txtLoginPassword.UseSystemPasswordChar = true;
             txtLoginPassword.TextChanged += txtLoginPassword_TextChanged;
             // 
             // txtLoginUsername
@@ -105,7 +104,6 @@
             txtLoginUsername.Name = "txtLoginUsername";
             txtLoginUsername.Size = new Size(350, 40);
             txtLoginUsername.TabIndex = 22;
-            txtLoginUsername.Text = "Username";
             txtLoginUsername.TextChanged += txtLoginUsername_TextChanged;
             // 
             // btnLogin

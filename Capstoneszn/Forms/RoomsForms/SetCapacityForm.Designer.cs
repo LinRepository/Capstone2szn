@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             pnlCapacityHeader = new Panel();
-            pnlCapacityActions = new Panel();
-            pnlCapacityContent = new Panel();
             lblCapacityTitle = new Label();
-            lblCurrentCapacity = new Label();
-            lblNewCapacity = new Label();
-            btnCancelCapacity = new Button();
+            pnlCapacityActions = new Panel();
             btnSaveCapacity = new Button();
-            lblCurrentCapacityValue = new Label();
+            btnCancelCapacity = new Button();
+            pnlCapacityContent = new Panel();
             nudNewCapacity = new NumericUpDown();
+            lblCurrentCapacityValue = new Label();
+            lblNewCapacity = new Label();
+            lblCurrentCapacity = new Label();
             pnlCapacityHeader.SuspendLayout();
             pnlCapacityActions.SuspendLayout();
             pnlCapacityContent.SuspendLayout();
@@ -53,6 +53,19 @@
             pnlCapacityHeader.Size = new Size(282, 40);
             pnlCapacityHeader.TabIndex = 0;
             // 
+            // lblCapacityTitle
+            // 
+            lblCapacityTitle.AutoSize = true;
+            lblCapacityTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCapacityTitle.ForeColor = Color.White;
+            lblCapacityTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblCapacityTitle.Location = new Point(65, 9);
+            lblCapacityTitle.Name = "lblCapacityTitle";
+            lblCapacityTitle.Size = new Size(162, 25);
+            lblCapacityTitle.TabIndex = 34;
+            lblCapacityTitle.Text = "Set Room Capacity";
+            lblCapacityTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // pnlCapacityActions
             // 
             pnlCapacityActions.Controls.Add(btnSaveCapacity);
@@ -62,6 +75,26 @@
             pnlCapacityActions.Name = "pnlCapacityActions";
             pnlCapacityActions.Size = new Size(282, 40);
             pnlCapacityActions.TabIndex = 1;
+            // 
+            // btnSaveCapacity
+            // 
+            btnSaveCapacity.Location = new Point(148, 8);
+            btnSaveCapacity.Name = "btnSaveCapacity";
+            btnSaveCapacity.Size = new Size(125, 29);
+            btnSaveCapacity.TabIndex = 1;
+            btnSaveCapacity.Text = "Save Capacity";
+            btnSaveCapacity.UseVisualStyleBackColor = true;
+            btnSaveCapacity.Click += btnSaveCapacity_Click;
+            // 
+            // btnCancelCapacity
+            // 
+            btnCancelCapacity.Location = new Point(46, 8);
+            btnCancelCapacity.Name = "btnCancelCapacity";
+            btnCancelCapacity.Size = new Size(94, 29);
+            btnCancelCapacity.TabIndex = 0;
+            btnCancelCapacity.Text = "Cancel";
+            btnCancelCapacity.UseVisualStyleBackColor = true;
+            btnCancelCapacity.Click += btnCancelCapacity_Click;
             // 
             // pnlCapacityContent
             // 
@@ -75,33 +108,27 @@
             pnlCapacityContent.Size = new Size(282, 173);
             pnlCapacityContent.TabIndex = 2;
             // 
-            // lblCapacityTitle
+            // nudNewCapacity
             // 
-            lblCapacityTitle.AutoSize = true;
-            lblCapacityTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCapacityTitle.ForeColor = Color.White;
-            lblCapacityTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblCapacityTitle.Location = new Point(65, 9);
-            lblCapacityTitle.Name = "lblCapacityTitle";
-            lblCapacityTitle.Size = new Size(162, 25);
-            lblCapacityTitle.TabIndex = 34;
-            lblCapacityTitle.Text = "Set Room Capacity";
-            lblCapacityTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblCapacityTitle.Visible = false;
+            nudNewCapacity.Location = new Point(66, 108);
+            nudNewCapacity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudNewCapacity.Name = "nudNewCapacity";
+            nudNewCapacity.Size = new Size(150, 27);
+            nudNewCapacity.TabIndex = 38;
+            nudNewCapacity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudNewCapacity.ValueChanged += nudNewCapacity_ValueChanged;
             // 
-            // lblCurrentCapacity
+            // lblCurrentCapacityValue
             // 
-            lblCurrentCapacity.AutoSize = true;
-            lblCurrentCapacity.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCurrentCapacity.ForeColor = Color.White;
-            lblCurrentCapacity.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentCapacity.Location = new Point(67, 15);
-            lblCurrentCapacity.Name = "lblCurrentCapacity";
-            lblCurrentCapacity.Size = new Size(138, 23);
-            lblCurrentCapacity.TabIndex = 35;
-            lblCurrentCapacity.Text = "Current Capacity";
-            lblCurrentCapacity.TextAlign = ContentAlignment.MiddleCenter;
-            lblCurrentCapacity.Visible = false;
+            lblCurrentCapacityValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCurrentCapacityValue.ForeColor = Color.White;
+            lblCurrentCapacityValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblCurrentCapacityValue.Location = new Point(67, 43);
+            lblCurrentCapacityValue.Name = "lblCurrentCapacityValue";
+            lblCurrentCapacityValue.Size = new Size(138, 23);
+            lblCurrentCapacityValue.TabIndex = 37;
+            lblCurrentCapacityValue.Text = "-";
+            lblCurrentCapacityValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblNewCapacity
             // 
@@ -115,47 +142,19 @@
             lblNewCapacity.TabIndex = 36;
             lblNewCapacity.Text = "New Capacity";
             lblNewCapacity.TextAlign = ContentAlignment.MiddleCenter;
-            lblNewCapacity.Visible = false;
             // 
-            // btnCancelCapacity
+            // lblCurrentCapacity
             // 
-            btnCancelCapacity.Location = new Point(46, 8);
-            btnCancelCapacity.Name = "btnCancelCapacity";
-            btnCancelCapacity.Size = new Size(94, 29);
-            btnCancelCapacity.TabIndex = 0;
-            btnCancelCapacity.Text = "Cancel";
-            btnCancelCapacity.UseVisualStyleBackColor = true;
-            // 
-            // btnSaveCapacity
-            // 
-            btnSaveCapacity.Location = new Point(148, 8);
-            btnSaveCapacity.Name = "btnSaveCapacity";
-            btnSaveCapacity.Size = new Size(125, 29);
-            btnSaveCapacity.TabIndex = 1;
-            btnSaveCapacity.Text = "Save Capacity";
-            btnSaveCapacity.UseVisualStyleBackColor = true;
-            // 
-            // lblCurrentCapacityValue
-            // 
-            lblCurrentCapacityValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCurrentCapacityValue.ForeColor = Color.White;
-            lblCurrentCapacityValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentCapacityValue.Location = new Point(67, 43);
-            lblCurrentCapacityValue.Name = "lblCurrentCapacityValue";
-            lblCurrentCapacityValue.Size = new Size(138, 23);
-            lblCurrentCapacityValue.TabIndex = 37;
-            lblCurrentCapacityValue.Text = "-";
-            lblCurrentCapacityValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblCurrentCapacityValue.Visible = false;
-            // 
-            // nudNewCapacity
-            // 
-            nudNewCapacity.Location = new Point(66, 108);
-            nudNewCapacity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            nudNewCapacity.Name = "nudNewCapacity";
-            nudNewCapacity.Size = new Size(150, 27);
-            nudNewCapacity.TabIndex = 38;
-            nudNewCapacity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            lblCurrentCapacity.AutoSize = true;
+            lblCurrentCapacity.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCurrentCapacity.ForeColor = Color.White;
+            lblCurrentCapacity.ImageAlign = ContentAlignment.MiddleRight;
+            lblCurrentCapacity.Location = new Point(67, 15);
+            lblCurrentCapacity.Name = "lblCurrentCapacity";
+            lblCurrentCapacity.Size = new Size(138, 23);
+            lblCurrentCapacity.TabIndex = 35;
+            lblCurrentCapacity.Text = "Current Capacity";
+            lblCurrentCapacity.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SetCapacityForm
             // 
@@ -172,6 +171,7 @@
             Name = "SetCapacityForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Set Capacity";
+            Load += SetCapacityForm_Load;
             pnlCapacityHeader.ResumeLayout(false);
             pnlCapacityHeader.PerformLayout();
             pnlCapacityActions.ResumeLayout(false);

@@ -345,6 +345,7 @@
             btnConfirmPayment.TabIndex = 1;
             btnConfirmPayment.Text = "Confirm Payment";
             btnConfirmPayment.UseVisualStyleBackColor = true;
+            btnConfirmPayment.Click += btnConfirmPayment_Click;
             // 
             // btnCancelPayment
             // 
@@ -354,6 +355,7 @@
             btnCancelPayment.TabIndex = 0;
             btnCancelPayment.Text = "Cancel";
             btnCancelPayment.UseVisualStyleBackColor = true;
+            btnCancelPayment.Click += btnCancelPayment_Click;
             // 
             // ConfirmPaymentForm
             // 
@@ -371,6 +373,7 @@
             Name = "ConfirmPaymentForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Confirm Payment";
+            Load += ConfirmPaymentForm_Load;
             pnlPaymentDetails.ResumeLayout(false);
             tblPaymentDetails.ResumeLayout(false);
             tblPaymentDetails.PerformLayout();

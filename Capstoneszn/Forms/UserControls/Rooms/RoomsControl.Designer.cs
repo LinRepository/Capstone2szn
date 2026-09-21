@@ -43,17 +43,12 @@
             btnManageRooms = new Button();
             pnlRoomsContent = new Panel();
             flpRoomsOverview = new FlowLayoutPanel();
-            pnlFloorSection = new Panel();
-            flpFloorRooms = new FlowLayoutPanel();
-            lblFloor = new Label();
             pnlRoomsHeader.SuspendLayout();
             pnlRoomsHeaderContent.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             pnlRoomsContent.SuspendLayout();
-            flpRoomsOverview.SuspendLayout();
-            pnlFloorSection.SuspendLayout();
             SuspendLayout();
             // 
             // pnlRoomsHeader
@@ -202,6 +197,7 @@
             btnManageRooms.TabIndex = 29;
             btnManageRooms.Text = "Manage Rooms";
             btnManageRooms.UseVisualStyleBackColor = true;
+            btnManageRooms.Click += btnManageRooms_Click;
             // 
             // pnlRoomsContent
             // 
@@ -216,7 +212,6 @@
             // flpRoomsOverview
             // 
             flpRoomsOverview.AutoScroll = true;
-            flpRoomsOverview.Controls.Add(pnlFloorSection);
             flpRoomsOverview.Dock = DockStyle.Fill;
             flpRoomsOverview.FlowDirection = FlowDirection.TopDown;
             flpRoomsOverview.Location = new Point(0, 0);
@@ -224,39 +219,6 @@
             flpRoomsOverview.Size = new Size(1288, 583);
             flpRoomsOverview.TabIndex = 0;
             flpRoomsOverview.WrapContents = false;
-            // 
-            // pnlFloorSection
-            // 
-            pnlFloorSection.Controls.Add(flpFloorRooms);
-            pnlFloorSection.Controls.Add(lblFloor);
-            pnlFloorSection.Location = new Point(3, 3);
-            pnlFloorSection.Name = "pnlFloorSection";
-            pnlFloorSection.Size = new Size(514, 190);
-            pnlFloorSection.TabIndex = 0;
-            // 
-            // flpFloorRooms
-            // 
-            flpFloorRooms.Dock = DockStyle.Fill;
-            flpFloorRooms.Location = new Point(0, 25);
-            flpFloorRooms.Margin = new Padding(0);
-            flpFloorRooms.Name = "flpFloorRooms";
-            flpFloorRooms.Size = new Size(514, 165);
-            flpFloorRooms.TabIndex = 22;
-            // 
-            // lblFloor
-            // 
-            lblFloor.AutoSize = true;
-            lblFloor.Dock = DockStyle.Top;
-            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFloor.ForeColor = Color.White;
-            lblFloor.ImageAlign = ContentAlignment.MiddleRight;
-            lblFloor.Location = new Point(0, 0);
-            lblFloor.Margin = new Padding(0);
-            lblFloor.Name = "lblFloor";
-            lblFloor.Size = new Size(69, 25);
-            lblFloor.TabIndex = 20;
-            lblFloor.Text = "Floor #";
-            lblFloor.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // RoomsControl
             // 
@@ -270,6 +232,7 @@
             Name = "RoomsControl";
             Padding = new Padding(5);
             Size = new Size(1300, 750);
+            Load += RoomsControl_Load;
             pnlRoomsHeader.ResumeLayout(false);
             pnlRoomsHeaderContent.ResumeLayout(false);
             panel3.ResumeLayout(false);
@@ -279,9 +242,6 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             pnlRoomsContent.ResumeLayout(false);
-            flpRoomsOverview.ResumeLayout(false);
-            pnlFloorSection.ResumeLayout(false);
-            pnlFloorSection.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -299,9 +259,6 @@
         private Panel pnlLegendAvailable;
         private Panel pnlRoomsContent;
         private FlowLayoutPanel flpRoomsOverview;
-        private Panel pnlFloorSection;
-        private FlowLayoutPanel flpFloorRooms;
-        private Label lblFloor;
         private Panel panel3;
         private Panel panel2;
         private Panel panel1;

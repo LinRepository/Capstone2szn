@@ -39,33 +39,33 @@
             pnlRoomDetails = new Panel();
             tblRoomDetails = new TableLayoutPanel();
             pnlRoomInformation = new Panel();
+            panel4 = new Panel();
             btnSetCapacity = new Button();
+            panel3 = new Panel();
             lblCapacityValue = new Label();
             lblCapacityTitle = new Label();
+            panel2 = new Panel();
             lblDateOccupiedValue = new Label();
             lblDateOccupiedTitle = new Label();
+            panel1 = new Panel();
             lblUnitNumberValue = new Label();
             lblUnitNumberTitle = new Label();
             pnlCurrentTenants = new Panel();
             dgvCurrentTenants = new DataGridView();
             pnlCurrentTenantsHeader = new Panel();
             lblCurrentTenantsTitle = new Label();
-            panel1 = new Panel();
-            panel2 = new Panel();
-            panel3 = new Panel();
-            panel4 = new Panel();
             pnlRoomHeader.SuspendLayout();
             pnlRoomStatus.SuspendLayout();
             pnlRoomDetails.SuspendLayout();
             tblRoomDetails.SuspendLayout();
             pnlRoomInformation.SuspendLayout();
+            panel4.SuspendLayout();
+            panel3.SuspendLayout();
+            panel2.SuspendLayout();
+            panel1.SuspendLayout();
             pnlCurrentTenants.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvCurrentTenants).BeginInit();
             pnlCurrentTenantsHeader.SuspendLayout();
-            panel1.SuspendLayout();
-            panel2.SuspendLayout();
-            panel3.SuspendLayout();
-            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // pnlRoomHeader
@@ -205,6 +205,16 @@
             pnlRoomInformation.Size = new Size(346, 417);
             pnlRoomInformation.TabIndex = 0;
             // 
+            // panel4
+            // 
+            panel4.BorderStyle = BorderStyle.FixedSingle;
+            panel4.Controls.Add(btnSetCapacity);
+            panel4.Dock = DockStyle.Top;
+            panel4.Location = new Point(0, 165);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(344, 55);
+            panel4.TabIndex = 33;
+            // 
             // btnSetCapacity
             // 
             btnSetCapacity.Location = new Point(128, 6);
@@ -213,6 +223,18 @@
             btnSetCapacity.TabIndex = 29;
             btnSetCapacity.Text = "Set";
             btnSetCapacity.UseVisualStyleBackColor = true;
+            btnSetCapacity.Click += btnSetCapacity_Click;
+            // 
+            // panel3
+            // 
+            panel3.BorderStyle = BorderStyle.FixedSingle;
+            panel3.Controls.Add(lblCapacityValue);
+            panel3.Controls.Add(lblCapacityTitle);
+            panel3.Dock = DockStyle.Top;
+            panel3.Location = new Point(0, 110);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(344, 55);
+            panel3.TabIndex = 32;
             // 
             // lblCapacityValue
             // 
@@ -242,6 +264,17 @@
             lblCapacityTitle.Text = "Capacity";
             lblCapacityTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // panel2
+            // 
+            panel2.BorderStyle = BorderStyle.FixedSingle;
+            panel2.Controls.Add(lblDateOccupiedValue);
+            panel2.Controls.Add(lblDateOccupiedTitle);
+            panel2.Dock = DockStyle.Top;
+            panel2.Location = new Point(0, 55);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(344, 55);
+            panel2.TabIndex = 31;
+            // 
             // lblDateOccupiedValue
             // 
             lblDateOccupiedValue.Dock = DockStyle.Left;
@@ -269,6 +302,17 @@
             lblDateOccupiedTitle.TabIndex = 25;
             lblDateOccupiedTitle.Text = "Date Occupied";
             lblDateOccupiedTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panel1
+            // 
+            panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Controls.Add(lblUnitNumberValue);
+            panel1.Controls.Add(lblUnitNumberTitle);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(344, 55);
+            panel1.TabIndex = 30;
             // 
             // lblUnitNumberValue
             // 
@@ -348,49 +392,6 @@
             lblCurrentTenantsTitle.Text = "Current Tenants";
             lblCurrentTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // panel1
-            // 
-            panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Controls.Add(lblUnitNumberValue);
-            panel1.Controls.Add(lblUnitNumberTitle);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(344, 55);
-            panel1.TabIndex = 30;
-            // 
-            // panel2
-            // 
-            panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(lblDateOccupiedValue);
-            panel2.Controls.Add(lblDateOccupiedTitle);
-            panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 55);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(344, 55);
-            panel2.TabIndex = 31;
-            // 
-            // panel3
-            // 
-            panel3.BorderStyle = BorderStyle.FixedSingle;
-            panel3.Controls.Add(lblCapacityValue);
-            panel3.Controls.Add(lblCapacityTitle);
-            panel3.Dock = DockStyle.Top;
-            panel3.Location = new Point(0, 110);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(344, 55);
-            panel3.TabIndex = 32;
-            // 
-            // panel4
-            // 
-            panel4.BorderStyle = BorderStyle.FixedSingle;
-            panel4.Controls.Add(btnSetCapacity);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 165);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(344, 55);
-            panel4.TabIndex = 33;
-            // 
             // RoomInformationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -407,6 +408,7 @@
             Name = "RoomInformationForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Room Information";
+            Load += RoomInformationForm_Load;
             pnlRoomHeader.ResumeLayout(false);
             pnlRoomHeader.PerformLayout();
             pnlRoomStatus.ResumeLayout(false);
@@ -414,13 +416,13 @@
             pnlRoomDetails.ResumeLayout(false);
             tblRoomDetails.ResumeLayout(false);
             pnlRoomInformation.ResumeLayout(false);
+            panel4.ResumeLayout(false);
+            panel3.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             pnlCurrentTenants.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvCurrentTenants).EndInit();
             pnlCurrentTenantsHeader.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel4.ResumeLayout(false);
             ResumeLayout(false);
         }
 

@@ -15,15 +15,30 @@ namespace Capstoneszn
     public partial class MainForm : Form
     {
         private bool isSidebarExpanded = true;
-
         private const int SidebarExpandedWidth = 220;
         private const int SidebarCollapsedWidth = 44;
 
+        //ROOMS
+        private int checkbuildingId;
+
+        //ORIGINAL CONSTRUCTOR for sampling
         public MainForm()
         {
             InitializeComponent();
 
             pnlSideBar.Width = SidebarExpandedWidth;
+        }
+
+        // Add this variable to remember which building's dashboard is currently open
+        private int checkcurrentBuildingId;
+        // 1. The NEW Constructor used for db
+        public MainForm(int buildingId)
+        {
+            InitializeComponent();
+            pnlSideBar.Width = SidebarExpandedWidth;
+
+            checkcurrentBuildingId = buildingId; //BUILDING CREATION
+            checkbuildingId = buildingId; //ROOMS MODULE
         }
 
         //MAIN FORM 
@@ -136,7 +151,7 @@ namespace Capstoneszn
 
         private void btnRooms_Click_1(object sender, EventArgs e)
         {
-            LoadControl(new RoomsControl());
+            LoadControl(new RoomsControl(checkbuildingId));
         }
 
         private void btnUtilities_Click_1(object sender, EventArgs e)
