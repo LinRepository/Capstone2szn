@@ -16,101 +16,92 @@ namespace Capstoneszn.Forms.BuildingForms
         public BuildingSelection()
         {
             InitializeComponent();
-            LoadBuildings(); // Load immediately on form launch
         }
 
         private void BuildingSelection_Load(object sender, EventArgs e)
         {
-
+            LoadBuildings();
         }
 
-        private void flpBuildings_Paint(object sender, PaintEventArgs e)
+        private void LoadBuildings()
         {
-
-        }
-
-        
-
-        private void lblPlusBuilding_Click(object sender, EventArgs e)
-        {
-            AddBuildingForm addForm = new AddBuildingForm();
-            addForm.Show();
-
-            // Hide
-            this.Hide();
-        }
-
-
-        public void LoadBuildings()
-        {
-            // 1. Remove any previously loaded database cards
+            // 1. Clear existing cards EXCEPT the pnlAddBuilding
             for (int i = flpBuildings.Controls.Count - 1; i >= 0; i--)
             {
                 Control ctrl = flpBuildings.Controls[i];
-                // Don't delete your static design-time panels
-                if (ctrl.Name != "pnlSamplesAddBuilding" && ctrl.Name != "pnlAddBuilding")
+                if (ctrl.Name != "pnlAddBuilding")
                 {
                     flpBuildings.Controls.Remove(ctrl);
                     ctrl.Dispose();
                 }
             }
 
-            // 2. Fetch buildings from SQL Server
+            // 2. Fetch and populate BuildingCards
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             {
                 try
                 {
                     conn.Open();
-                    string query = "SELECT BuildingId, BuildingName FROM Buildings ORDER BY BuildingId ASC";
+                    string query = "SELECT BuildingId, BuildingName FROM Buildings ORDER BY CreatedDate ASC";
+
                     using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            int insertionIndex = 0; // Tracks where to insert so they stay in order
+                            BuildingCard card = new BuildingCard();
+                            card.BuildingId = reader.GetInt32(0);
+                            card.BuildingName = reader.GetString(1);
 
-                            while (reader.Read())
-                            {
-                                // 3. Instantiate your custom UserControl
-                                BuildingCard card = new BuildingCard();
-                                card.BuildingId = Convert.ToInt32(reader["BuildingId"]);
-                                card.BuildingName = reader["BuildingName"].ToString();
-                                card.Cursor = Cursors.Hand;
+                            
+                            card.CardClicked += BuildingCard_Clicked;
 
-                                // Subscribe to the unified click event we created in the UserControl
-                                card.CardClicked += BuildingCard_Click;
-
-                                // 4. Inject into FlowLayoutPanel at the correct position
-                                flpBuildings.Controls.Add(card);
-                                flpBuildings.Controls.SetChildIndex(card, insertionIndex);
-                                insertionIndex++;
-                            }
+                            flpBuildings.Controls.Add(card);
                         }
                     }
+
+                    // 3. Ensure the Add Building panel always stays at the very end of the flow layout
+                    flpBuildings.Controls.SetChildIndex(pnlAddBuilding, flpBuildings.Controls.Count);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to load buildings: " + ex.Message);
+                    MessageBox.Show("Error loading buildings: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        // 5. The click event for when a user selects a generated BuildingCard
-        private void BuildingCard_Click(object sender, EventArgs e)
+        private void lblPlusBuilding_Click(object sender, EventArgs e)
         {
-            // Cast the sender specifically to your BuildingCard class
+            
+            using (AddBuildingForm addForm = new AddBuildingForm())
+            {
+                
+                if (addForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadBuildings();
+                }
+            }
+        }
+
+        // This triggers when ANY dynamically created BuildingCard is clicked
+        private void BuildingCard_Clicked(object sender, EventArgs e)
+        {
             BuildingCard clickedCard = sender as BuildingCard;
+
             if (clickedCard != null)
             {
-                int buildingId = clickedCard.BuildingId;
+                int selectedBuildingId = clickedCard.BuildingId;
+                string selectedBuildingName = clickedCard.BuildingName;
 
-                // Instantiate MainForm and pass the selected building's ID into it
-                MainForm mainForm = new MainForm(buildingId);
+                
+                MainForm mainForm = new MainForm(selectedBuildingId, selectedBuildingName);
                 mainForm.Show();
-
-                // Hide the building selection screen
                 this.Hide();
             }
         }
 
+        private void flpBuildings_Paint(object sender, PaintEventArgs e)
+        {
+        }
     }
 }

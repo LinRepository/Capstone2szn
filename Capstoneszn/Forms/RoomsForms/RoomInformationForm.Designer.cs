@@ -36,33 +36,60 @@
             pnlRoomStatus = new Panel();
             lblRoomStatus = new Label();
             lblCurrentStatus = new Label();
+            panel8 = new Panel();
+            btnEdit = new Button();
             pnlRoomDetails = new Panel();
             tblRoomDetails = new TableLayoutPanel();
             pnlRoomInformation = new Panel();
-            panel4 = new Panel();
-            btnSetCapacity = new Button();
-            panel3 = new Panel();
-            lblCapacityValue = new Label();
-            lblCapacityTitle = new Label();
-            panel2 = new Panel();
-            lblDateOccupiedValue = new Label();
-            lblDateOccupiedTitle = new Label();
-            panel1 = new Panel();
+            flpRoomDetails = new FlowLayoutPanel();
+            pnlUnitData = new Panel();
             lblUnitNumberValue = new Label();
             lblUnitNumberTitle = new Label();
+            pnlSetRoom = new Panel();
+            txtSetRoom = new TextBox();
+            lblSetRoom = new Label();
+            pnlCapacityData = new Panel();
+            lblCapacityValue = new Label();
+            lblCapacityTitle = new Label();
+            pnlSetCapacity = new Panel();
+            nudSetCapacity = new NumericUpDown();
+            lblSetCapacity = new Label();
+            pnlRoomType = new Panel();
+            lblRoomType = new Label();
+            pnlRoomTypescbo = new Panel();
+            cboRoomType = new ComboBox();
+            pnlRoomPricelbl = new Panel();
+            lblRoomPrice = new Label();
+            pnlRoomPrice = new Panel();
+            txtRoomPrice = new TextBox();
+            pnlActionButtons = new Panel();
+            btnSave = new Button();
+            btnCancel = new Button();
             pnlCurrentTenants = new Panel();
             dgvCurrentTenants = new DataGridView();
+            TenantID = new DataGridViewTextBoxColumn();
+            TenantFname = new DataGridViewTextBoxColumn();
+            TenantLname = new DataGridViewTextBoxColumn();
+            TenantContactNumber = new DataGridViewTextBoxColumn();
             pnlCurrentTenantsHeader = new Panel();
             lblCurrentTenantsTitle = new Label();
             pnlRoomHeader.SuspendLayout();
             pnlRoomStatus.SuspendLayout();
+            panel8.SuspendLayout();
             pnlRoomDetails.SuspendLayout();
             tblRoomDetails.SuspendLayout();
             pnlRoomInformation.SuspendLayout();
-            panel4.SuspendLayout();
-            panel3.SuspendLayout();
-            panel2.SuspendLayout();
-            panel1.SuspendLayout();
+            flpRoomDetails.SuspendLayout();
+            pnlUnitData.SuspendLayout();
+            pnlSetRoom.SuspendLayout();
+            pnlCapacityData.SuspendLayout();
+            pnlSetCapacity.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudSetCapacity).BeginInit();
+            pnlRoomType.SuspendLayout();
+            pnlRoomTypescbo.SuspendLayout();
+            pnlRoomPricelbl.SuspendLayout();
+            pnlRoomPrice.SuspendLayout();
+            pnlActionButtons.SuspendLayout();
             pnlCurrentTenants.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvCurrentTenants).BeginInit();
             pnlCurrentTenantsHeader.SuspendLayout();
@@ -109,22 +136,26 @@
             // 
             // btnMoveOut
             // 
+            btnMoveOut.Cursor = Cursors.Hand;
             btnMoveOut.Location = new Point(776, 20);
             btnMoveOut.Name = "btnMoveOut";
             btnMoveOut.Size = new Size(94, 40);
             btnMoveOut.TabIndex = 1;
             btnMoveOut.Text = "Move Out";
             btnMoveOut.UseVisualStyleBackColor = true;
+            btnMoveOut.Visible = false;
             btnMoveOut.Click += btnMoveOut_Click;
             // 
             // btnMoveIn
             // 
+            btnMoveIn.Cursor = Cursors.Hand;
             btnMoveIn.Location = new Point(676, 20);
             btnMoveIn.Name = "btnMoveIn";
             btnMoveIn.Size = new Size(94, 40);
             btnMoveIn.TabIndex = 0;
             btnMoveIn.Text = "Move In";
             btnMoveIn.UseVisualStyleBackColor = true;
+            btnMoveIn.Visible = false;
             btnMoveIn.Click += btnMoveIn_Click;
             // 
             // pnlRoomStatus
@@ -132,6 +163,7 @@
             pnlRoomStatus.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomStatus.Controls.Add(lblRoomStatus);
             pnlRoomStatus.Controls.Add(lblCurrentStatus);
+            pnlRoomStatus.Controls.Add(panel8);
             pnlRoomStatus.Controls.Add(btnMoveIn);
             pnlRoomStatus.Controls.Add(btnMoveOut);
             pnlRoomStatus.Dock = DockStyle.Top;
@@ -142,31 +174,51 @@
             // 
             // lblRoomStatus
             // 
-            lblRoomStatus.AutoSize = true;
+            lblRoomStatus.Dock = DockStyle.Left;
             lblRoomStatus.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoomStatus.ForeColor = Color.White;
             lblRoomStatus.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoomStatus.Location = new Point(132, 26);
+            lblRoomStatus.Location = new Point(270, 0);
             lblRoomStatus.Margin = new Padding(0);
             lblRoomStatus.Name = "lblRoomStatus";
-            lblRoomStatus.Size = new Size(60, 25);
-            lblRoomStatus.TabIndex = 22;
+            lblRoomStatus.Size = new Size(85, 78);
+            lblRoomStatus.TabIndex = 33;
             lblRoomStatus.Text = "Status";
             lblRoomStatus.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblCurrentStatus
             // 
-            lblCurrentStatus.AutoSize = true;
+            lblCurrentStatus.Dock = DockStyle.Left;
             lblCurrentStatus.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblCurrentStatus.ForeColor = Color.White;
             lblCurrentStatus.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentStatus.Location = new Point(9, 26);
+            lblCurrentStatus.Location = new Point(130, 0);
             lblCurrentStatus.Margin = new Padding(0);
             lblCurrentStatus.Name = "lblCurrentStatus";
-            lblCurrentStatus.Size = new Size(123, 25);
-            lblCurrentStatus.TabIndex = 21;
+            lblCurrentStatus.Size = new Size(140, 78);
+            lblCurrentStatus.TabIndex = 32;
             lblCurrentStatus.Text = "Current Status";
             lblCurrentStatus.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panel8
+            // 
+            panel8.Controls.Add(btnEdit);
+            panel8.Dock = DockStyle.Left;
+            panel8.Location = new Point(0, 0);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(130, 78);
+            panel8.TabIndex = 31;
+            // 
+            // btnEdit
+            // 
+            btnEdit.Cursor = Cursors.Hand;
+            btnEdit.Location = new Point(28, 20);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(76, 40);
+            btnEdit.TabIndex = 30;
+            btnEdit.Text = "Edit";
+            btnEdit.UseVisualStyleBackColor = true;
+            btnEdit.Click += btnEdit_Click;
             // 
             // pnlRoomDetails
             // 
@@ -174,7 +226,7 @@
             pnlRoomDetails.Dock = DockStyle.Fill;
             pnlRoomDetails.Location = new Point(0, 130);
             pnlRoomDetails.Name = "pnlRoomDetails";
-            pnlRoomDetails.Size = new Size(882, 423);
+            pnlRoomDetails.Size = new Size(882, 558);
             pnlRoomDetails.TabIndex = 2;
             // 
             // tblRoomDetails
@@ -189,130 +241,49 @@
             tblRoomDetails.Name = "tblRoomDetails";
             tblRoomDetails.RowCount = 1;
             tblRoomDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tblRoomDetails.Size = new Size(882, 423);
+            tblRoomDetails.Size = new Size(882, 558);
             tblRoomDetails.TabIndex = 0;
             // 
             // pnlRoomInformation
             // 
             pnlRoomInformation.BorderStyle = BorderStyle.FixedSingle;
-            pnlRoomInformation.Controls.Add(panel4);
-            pnlRoomInformation.Controls.Add(panel3);
-            pnlRoomInformation.Controls.Add(panel2);
-            pnlRoomInformation.Controls.Add(panel1);
+            pnlRoomInformation.Controls.Add(flpRoomDetails);
+            pnlRoomInformation.Controls.Add(pnlActionButtons);
             pnlRoomInformation.Dock = DockStyle.Fill;
             pnlRoomInformation.Location = new Point(3, 3);
             pnlRoomInformation.Name = "pnlRoomInformation";
-            pnlRoomInformation.Size = new Size(346, 417);
+            pnlRoomInformation.Size = new Size(346, 552);
             pnlRoomInformation.TabIndex = 0;
             // 
-            // panel4
+            // flpRoomDetails
             // 
-            panel4.BorderStyle = BorderStyle.FixedSingle;
-            panel4.Controls.Add(btnSetCapacity);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 165);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(344, 55);
-            panel4.TabIndex = 33;
+            flpRoomDetails.AutoScroll = true;
+            flpRoomDetails.Controls.Add(pnlUnitData);
+            flpRoomDetails.Controls.Add(pnlSetRoom);
+            flpRoomDetails.Controls.Add(pnlCapacityData);
+            flpRoomDetails.Controls.Add(pnlSetCapacity);
+            flpRoomDetails.Controls.Add(pnlRoomType);
+            flpRoomDetails.Controls.Add(pnlRoomTypescbo);
+            flpRoomDetails.Controls.Add(pnlRoomPricelbl);
+            flpRoomDetails.Controls.Add(pnlRoomPrice);
+            flpRoomDetails.Dock = DockStyle.Fill;
+            flpRoomDetails.FlowDirection = FlowDirection.TopDown;
+            flpRoomDetails.Location = new Point(0, 0);
+            flpRoomDetails.Margin = new Padding(0);
+            flpRoomDetails.Name = "flpRoomDetails";
+            flpRoomDetails.Size = new Size(344, 505);
+            flpRoomDetails.TabIndex = 4;
+            flpRoomDetails.WrapContents = false;
             // 
-            // btnSetCapacity
+            // pnlUnitData
             // 
-            btnSetCapacity.Location = new Point(128, 6);
-            btnSetCapacity.Name = "btnSetCapacity";
-            btnSetCapacity.Size = new Size(76, 40);
-            btnSetCapacity.TabIndex = 29;
-            btnSetCapacity.Text = "Set";
-            btnSetCapacity.UseVisualStyleBackColor = true;
-            btnSetCapacity.Click += btnSetCapacity_Click;
-            // 
-            // panel3
-            // 
-            panel3.BorderStyle = BorderStyle.FixedSingle;
-            panel3.Controls.Add(lblCapacityValue);
-            panel3.Controls.Add(lblCapacityTitle);
-            panel3.Dock = DockStyle.Top;
-            panel3.Location = new Point(0, 110);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(344, 55);
-            panel3.TabIndex = 32;
-            // 
-            // lblCapacityValue
-            // 
-            lblCapacityValue.Dock = DockStyle.Left;
-            lblCapacityValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCapacityValue.ForeColor = Color.White;
-            lblCapacityValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblCapacityValue.Location = new Point(164, 0);
-            lblCapacityValue.Margin = new Padding(0);
-            lblCapacityValue.Name = "lblCapacityValue";
-            lblCapacityValue.Size = new Size(135, 53);
-            lblCapacityValue.TabIndex = 28;
-            lblCapacityValue.Text = "#";
-            lblCapacityValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblCapacityTitle
-            // 
-            lblCapacityTitle.Dock = DockStyle.Left;
-            lblCapacityTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCapacityTitle.ForeColor = Color.White;
-            lblCapacityTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblCapacityTitle.Location = new Point(0, 0);
-            lblCapacityTitle.Margin = new Padding(0);
-            lblCapacityTitle.Name = "lblCapacityTitle";
-            lblCapacityTitle.Size = new Size(164, 53);
-            lblCapacityTitle.TabIndex = 27;
-            lblCapacityTitle.Text = "Capacity";
-            lblCapacityTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // panel2
-            // 
-            panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(lblDateOccupiedValue);
-            panel2.Controls.Add(lblDateOccupiedTitle);
-            panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 55);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(344, 55);
-            panel2.TabIndex = 31;
-            // 
-            // lblDateOccupiedValue
-            // 
-            lblDateOccupiedValue.Dock = DockStyle.Left;
-            lblDateOccupiedValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDateOccupiedValue.ForeColor = Color.White;
-            lblDateOccupiedValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblDateOccupiedValue.Location = new Point(164, 0);
-            lblDateOccupiedValue.Margin = new Padding(0);
-            lblDateOccupiedValue.Name = "lblDateOccupiedValue";
-            lblDateOccupiedValue.Size = new Size(135, 53);
-            lblDateOccupiedValue.TabIndex = 26;
-            lblDateOccupiedValue.Text = "MMDDYY";
-            lblDateOccupiedValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblDateOccupiedTitle
-            // 
-            lblDateOccupiedTitle.Dock = DockStyle.Left;
-            lblDateOccupiedTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDateOccupiedTitle.ForeColor = Color.White;
-            lblDateOccupiedTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblDateOccupiedTitle.Location = new Point(0, 0);
-            lblDateOccupiedTitle.Margin = new Padding(0);
-            lblDateOccupiedTitle.Name = "lblDateOccupiedTitle";
-            lblDateOccupiedTitle.Size = new Size(164, 53);
-            lblDateOccupiedTitle.TabIndex = 25;
-            lblDateOccupiedTitle.Text = "Date Occupied";
-            lblDateOccupiedTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // panel1
-            // 
-            panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Controls.Add(lblUnitNumberValue);
-            panel1.Controls.Add(lblUnitNumberTitle);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(344, 55);
-            panel1.TabIndex = 30;
+            pnlUnitData.BorderStyle = BorderStyle.FixedSingle;
+            pnlUnitData.Controls.Add(lblUnitNumberValue);
+            pnlUnitData.Controls.Add(lblUnitNumberTitle);
+            pnlUnitData.Location = new Point(3, 3);
+            pnlUnitData.Name = "pnlUnitData";
+            pnlUnitData.Size = new Size(338, 55);
+            pnlUnitData.TabIndex = 32;
             // 
             // lblUnitNumberValue
             // 
@@ -342,6 +313,241 @@
             lblUnitNumberTitle.Text = "Unit Number";
             lblUnitNumberTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // pnlSetRoom
+            // 
+            pnlSetRoom.BorderStyle = BorderStyle.FixedSingle;
+            pnlSetRoom.Controls.Add(txtSetRoom);
+            pnlSetRoom.Controls.Add(lblSetRoom);
+            pnlSetRoom.Location = new Point(3, 64);
+            pnlSetRoom.Name = "pnlSetRoom";
+            pnlSetRoom.Size = new Size(338, 55);
+            pnlSetRoom.TabIndex = 41;
+            pnlSetRoom.Visible = false;
+            // 
+            // txtSetRoom
+            // 
+            txtSetRoom.Cursor = Cursors.IBeam;
+            txtSetRoom.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSetRoom.Location = new Point(180, 3);
+            txtSetRoom.Multiline = true;
+            txtSetRoom.Name = "txtSetRoom";
+            txtSetRoom.Size = new Size(150, 47);
+            txtSetRoom.TabIndex = 30;
+            txtSetRoom.TextAlign = HorizontalAlignment.Center;
+            // 
+            // lblSetRoom
+            // 
+            lblSetRoom.Dock = DockStyle.Left;
+            lblSetRoom.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSetRoom.ForeColor = Color.White;
+            lblSetRoom.ImageAlign = ContentAlignment.MiddleRight;
+            lblSetRoom.Location = new Point(0, 0);
+            lblSetRoom.Margin = new Padding(0);
+            lblSetRoom.Name = "lblSetRoom";
+            lblSetRoom.Size = new Size(164, 53);
+            lblSetRoom.TabIndex = 29;
+            lblSetRoom.Text = "Set Room Number";
+            lblSetRoom.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlCapacityData
+            // 
+            pnlCapacityData.BorderStyle = BorderStyle.FixedSingle;
+            pnlCapacityData.Controls.Add(lblCapacityValue);
+            pnlCapacityData.Controls.Add(lblCapacityTitle);
+            pnlCapacityData.Location = new Point(3, 125);
+            pnlCapacityData.Name = "pnlCapacityData";
+            pnlCapacityData.Size = new Size(338, 55);
+            pnlCapacityData.TabIndex = 42;
+            // 
+            // lblCapacityValue
+            // 
+            lblCapacityValue.Dock = DockStyle.Left;
+            lblCapacityValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCapacityValue.ForeColor = Color.White;
+            lblCapacityValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblCapacityValue.Location = new Point(164, 0);
+            lblCapacityValue.Margin = new Padding(0);
+            lblCapacityValue.Name = "lblCapacityValue";
+            lblCapacityValue.Size = new Size(135, 53);
+            lblCapacityValue.TabIndex = 29;
+            lblCapacityValue.Text = "#";
+            lblCapacityValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblCapacityTitle
+            // 
+            lblCapacityTitle.Dock = DockStyle.Left;
+            lblCapacityTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCapacityTitle.ForeColor = Color.White;
+            lblCapacityTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblCapacityTitle.Location = new Point(0, 0);
+            lblCapacityTitle.Margin = new Padding(0);
+            lblCapacityTitle.Name = "lblCapacityTitle";
+            lblCapacityTitle.Size = new Size(164, 53);
+            lblCapacityTitle.TabIndex = 28;
+            lblCapacityTitle.Text = "Capacity";
+            lblCapacityTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlSetCapacity
+            // 
+            pnlSetCapacity.BorderStyle = BorderStyle.FixedSingle;
+            pnlSetCapacity.Controls.Add(nudSetCapacity);
+            pnlSetCapacity.Controls.Add(lblSetCapacity);
+            pnlSetCapacity.Location = new Point(3, 186);
+            pnlSetCapacity.Name = "pnlSetCapacity";
+            pnlSetCapacity.Size = new Size(338, 55);
+            pnlSetCapacity.TabIndex = 53;
+            pnlSetCapacity.Visible = false;
+            // 
+            // nudSetCapacity
+            // 
+            nudSetCapacity.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            nudSetCapacity.Location = new Point(180, 9);
+            nudSetCapacity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudSetCapacity.Name = "nudSetCapacity";
+            nudSetCapacity.Size = new Size(150, 37);
+            nudSetCapacity.TabIndex = 39;
+            nudSetCapacity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // lblSetCapacity
+            // 
+            lblSetCapacity.Dock = DockStyle.Left;
+            lblSetCapacity.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSetCapacity.ForeColor = Color.White;
+            lblSetCapacity.ImageAlign = ContentAlignment.MiddleRight;
+            lblSetCapacity.Location = new Point(0, 0);
+            lblSetCapacity.Margin = new Padding(0);
+            lblSetCapacity.Name = "lblSetCapacity";
+            lblSetCapacity.Size = new Size(164, 53);
+            lblSetCapacity.TabIndex = 29;
+            lblSetCapacity.Text = "Set Capacity";
+            lblSetCapacity.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlRoomType
+            // 
+            pnlRoomType.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomType.Controls.Add(lblRoomType);
+            pnlRoomType.Location = new Point(3, 247);
+            pnlRoomType.Name = "pnlRoomType";
+            pnlRoomType.Padding = new Padding(5);
+            pnlRoomType.Size = new Size(338, 55);
+            pnlRoomType.TabIndex = 54;
+            pnlRoomType.Visible = false;
+            // 
+            // lblRoomType
+            // 
+            lblRoomType.Dock = DockStyle.Fill;
+            lblRoomType.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoomType.ForeColor = Color.White;
+            lblRoomType.ImageAlign = ContentAlignment.MiddleRight;
+            lblRoomType.Location = new Point(5, 5);
+            lblRoomType.Margin = new Padding(0);
+            lblRoomType.Name = "lblRoomType";
+            lblRoomType.Size = new Size(326, 43);
+            lblRoomType.TabIndex = 29;
+            lblRoomType.Text = "Select a Room Type";
+            lblRoomType.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlRoomTypescbo
+            // 
+            pnlRoomTypescbo.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomTypescbo.Controls.Add(cboRoomType);
+            pnlRoomTypescbo.Location = new Point(3, 308);
+            pnlRoomTypescbo.Name = "pnlRoomTypescbo";
+            pnlRoomTypescbo.Size = new Size(338, 55);
+            pnlRoomTypescbo.TabIndex = 55;
+            pnlRoomTypescbo.Visible = false;
+            // 
+            // cboRoomType
+            // 
+            cboRoomType.Cursor = Cursors.Hand;
+            cboRoomType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboRoomType.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cboRoomType.FormattingEnabled = true;
+            cboRoomType.Location = new Point(45, 8);
+            cboRoomType.Name = "cboRoomType";
+            cboRoomType.Size = new Size(250, 38);
+            cboRoomType.TabIndex = 34;
+            // 
+            // pnlRoomPricelbl
+            // 
+            pnlRoomPricelbl.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomPricelbl.Controls.Add(lblRoomPrice);
+            pnlRoomPricelbl.Location = new Point(3, 369);
+            pnlRoomPricelbl.Name = "pnlRoomPricelbl";
+            pnlRoomPricelbl.Padding = new Padding(5);
+            pnlRoomPricelbl.Size = new Size(338, 55);
+            pnlRoomPricelbl.TabIndex = 56;
+            pnlRoomPricelbl.Visible = false;
+            // 
+            // lblRoomPrice
+            // 
+            lblRoomPrice.Dock = DockStyle.Fill;
+            lblRoomPrice.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoomPrice.ForeColor = Color.White;
+            lblRoomPrice.ImageAlign = ContentAlignment.MiddleRight;
+            lblRoomPrice.Location = new Point(5, 5);
+            lblRoomPrice.Margin = new Padding(0);
+            lblRoomPrice.Name = "lblRoomPrice";
+            lblRoomPrice.Size = new Size(326, 43);
+            lblRoomPrice.TabIndex = 30;
+            lblRoomPrice.Text = "Enter Room Price";
+            lblRoomPrice.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlRoomPrice
+            // 
+            pnlRoomPrice.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomPrice.Controls.Add(txtRoomPrice);
+            pnlRoomPrice.Location = new Point(3, 430);
+            pnlRoomPrice.Name = "pnlRoomPrice";
+            pnlRoomPrice.Size = new Size(338, 55);
+            pnlRoomPrice.TabIndex = 57;
+            pnlRoomPrice.Visible = false;
+            // 
+            // txtRoomPrice
+            // 
+            txtRoomPrice.Cursor = Cursors.IBeam;
+            txtRoomPrice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtRoomPrice.Location = new Point(45, 3);
+            txtRoomPrice.Multiline = true;
+            txtRoomPrice.Name = "txtRoomPrice";
+            txtRoomPrice.Size = new Size(250, 47);
+            txtRoomPrice.TabIndex = 0;
+            txtRoomPrice.TextAlign = HorizontalAlignment.Center;
+            // 
+            // pnlActionButtons
+            // 
+            pnlActionButtons.BorderStyle = BorderStyle.FixedSingle;
+            pnlActionButtons.Controls.Add(btnSave);
+            pnlActionButtons.Controls.Add(btnCancel);
+            pnlActionButtons.Dock = DockStyle.Bottom;
+            pnlActionButtons.Location = new Point(0, 505);
+            pnlActionButtons.Name = "pnlActionButtons";
+            pnlActionButtons.Size = new Size(344, 45);
+            pnlActionButtons.TabIndex = 3;
+            pnlActionButtons.Visible = false;
+            // 
+            // btnSave
+            // 
+            btnSave.Cursor = Cursors.Hand;
+            btnSave.Location = new Point(204, 9);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(94, 29);
+            btnSave.TabIndex = 51;
+            btnSave.Text = "Save";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Cursor = Cursors.Hand;
+            btnCancel.Location = new Point(48, 9);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(94, 29);
+            btnCancel.TabIndex = 50;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
+            // 
             // pnlCurrentTenants
             // 
             pnlCurrentTenants.Controls.Add(dgvCurrentTenants);
@@ -349,14 +555,16 @@
             pnlCurrentTenants.Dock = DockStyle.Fill;
             pnlCurrentTenants.Location = new Point(355, 3);
             pnlCurrentTenants.Name = "pnlCurrentTenants";
-            pnlCurrentTenants.Size = new Size(524, 417);
+            pnlCurrentTenants.Size = new Size(524, 552);
             pnlCurrentTenants.TabIndex = 1;
             // 
             // dgvCurrentTenants
             // 
             dgvCurrentTenants.AllowUserToAddRows = false;
             dgvCurrentTenants.AllowUserToDeleteRows = false;
+            dgvCurrentTenants.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCurrentTenants.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvCurrentTenants.Columns.AddRange(new DataGridViewColumn[] { TenantID, TenantFname, TenantLname, TenantContactNumber });
             dgvCurrentTenants.Dock = DockStyle.Fill;
             dgvCurrentTenants.Location = new Point(0, 45);
             dgvCurrentTenants.MultiSelect = false;
@@ -365,8 +573,37 @@
             dgvCurrentTenants.RowHeadersVisible = false;
             dgvCurrentTenants.RowHeadersWidth = 51;
             dgvCurrentTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCurrentTenants.Size = new Size(524, 372);
+            dgvCurrentTenants.Size = new Size(524, 507);
             dgvCurrentTenants.TabIndex = 30;
+            dgvCurrentTenants.CellContentClick += dgvCurrentTenants_CellContentClick;
+            // 
+            // TenantID
+            // 
+            TenantID.HeaderText = "ID";
+            TenantID.MinimumWidth = 6;
+            TenantID.Name = "TenantID";
+            TenantID.ReadOnly = true;
+            // 
+            // TenantFname
+            // 
+            TenantFname.HeaderText = "First Name";
+            TenantFname.MinimumWidth = 6;
+            TenantFname.Name = "TenantFname";
+            TenantFname.ReadOnly = true;
+            // 
+            // TenantLname
+            // 
+            TenantLname.HeaderText = "Last Name";
+            TenantLname.MinimumWidth = 6;
+            TenantLname.Name = "TenantLname";
+            TenantLname.ReadOnly = true;
+            // 
+            // TenantContactNumber
+            // 
+            TenantContactNumber.HeaderText = "ContactNumber";
+            TenantContactNumber.MinimumWidth = 6;
+            TenantContactNumber.Name = "TenantContactNumber";
+            TenantContactNumber.ReadOnly = true;
             // 
             // pnlCurrentTenantsHeader
             // 
@@ -398,7 +635,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(882, 553);
+            ClientSize = new Size(882, 688);
             Controls.Add(pnlRoomDetails);
             Controls.Add(pnlRoomStatus);
             Controls.Add(pnlRoomHeader);
@@ -412,14 +649,23 @@
             pnlRoomHeader.ResumeLayout(false);
             pnlRoomHeader.PerformLayout();
             pnlRoomStatus.ResumeLayout(false);
-            pnlRoomStatus.PerformLayout();
+            panel8.ResumeLayout(false);
             pnlRoomDetails.ResumeLayout(false);
             tblRoomDetails.ResumeLayout(false);
             pnlRoomInformation.ResumeLayout(false);
-            panel4.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel1.ResumeLayout(false);
+            flpRoomDetails.ResumeLayout(false);
+            pnlUnitData.ResumeLayout(false);
+            pnlSetRoom.ResumeLayout(false);
+            pnlSetRoom.PerformLayout();
+            pnlCapacityData.ResumeLayout(false);
+            pnlSetCapacity.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)nudSetCapacity).EndInit();
+            pnlRoomType.ResumeLayout(false);
+            pnlRoomTypescbo.ResumeLayout(false);
+            pnlRoomPricelbl.ResumeLayout(false);
+            pnlRoomPrice.ResumeLayout(false);
+            pnlRoomPrice.PerformLayout();
+            pnlActionButtons.ResumeLayout(false);
             pnlCurrentTenants.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvCurrentTenants).EndInit();
             pnlCurrentTenantsHeader.ResumeLayout(false);
@@ -435,24 +681,43 @@
         private Label lblRoomTitle;
         private Button btnCloseRoomInfo;
         private Panel pnlRoomDetails;
-        private Label lblRoomStatus;
-        private Label lblCurrentStatus;
         private TableLayoutPanel tblRoomDetails;
         private Panel pnlRoomInformation;
-        private Label lblCapacityValue;
-        private Label lblCapacityTitle;
-        private Label lblDateOccupiedValue;
-        private Label lblDateOccupiedTitle;
-        private Label lblUnitNumberValue;
-        private Label lblUnitNumberTitle;
         private Panel pnlCurrentTenants;
-        private Button btnSetCapacity;
         private Label lblCurrentTenantsTitle;
         private Panel pnlCurrentTenantsHeader;
         private DataGridView dgvCurrentTenants;
-        private Panel panel4;
-        private Panel panel3;
-        private Panel panel2;
-        private Panel panel1;
+        private Button btnEdit;
+        private Panel panel8;
+        private Label lblRoomStatus;
+        private Label lblCurrentStatus;
+        private DataGridViewTextBoxColumn TenantID;
+        private DataGridViewTextBoxColumn TenantFname;
+        private DataGridViewTextBoxColumn TenantLname;
+        private DataGridViewTextBoxColumn TenantContactNumber;
+        private Panel pnlActionButtons;
+        private Button btnSave;
+        private Button btnCancel;
+        private FlowLayoutPanel flpRoomDetails;
+        private Panel pnlUnitData;
+        private Label lblUnitNumberValue;
+        private Label lblUnitNumberTitle;
+        private Panel pnlSetRoom;
+        private TextBox txtSetRoom;
+        private Label lblSetRoom;
+        private Panel pnlCapacityData;
+        private Label lblCapacityValue;
+        private Label lblCapacityTitle;
+        private Panel pnlSetCapacity;
+        private NumericUpDown nudSetCapacity;
+        private Label lblSetCapacity;
+        private Panel pnlRoomType;
+        private Label lblRoomType;
+        private Panel pnlRoomTypescbo;
+        private ComboBox cboRoomType;
+        private Panel pnlRoomPricelbl;
+        private Label lblRoomPrice;
+        private Panel pnlRoomPrice;
+        private TextBox txtRoomPrice;
     }
 }

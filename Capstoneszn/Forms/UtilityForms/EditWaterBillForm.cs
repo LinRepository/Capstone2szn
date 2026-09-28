@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Capstoneszn.Forms.UtilityForms
 {
-    public partial class AddBillForm : Form
+    public partial class EditWaterBillForm : Form
     {
-        public AddBillForm()
+        public EditWaterBillForm()
         {
             InitializeComponent();
         }

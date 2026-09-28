@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms.UtilityForms;
 
 namespace Capstoneszn.UserControls
 {
@@ -15,6 +16,11 @@ namespace Capstoneszn.UserControls
         public UtilitiesControl()
         {
             InitializeComponent();
+        }
+
+        private void btnEditWaterBill_Click(object sender, EventArgs e)
+        {
+            EditWaterBillForm ewb = new EditWaterBillForm();
         }
     }
 }

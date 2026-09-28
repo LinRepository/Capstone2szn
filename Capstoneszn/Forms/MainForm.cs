@@ -21,18 +21,10 @@ namespace Capstoneszn
         //ROOMS
         private int checkbuildingId;
 
-        //ORIGINAL CONSTRUCTOR for sampling
-        public MainForm()
-        {
-            InitializeComponent();
-
-            pnlSideBar.Width = SidebarExpandedWidth;
-        }
-
-        // Add this variable to remember which building's dashboard is currently open
+        
         private int checkcurrentBuildingId;
         // 1. The NEW Constructor used for db
-        public MainForm(int buildingId)
+        public MainForm(int buildingId, string buildingName)
         {
             InitializeComponent();
             pnlSideBar.Width = SidebarExpandedWidth;

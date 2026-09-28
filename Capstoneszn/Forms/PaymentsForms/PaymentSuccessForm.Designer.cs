@@ -28,29 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panel1 = new Panel();
+            pnlPaymentSuccessHeader = new Panel();
             lblConfirmationTitle = new Label();
-            label1 = new Label();
-            panel2 = new Panel();
+            lblDescription = new Label();
+            pnlPaymentSuccessActions = new Panel();
             btnClose = new Button();
             btnAnotherTransaction = new Button();
             btnPrintReceipt = new Button();
-            panel3 = new Panel();
-            label2 = new Label();
-            panel1.SuspendLayout();
-            panel2.SuspendLayout();
-            panel3.SuspendLayout();
+            pnlPaymentSuccessContent = new Panel();
+            pnlTransactionID = new Panel();
+            pnlDate = new Panel();
+            pnlCategory = new Panel();
+            lblTransactionID = new Label();
+            lblDate = new Label();
+            lblCategory = new Label();
+            lblTransactionIDValue = new Label();
+            lblDateValue = new Label();
+            lblCategoryValue = new Label();
+            pnlPaymentSuccessHeader.SuspendLayout();
+            pnlPaymentSuccessActions.SuspendLayout();
+            pnlPaymentSuccessContent.SuspendLayout();
+            pnlTransactionID.SuspendLayout();
+            pnlDate.SuspendLayout();
+            pnlCategory.SuspendLayout();
             SuspendLayout();
             // 
-            // panel1
+            // pnlPaymentSuccessHeader
             // 
-            panel1.Controls.Add(lblConfirmationTitle);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(482, 60);
-            panel1.TabIndex = 0;
+            pnlPaymentSuccessHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlPaymentSuccessHeader.Controls.Add(lblConfirmationTitle);
+            pnlPaymentSuccessHeader.Controls.Add(lblDescription);
+            pnlPaymentSuccessHeader.Dock = DockStyle.Top;
+            pnlPaymentSuccessHeader.Location = new Point(0, 0);
+            pnlPaymentSuccessHeader.Name = "pnlPaymentSuccessHeader";
+            pnlPaymentSuccessHeader.Size = new Size(482, 60);
+            pnlPaymentSuccessHeader.TabIndex = 0;
             // 
             // lblConfirmationTitle
             // 
@@ -65,29 +77,30 @@
             lblConfirmationTitle.Text = "Payment Successful";
             lblConfirmationTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // label1
+            // lblDescription
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.ImageAlign = ContentAlignment.MiddleRight;
-            label1.Location = new Point(64, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(368, 25);
-            label1.TabIndex = 6;
-            label1.Text = "The payment has been recorded successfully.";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
+            lblDescription.AutoSize = true;
+            lblDescription.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDescription.ForeColor = Color.White;
+            lblDescription.ImageAlign = ContentAlignment.MiddleRight;
+            lblDescription.Location = new Point(64, 28);
+            lblDescription.Name = "lblDescription";
+            lblDescription.Size = new Size(368, 25);
+            lblDescription.TabIndex = 6;
+            lblDescription.Text = "The payment has been recorded successfully.";
+            lblDescription.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // panel2
+            // pnlPaymentSuccessActions
             // 
-            panel2.Controls.Add(btnClose);
-            panel2.Controls.Add(btnAnotherTransaction);
-            panel2.Controls.Add(btnPrintReceipt);
-            panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 323);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(482, 80);
-            panel2.TabIndex = 1;
+            pnlPaymentSuccessActions.BorderStyle = BorderStyle.FixedSingle;
+            pnlPaymentSuccessActions.Controls.Add(btnClose);
+            pnlPaymentSuccessActions.Controls.Add(btnAnotherTransaction);
+            pnlPaymentSuccessActions.Controls.Add(btnPrintReceipt);
+            pnlPaymentSuccessActions.Dock = DockStyle.Bottom;
+            pnlPaymentSuccessActions.Location = new Point(0, 323);
+            pnlPaymentSuccessActions.Name = "pnlPaymentSuccessActions";
+            pnlPaymentSuccessActions.Size = new Size(482, 80);
+            pnlPaymentSuccessActions.TabIndex = 1;
             // 
             // btnClose
             // 
@@ -116,27 +129,127 @@
             btnPrintReceipt.Text = "Print Receipt";
             btnPrintReceipt.UseVisualStyleBackColor = true;
             // 
-            // panel3
+            // pnlPaymentSuccessContent
             // 
-            panel3.Controls.Add(label2);
-            panel3.Dock = DockStyle.Fill;
-            panel3.Location = new Point(0, 60);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(482, 263);
-            panel3.TabIndex = 2;
+            pnlPaymentSuccessContent.Controls.Add(pnlCategory);
+            pnlPaymentSuccessContent.Controls.Add(pnlDate);
+            pnlPaymentSuccessContent.Controls.Add(pnlTransactionID);
+            pnlPaymentSuccessContent.Dock = DockStyle.Fill;
+            pnlPaymentSuccessContent.Location = new Point(0, 60);
+            pnlPaymentSuccessContent.Name = "pnlPaymentSuccessContent";
+            pnlPaymentSuccessContent.Size = new Size(482, 263);
+            pnlPaymentSuccessContent.TabIndex = 2;
             // 
-            // label2
+            // pnlTransactionID
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.ImageAlign = ContentAlignment.MiddleRight;
-            label2.Location = new Point(112, 112);
-            label2.Name = "label2";
-            label2.Size = new Size(199, 25);
-            label2.TabIndex = 7;
-            label2.Text = "I haven't design this yet";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
+            pnlTransactionID.BorderStyle = BorderStyle.FixedSingle;
+            pnlTransactionID.Controls.Add(lblTransactionIDValue);
+            pnlTransactionID.Controls.Add(lblTransactionID);
+            pnlTransactionID.Dock = DockStyle.Top;
+            pnlTransactionID.Location = new Point(0, 0);
+            pnlTransactionID.Name = "pnlTransactionID";
+            pnlTransactionID.Size = new Size(482, 85);
+            pnlTransactionID.TabIndex = 0;
+            // 
+            // pnlDate
+            // 
+            pnlDate.BorderStyle = BorderStyle.FixedSingle;
+            pnlDate.Controls.Add(lblDateValue);
+            pnlDate.Controls.Add(lblDate);
+            pnlDate.Dock = DockStyle.Top;
+            pnlDate.Location = new Point(0, 85);
+            pnlDate.Name = "pnlDate";
+            pnlDate.Size = new Size(482, 85);
+            pnlDate.TabIndex = 1;
+            // 
+            // pnlCategory
+            // 
+            pnlCategory.BorderStyle = BorderStyle.FixedSingle;
+            pnlCategory.Controls.Add(lblCategoryValue);
+            pnlCategory.Controls.Add(lblCategory);
+            pnlCategory.Dock = DockStyle.Top;
+            pnlCategory.Location = new Point(0, 170);
+            pnlCategory.Name = "pnlCategory";
+            pnlCategory.Size = new Size(482, 85);
+            pnlCategory.TabIndex = 2;
+            // 
+            // lblTransactionID
+            // 
+            lblTransactionID.AutoSize = true;
+            lblTransactionID.Font = new Font("Segoe UI", 13.2000008F);
+            lblTransactionID.ForeColor = Color.White;
+            lblTransactionID.ImageAlign = ContentAlignment.MiddleRight;
+            lblTransactionID.Location = new Point(3, 23);
+            lblTransactionID.Name = "lblTransactionID";
+            lblTransactionID.Size = new Size(158, 31);
+            lblTransactionID.TabIndex = 6;
+            lblTransactionID.Text = "Transaction ID";
+            lblTransactionID.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblDate
+            // 
+            lblDate.AutoSize = true;
+            lblDate.Font = new Font("Segoe UI", 13.2000008F);
+            lblDate.ForeColor = Color.White;
+            lblDate.ImageAlign = ContentAlignment.MiddleRight;
+            lblDate.Location = new Point(3, 26);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(62, 31);
+            lblDate.TabIndex = 6;
+            lblDate.Text = "Date";
+            lblDate.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblCategory
+            // 
+            lblCategory.AutoSize = true;
+            lblCategory.Font = new Font("Segoe UI", 13.2000008F);
+            lblCategory.ForeColor = Color.White;
+            lblCategory.ImageAlign = ContentAlignment.MiddleRight;
+            lblCategory.Location = new Point(3, 28);
+            lblCategory.Name = "lblCategory";
+            lblCategory.Size = new Size(106, 31);
+            lblCategory.TabIndex = 6;
+            lblCategory.Text = "Category";
+            lblCategory.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblTransactionIDValue
+            // 
+            lblTransactionIDValue.AutoSize = true;
+            lblTransactionIDValue.Font = new Font("Segoe UI", 13.2000008F);
+            lblTransactionIDValue.ForeColor = Color.White;
+            lblTransactionIDValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblTransactionIDValue.Location = new Point(193, 23);
+            lblTransactionIDValue.Name = "lblTransactionIDValue";
+            lblTransactionIDValue.Size = new Size(23, 31);
+            lblTransactionIDValue.TabIndex = 7;
+            lblTransactionIDValue.Text = "-";
+            lblTransactionIDValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblDateValue
+            // 
+            lblDateValue.AutoSize = true;
+            lblDateValue.Font = new Font("Segoe UI", 13.2000008F);
+            lblDateValue.ForeColor = Color.White;
+            lblDateValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblDateValue.Location = new Point(193, 26);
+            lblDateValue.Name = "lblDateValue";
+            lblDateValue.Size = new Size(23, 31);
+            lblDateValue.TabIndex = 8;
+            lblDateValue.Text = "-";
+            lblDateValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblCategoryValue
+            // 
+            lblCategoryValue.AutoSize = true;
+            lblCategoryValue.Font = new Font("Segoe UI", 13.2000008F);
+            lblCategoryValue.ForeColor = Color.White;
+            lblCategoryValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblCategoryValue.Location = new Point(193, 28);
+            lblCategoryValue.Name = "lblCategoryValue";
+            lblCategoryValue.Size = new Size(23, 31);
+            lblCategoryValue.TabIndex = 8;
+            lblCategoryValue.Text = "-";
+            lblCategoryValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // PaymentSuccessForm
             // 
@@ -144,33 +257,46 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             ClientSize = new Size(482, 403);
-            Controls.Add(panel3);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
+            Controls.Add(pnlPaymentSuccessContent);
+            Controls.Add(pnlPaymentSuccessActions);
+            Controls.Add(pnlPaymentSuccessHeader);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "PaymentSuccessForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Payment Successful";
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            panel2.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
+            pnlPaymentSuccessHeader.ResumeLayout(false);
+            pnlPaymentSuccessHeader.PerformLayout();
+            pnlPaymentSuccessActions.ResumeLayout(false);
+            pnlPaymentSuccessContent.ResumeLayout(false);
+            pnlTransactionID.ResumeLayout(false);
+            pnlTransactionID.PerformLayout();
+            pnlDate.ResumeLayout(false);
+            pnlDate.PerformLayout();
+            pnlCategory.ResumeLayout(false);
+            pnlCategory.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private Panel panel1;
-        private Panel panel2;
-        private Panel panel3;
+        private Panel pnlPaymentSuccessHeader;
+        private Panel pnlPaymentSuccessActions;
+        private Panel pnlPaymentSuccessContent;
         private Label lblConfirmationTitle;
-        private Label label1;
-        private Label label2;
+        private Label lblDescription;
         private Button btnClose;
         private Button btnAnotherTransaction;
         private Button btnPrintReceipt;
+        private Panel pnlCategory;
+        private Panel pnlDate;
+        private Panel pnlTransactionID;
+        private Label lblTransactionID;
+        private Label lblCategory;
+        private Label lblDate;
+        private Label lblCategoryValue;
+        private Label lblDateValue;
+        private Label lblTransactionIDValue;
     }
 }

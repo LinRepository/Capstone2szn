@@ -82,7 +82,7 @@ namespace Capstoneszn
                         if (result != null)
                         {
                             string userRole = result.ToString();
-                            MessageBox.Show($"Login successful! Welcome, {userRole}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            //MessageBox.Show($"Login successful! Welcome, {userRole}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                             // --> WIPE THE CREDENTIALS CLEAN HERE <--
                             txtLoginUsername.Clear();

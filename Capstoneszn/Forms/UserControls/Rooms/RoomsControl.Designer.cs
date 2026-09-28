@@ -31,6 +31,10 @@
             pnlRoomsHeader = new Panel();
             lblRoomsTitle = new Label();
             pnlRoomsHeaderContent = new Panel();
+            panel5 = new Panel();
+            btnAddRoom = new Button();
+            panel4 = new Panel();
+            btnArchiveRoom = new Button();
             panel3 = new Panel();
             lblLegendMaintenance = new Label();
             pnlLegendMaintenance = new Panel();
@@ -40,11 +44,12 @@
             panel1 = new Panel();
             lblLegendAvailable = new Label();
             pnlLegendAvailable = new Panel();
-            btnManageRooms = new Button();
             pnlRoomsContent = new Panel();
             flpRoomsOverview = new FlowLayoutPanel();
             pnlRoomsHeader.SuspendLayout();
             pnlRoomsHeaderContent.SuspendLayout();
+            panel5.SuspendLayout();
+            panel4.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
@@ -79,16 +84,58 @@
             // pnlRoomsHeaderContent
             // 
             pnlRoomsHeaderContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomsHeaderContent.Controls.Add(panel5);
+            pnlRoomsHeaderContent.Controls.Add(panel4);
             pnlRoomsHeaderContent.Controls.Add(panel3);
             pnlRoomsHeaderContent.Controls.Add(panel2);
             pnlRoomsHeaderContent.Controls.Add(panel1);
-            pnlRoomsHeaderContent.Controls.Add(btnManageRooms);
             pnlRoomsHeaderContent.Dock = DockStyle.Top;
             pnlRoomsHeaderContent.Location = new Point(5, 90);
             pnlRoomsHeaderContent.Name = "pnlRoomsHeaderContent";
             pnlRoomsHeaderContent.Padding = new Padding(10, 5, 10, 5);
             pnlRoomsHeaderContent.Size = new Size(1290, 70);
             pnlRoomsHeaderContent.TabIndex = 1;
+            // 
+            // panel5
+            // 
+            panel5.Controls.Add(btnAddRoom);
+            panel5.Dock = DockStyle.Right;
+            panel5.Location = new Point(1018, 5);
+            panel5.Name = "panel5";
+            panel5.Padding = new Padding(10);
+            panel5.Size = new Size(130, 58);
+            panel5.TabIndex = 34;
+            // 
+            // btnAddRoom
+            // 
+            btnAddRoom.Dock = DockStyle.Fill;
+            btnAddRoom.Location = new Point(10, 10);
+            btnAddRoom.Name = "btnAddRoom";
+            btnAddRoom.Size = new Size(110, 38);
+            btnAddRoom.TabIndex = 37;
+            btnAddRoom.Text = "Add Room";
+            btnAddRoom.UseVisualStyleBackColor = true;
+            btnAddRoom.Click += btnAddRoom_Click;
+            // 
+            // panel4
+            // 
+            panel4.Controls.Add(btnArchiveRoom);
+            panel4.Dock = DockStyle.Right;
+            panel4.Location = new Point(1148, 5);
+            panel4.Name = "panel4";
+            panel4.Padding = new Padding(10);
+            panel4.Size = new Size(130, 58);
+            panel4.TabIndex = 33;
+            // 
+            // btnArchiveRoom
+            // 
+            btnArchiveRoom.Dock = DockStyle.Fill;
+            btnArchiveRoom.Location = new Point(10, 10);
+            btnArchiveRoom.Name = "btnArchiveRoom";
+            btnArchiveRoom.Size = new Size(110, 38);
+            btnArchiveRoom.TabIndex = 34;
+            btnArchiveRoom.Text = "Archive Room";
+            btnArchiveRoom.UseVisualStyleBackColor = true;
             // 
             // panel3
             // 
@@ -186,19 +233,6 @@
             pnlLegendAvailable.Size = new Size(25, 25);
             pnlLegendAvailable.TabIndex = 23;
             // 
-            // btnManageRooms
-            // 
-            btnManageRooms.Cursor = Cursors.Hand;
-            btnManageRooms.Dock = DockStyle.Right;
-            btnManageRooms.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnManageRooms.Location = new Point(1158, 5);
-            btnManageRooms.Name = "btnManageRooms";
-            btnManageRooms.Size = new Size(120, 58);
-            btnManageRooms.TabIndex = 29;
-            btnManageRooms.Text = "Manage Rooms";
-            btnManageRooms.UseVisualStyleBackColor = true;
-            btnManageRooms.Click += btnManageRooms_Click;
-            // 
             // pnlRoomsContent
             // 
             pnlRoomsContent.BorderStyle = BorderStyle.FixedSingle;
@@ -219,6 +253,7 @@
             flpRoomsOverview.Size = new Size(1288, 583);
             flpRoomsOverview.TabIndex = 0;
             flpRoomsOverview.WrapContents = false;
+            flpRoomsOverview.Paint += flpRoomsOverview_Paint;
             // 
             // RoomsControl
             // 
@@ -235,6 +270,8 @@
             Load += RoomsControl_Load;
             pnlRoomsHeader.ResumeLayout(false);
             pnlRoomsHeaderContent.ResumeLayout(false);
+            panel5.ResumeLayout(false);
+            panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             panel2.ResumeLayout(false);
@@ -250,7 +287,6 @@
         private Panel pnlRoomsHeader;
         private Panel pnlRoomsHeaderContent;
         private Label lblRoomsTitle;
-        private Button btnManageRooms;
         private Label lblLegendMaintenance;
         private Label lblLegendOccupied;
         private Label lblLegendAvailable;
@@ -262,5 +298,9 @@
         private Panel panel3;
         private Panel panel2;
         private Panel panel1;
+        private Button btnArchiveRoom;
+        private Panel panel5;
+        private Panel panel4;
+        private Button btnAddRoom;
     }
 }

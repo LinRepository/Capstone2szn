@@ -12,11 +12,9 @@ namespace Capstoneszn.Forms.BuildingForms
 {
     public partial class BuildingCard : UserControl
     {
-
-        // Property to store the database ID invisibly
+        
         public int BuildingId { get; set; }
 
-        // Property to easily set the label text from BuildingSelection
         public string BuildingName
         {
             get { return lblBuildingNameCard.Text; }

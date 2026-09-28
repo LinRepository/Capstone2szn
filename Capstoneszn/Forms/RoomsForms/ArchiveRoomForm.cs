@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Capstoneszn.Forms.UtilityForms
+namespace Capstoneszn.Forms.RoomsForms
 {
-    public partial class EditBillForm : Form
+    public partial class ArchiveRoomForm : Form
     {
-        public EditBillForm()
+        public ArchiveRoomForm()
         {
             InitializeComponent();
         }

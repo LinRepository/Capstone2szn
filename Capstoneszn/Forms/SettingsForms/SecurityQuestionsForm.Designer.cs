@@ -29,26 +29,26 @@
         private void InitializeComponent()
         {
             pnlSecurityQuestionsHeader = new Panel();
-            pnlSecurityQuestionsActions = new Panel();
             lblSecurityQuestionsTitle = new Label();
-            pnlSecurityQuestionsContent = new Panel();
-            pnlQuestion1 = new Panel();
-            pnlQuestion3 = new Panel();
-            pnlQuestion2 = new Panel();
-            lblQuestion1 = new Label();
-            txtAnswer1 = new TextBox();
-            txtAnswer2 = new TextBox();
-            txtAnswer3 = new TextBox();
-            btnSaveSecurityQuestions = new Button();
+            pnlSecurityQuestionsActions = new Panel();
             btnCancelSecurityQuestions = new Button();
+            btnSaveSecurityQuestions = new Button();
+            pnlSecurityQuestionsContent = new Panel();
+            pnlQuestion2 = new Panel();
             lblQuestion2 = new Label();
+            txtAnswer2 = new TextBox();
+            pnlQuestion3 = new Panel();
             lblQuestion3 = new Label();
+            txtAnswer3 = new TextBox();
+            pnlQuestion1 = new Panel();
+            txtAnswer1 = new TextBox();
+            lblQuestion1 = new Label();
             pnlSecurityQuestionsHeader.SuspendLayout();
             pnlSecurityQuestionsActions.SuspendLayout();
             pnlSecurityQuestionsContent.SuspendLayout();
-            pnlQuestion1.SuspendLayout();
-            pnlQuestion3.SuspendLayout();
             pnlQuestion2.SuspendLayout();
+            pnlQuestion3.SuspendLayout();
+            pnlQuestion1.SuspendLayout();
             SuspendLayout();
             // 
             // pnlSecurityQuestionsHeader
@@ -59,16 +59,6 @@
             pnlSecurityQuestionsHeader.Name = "pnlSecurityQuestionsHeader";
             pnlSecurityQuestionsHeader.Size = new Size(682, 70);
             pnlSecurityQuestionsHeader.TabIndex = 0;
-            // 
-            // pnlSecurityQuestionsActions
-            // 
-            pnlSecurityQuestionsActions.Controls.Add(btnCancelSecurityQuestions);
-            pnlSecurityQuestionsActions.Controls.Add(btnSaveSecurityQuestions);
-            pnlSecurityQuestionsActions.Dock = DockStyle.Bottom;
-            pnlSecurityQuestionsActions.Location = new Point(0, 373);
-            pnlSecurityQuestionsActions.Name = "pnlSecurityQuestionsActions";
-            pnlSecurityQuestionsActions.Size = new Size(682, 80);
-            pnlSecurityQuestionsActions.TabIndex = 0;
             // 
             // lblSecurityQuestionsTitle
             // 
@@ -83,6 +73,36 @@
             lblSecurityQuestionsTitle.Text = "Security Questions";
             lblSecurityQuestionsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // pnlSecurityQuestionsActions
+            // 
+            pnlSecurityQuestionsActions.Controls.Add(btnCancelSecurityQuestions);
+            pnlSecurityQuestionsActions.Controls.Add(btnSaveSecurityQuestions);
+            pnlSecurityQuestionsActions.Dock = DockStyle.Bottom;
+            pnlSecurityQuestionsActions.Location = new Point(0, 373);
+            pnlSecurityQuestionsActions.Name = "pnlSecurityQuestionsActions";
+            pnlSecurityQuestionsActions.Size = new Size(682, 80);
+            pnlSecurityQuestionsActions.TabIndex = 0;
+            // 
+            // btnCancelSecurityQuestions
+            // 
+            btnCancelSecurityQuestions.Cursor = Cursors.Hand;
+            btnCancelSecurityQuestions.Location = new Point(417, 27);
+            btnCancelSecurityQuestions.Name = "btnCancelSecurityQuestions";
+            btnCancelSecurityQuestions.Size = new Size(94, 29);
+            btnCancelSecurityQuestions.TabIndex = 1;
+            btnCancelSecurityQuestions.Text = "Cancel";
+            btnCancelSecurityQuestions.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveSecurityQuestions
+            // 
+            btnSaveSecurityQuestions.Cursor = Cursors.Hand;
+            btnSaveSecurityQuestions.Location = new Point(544, 27);
+            btnSaveSecurityQuestions.Name = "btnSaveSecurityQuestions";
+            btnSaveSecurityQuestions.Size = new Size(94, 29);
+            btnSaveSecurityQuestions.TabIndex = 0;
+            btnSaveSecurityQuestions.Text = "Save";
+            btnSaveSecurityQuestions.UseVisualStyleBackColor = true;
+            // 
             // pnlSecurityQuestionsContent
             // 
             pnlSecurityQuestionsContent.Controls.Add(pnlQuestion2);
@@ -93,28 +113,6 @@
             pnlSecurityQuestionsContent.Name = "pnlSecurityQuestionsContent";
             pnlSecurityQuestionsContent.Size = new Size(682, 303);
             pnlSecurityQuestionsContent.TabIndex = 1;
-            // 
-            // pnlQuestion1
-            // 
-            pnlQuestion1.BorderStyle = BorderStyle.FixedSingle;
-            pnlQuestion1.Controls.Add(txtAnswer1);
-            pnlQuestion1.Controls.Add(lblQuestion1);
-            pnlQuestion1.Dock = DockStyle.Top;
-            pnlQuestion1.Location = new Point(0, 0);
-            pnlQuestion1.Name = "pnlQuestion1";
-            pnlQuestion1.Size = new Size(682, 100);
-            pnlQuestion1.TabIndex = 0;
-            // 
-            // pnlQuestion3
-            // 
-            pnlQuestion3.BorderStyle = BorderStyle.FixedSingle;
-            pnlQuestion3.Controls.Add(lblQuestion3);
-            pnlQuestion3.Controls.Add(txtAnswer3);
-            pnlQuestion3.Dock = DockStyle.Bottom;
-            pnlQuestion3.Location = new Point(0, 203);
-            pnlQuestion3.Name = "pnlQuestion3";
-            pnlQuestion3.Size = new Size(682, 100);
-            pnlQuestion3.TabIndex = 1;
             // 
             // pnlQuestion2
             // 
@@ -127,63 +125,6 @@
             pnlQuestion2.Size = new Size(682, 103);
             pnlQuestion2.TabIndex = 2;
             // 
-            // lblQuestion1
-            // 
-            lblQuestion1.Dock = DockStyle.Top;
-            lblQuestion1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblQuestion1.ForeColor = Color.White;
-            lblQuestion1.ImageAlign = ContentAlignment.MiddleRight;
-            lblQuestion1.Location = new Point(0, 0);
-            lblQuestion1.Name = "lblQuestion1";
-            lblQuestion1.Size = new Size(680, 45);
-            lblQuestion1.TabIndex = 15;
-            lblQuestion1.Text = "What is the name of your first dog?";
-            lblQuestion1.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // txtAnswer1
-            // 
-            txtAnswer1.Location = new Point(119, 48);
-            txtAnswer1.Multiline = true;
-            txtAnswer1.Name = "txtAnswer1";
-            txtAnswer1.Size = new Size(450, 35);
-            txtAnswer1.TabIndex = 16;
-            // 
-            // txtAnswer2
-            // 
-            txtAnswer2.Location = new Point(119, 48);
-            txtAnswer2.Multiline = true;
-            txtAnswer2.Name = "txtAnswer2";
-            txtAnswer2.Size = new Size(450, 35);
-            txtAnswer2.TabIndex = 16;
-            // 
-            // txtAnswer3
-            // 
-            txtAnswer3.Location = new Point(119, 48);
-            txtAnswer3.Multiline = true;
-            txtAnswer3.Name = "txtAnswer3";
-            txtAnswer3.Size = new Size(450, 35);
-            txtAnswer3.TabIndex = 16;
-            // 
-            // btnSaveSecurityQuestions
-            // 
-            btnSaveSecurityQuestions.Cursor = Cursors.Hand;
-            btnSaveSecurityQuestions.Location = new Point(544, 27);
-            btnSaveSecurityQuestions.Name = "btnSaveSecurityQuestions";
-            btnSaveSecurityQuestions.Size = new Size(94, 29);
-            btnSaveSecurityQuestions.TabIndex = 0;
-            btnSaveSecurityQuestions.Text = "Save";
-            btnSaveSecurityQuestions.UseVisualStyleBackColor = true;
-            // 
-            // btnCancelSecurityQuestions
-            // 
-            btnCancelSecurityQuestions.Cursor = Cursors.Hand;
-            btnCancelSecurityQuestions.Location = new Point(417, 27);
-            btnCancelSecurityQuestions.Name = "btnCancelSecurityQuestions";
-            btnCancelSecurityQuestions.Size = new Size(94, 29);
-            btnCancelSecurityQuestions.TabIndex = 1;
-            btnCancelSecurityQuestions.Text = "Cancel";
-            btnCancelSecurityQuestions.UseVisualStyleBackColor = true;
-            // 
             // lblQuestion2
             // 
             lblQuestion2.Dock = DockStyle.Top;
@@ -194,8 +135,27 @@
             lblQuestion2.Name = "lblQuestion2";
             lblQuestion2.Size = new Size(680, 45);
             lblQuestion2.TabIndex = 17;
-            lblQuestion2.Text = "What is your mother’s maiden name?";
+            lblQuestion2.Text = "Question No. 2";
             lblQuestion2.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // txtAnswer2
+            // 
+            txtAnswer2.Location = new Point(119, 48);
+            txtAnswer2.Multiline = true;
+            txtAnswer2.Name = "txtAnswer2";
+            txtAnswer2.Size = new Size(450, 35);
+            txtAnswer2.TabIndex = 16;
+            // 
+            // pnlQuestion3
+            // 
+            pnlQuestion3.BorderStyle = BorderStyle.FixedSingle;
+            pnlQuestion3.Controls.Add(lblQuestion3);
+            pnlQuestion3.Controls.Add(txtAnswer3);
+            pnlQuestion3.Dock = DockStyle.Bottom;
+            pnlQuestion3.Location = new Point(0, 203);
+            pnlQuestion3.Name = "pnlQuestion3";
+            pnlQuestion3.Size = new Size(682, 100);
+            pnlQuestion3.TabIndex = 1;
             // 
             // lblQuestion3
             // 
@@ -207,8 +167,48 @@
             lblQuestion3.Name = "lblQuestion3";
             lblQuestion3.Size = new Size(680, 45);
             lblQuestion3.TabIndex = 17;
-            lblQuestion3.Text = "What model is your first car?";
+            lblQuestion3.Text = "Question No. 3";
             lblQuestion3.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // txtAnswer3
+            // 
+            txtAnswer3.Location = new Point(119, 48);
+            txtAnswer3.Multiline = true;
+            txtAnswer3.Name = "txtAnswer3";
+            txtAnswer3.Size = new Size(450, 35);
+            txtAnswer3.TabIndex = 16;
+            // 
+            // pnlQuestion1
+            // 
+            pnlQuestion1.BorderStyle = BorderStyle.FixedSingle;
+            pnlQuestion1.Controls.Add(txtAnswer1);
+            pnlQuestion1.Controls.Add(lblQuestion1);
+            pnlQuestion1.Dock = DockStyle.Top;
+            pnlQuestion1.Location = new Point(0, 0);
+            pnlQuestion1.Name = "pnlQuestion1";
+            pnlQuestion1.Size = new Size(682, 100);
+            pnlQuestion1.TabIndex = 0;
+            // 
+            // txtAnswer1
+            // 
+            txtAnswer1.Location = new Point(119, 48);
+            txtAnswer1.Multiline = true;
+            txtAnswer1.Name = "txtAnswer1";
+            txtAnswer1.Size = new Size(450, 35);
+            txtAnswer1.TabIndex = 16;
+            // 
+            // lblQuestion1
+            // 
+            lblQuestion1.Dock = DockStyle.Top;
+            lblQuestion1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestion1.ForeColor = Color.White;
+            lblQuestion1.ImageAlign = ContentAlignment.MiddleRight;
+            lblQuestion1.Location = new Point(0, 0);
+            lblQuestion1.Name = "lblQuestion1";
+            lblQuestion1.Size = new Size(680, 45);
+            lblQuestion1.TabIndex = 15;
+            lblQuestion1.Text = "Question No. 1";
+            lblQuestion1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SecurityQuestionsForm
             // 
@@ -229,12 +229,12 @@
             pnlSecurityQuestionsHeader.ResumeLayout(false);
             pnlSecurityQuestionsActions.ResumeLayout(false);
             pnlSecurityQuestionsContent.ResumeLayout(false);
-            pnlQuestion1.ResumeLayout(false);
-            pnlQuestion1.PerformLayout();
-            pnlQuestion3.ResumeLayout(false);
-            pnlQuestion3.PerformLayout();
             pnlQuestion2.ResumeLayout(false);
             pnlQuestion2.PerformLayout();
+            pnlQuestion3.ResumeLayout(false);
+            pnlQuestion3.PerformLayout();
+            pnlQuestion1.ResumeLayout(false);
+            pnlQuestion1.PerformLayout();
             ResumeLayout(false);
         }
 

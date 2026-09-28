@@ -8,26 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Capstoneszn.Forms
+namespace Capstoneszn.Forms.UtilityForms
 {
-    public partial class ManageRoomsForm : Form
+    public partial class AddWaterBillForm : Form
     {
-        public ManageRoomsForm()
+        public AddWaterBillForm()
         {
             InitializeComponent();
         }
 
-        private void ManageRoomsForm_Load(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void btnAddRoom_Click(object sender, EventArgs e)
+        private void btnConfirm_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void btnArchiveRoom_Click(object sender, EventArgs e)
+        private void AddWaterBillForm_Load(object sender, EventArgs e)
         {
 
         }

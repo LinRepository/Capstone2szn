@@ -33,25 +33,18 @@
             btnCloseManageRooms = new Button();
             lblManageRoomsTitle = new Label();
             pnlManageRoomsActions = new Panel();
-            btnSetGlobalRent = new Button();
             btnAddRoom = new Button();
             btnArchiveRoom = new Button();
             pnlManageRoomsContent = new Panel();
             flpManageRooms = new FlowLayoutPanel();
-            pnlFloorSection = new Panel();
-            flpFloorRooms = new FlowLayoutPanel();
-            label2 = new Label();
-            lblFloor = new Label();
             pnlManageRoomsHeader.SuspendLayout();
             pnlManageRoomsActions.SuspendLayout();
             pnlManageRoomsContent.SuspendLayout();
-            flpManageRooms.SuspendLayout();
-            pnlFloorSection.SuspendLayout();
-            flpFloorRooms.SuspendLayout();
             SuspendLayout();
             // 
             // pnlManageRoomsHeader
             // 
+            pnlManageRoomsHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlManageRoomsHeader.Controls.Add(lblArchiveInstruction);
             pnlManageRoomsHeader.Controls.Add(btnCloseManageRooms);
             pnlManageRoomsHeader.Controls.Add(lblManageRoomsTitle);
@@ -80,7 +73,7 @@
             btnCloseManageRooms.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnCloseManageRooms.FlatStyle = FlatStyle.Flat;
             btnCloseManageRooms.ForeColor = Color.White;
-            btnCloseManageRooms.Location = new Point(740, 12);
+            btnCloseManageRooms.Location = new Point(738, 12);
             btnCloseManageRooms.Name = "btnCloseManageRooms";
             btnCloseManageRooms.Size = new Size(30, 30);
             btnCloseManageRooms.TabIndex = 22;
@@ -103,7 +96,7 @@
             // 
             // pnlManageRoomsActions
             // 
-            pnlManageRoomsActions.Controls.Add(btnSetGlobalRent);
+            pnlManageRoomsActions.BorderStyle = BorderStyle.FixedSingle;
             pnlManageRoomsActions.Controls.Add(btnAddRoom);
             pnlManageRoomsActions.Controls.Add(btnArchiveRoom);
             pnlManageRoomsActions.Dock = DockStyle.Top;
@@ -112,35 +105,29 @@
             pnlManageRoomsActions.Size = new Size(782, 49);
             pnlManageRoomsActions.TabIndex = 9;
             // 
-            // btnSetGlobalRent
-            // 
-            btnSetGlobalRent.Location = new Point(637, 9);
-            btnSetGlobalRent.Name = "btnSetGlobalRent";
-            btnSetGlobalRent.Size = new Size(135, 30);
-            btnSetGlobalRent.TabIndex = 10;
-            btnSetGlobalRent.Text = "Set Global Rent";
-            btnSetGlobalRent.UseVisualStyleBackColor = true;
-            // 
             // btnAddRoom
             // 
-            btnAddRoom.Location = new Point(340, 9);
+            btnAddRoom.Location = new Point(11, 10);
             btnAddRoom.Name = "btnAddRoom";
             btnAddRoom.Size = new Size(105, 30);
             btnAddRoom.TabIndex = 0;
             btnAddRoom.Text = "Add Room";
             btnAddRoom.UseVisualStyleBackColor = true;
+            btnAddRoom.Click += btnAddRoom_Click;
             // 
             // btnArchiveRoom
             // 
-            btnArchiveRoom.Location = new Point(10, 10);
+            btnArchiveRoom.Location = new Point(139, 10);
             btnArchiveRoom.Name = "btnArchiveRoom";
             btnArchiveRoom.Size = new Size(105, 30);
             btnArchiveRoom.TabIndex = 0;
             btnArchiveRoom.Text = "Archive Room";
             btnArchiveRoom.UseVisualStyleBackColor = true;
+            btnArchiveRoom.Click += btnArchiveRoom_Click;
             // 
             // pnlManageRoomsContent
             // 
+            pnlManageRoomsContent.BorderStyle = BorderStyle.FixedSingle;
             pnlManageRoomsContent.Controls.Add(flpManageRooms);
             pnlManageRoomsContent.Dock = DockStyle.Fill;
             pnlManageRoomsContent.Location = new Point(0, 118);
@@ -152,63 +139,14 @@
             // flpManageRooms
             // 
             flpManageRooms.AutoScroll = true;
-            flpManageRooms.Controls.Add(pnlFloorSection);
+            flpManageRooms.BorderStyle = BorderStyle.FixedSingle;
             flpManageRooms.Dock = DockStyle.Fill;
             flpManageRooms.FlowDirection = FlowDirection.TopDown;
             flpManageRooms.Location = new Point(10, 10);
             flpManageRooms.Name = "flpManageRooms";
-            flpManageRooms.Size = new Size(762, 415);
+            flpManageRooms.Size = new Size(760, 413);
             flpManageRooms.TabIndex = 0;
             flpManageRooms.WrapContents = false;
-            // 
-            // pnlFloorSection
-            // 
-            pnlFloorSection.Controls.Add(flpFloorRooms);
-            pnlFloorSection.Controls.Add(lblFloor);
-            pnlFloorSection.Location = new Point(5, 5);
-            pnlFloorSection.Margin = new Padding(5);
-            pnlFloorSection.Name = "pnlFloorSection";
-            pnlFloorSection.Padding = new Padding(5);
-            pnlFloorSection.Size = new Size(752, 95);
-            pnlFloorSection.TabIndex = 0;
-            // 
-            // flpFloorRooms
-            // 
-            flpFloorRooms.Controls.Add(label2);
-            flpFloorRooms.Dock = DockStyle.Fill;
-            flpFloorRooms.Location = new Point(5, 30);
-            flpFloorRooms.Name = "flpFloorRooms";
-            flpFloorRooms.Padding = new Padding(5);
-            flpFloorRooms.Size = new Size(742, 60);
-            flpFloorRooms.TabIndex = 9;
-            // 
-            // label2
-            // 
-            label2.BorderStyle = BorderStyle.FixedSingle;
-            label2.Cursor = Cursors.Hand;
-            label2.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.ImageAlign = ContentAlignment.MiddleRight;
-            label2.Location = new Point(10, 10);
-            label2.Margin = new Padding(5);
-            label2.Name = "label2";
-            label2.Size = new Size(65, 40);
-            label2.TabIndex = 8;
-            label2.Text = "101";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblFloor
-            // 
-            lblFloor.Dock = DockStyle.Top;
-            lblFloor.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFloor.ForeColor = Color.White;
-            lblFloor.ImageAlign = ContentAlignment.MiddleRight;
-            lblFloor.Location = new Point(5, 5);
-            lblFloor.Name = "lblFloor";
-            lblFloor.Size = new Size(742, 25);
-            lblFloor.TabIndex = 8;
-            lblFloor.Text = "Floor 1";
-            lblFloor.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // ManageRoomsForm
             // 
@@ -230,9 +168,6 @@
             pnlManageRoomsHeader.PerformLayout();
             pnlManageRoomsActions.ResumeLayout(false);
             pnlManageRoomsContent.ResumeLayout(false);
-            flpManageRooms.ResumeLayout(false);
-            pnlFloorSection.ResumeLayout(false);
-            flpFloorRooms.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -242,15 +177,10 @@
         private Label lblManageRoomsTitle;
         private Button btnCloseManageRooms;
         private Panel pnlManageRoomsActions;
-        private Button btnSetGlobalRent;
         private Button btnAddRoom;
         private Button btnArchiveRoom;
         private Panel pnlManageRoomsContent;
         private FlowLayoutPanel flpManageRooms;
-        private Panel pnlFloorSection;
-        private FlowLayoutPanel flpFloorRooms;
-        private Label lblFloor;
-        private Label label2;
         private Label lblArchiveInstruction;
     }
 }

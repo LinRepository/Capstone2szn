@@ -33,15 +33,16 @@
             lblPaymentTitle = new Label();
             pnlPaymentActions = new Panel();
             btnContinuePayment = new Button();
+            btnClear = new Button();
             btnCancelPayment = new Button();
             pnlPaymentContent = new Panel();
             pnlAmountReferenceNumber = new Panel();
-            pnlReferenceNumber = new Panel();
-            lblReferenceNumber = new Label();
-            txtReferenceNumber = new TextBox();
             pnlPaymentAmount = new Panel();
-            txtPaymentAmount = new TextBox();
+            lblAmountValue = new Label();
             lblPaymentAmount = new Label();
+            pnlReferenceNumber = new Panel();
+            txtReferenceNumber = new TextBox();
+            lblReferenceNumber = new Label();
             pnlCategoryPaymentType = new Panel();
             pnlPaymentCategory = new Panel();
             cboPaymentCategory = new ComboBox();
@@ -58,15 +59,12 @@
             pnlPaymentDate = new Panel();
             lblPaymentDate = new Label();
             dtpPaymentDate = new DateTimePicker();
-            pnlPaymentRemarks = new Panel();
-            txtPaymentRemarks = new TextBox();
-            lblPaymentRemarks = new Label();
             pnlPaymentHeader.SuspendLayout();
             pnlPaymentActions.SuspendLayout();
             pnlPaymentContent.SuspendLayout();
             pnlAmountReferenceNumber.SuspendLayout();
-            pnlReferenceNumber.SuspendLayout();
             pnlPaymentAmount.SuspendLayout();
+            pnlReferenceNumber.SuspendLayout();
             pnlCategoryPaymentType.SuspendLayout();
             pnlPaymentCategory.SuspendLayout();
             pnlPaymentType.SuspendLayout();
@@ -74,7 +72,6 @@
             pnlPaymentMethod.SuspendLayout();
             pnlPaymentMethodOptions.SuspendLayout();
             pnlPaymentDate.SuspendLayout();
-            pnlPaymentRemarks.SuspendLayout();
             SuspendLayout();
             // 
             // pnlPaymentHeader
@@ -117,9 +114,10 @@
             // pnlPaymentActions
             // 
             pnlPaymentActions.Controls.Add(btnContinuePayment);
+            pnlPaymentActions.Controls.Add(btnClear);
             pnlPaymentActions.Controls.Add(btnCancelPayment);
             pnlPaymentActions.Dock = DockStyle.Bottom;
-            pnlPaymentActions.Location = new Point(0, 503);
+            pnlPaymentActions.Location = new Point(0, 372);
             pnlPaymentActions.Margin = new Padding(0);
             pnlPaymentActions.Name = "pnlPaymentActions";
             pnlPaymentActions.Size = new Size(782, 50);
@@ -135,6 +133,17 @@
             btnContinuePayment.Text = "Confirm";
             btnContinuePayment.UseVisualStyleBackColor = true;
             btnContinuePayment.Click += btnContinuePayment_Click;
+            // 
+            // btnClear
+            // 
+            btnClear.Cursor = Cursors.Hand;
+            btnClear.Location = new Point(22, 11);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(94, 29);
+            btnClear.TabIndex = 0;
+            btnClear.Text = "Clear";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnCancelPayment_Click;
             // 
             // btnCancelPayment
             // 
@@ -152,77 +161,47 @@
             pnlPaymentContent.Controls.Add(pnlAmountReferenceNumber);
             pnlPaymentContent.Controls.Add(pnlCategoryPaymentType);
             pnlPaymentContent.Controls.Add(pnlDatePaymentMethod);
-            pnlPaymentContent.Controls.Add(pnlPaymentRemarks);
             pnlPaymentContent.Dock = DockStyle.Fill;
             pnlPaymentContent.Location = new Point(0, 70);
             pnlPaymentContent.Margin = new Padding(0);
             pnlPaymentContent.Name = "pnlPaymentContent";
             pnlPaymentContent.Padding = new Padding(10);
-            pnlPaymentContent.Size = new Size(782, 433);
+            pnlPaymentContent.Size = new Size(782, 302);
             pnlPaymentContent.TabIndex = 2;
             // 
             // pnlAmountReferenceNumber
             // 
-            pnlAmountReferenceNumber.Controls.Add(pnlReferenceNumber);
             pnlAmountReferenceNumber.Controls.Add(pnlPaymentAmount);
+            pnlAmountReferenceNumber.Controls.Add(pnlReferenceNumber);
             pnlAmountReferenceNumber.Dock = DockStyle.Fill;
             pnlAmountReferenceNumber.Location = new Point(10, 210);
             pnlAmountReferenceNumber.Name = "pnlAmountReferenceNumber";
-            pnlAmountReferenceNumber.Size = new Size(762, 113);
+            pnlAmountReferenceNumber.Size = new Size(762, 82);
             pnlAmountReferenceNumber.TabIndex = 3;
-            // 
-            // pnlReferenceNumber
-            // 
-            pnlReferenceNumber.Controls.Add(lblReferenceNumber);
-            pnlReferenceNumber.Controls.Add(txtReferenceNumber);
-            pnlReferenceNumber.Dock = DockStyle.Right;
-            pnlReferenceNumber.Location = new Point(387, 0);
-            pnlReferenceNumber.Name = "pnlReferenceNumber";
-            pnlReferenceNumber.Size = new Size(375, 113);
-            pnlReferenceNumber.TabIndex = 1;
-            // 
-            // lblReferenceNumber
-            // 
-            lblReferenceNumber.AutoSize = true;
-            lblReferenceNumber.Dock = DockStyle.Top;
-            lblReferenceNumber.Font = new Font("Segoe UI", 13.8F);
-            lblReferenceNumber.ForeColor = Color.White;
-            lblReferenceNumber.ImageAlign = ContentAlignment.MiddleRight;
-            lblReferenceNumber.Location = new Point(0, 0);
-            lblReferenceNumber.Margin = new Padding(0);
-            lblReferenceNumber.Name = "lblReferenceNumber";
-            lblReferenceNumber.Size = new Size(272, 31);
-            lblReferenceNumber.TabIndex = 6;
-            lblReferenceNumber.Text = "Reference Gcash Number";
-            lblReferenceNumber.TextAlign = ContentAlignment.MiddleCenter;
-            lblReferenceNumber.Visible = false;
-            // 
-            // txtReferenceNumber
-            // 
-            txtReferenceNumber.BorderStyle = BorderStyle.FixedSingle;
-            txtReferenceNumber.Location = new Point(3, 34);
-            txtReferenceNumber.Name = "txtReferenceNumber";
-            txtReferenceNumber.Size = new Size(369, 27);
-            txtReferenceNumber.TabIndex = 7;
-            txtReferenceNumber.Visible = false;
             // 
             // pnlPaymentAmount
             // 
-            pnlPaymentAmount.Controls.Add(txtPaymentAmount);
+            pnlPaymentAmount.Controls.Add(lblAmountValue);
             pnlPaymentAmount.Controls.Add(lblPaymentAmount);
-            pnlPaymentAmount.Dock = DockStyle.Left;
-            pnlPaymentAmount.Location = new Point(0, 0);
+            pnlPaymentAmount.Dock = DockStyle.Right;
+            pnlPaymentAmount.Location = new Point(387, 0);
             pnlPaymentAmount.Name = "pnlPaymentAmount";
-            pnlPaymentAmount.Size = new Size(375, 113);
-            pnlPaymentAmount.TabIndex = 0;
+            pnlPaymentAmount.Size = new Size(375, 82);
+            pnlPaymentAmount.TabIndex = 1;
             // 
-            // txtPaymentAmount
+            // lblAmountValue
             // 
-            txtPaymentAmount.BorderStyle = BorderStyle.FixedSingle;
-            txtPaymentAmount.Location = new Point(3, 34);
-            txtPaymentAmount.Name = "txtPaymentAmount";
-            txtPaymentAmount.Size = new Size(369, 27);
-            txtPaymentAmount.TabIndex = 8;
+            lblAmountValue.Dock = DockStyle.Top;
+            lblAmountValue.Font = new Font("Segoe UI", 13.8F);
+            lblAmountValue.ForeColor = Color.White;
+            lblAmountValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblAmountValue.Location = new Point(0, 31);
+            lblAmountValue.Margin = new Padding(0);
+            lblAmountValue.Name = "lblAmountValue";
+            lblAmountValue.Size = new Size(375, 38);
+            lblAmountValue.TabIndex = 9;
+            lblAmountValue.Text = "₱***";
+            lblAmountValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblPaymentAmount
             // 
@@ -235,9 +214,44 @@
             lblPaymentAmount.Margin = new Padding(0);
             lblPaymentAmount.Name = "lblPaymentAmount";
             lblPaymentAmount.Size = new Size(96, 31);
-            lblPaymentAmount.TabIndex = 5;
+            lblPaymentAmount.TabIndex = 8;
             lblPaymentAmount.Text = "Amount";
             lblPaymentAmount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlReferenceNumber
+            // 
+            pnlReferenceNumber.Controls.Add(txtReferenceNumber);
+            pnlReferenceNumber.Controls.Add(lblReferenceNumber);
+            pnlReferenceNumber.Dock = DockStyle.Left;
+            pnlReferenceNumber.Location = new Point(0, 0);
+            pnlReferenceNumber.Name = "pnlReferenceNumber";
+            pnlReferenceNumber.Size = new Size(375, 82);
+            pnlReferenceNumber.TabIndex = 0;
+            // 
+            // txtReferenceNumber
+            // 
+            txtReferenceNumber.BorderStyle = BorderStyle.FixedSingle;
+            txtReferenceNumber.Location = new Point(3, 28);
+            txtReferenceNumber.Name = "txtReferenceNumber";
+            txtReferenceNumber.Size = new Size(369, 27);
+            txtReferenceNumber.TabIndex = 9;
+            txtReferenceNumber.Visible = false;
+            // 
+            // lblReferenceNumber
+            // 
+            lblReferenceNumber.AutoSize = true;
+            lblReferenceNumber.Dock = DockStyle.Top;
+            lblReferenceNumber.Font = new Font("Segoe UI", 13.8F);
+            lblReferenceNumber.ForeColor = Color.White;
+            lblReferenceNumber.ImageAlign = ContentAlignment.MiddleRight;
+            lblReferenceNumber.Location = new Point(0, 0);
+            lblReferenceNumber.Margin = new Padding(0);
+            lblReferenceNumber.Name = "lblReferenceNumber";
+            lblReferenceNumber.Size = new Size(272, 31);
+            lblReferenceNumber.TabIndex = 8;
+            lblReferenceNumber.Text = "Reference Gcash Number";
+            lblReferenceNumber.TextAlign = ContentAlignment.MiddleCenter;
+            lblReferenceNumber.Visible = false;
             // 
             // pnlCategoryPaymentType
             // 
@@ -417,48 +431,13 @@
             dtpPaymentDate.Size = new Size(369, 27);
             dtpPaymentDate.TabIndex = 0;
             // 
-            // pnlPaymentRemarks
-            // 
-            pnlPaymentRemarks.Controls.Add(txtPaymentRemarks);
-            pnlPaymentRemarks.Controls.Add(lblPaymentRemarks);
-            pnlPaymentRemarks.Dock = DockStyle.Bottom;
-            pnlPaymentRemarks.Location = new Point(10, 323);
-            pnlPaymentRemarks.Name = "pnlPaymentRemarks";
-            pnlPaymentRemarks.Size = new Size(762, 100);
-            pnlPaymentRemarks.TabIndex = 0;
-            // 
-            // txtPaymentRemarks
-            // 
-            txtPaymentRemarks.Dock = DockStyle.Fill;
-            txtPaymentRemarks.Location = new Point(0, 25);
-            txtPaymentRemarks.Multiline = true;
-            txtPaymentRemarks.Name = "txtPaymentRemarks";
-            txtPaymentRemarks.ScrollBars = ScrollBars.Vertical;
-            txtPaymentRemarks.Size = new Size(762, 75);
-            txtPaymentRemarks.TabIndex = 10;
-            // 
-            // lblPaymentRemarks
-            // 
-            lblPaymentRemarks.AutoSize = true;
-            lblPaymentRemarks.Dock = DockStyle.Top;
-            lblPaymentRemarks.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPaymentRemarks.ForeColor = Color.White;
-            lblPaymentRemarks.ImageAlign = ContentAlignment.MiddleRight;
-            lblPaymentRemarks.Location = new Point(0, 0);
-            lblPaymentRemarks.Margin = new Padding(0);
-            lblPaymentRemarks.Name = "lblPaymentRemarks";
-            lblPaymentRemarks.Size = new Size(163, 25);
-            lblPaymentRemarks.TabIndex = 7;
-            lblPaymentRemarks.Text = "Remarks (Optional)";
-            lblPaymentRemarks.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // PaymentForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(782, 553);
+            ClientSize = new Size(782, 422);
             Controls.Add(pnlPaymentContent);
             Controls.Add(pnlPaymentActions);
             Controls.Add(pnlPaymentHeader);
@@ -474,10 +453,10 @@
             pnlPaymentActions.ResumeLayout(false);
             pnlPaymentContent.ResumeLayout(false);
             pnlAmountReferenceNumber.ResumeLayout(false);
-            pnlReferenceNumber.ResumeLayout(false);
-            pnlReferenceNumber.PerformLayout();
             pnlPaymentAmount.ResumeLayout(false);
             pnlPaymentAmount.PerformLayout();
+            pnlReferenceNumber.ResumeLayout(false);
+            pnlReferenceNumber.PerformLayout();
             pnlCategoryPaymentType.ResumeLayout(false);
             pnlPaymentCategory.ResumeLayout(false);
             pnlPaymentCategory.PerformLayout();
@@ -490,8 +469,6 @@
             pnlPaymentMethodOptions.PerformLayout();
             pnlPaymentDate.ResumeLayout(false);
             pnlPaymentDate.PerformLayout();
-            pnlPaymentRemarks.ResumeLayout(false);
-            pnlPaymentRemarks.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -503,7 +480,6 @@
         private Label lblPaymentDescription;
         private Label lblPaymentTitle;
         private Panel pnlDatePaymentMethod;
-        private Panel pnlPaymentRemarks;
         private Panel pnlCategoryPaymentType;
         private Panel pnlPaymentMethod;
         private Panel pnlPaymentDate;
@@ -513,22 +489,21 @@
         private Button btnContinuePayment;
         private Button btnCancelPayment;
         private DateTimePicker dtpPaymentDate;
-        private Panel pnlReferenceNumber;
         private Panel pnlPaymentAmount;
-        private Label lblPaymentAmount;
-        private Label lblReferenceNumber;
+        private Panel pnlReferenceNumber;
         private Label lblPaymentMethod;
         private Label lblPaymentDate;
-        private Label lblPaymentRemarks;
         private Label lblPaymentType;
         private ComboBox cboPaymentType;
         private Label lblPaymentCategory;
         private ComboBox cboPaymentCategory;
-        private TextBox txtPaymentAmount;
-        private TextBox txtReferenceNumber;
-        private TextBox txtPaymentRemarks;
         private Panel pnlPaymentMethodOptions;
         private RadioButton RadioBtnGCash;
         private RadioButton RadioBtnCash;
+        private Button btnClear;
+        private Label lblAmountValue;
+        private Label lblPaymentAmount;
+        private TextBox txtReferenceNumber;
+        private Label lblReferenceNumber;
     }
 }

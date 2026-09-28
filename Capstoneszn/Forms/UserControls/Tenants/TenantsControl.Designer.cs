@@ -41,9 +41,12 @@
             pnlTenantList = new Panel();
             dgvTenants = new DataGridView();
             colRoom = new DataGridViewTextBoxColumn();
-            colTenantName = new DataGridViewTextBoxColumn();
+            colFname = new DataGridViewTextBoxColumn();
+            colMname = new DataGridViewTextBoxColumn();
+            colLname = new DataGridViewTextBoxColumn();
+            colAddress = new DataGridViewTextBoxColumn();
+            colContactNumber = new DataGridViewTextBoxColumn();
             colDateOccupied = new DataGridViewTextBoxColumn();
-            colContact = new DataGridViewTextBoxColumn();
             pnlTenantDetails = new Panel();
             pnlBillingSummary = new Panel();
             pnlBillingSummaryHeader = new Panel();
@@ -164,8 +167,8 @@
             // tblTenantSplit
             // 
             tblTenantSplit.ColumnCount = 2;
-            tblTenantSplit.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-            tblTenantSplit.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tblTenantSplit.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
+            tblTenantSplit.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tblTenantSplit.Controls.Add(pnlTenantList, 0, 0);
             tblTenantSplit.Controls.Add(pnlTenantDetails, 1, 0);
             tblTenantSplit.Dock = DockStyle.Fill;
@@ -174,7 +177,6 @@
             tblTenantSplit.Name = "tblTenantSplit";
             tblTenantSplit.RowCount = 1;
             tblTenantSplit.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tblTenantSplit.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tblTenantSplit.Size = new Size(1288, 583);
             tblTenantSplit.TabIndex = 0;
             // 
@@ -187,7 +189,7 @@
             pnlTenantList.Margin = new Padding(0);
             pnlTenantList.Name = "pnlTenantList";
             pnlTenantList.Padding = new Padding(10);
-            pnlTenantList.Size = new Size(772, 583);
+            pnlTenantList.Size = new Size(901, 583);
             pnlTenantList.TabIndex = 0;
             // 
             // dgvTenants
@@ -208,7 +210,7 @@
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dgvTenants.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvTenants.ColumnHeadersHeight = 35;
-            dgvTenants.Columns.AddRange(new DataGridViewColumn[] { colRoom, colTenantName, colDateOccupied, colContact });
+            dgvTenants.Columns.AddRange(new DataGridViewColumn[] { colRoom, colFname, colMname, colLname, colAddress, colContactNumber, colDateOccupied });
             dgvTenants.Cursor = Cursors.Hand;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
@@ -227,44 +229,57 @@
             dgvTenants.RowHeadersWidth = 51;
             dgvTenants.RowTemplate.Height = 35;
             dgvTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTenants.Size = new Size(750, 561);
+            dgvTenants.Size = new Size(879, 561);
             dgvTenants.TabIndex = 4;
             // 
             // colRoom
             // 
-            colRoom.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colRoom.FillWeight = 15F;
             colRoom.HeaderText = "Room";
             colRoom.MinimumWidth = 6;
             colRoom.Name = "colRoom";
             colRoom.ReadOnly = true;
             // 
-            // colTenantName
+            // colFname
             // 
-            colTenantName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colTenantName.FillWeight = 35F;
-            colTenantName.HeaderText = "Tenant Name";
-            colTenantName.MinimumWidth = 6;
-            colTenantName.Name = "colTenantName";
-            colTenantName.ReadOnly = true;
+            colFname.HeaderText = "First Name";
+            colFname.MinimumWidth = 6;
+            colFname.Name = "colFname";
+            colFname.ReadOnly = true;
+            // 
+            // colMname
+            // 
+            colMname.HeaderText = "Middle Name";
+            colMname.MinimumWidth = 6;
+            colMname.Name = "colMname";
+            colMname.ReadOnly = true;
+            // 
+            // colLname
+            // 
+            colLname.HeaderText = "Last Name";
+            colLname.MinimumWidth = 6;
+            colLname.Name = "colLname";
+            colLname.ReadOnly = true;
+            // 
+            // colAddress
+            // 
+            colAddress.HeaderText = "Address";
+            colAddress.MinimumWidth = 6;
+            colAddress.Name = "colAddress";
+            colAddress.ReadOnly = true;
+            // 
+            // colContactNumber
+            // 
+            colContactNumber.HeaderText = "Contact Number";
+            colContactNumber.MinimumWidth = 6;
+            colContactNumber.Name = "colContactNumber";
+            colContactNumber.ReadOnly = true;
             // 
             // colDateOccupied
             // 
-            colDateOccupied.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colDateOccupied.FillWeight = 25F;
             colDateOccupied.HeaderText = "Date Occupied";
             colDateOccupied.MinimumWidth = 6;
             colDateOccupied.Name = "colDateOccupied";
             colDateOccupied.ReadOnly = true;
-            // 
-            // colContact
-            // 
-            colContact.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colContact.FillWeight = 25F;
-            colContact.HeaderText = "Contacts";
-            colContact.MinimumWidth = 6;
-            colContact.Name = "colContact";
-            colContact.ReadOnly = true;
             // 
             // pnlTenantDetails
             // 
@@ -274,11 +289,11 @@
             pnlTenantDetails.Controls.Add(pnlTenantInfo);
             pnlTenantDetails.Controls.Add(pnlTenantDetailsHeader);
             pnlTenantDetails.Dock = DockStyle.Fill;
-            pnlTenantDetails.Location = new Point(772, 0);
+            pnlTenantDetails.Location = new Point(901, 0);
             pnlTenantDetails.Margin = new Padding(0);
             pnlTenantDetails.Name = "pnlTenantDetails";
             pnlTenantDetails.Padding = new Padding(10);
-            pnlTenantDetails.Size = new Size(516, 583);
+            pnlTenantDetails.Size = new Size(387, 583);
             pnlTenantDetails.TabIndex = 1;
             // 
             // pnlBillingSummary
@@ -288,7 +303,7 @@
             pnlBillingSummary.Dock = DockStyle.Fill;
             pnlBillingSummary.Location = new Point(10, 360);
             pnlBillingSummary.Name = "pnlBillingSummary";
-            pnlBillingSummary.Size = new Size(494, 211);
+            pnlBillingSummary.Size = new Size(365, 211);
             pnlBillingSummary.TabIndex = 4;
             // 
             // pnlBillingSummaryHeader
@@ -298,7 +313,7 @@
             pnlBillingSummaryHeader.Dock = DockStyle.Top;
             pnlBillingSummaryHeader.Location = new Point(0, 0);
             pnlBillingSummaryHeader.Name = "pnlBillingSummaryHeader";
-            pnlBillingSummaryHeader.Size = new Size(494, 40);
+            pnlBillingSummaryHeader.Size = new Size(365, 40);
             pnlBillingSummaryHeader.TabIndex = 11;
             // 
             // lblBillingSummary
@@ -309,7 +324,7 @@
             lblBillingSummary.ImageAlign = ContentAlignment.MiddleRight;
             lblBillingSummary.Location = new Point(0, 0);
             lblBillingSummary.Name = "lblBillingSummary";
-            lblBillingSummary.Size = new Size(492, 38);
+            lblBillingSummary.Size = new Size(363, 38);
             lblBillingSummary.TabIndex = 11;
             lblBillingSummary.Text = "Billing Summary";
             lblBillingSummary.TextAlign = ContentAlignment.MiddleCenter;
@@ -323,7 +338,7 @@
             pnlTenantActions.Location = new Point(10, 310);
             pnlTenantActions.Margin = new Padding(0);
             pnlTenantActions.Name = "pnlTenantActions";
-            pnlTenantActions.Size = new Size(494, 50);
+            pnlTenantActions.Size = new Size(365, 50);
             pnlTenantActions.TabIndex = 3;
             pnlTenantActions.Visible = false;
             // 
@@ -358,7 +373,7 @@
             pnlTenantInfo.Margin = new Padding(0);
             pnlTenantInfo.Name = "pnlTenantInfo";
             pnlTenantInfo.Padding = new Padding(5);
-            pnlTenantInfo.Size = new Size(494, 250);
+            pnlTenantInfo.Size = new Size(365, 250);
             pnlTenantInfo.TabIndex = 1;
             // 
             // tblTenantInfo
@@ -382,7 +397,7 @@
             tblTenantInfo.RowStyles.Add(new RowStyle(SizeType.Percent, 61.9718323F));
             tblTenantInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 77F));
             tblTenantInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 46F));
-            tblTenantInfo.Size = new Size(482, 238);
+            tblTenantInfo.Size = new Size(353, 238);
             tblTenantInfo.TabIndex = 2;
             // 
             // lblContactNumberValue
@@ -391,7 +406,7 @@
             lblContactNumberValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblContactNumberValue.ForeColor = Color.White;
             lblContactNumberValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblContactNumberValue.Location = new Point(195, 191);
+            lblContactNumberValue.Location = new Point(144, 191);
             lblContactNumberValue.Name = "lblContactNumberValue";
             lblContactNumberValue.Size = new Size(19, 25);
             lblContactNumberValue.TabIndex = 10;
@@ -406,7 +421,7 @@
             lblContactNumberTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblContactNumberTitle.Location = new Point(3, 191);
             lblContactNumberTitle.Name = "lblContactNumberTitle";
-            lblContactNumberTitle.Size = new Size(143, 25);
+            lblContactNumberTitle.Size = new Size(77, 47);
             lblContactNumberTitle.TabIndex = 9;
             lblContactNumberTitle.Text = "Contact Number";
             lblContactNumberTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -417,7 +432,7 @@
             lblTenantNameValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTenantNameValue.ForeColor = Color.White;
             lblTenantNameValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblTenantNameValue.Location = new Point(195, 114);
+            lblTenantNameValue.Location = new Point(144, 114);
             lblTenantNameValue.Name = "lblTenantNameValue";
             lblTenantNameValue.Size = new Size(19, 25);
             lblTenantNameValue.TabIndex = 8;
@@ -443,7 +458,7 @@
             lblDateOccupiedValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDateOccupiedValue.ForeColor = Color.White;
             lblDateOccupiedValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblDateOccupiedValue.Location = new Point(195, 43);
+            lblDateOccupiedValue.Location = new Point(144, 43);
             lblDateOccupiedValue.Name = "lblDateOccupiedValue";
             lblDateOccupiedValue.Size = new Size(19, 25);
             lblDateOccupiedValue.TabIndex = 6;
@@ -469,7 +484,7 @@
             lblRoomNumberValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoomNumberValue.ForeColor = Color.White;
             lblRoomNumberValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoomNumberValue.Location = new Point(195, 0);
+            lblRoomNumberValue.Location = new Point(144, 0);
             lblRoomNumberValue.Name = "lblRoomNumberValue";
             lblRoomNumberValue.Size = new Size(19, 25);
             lblRoomNumberValue.TabIndex = 3;
@@ -500,7 +515,7 @@
             pnlTenantDetailsHeader.Margin = new Padding(0);
             pnlTenantDetailsHeader.Name = "pnlTenantDetailsHeader";
             pnlTenantDetailsHeader.Padding = new Padding(5);
-            pnlTenantDetailsHeader.Size = new Size(494, 50);
+            pnlTenantDetailsHeader.Size = new Size(365, 50);
             pnlTenantDetailsHeader.TabIndex = 0;
             // 
             // lblTenantDetailsTitle
@@ -512,7 +527,7 @@
             lblTenantDetailsTitle.Location = new Point(99, 5);
             lblTenantDetailsTitle.Name = "lblTenantDetailsTitle";
             lblTenantDetailsTitle.Padding = new Padding(0, 0, 50, 0);
-            lblTenantDetailsTitle.Size = new Size(350, 38);
+            lblTenantDetailsTitle.Size = new Size(221, 38);
             lblTenantDetailsTitle.TabIndex = 6;
             lblTenantDetailsTitle.Text = "Tenant Information";
             lblTenantDetailsTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -523,7 +538,7 @@
             btnCloseTenantDetails.Dock = DockStyle.Right;
             btnCloseTenantDetails.FlatStyle = FlatStyle.Flat;
             btnCloseTenantDetails.ForeColor = Color.White;
-            btnCloseTenantDetails.Location = new Point(449, 5);
+            btnCloseTenantDetails.Location = new Point(320, 5);
             btnCloseTenantDetails.Name = "btnCloseTenantDetails";
             btnCloseTenantDetails.Size = new Size(38, 38);
             btnCloseTenantDetails.TabIndex = 5;
@@ -584,10 +599,6 @@
         private TableLayoutPanel tblTenantSplit;
         private Panel pnlTenantList;
         private DataGridView dgvTenants;
-        private DataGridViewTextBoxColumn colRoom;
-        private DataGridViewTextBoxColumn colTenantName;
-        private DataGridViewTextBoxColumn colDateOccupied;
-        private DataGridViewTextBoxColumn colContact;
         private Panel pnlTenantDetails;
         private Panel pnlBillingSummary;
         private Panel pnlBillingSummaryHeader;
@@ -610,5 +621,12 @@
         private Button btnEditTenant;
         private Label lblTenantsTitle;
         private Label lblTenantDetailsTitle;
+        private DataGridViewTextBoxColumn colRoom;
+        private DataGridViewTextBoxColumn colFname;
+        private DataGridViewTextBoxColumn colMname;
+        private DataGridViewTextBoxColumn colLname;
+        private DataGridViewTextBoxColumn colAddress;
+        private DataGridViewTextBoxColumn colContactNumber;
+        private DataGridViewTextBoxColumn colDateOccupied;
     }
 }
