@@ -144,6 +144,7 @@
             tabArchive.Controls.Add(tabTenants);
             tabArchive.Controls.Add(tabEmployee);
             tabArchive.Dock = DockStyle.Fill;
+            tabArchive.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             tabArchive.Location = new Point(10, 10);
             tabArchive.Name = "tabArchive";
             tabArchive.SelectedIndex = 0;
@@ -153,10 +154,10 @@
             // tabRooms
             // 
             tabRooms.Controls.Add(dgvArchivedRooms);
-            tabRooms.Location = new Point(4, 29);
+            tabRooms.Location = new Point(4, 34);
             tabRooms.Name = "tabRooms";
             tabRooms.Padding = new Padding(3);
-            tabRooms.Size = new Size(1270, 595);
+            tabRooms.Size = new Size(1270, 590);
             tabRooms.TabIndex = 0;
             tabRooms.Text = "Rooms";
             tabRooms.UseVisualStyleBackColor = true;
@@ -178,7 +179,7 @@
             dgvArchivedRooms.RowHeadersWidth = 51;
             dgvArchivedRooms.ScrollBars = ScrollBars.Vertical;
             dgvArchivedRooms.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedRooms.Size = new Size(1264, 589);
+            dgvArchivedRooms.Size = new Size(1264, 584);
             dgvArchivedRooms.TabIndex = 0;
             // 
             // colRoomArchiveID
@@ -212,10 +213,10 @@
             // tabBillAccounts
             // 
             tabBillAccounts.Controls.Add(dgvArchivedBillAccounts);
-            tabBillAccounts.Location = new Point(4, 29);
+            tabBillAccounts.Location = new Point(4, 34);
             tabBillAccounts.Name = "tabBillAccounts";
             tabBillAccounts.Padding = new Padding(3);
-            tabBillAccounts.Size = new Size(1272, 597);
+            tabBillAccounts.Size = new Size(1270, 590);
             tabBillAccounts.TabIndex = 1;
             tabBillAccounts.Text = "Bill Accounts";
             tabBillAccounts.UseVisualStyleBackColor = true;
@@ -237,7 +238,7 @@
             dgvArchivedBillAccounts.RowHeadersWidth = 51;
             dgvArchivedBillAccounts.ScrollBars = ScrollBars.Vertical;
             dgvArchivedBillAccounts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedBillAccounts.Size = new Size(1266, 591);
+            dgvArchivedBillAccounts.Size = new Size(1264, 584);
             dgvArchivedBillAccounts.TabIndex = 1;
             // 
             // colBillAccountArchiveID
@@ -285,10 +286,10 @@
             // tabAudits
             // 
             tabAudits.Controls.Add(dgvArchivedAudits);
-            tabAudits.Location = new Point(4, 29);
+            tabAudits.Location = new Point(4, 34);
             tabAudits.Name = "tabAudits";
             tabAudits.Padding = new Padding(3);
-            tabAudits.Size = new Size(1272, 597);
+            tabAudits.Size = new Size(1270, 590);
             tabAudits.TabIndex = 2;
             tabAudits.Text = "Audits";
             tabAudits.UseVisualStyleBackColor = true;
@@ -310,7 +311,7 @@
             dgvArchivedAudits.RowHeadersWidth = 51;
             dgvArchivedAudits.ScrollBars = ScrollBars.Vertical;
             dgvArchivedAudits.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedAudits.Size = new Size(1266, 591);
+            dgvArchivedAudits.Size = new Size(1264, 584);
             dgvArchivedAudits.TabIndex = 1;
             // 
             // colAuditArchiveID
@@ -351,10 +352,10 @@
             // tabTenants
             // 
             tabTenants.Controls.Add(dgvArchivedTenants);
-            tabTenants.Location = new Point(4, 29);
+            tabTenants.Location = new Point(4, 34);
             tabTenants.Name = "tabTenants";
             tabTenants.Padding = new Padding(3);
-            tabTenants.Size = new Size(1272, 597);
+            tabTenants.Size = new Size(1270, 590);
             tabTenants.TabIndex = 3;
             tabTenants.Text = "Tenants";
             tabTenants.UseVisualStyleBackColor = true;
@@ -376,7 +377,7 @@
             dgvArchivedTenants.RowHeadersWidth = 51;
             dgvArchivedTenants.ScrollBars = ScrollBars.Vertical;
             dgvArchivedTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedTenants.Size = new Size(1266, 591);
+            dgvArchivedTenants.Size = new Size(1264, 584);
             dgvArchivedTenants.TabIndex = 1;
             // 
             // colTenantArchiveID
@@ -424,10 +425,10 @@
             // tabEmployee
             // 
             tabEmployee.Controls.Add(dgvArchivedEmployees);
-            tabEmployee.Location = new Point(4, 29);
+            tabEmployee.Location = new Point(4, 34);
             tabEmployee.Name = "tabEmployee";
             tabEmployee.Padding = new Padding(3);
-            tabEmployee.Size = new Size(1272, 597);
+            tabEmployee.Size = new Size(1270, 590);
             tabEmployee.TabIndex = 4;
             tabEmployee.Text = "Employee";
             tabEmployee.UseVisualStyleBackColor = true;
@@ -449,7 +450,7 @@
             dgvArchivedEmployees.RowHeadersWidth = 51;
             dgvArchivedEmployees.ScrollBars = ScrollBars.Vertical;
             dgvArchivedEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedEmployees.Size = new Size(1266, 591);
+            dgvArchivedEmployees.Size = new Size(1264, 584);
             dgvArchivedEmployees.TabIndex = 1;
             // 
             // colEmployeeArchiveID
