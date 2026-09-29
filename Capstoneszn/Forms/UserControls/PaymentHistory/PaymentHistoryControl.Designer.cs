@@ -28,295 +28,54 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            label1 = new Label();
-            tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
-            dataGridView1 = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column3 = new DataGridViewTextBoxColumn();
-            Column4 = new DataGridViewTextBoxColumn();
-            Column5 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
-            Column7 = new DataGridViewTextBoxColumn();
-            Column8 = new DataGridViewTextBoxColumn();
-            Column9 = new DataGridViewButtonColumn();
-            textBox1 = new TextBox();
-            tabPage2 = new TabPage();
-            textBox2 = new TextBox();
-            dataGridView2 = new DataGridView();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
-            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            tabPage3 = new TabPage();
-            dataGridView3 = new DataGridView();
-            dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn11 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn12 = new DataGridViewTextBoxColumn();
-            dataGridViewButtonColumn2 = new DataGridViewButtonColumn();
-            textBox3 = new TextBox();
-            tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
-            tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            this.tabMaintenance = new TabPage();
+            dgvMaintenance = new DataGridView();
+            colMaintenanceReceipt = new DataGridViewButtonColumn();
+            colMaintenanceAmount = new DataGridViewTextBoxColumn();
+            colMaintenanceIssue = new DataGridViewTextBoxColumn();
+            colMaintenanceRoom = new DataGridViewTextBoxColumn();
+            colMaintenanceResponsible = new DataGridViewTextBoxColumn();
+            colMaintenanceTime = new DataGridViewTextBoxColumn();
+            colMaintenanceDate = new DataGridViewTextBoxColumn();
+            txtMaintenanceSearch = new TextBox();
+            this.tabRent = new TabPage();
+            this.txtRentSearch = new TextBox();
+            dgvRent = new DataGridView();
+            colRentReceipt = new DataGridViewButtonColumn();
+            colRentAmount = new DataGridViewTextBoxColumn();
+            colRentMethod = new DataGridViewTextBoxColumn();
+            colRentTags = new DataGridViewTextBoxColumn();
+            colRentType = new DataGridViewTextBoxColumn();
+            colRentRoom = new DataGridViewTextBoxColumn();
+            colRentTenantName = new DataGridViewTextBoxColumn();
+            colRentTime = new DataGridViewTextBoxColumn();
+            colRentDate = new DataGridViewTextBoxColumn();
+            tabPaymentHistory = new TabControl();
+            this.tabMaintenance.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvMaintenance).BeginInit();
+            this.tabRent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvRent).BeginInit();
+            tabPaymentHistory.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // tabMaintenance
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 28.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(413, 341);
-            label1.Name = "label1";
-            label1.Size = new Size(0, 62);
-            label1.TabIndex = 0;
+            this.tabMaintenance.Controls.Add(txtMaintenanceSearch);
+            this.tabMaintenance.Controls.Add(dgvMaintenance);
+            this.tabMaintenance.Location = new Point(4, 40);
+            this.tabMaintenance.Name = "tabMaintenance";
+            this.tabMaintenance.Size = new Size(1290, 703);
+            this.tabMaintenance.TabIndex = 1;
+            this.tabMaintenance.Text = "Maintenance";
+            this.tabMaintenance.UseVisualStyleBackColor = true;
             // 
-            // tabControl1
+            // dgvMaintenance
             // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
-            tabControl1.Font = new Font("Segoe UI", 14F);
-            tabControl1.Location = new Point(-1, 0);
-            tabControl1.Name = "tabControl1";
-            tabControl1.Padding = new Point(10, 3);
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1298, 747);
-            tabControl1.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            tabPage1.Controls.Add(dataGridView1);
-            tabPage1.Controls.Add(textBox1);
-            tabPage1.Location = new Point(4, 40);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Size = new Size(1290, 703);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "Rent";
-            tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 14F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView1.ColumnHeadersHeight = 50;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column6, Column7, Column8, Column9 });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
-            dataGridView1.Location = new Point(-3, 75);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1298, 632);
-            dataGridView1.TabIndex = 1;
-            // 
-            // Column1
-            // 
-            Column1.FillWeight = 60F;
-            Column1.HeaderText = "Date";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            // 
-            // Column2
-            // 
-            Column2.FillWeight = 60F;
-            Column2.HeaderText = "Time";
-            Column2.MinimumWidth = 6;
-            Column2.Name = "Column2";
-            // 
-            // Column3
-            // 
-            Column3.HeaderText = "Tenant Name";
-            Column3.MinimumWidth = 6;
-            Column3.Name = "Column3";
-            // 
-            // Column4
-            // 
-            Column4.FillWeight = 50F;
-            Column4.HeaderText = "Room";
-            Column4.MinimumWidth = 6;
-            Column4.Name = "Column4";
-            // 
-            // Column5
-            // 
-            Column5.FillWeight = 60F;
-            Column5.HeaderText = "Type";
-            Column5.MinimumWidth = 6;
-            Column5.Name = "Column5";
-            // 
-            // Column6
-            // 
-            Column6.HeaderText = "Tags";
-            Column6.MinimumWidth = 6;
-            Column6.Name = "Column6";
-            // 
-            // Column7
-            // 
-            Column7.FillWeight = 80F;
-            Column7.HeaderText = "Method";
-            Column7.MinimumWidth = 6;
-            Column7.Name = "Column7";
-            // 
-            // Column8
-            // 
-            Column8.HeaderText = "Amount";
-            Column8.MinimumWidth = 6;
-            Column8.Name = "Column8";
-            // 
-            // Column9
-            // 
-            Column9.FillWeight = 80F;
-            Column9.HeaderText = "Reciept";
-            Column9.MinimumWidth = 6;
-            Column9.Name = "Column9";
-            // 
-            // textBox1
-            // 
-            textBox1.BorderStyle = BorderStyle.FixedSingle;
-            textBox1.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            textBox1.Location = new Point(15, 13);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "🔍Search";
-            textBox1.Size = new Size(1258, 52);
-            textBox1.TabIndex = 0;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(textBox2);
-            tabPage2.Controls.Add(dataGridView2);
-            tabPage2.Location = new Point(4, 40);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Size = new Size(1290, 703);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Maintenance";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // textBox2
-            // 
-            textBox2.BorderStyle = BorderStyle.FixedSingle;
-            textBox2.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            textBox2.Location = new Point(15, 13);
-            textBox2.Name = "textBox2";
-            textBox2.PlaceholderText = "🔍Search";
-            textBox2.Size = new Size(1258, 52);
-            textBox2.TabIndex = 3;
-            // 
-            // dataGridView2
-            // 
-            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 14F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            dataGridView2.ColumnHeadersHeight = 50;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn8, dataGridViewButtonColumn1 });
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dataGridView2.DefaultCellStyle = dataGridViewCellStyle4;
-            dataGridView2.Location = new Point(-3, 75);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1298, 632);
-            dataGridView2.TabIndex = 2;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            dataGridViewTextBoxColumn1.FillWeight = 40F;
-            dataGridViewTextBoxColumn1.HeaderText = "Date";
-            dataGridViewTextBoxColumn1.MinimumWidth = 6;
-            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            dataGridViewTextBoxColumn2.FillWeight = 40F;
-            dataGridViewTextBoxColumn2.HeaderText = "Time";
-            dataGridViewTextBoxColumn2.MinimumWidth = 6;
-            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            dataGridViewTextBoxColumn3.HeaderText = "Responsible";
-            dataGridViewTextBoxColumn3.MinimumWidth = 6;
-            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            dataGridViewTextBoxColumn4.FillWeight = 30F;
-            dataGridViewTextBoxColumn4.HeaderText = "Room";
-            dataGridViewTextBoxColumn4.MinimumWidth = 6;
-            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            dataGridViewTextBoxColumn5.HeaderText = "Issue";
-            dataGridViewTextBoxColumn5.MinimumWidth = 6;
-            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            // 
-            // dataGridViewTextBoxColumn8
-            // 
-            dataGridViewTextBoxColumn8.FillWeight = 50F;
-            dataGridViewTextBoxColumn8.HeaderText = "Amount";
-            dataGridViewTextBoxColumn8.MinimumWidth = 6;
-            dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewButtonColumn1.FillWeight = 50F;
-            dataGridViewButtonColumn1.HeaderText = "Reciept";
-            dataGridViewButtonColumn1.MinimumWidth = 6;
-            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            // 
-            // tabPage3
-            // 
-            tabPage3.Controls.Add(dataGridView3);
-            tabPage3.Controls.Add(textBox3);
-            tabPage3.Location = new Point(4, 40);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1290, 703);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Global";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView3
-            // 
-            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvMaintenance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle5.BackColor = SystemColors.Control;
             dataGridViewCellStyle5.Font = new Font("Segoe UI", 14F);
@@ -324,9 +83,9 @@
             dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            dataGridView3.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            dataGridView3.ColumnHeadersHeight = 50;
-            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn9, dataGridViewTextBoxColumn10, dataGridViewTextBoxColumn11, dataGridViewTextBoxColumn12, dataGridViewButtonColumn2 });
+            dgvMaintenance.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dgvMaintenance.ColumnHeadersHeight = 50;
+            dgvMaintenance.Columns.AddRange(new DataGridViewColumn[] { colMaintenanceDate, colMaintenanceTime, colMaintenanceResponsible, colMaintenanceRoom, colMaintenanceIssue, colMaintenanceAmount, colMaintenanceReceipt });
             dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = SystemColors.Window;
             dataGridViewCellStyle6.Font = new Font("Segoe UI", 12F);
@@ -334,123 +93,213 @@
             dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            dataGridView3.DefaultCellStyle = dataGridViewCellStyle6;
-            dataGridView3.Location = new Point(-3, 75);
-            dataGridView3.Name = "dataGridView3";
-            dataGridView3.RowHeadersWidth = 51;
-            dataGridView3.Size = new Size(1298, 632);
-            dataGridView3.TabIndex = 5;
+            dgvMaintenance.DefaultCellStyle = dataGridViewCellStyle6;
+            dgvMaintenance.Location = new Point(-3, 75);
+            dgvMaintenance.Name = "dgvMaintenance";
+            dgvMaintenance.RowHeadersWidth = 51;
+            dgvMaintenance.Size = new Size(1298, 632);
+            dgvMaintenance.TabIndex = 2;
             // 
-            // dataGridViewTextBoxColumn6
+            // colMaintenanceReceipt
             // 
-            dataGridViewTextBoxColumn6.FillWeight = 40F;
-            dataGridViewTextBoxColumn6.HeaderText = "Date";
-            dataGridViewTextBoxColumn6.MinimumWidth = 6;
-            dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            colMaintenanceReceipt.FillWeight = 50F;
+            colMaintenanceReceipt.HeaderText = "Reciept";
+            colMaintenanceReceipt.MinimumWidth = 6;
+            colMaintenanceReceipt.Name = "colMaintenanceReceipt";
             // 
-            // dataGridViewTextBoxColumn7
+            // colMaintenanceAmount
             // 
-            dataGridViewTextBoxColumn7.FillWeight = 40F;
-            dataGridViewTextBoxColumn7.HeaderText = "Time";
-            dataGridViewTextBoxColumn7.MinimumWidth = 6;
-            dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            colMaintenanceAmount.FillWeight = 50F;
+            colMaintenanceAmount.HeaderText = "Amount";
+            colMaintenanceAmount.MinimumWidth = 6;
+            colMaintenanceAmount.Name = "colMaintenanceAmount";
             // 
-            // dataGridViewTextBoxColumn9
+            // colMaintenanceIssue
             // 
-            dataGridViewTextBoxColumn9.FillWeight = 50F;
-            dataGridViewTextBoxColumn9.HeaderText = "Type";
-            dataGridViewTextBoxColumn9.MinimumWidth = 6;
-            dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            colMaintenanceIssue.HeaderText = "Issue";
+            colMaintenanceIssue.MinimumWidth = 6;
+            colMaintenanceIssue.Name = "colMaintenanceIssue";
             // 
-            // dataGridViewTextBoxColumn10
+            // colMaintenanceRoom
             // 
-            dataGridViewTextBoxColumn10.FillWeight = 30F;
-            dataGridViewTextBoxColumn10.HeaderText = "Room";
-            dataGridViewTextBoxColumn10.MinimumWidth = 6;
-            dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+            colMaintenanceRoom.FillWeight = 30F;
+            colMaintenanceRoom.HeaderText = "Room";
+            colMaintenanceRoom.MinimumWidth = 6;
+            colMaintenanceRoom.Name = "colMaintenanceRoom";
             // 
-            // dataGridViewTextBoxColumn11
+            // colMaintenanceResponsible
             // 
-            dataGridViewTextBoxColumn11.HeaderText = "Details";
-            dataGridViewTextBoxColumn11.MinimumWidth = 6;
-            dataGridViewTextBoxColumn11.Name = "dataGridViewTextBoxColumn11";
+            colMaintenanceResponsible.HeaderText = "Responsible";
+            colMaintenanceResponsible.MinimumWidth = 6;
+            colMaintenanceResponsible.Name = "colMaintenanceResponsible";
             // 
-            // dataGridViewTextBoxColumn12
+            // colMaintenanceTime
             // 
-            dataGridViewTextBoxColumn12.FillWeight = 50F;
-            dataGridViewTextBoxColumn12.HeaderText = "Amount";
-            dataGridViewTextBoxColumn12.MinimumWidth = 6;
-            dataGridViewTextBoxColumn12.Name = "dataGridViewTextBoxColumn12";
+            colMaintenanceTime.FillWeight = 40F;
+            colMaintenanceTime.HeaderText = "Time";
+            colMaintenanceTime.MinimumWidth = 6;
+            colMaintenanceTime.Name = "colMaintenanceTime";
             // 
-            // dataGridViewButtonColumn2
+            // colMaintenanceDate
             // 
-            dataGridViewButtonColumn2.FillWeight = 30F;
-            dataGridViewButtonColumn2.HeaderText = "Reciept";
-            dataGridViewButtonColumn2.MinimumWidth = 6;
-            dataGridViewButtonColumn2.Name = "dataGridViewButtonColumn2";
+            colMaintenanceDate.FillWeight = 40F;
+            colMaintenanceDate.HeaderText = "Date";
+            colMaintenanceDate.MinimumWidth = 6;
+            colMaintenanceDate.Name = "colMaintenanceDate";
             // 
-            // textBox3
+            // txtMaintenanceSearch
             // 
-            textBox3.BorderStyle = BorderStyle.FixedSingle;
-            textBox3.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            textBox3.Location = new Point(15, 13);
-            textBox3.Name = "textBox3";
-            textBox3.PlaceholderText = "🔍Search";
-            textBox3.Size = new Size(1258, 52);
-            textBox3.TabIndex = 4;
+            txtMaintenanceSearch.BorderStyle = BorderStyle.FixedSingle;
+            txtMaintenanceSearch.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            txtMaintenanceSearch.Location = new Point(15, 13);
+            txtMaintenanceSearch.Name = "txtMaintenanceSearch";
+            txtMaintenanceSearch.PlaceholderText = "🔍Search";
+            txtMaintenanceSearch.Size = new Size(1258, 52);
+            txtMaintenanceSearch.TabIndex = 3;
+            // 
+            // tabRent
+            // 
+            this.tabRent.Controls.Add(dgvRent);
+            this.tabRent.Controls.Add(this.txtRentSearch);
+            this.tabRent.Location = new Point(4, 40);
+            this.tabRent.Name = "tabRent";
+            this.tabRent.Size = new Size(1290, 703);
+            this.tabRent.TabIndex = 0;
+            this.tabRent.Text = "Rent";
+            this.tabRent.UseVisualStyleBackColor = true;
+            // 
+            // txtRentSearch
+            // 
+            this.txtRentSearch.BorderStyle = BorderStyle.FixedSingle;
+            this.txtRentSearch.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            this.txtRentSearch.Location = new Point(15, 13);
+            this.txtRentSearch.Name = "txtRentSearch";
+            this.txtRentSearch.PlaceholderText = "🔍Search";
+            this.txtRentSearch.Size = new Size(1258, 52);
+            this.txtRentSearch.TabIndex = 0;
+            // 
+            // dgvRent
+            // 
+            dgvRent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.BackColor = SystemColors.Control;
+            dataGridViewCellStyle7.Font = new Font("Segoe UI", 14F);
+            dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
+            dgvRent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dgvRent.ColumnHeadersHeight = 50;
+            dgvRent.Columns.AddRange(new DataGridViewColumn[] { colRentDate, colRentTime, colRentTenantName, colRentRoom, colRentType, colRentTags, colRentMethod, colRentAmount, colRentReceipt });
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = SystemColors.Window;
+            dataGridViewCellStyle8.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle8.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
+            dgvRent.DefaultCellStyle = dataGridViewCellStyle8;
+            dgvRent.Location = new Point(-3, 75);
+            dgvRent.Name = "dgvRent";
+            dgvRent.RowHeadersWidth = 51;
+            dgvRent.Size = new Size(1298, 632);
+            dgvRent.TabIndex = 1;
+            // 
+            // colRentReceipt
+            // 
+            colRentReceipt.FillWeight = 80F;
+            colRentReceipt.HeaderText = "Reciept";
+            colRentReceipt.MinimumWidth = 6;
+            colRentReceipt.Name = "colRentReceipt";
+            // 
+            // colRentAmount
+            // 
+            colRentAmount.HeaderText = "Amount";
+            colRentAmount.MinimumWidth = 6;
+            colRentAmount.Name = "colRentAmount";
+            // 
+            // colRentMethod
+            // 
+            colRentMethod.FillWeight = 80F;
+            colRentMethod.HeaderText = "Method";
+            colRentMethod.MinimumWidth = 6;
+            colRentMethod.Name = "colRentMethod";
+            // 
+            // colRentTags
+            // 
+            colRentTags.HeaderText = "Tags";
+            colRentTags.MinimumWidth = 6;
+            colRentTags.Name = "colRentTags";
+            // 
+            // colRentType
+            // 
+            colRentType.FillWeight = 60F;
+            colRentType.HeaderText = "Type";
+            colRentType.MinimumWidth = 6;
+            colRentType.Name = "colRentType";
+            // 
+            // colRentRoom
+            // 
+            colRentRoom.FillWeight = 50F;
+            colRentRoom.HeaderText = "Room";
+            colRentRoom.MinimumWidth = 6;
+            colRentRoom.Name = "colRentRoom";
+            // 
+            // colRentTenantName
+            // 
+            colRentTenantName.HeaderText = "Tenant Name";
+            colRentTenantName.MinimumWidth = 6;
+            colRentTenantName.Name = "colRentTenantName";
+            // 
+            // colRentTime
+            // 
+            colRentTime.FillWeight = 60F;
+            colRentTime.HeaderText = "Time";
+            colRentTime.MinimumWidth = 6;
+            colRentTime.Name = "colRentTime";
+            // 
+            // colRentDate
+            // 
+            colRentDate.FillWeight = 60F;
+            colRentDate.HeaderText = "Date";
+            colRentDate.MinimumWidth = 6;
+            colRentDate.Name = "colRentDate";
+            // 
+            // tabPaymentHistory
+            // 
+            tabPaymentHistory.Controls.Add(this.tabRent);
+            tabPaymentHistory.Controls.Add(this.tabMaintenance);
+            tabPaymentHistory.Font = new Font("Segoe UI", 14F);
+            tabPaymentHistory.Location = new Point(-1, 0);
+            tabPaymentHistory.Name = "tabPaymentHistory";
+            tabPaymentHistory.Padding = new Point(10, 3);
+            tabPaymentHistory.SelectedIndex = 0;
+            tabPaymentHistory.Size = new Size(1298, 747);
+            tabPaymentHistory.TabIndex = 1;
             // 
             // PaymentHistoryControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 50);
-            Controls.Add(tabControl1);
-            Controls.Add(label1);
+            Controls.Add(tabPaymentHistory);
             Name = "PaymentHistoryControl";
             Size = new Size(1300, 750);
-            tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
-            tabPage3.ResumeLayout(false);
-            tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            this.tabMaintenance.ResumeLayout(false);
+            this.tabMaintenance.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvMaintenance).EndInit();
+            this.tabRent.ResumeLayout(false);
+            this.tabRent.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvRent).EndInit();
+            tabPaymentHistory.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private Label label1;
-        private TabControl tabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
         private TabPage tabPage3;
-        private TextBox textBox1;
-        private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn Column2;
-        private DataGridViewTextBoxColumn Column3;
-        private DataGridViewTextBoxColumn Column4;
-        private DataGridViewTextBoxColumn Column5;
-        private DataGridViewTextBoxColumn Column6;
-        private DataGridViewTextBoxColumn Column7;
-        private DataGridViewTextBoxColumn Column8;
-        private DataGridViewButtonColumn Column9;
-        private TextBox textBox2;
-        private DataGridView dataGridView2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
-        private DataGridViewButtonColumn dataGridViewButtonColumn1;
         private DataGridView dataGridView3;
-        private TextBox textBox3;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
@@ -458,5 +307,29 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn11;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn12;
         private DataGridViewButtonColumn dataGridViewButtonColumn2;
+        private TextBox textBox3;
+        private TabPage tabPage2;
+        private TextBox txtMaintenanceSearch;
+        private DataGridView dgvMaintenance;
+        private DataGridViewTextBoxColumn colMaintenanceDate;
+        private DataGridViewTextBoxColumn colMaintenanceTime;
+        private DataGridViewTextBoxColumn colMaintenanceResponsible;
+        private DataGridViewTextBoxColumn colMaintenanceRoom;
+        private DataGridViewTextBoxColumn colMaintenanceIssue;
+        private DataGridViewTextBoxColumn colMaintenanceAmount;
+        private DataGridViewButtonColumn colMaintenanceReceipt;
+        private TabPage tabPage1;
+        private DataGridView dgvRent;
+        private DataGridViewTextBoxColumn colRentDate;
+        private DataGridViewTextBoxColumn colRentTime;
+        private DataGridViewTextBoxColumn colRentTenantName;
+        private DataGridViewTextBoxColumn colRentRoom;
+        private DataGridViewTextBoxColumn colRentType;
+        private DataGridViewTextBoxColumn colRentTags;
+        private DataGridViewTextBoxColumn colRentMethod;
+        private DataGridViewTextBoxColumn colRentAmount;
+        private DataGridViewButtonColumn colRentReceipt;
+        private TextBox textBox1;
+        private TabControl tabPaymentHistory;
     }
 }

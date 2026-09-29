@@ -36,8 +36,8 @@
             pnlElectricityContent = new Panel();
             txtElectricityAmount = new TextBox();
             lblElectricityAmount = new Label();
-            cboElectricityFloor = new ComboBox();
-            lblElectricityFloor = new Label();
+            cboElectricityRoom = new ComboBox();
+            lblElectricityRoom = new Label();
             pnlElectrcityHeader.SuspendLayout();
             pnlElectricityActionButton.SuspendLayout();
             pnlElectricityContent.SuspendLayout();
@@ -99,8 +99,8 @@
             pnlElectricityContent.BorderStyle = BorderStyle.FixedSingle;
             pnlElectricityContent.Controls.Add(txtElectricityAmount);
             pnlElectricityContent.Controls.Add(lblElectricityAmount);
-            pnlElectricityContent.Controls.Add(cboElectricityFloor);
-            pnlElectricityContent.Controls.Add(lblElectricityFloor);
+            pnlElectricityContent.Controls.Add(cboElectricityRoom);
+            pnlElectricityContent.Controls.Add(lblElectricityRoom);
             pnlElectricityContent.Dock = DockStyle.Fill;
             pnlElectricityContent.Location = new Point(0, 60);
             pnlElectricityContent.Name = "pnlElectricityContent";
@@ -128,27 +128,27 @@
             lblElectricityAmount.Text = "Enter Amount";
             lblElectricityAmount.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // cboElectricityFloor
+            // cboElectricityRoom
             // 
-            cboElectricityFloor.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboElectricityFloor.FormattingEnabled = true;
-            cboElectricityFloor.Location = new Point(65, 61);
-            cboElectricityFloor.Name = "cboElectricityFloor";
-            cboElectricityFloor.Size = new Size(251, 28);
-            cboElectricityFloor.TabIndex = 16;
+            cboElectricityRoom.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboElectricityRoom.FormattingEnabled = true;
+            cboElectricityRoom.Location = new Point(65, 61);
+            cboElectricityRoom.Name = "cboElectricityRoom";
+            cboElectricityRoom.Size = new Size(251, 28);
+            cboElectricityRoom.TabIndex = 16;
             // 
-            // lblElectricityFloor
+            // lblElectricityRoom
             // 
-            lblElectricityFloor.AutoSize = true;
-            lblElectricityFloor.Font = new Font("Segoe UI", 13.2000008F);
-            lblElectricityFloor.ForeColor = Color.White;
-            lblElectricityFloor.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityFloor.Location = new Point(65, 27);
-            lblElectricityFloor.Name = "lblElectricityFloor";
-            lblElectricityFloor.Size = new Size(132, 31);
-            lblElectricityFloor.TabIndex = 15;
-            lblElectricityFloor.Text = "Select Floor";
-            lblElectricityFloor.TextAlign = ContentAlignment.MiddleCenter;
+            lblElectricityRoom.AutoSize = true;
+            lblElectricityRoom.Font = new Font("Segoe UI", 13.2000008F);
+            lblElectricityRoom.ForeColor = Color.White;
+            lblElectricityRoom.ImageAlign = ContentAlignment.MiddleRight;
+            lblElectricityRoom.Location = new Point(65, 27);
+            lblElectricityRoom.Name = "lblElectricityRoom";
+            lblElectricityRoom.Size = new Size(140, 31);
+            lblElectricityRoom.TabIndex = 15;
+            lblElectricityRoom.Text = "Select Room";
+            lblElectricityRoom.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // AddElectricityForm
             // 
@@ -181,9 +181,9 @@
         private Label lblAddElectricityBillTitle;
         private Button btnConfirm;
         private Button btnCancel;
-        private Label lblElectricityFloor;
+        private Label lblElectricityRoom;
         private Label lblElectricityAmount;
-        private ComboBox cboElectricityFloor;
+        private ComboBox cboElectricityRoom;
         private TextBox txtElectricityAmount;
     }
 }

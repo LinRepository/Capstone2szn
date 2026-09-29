@@ -29,26 +29,26 @@
         private void InitializeComponent()
         {
             pnlUtilityAccountHeader = new Panel();
-            pnlUtilityAccountActions = new Panel();
-            pnlUtilityAccountContent = new Panel();
             lblUtilityAccountTitle = new Label();
-            pnlRoom = new Panel();
-            pnlIncludeTo = new Panel();
-            pnlAccountNumber = new Panel();
-            btnCancelUtilityAccount = new Button();
+            pnlUtilityAccountActions = new Panel();
             btnAddUtilityAccount = new Button();
-            lblRoom = new Label();
-            cboRoom = new ComboBox();
-            lblAccountNumber = new Label();
-            lblIncludeTo = new Label();
+            btnCancelUtilityAccount = new Button();
+            pnlUtilityAccountContent = new Panel();
+            pnlAccountNumber = new Panel();
             txtAccountNumber = new TextBox();
+            lblAccountNumber = new Label();
+            pnlIncludeTo = new Panel();
             cboIncludeTo = new ComboBox();
+            lblIncludeTo = new Label();
+            pnlRoom = new Panel();
+            cboRoom = new ComboBox();
+            lblRoom = new Label();
             pnlUtilityAccountHeader.SuspendLayout();
             pnlUtilityAccountActions.SuspendLayout();
             pnlUtilityAccountContent.SuspendLayout();
-            pnlRoom.SuspendLayout();
-            pnlIncludeTo.SuspendLayout();
             pnlAccountNumber.SuspendLayout();
+            pnlIncludeTo.SuspendLayout();
+            pnlRoom.SuspendLayout();
             SuspendLayout();
             // 
             // pnlUtilityAccountHeader
@@ -59,27 +59,6 @@
             pnlUtilityAccountHeader.Name = "pnlUtilityAccountHeader";
             pnlUtilityAccountHeader.Size = new Size(482, 75);
             pnlUtilityAccountHeader.TabIndex = 0;
-            // 
-            // pnlUtilityAccountActions
-            // 
-            pnlUtilityAccountActions.Controls.Add(btnAddUtilityAccount);
-            pnlUtilityAccountActions.Controls.Add(btnCancelUtilityAccount);
-            pnlUtilityAccountActions.Dock = DockStyle.Bottom;
-            pnlUtilityAccountActions.Location = new Point(0, 328);
-            pnlUtilityAccountActions.Name = "pnlUtilityAccountActions";
-            pnlUtilityAccountActions.Size = new Size(482, 75);
-            pnlUtilityAccountActions.TabIndex = 1;
-            // 
-            // pnlUtilityAccountContent
-            // 
-            pnlUtilityAccountContent.Controls.Add(pnlAccountNumber);
-            pnlUtilityAccountContent.Controls.Add(pnlIncludeTo);
-            pnlUtilityAccountContent.Controls.Add(pnlRoom);
-            pnlUtilityAccountContent.Dock = DockStyle.Fill;
-            pnlUtilityAccountContent.Location = new Point(0, 75);
-            pnlUtilityAccountContent.Name = "pnlUtilityAccountContent";
-            pnlUtilityAccountContent.Size = new Size(482, 253);
-            pnlUtilityAccountContent.TabIndex = 2;
             // 
             // lblUtilityAccountTitle
             // 
@@ -94,27 +73,46 @@
             lblUtilityAccountTitle.Text = "Add Water/Electricity Bill Account";
             lblUtilityAccountTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // pnlRoom
+            // pnlUtilityAccountActions
             // 
-            pnlRoom.Controls.Add(cboRoom);
-            pnlRoom.Controls.Add(lblRoom);
-            pnlRoom.Dock = DockStyle.Top;
-            pnlRoom.Location = new Point(0, 0);
-            pnlRoom.Name = "pnlRoom";
-            pnlRoom.Padding = new Padding(10);
-            pnlRoom.Size = new Size(482, 80);
-            pnlRoom.TabIndex = 0;
+            pnlUtilityAccountActions.Controls.Add(btnAddUtilityAccount);
+            pnlUtilityAccountActions.Controls.Add(btnCancelUtilityAccount);
+            pnlUtilityAccountActions.Dock = DockStyle.Bottom;
+            pnlUtilityAccountActions.Location = new Point(0, 328);
+            pnlUtilityAccountActions.Name = "pnlUtilityAccountActions";
+            pnlUtilityAccountActions.Size = new Size(482, 75);
+            pnlUtilityAccountActions.TabIndex = 1;
             // 
-            // pnlIncludeTo
+            // btnAddUtilityAccount
             // 
-            pnlIncludeTo.Controls.Add(cboIncludeTo);
-            pnlIncludeTo.Controls.Add(lblIncludeTo);
-            pnlIncludeTo.Dock = DockStyle.Bottom;
-            pnlIncludeTo.Location = new Point(0, 173);
-            pnlIncludeTo.Name = "pnlIncludeTo";
-            pnlIncludeTo.Padding = new Padding(10);
-            pnlIncludeTo.Size = new Size(482, 80);
-            pnlIncludeTo.TabIndex = 1;
+            btnAddUtilityAccount.Cursor = Cursors.Hand;
+            btnAddUtilityAccount.Location = new Point(360, 30);
+            btnAddUtilityAccount.Name = "btnAddUtilityAccount";
+            btnAddUtilityAccount.Size = new Size(94, 29);
+            btnAddUtilityAccount.TabIndex = 1;
+            btnAddUtilityAccount.Text = "Add";
+            btnAddUtilityAccount.UseVisualStyleBackColor = true;
+            // 
+            // btnCancelUtilityAccount
+            // 
+            btnCancelUtilityAccount.Cursor = Cursors.Hand;
+            btnCancelUtilityAccount.Location = new Point(231, 30);
+            btnCancelUtilityAccount.Name = "btnCancelUtilityAccount";
+            btnCancelUtilityAccount.Size = new Size(94, 29);
+            btnCancelUtilityAccount.TabIndex = 0;
+            btnCancelUtilityAccount.Text = "Cancel";
+            btnCancelUtilityAccount.UseVisualStyleBackColor = true;
+            // 
+            // pnlUtilityAccountContent
+            // 
+            pnlUtilityAccountContent.Controls.Add(pnlAccountNumber);
+            pnlUtilityAccountContent.Controls.Add(pnlIncludeTo);
+            pnlUtilityAccountContent.Controls.Add(pnlRoom);
+            pnlUtilityAccountContent.Dock = DockStyle.Fill;
+            pnlUtilityAccountContent.Location = new Point(0, 75);
+            pnlUtilityAccountContent.Name = "pnlUtilityAccountContent";
+            pnlUtilityAccountContent.Size = new Size(482, 253);
+            pnlUtilityAccountContent.TabIndex = 2;
             // 
             // pnlAccountNumber
             // 
@@ -127,48 +125,14 @@
             pnlAccountNumber.Size = new Size(482, 93);
             pnlAccountNumber.TabIndex = 2;
             // 
-            // btnCancelUtilityAccount
+            // txtAccountNumber
             // 
-            btnCancelUtilityAccount.Cursor = Cursors.Hand;
-            btnCancelUtilityAccount.Location = new Point(231, 30);
-            btnCancelUtilityAccount.Name = "btnCancelUtilityAccount";
-            btnCancelUtilityAccount.Size = new Size(94, 29);
-            btnCancelUtilityAccount.TabIndex = 0;
-            btnCancelUtilityAccount.Text = "Cancel";
-            btnCancelUtilityAccount.UseVisualStyleBackColor = true;
-            // 
-            // btnAddUtilityAccount
-            // 
-            btnAddUtilityAccount.Cursor = Cursors.Hand;
-            btnAddUtilityAccount.Location = new Point(360, 30);
-            btnAddUtilityAccount.Name = "btnAddUtilityAccount";
-            btnAddUtilityAccount.Size = new Size(94, 29);
-            btnAddUtilityAccount.TabIndex = 1;
-            btnAddUtilityAccount.Text = "Add";
-            btnAddUtilityAccount.UseVisualStyleBackColor = true;
-            // 
-            // lblRoom
-            // 
-            lblRoom.Dock = DockStyle.Top;
-            lblRoom.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoom.ForeColor = Color.White;
-            lblRoom.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoom.Location = new Point(10, 10);
-            lblRoom.Name = "lblRoom";
-            lblRoom.Size = new Size(462, 33);
-            lblRoom.TabIndex = 11;
-            lblRoom.Text = "Room";
-            lblRoom.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // cboRoom
-            // 
-            cboRoom.Dock = DockStyle.Top;
-            cboRoom.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboRoom.FormattingEnabled = true;
-            cboRoom.Location = new Point(10, 43);
-            cboRoom.Name = "cboRoom";
-            cboRoom.Size = new Size(462, 28);
-            cboRoom.TabIndex = 12;
+            txtAccountNumber.Dock = DockStyle.Top;
+            txtAccountNumber.Location = new Point(10, 43);
+            txtAccountNumber.Multiline = true;
+            txtAccountNumber.Name = "txtAccountNumber";
+            txtAccountNumber.Size = new Size(462, 34);
+            txtAccountNumber.TabIndex = 13;
             // 
             // lblAccountNumber
             // 
@@ -183,6 +147,27 @@
             lblAccountNumber.Text = "Account Number";
             lblAccountNumber.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // pnlIncludeTo
+            // 
+            pnlIncludeTo.Controls.Add(cboIncludeTo);
+            pnlIncludeTo.Controls.Add(lblIncludeTo);
+            pnlIncludeTo.Dock = DockStyle.Bottom;
+            pnlIncludeTo.Location = new Point(0, 173);
+            pnlIncludeTo.Name = "pnlIncludeTo";
+            pnlIncludeTo.Padding = new Padding(10);
+            pnlIncludeTo.Size = new Size(482, 80);
+            pnlIncludeTo.TabIndex = 1;
+            // 
+            // cboIncludeTo
+            // 
+            cboIncludeTo.Dock = DockStyle.Top;
+            cboIncludeTo.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboIncludeTo.FormattingEnabled = true;
+            cboIncludeTo.Location = new Point(10, 43);
+            cboIncludeTo.Name = "cboIncludeTo";
+            cboIncludeTo.Size = new Size(462, 28);
+            cboIncludeTo.TabIndex = 13;
+            // 
             // lblIncludeTo
             // 
             lblIncludeTo.Dock = DockStyle.Top;
@@ -196,24 +181,39 @@
             lblIncludeTo.Text = "Include To:";
             lblIncludeTo.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // txtAccountNumber
+            // pnlRoom
             // 
-            txtAccountNumber.Dock = DockStyle.Top;
-            txtAccountNumber.Location = new Point(10, 43);
-            txtAccountNumber.Multiline = true;
-            txtAccountNumber.Name = "txtAccountNumber";
-            txtAccountNumber.Size = new Size(462, 34);
-            txtAccountNumber.TabIndex = 13;
+            pnlRoom.Controls.Add(cboRoom);
+            pnlRoom.Controls.Add(lblRoom);
+            pnlRoom.Dock = DockStyle.Top;
+            pnlRoom.Location = new Point(0, 0);
+            pnlRoom.Name = "pnlRoom";
+            pnlRoom.Padding = new Padding(10);
+            pnlRoom.Size = new Size(482, 80);
+            pnlRoom.TabIndex = 0;
             // 
-            // cboIncludeTo
+            // cboRoom
             // 
-            cboIncludeTo.Dock = DockStyle.Top;
-            cboIncludeTo.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboIncludeTo.FormattingEnabled = true;
-            cboIncludeTo.Location = new Point(10, 43);
-            cboIncludeTo.Name = "cboIncludeTo";
-            cboIncludeTo.Size = new Size(462, 28);
-            cboIncludeTo.TabIndex = 13;
+            cboRoom.Dock = DockStyle.Top;
+            cboRoom.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboRoom.FormattingEnabled = true;
+            cboRoom.Location = new Point(10, 43);
+            cboRoom.Name = "cboRoom";
+            cboRoom.Size = new Size(462, 28);
+            cboRoom.TabIndex = 12;
+            // 
+            // lblRoom
+            // 
+            lblRoom.Dock = DockStyle.Top;
+            lblRoom.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoom.ForeColor = Color.White;
+            lblRoom.ImageAlign = ContentAlignment.MiddleRight;
+            lblRoom.Location = new Point(10, 10);
+            lblRoom.Name = "lblRoom";
+            lblRoom.Size = new Size(462, 33);
+            lblRoom.TabIndex = 11;
+            lblRoom.Text = "Room";
+            lblRoom.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // AddUtilityAccountForm
             // 
@@ -234,10 +234,10 @@
             pnlUtilityAccountHeader.ResumeLayout(false);
             pnlUtilityAccountActions.ResumeLayout(false);
             pnlUtilityAccountContent.ResumeLayout(false);
-            pnlRoom.ResumeLayout(false);
-            pnlIncludeTo.ResumeLayout(false);
             pnlAccountNumber.ResumeLayout(false);
             pnlAccountNumber.PerformLayout();
+            pnlIncludeTo.ResumeLayout(false);
+            pnlRoom.ResumeLayout(false);
             ResumeLayout(false);
         }
 
