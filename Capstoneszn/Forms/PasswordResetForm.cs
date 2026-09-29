@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Capstoneszn.Forms;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,15 +9,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Capstoneszn.Forms;
 
 namespace Capstoneszn
 {
     public partial class PasswordResetForm : Form
     {
-        public PasswordResetForm()
+        private string _username;
+        public PasswordResetForm(string username)
         {
             InitializeComponent();
+            _username = username;
         }
 
         private void btnReturnLogin_Click(object sender, EventArgs e)
@@ -39,12 +42,65 @@ namespace Capstoneszn
 
         private void btnSetPassword_Click(object sender, EventArgs e)
         {
-            // Proceed to the Success Form
-            PasswordSuccessForm successForm = new PasswordSuccessForm();
-            successForm.Show();
+            string newPass = txtResetPassword.Text.Trim();
+            string confirmPass = txtConfirmResetPassword.Text.Trim();
 
-            // Close this Reset Form
-            this.Close();
+            // 1. Empty checks
+            if (newPass == "")
+            {
+                MessageBox.Show("Please enter a new password.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtResetPassword.Focus();
+                return;
+            }
+            if (confirmPass == "")
+            {
+                MessageBox.Show("Please confirm your new password.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtConfirmResetPassword.Focus();
+                return;
+            }
+
+            // 2. Both must match
+            if (newPass != confirmPass)
+            {
+                MessageBox.Show("Passwords do not match.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtConfirmResetPassword.Clear();
+                txtConfirmResetPassword.Focus();
+                return;
+            }
+
+            // 3. Save to database
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                using (SqlCommand cmd = new SqlCommand(
+                    "UPDATE Users SET Password = @Password WHERE Username = @Username", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Password", newPass);
+                    cmd.Parameters.AddWithValue("@Username", _username);
+                    conn.Open();
+
+                    int rows = cmd.ExecuteNonQuery();
+
+                    if (rows > 0)
+                    {
+                        new PasswordSuccessForm().Show();
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("User not found. Password was not changed.", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Database error: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void PasswordResetForm_Load(object sender, EventArgs e)

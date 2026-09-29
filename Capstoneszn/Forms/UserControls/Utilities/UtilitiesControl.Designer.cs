@@ -119,9 +119,10 @@
             // 
             pnlUtilitiesContent.BackColor = Color.FromArgb(11, 20, 50);
             pnlUtilitiesContent.Controls.Add(tabUtilities);
-            pnlUtilitiesContent.Location = new Point(0, 0);
+            pnlUtilitiesContent.Dock = DockStyle.Fill;
+            pnlUtilitiesContent.Location = new Point(20, 20);
             pnlUtilitiesContent.Name = "pnlUtilitiesContent";
-            pnlUtilitiesContent.Size = new Size(1300, 750);
+            pnlUtilitiesContent.Size = new Size(1260, 710);
             pnlUtilitiesContent.TabIndex = 0;
             // 
             // tabUtilities
@@ -135,7 +136,7 @@
             tabUtilities.Name = "tabUtilities";
             tabUtilities.Padding = new Point(10, 3);
             tabUtilities.SelectedIndex = 0;
-            tabUtilities.Size = new Size(1300, 750);
+            tabUtilities.Size = new Size(1260, 710);
             tabUtilities.TabIndex = 1;
             // 
             // tabWater
@@ -146,7 +147,7 @@
             tabWater.Location = new Point(4, 40);
             tabWater.Name = "tabWater";
             tabWater.Padding = new Padding(3);
-            tabWater.Size = new Size(1292, 706);
+            tabWater.Size = new Size(1252, 666);
             tabWater.TabIndex = 0;
             tabWater.Text = "Water Utility";
             tabWater.UseVisualStyleBackColor = true;
@@ -158,7 +159,7 @@
             pnlWaterContent.Dock = DockStyle.Fill;
             pnlWaterContent.Location = new Point(3, 153);
             pnlWaterContent.Name = "pnlWaterContent";
-            pnlWaterContent.Size = new Size(1286, 550);
+            pnlWaterContent.Size = new Size(1246, 510);
             pnlWaterContent.TabIndex = 16;
             // 
             // dgvWaterBillData
@@ -178,7 +179,7 @@
             dgvWaterBillData.Location = new Point(0, 0);
             dgvWaterBillData.Name = "dgvWaterBillData";
             dgvWaterBillData.RowHeadersWidth = 51;
-            dgvWaterBillData.Size = new Size(1284, 548);
+            dgvWaterBillData.Size = new Size(1244, 508);
             dgvWaterBillData.TabIndex = 12;
             // 
             // Column1
@@ -226,7 +227,7 @@
             pnlWaterHeader.Dock = DockStyle.Top;
             pnlWaterHeader.Location = new Point(3, 3);
             pnlWaterHeader.Name = "pnlWaterHeader";
-            pnlWaterHeader.Size = new Size(1286, 150);
+            pnlWaterHeader.Size = new Size(1246, 150);
             pnlWaterHeader.TabIndex = 15;
             // 
             // tblWaterActions
@@ -246,7 +247,7 @@
             tblWaterActions.Name = "tblWaterActions";
             tblWaterActions.RowCount = 1;
             tblWaterActions.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tblWaterActions.Size = new Size(1284, 88);
+            tblWaterActions.Size = new Size(1244, 88);
             tblWaterActions.TabIndex = 1;
             // 
             // pnlButtons
@@ -255,16 +256,16 @@
             pnlButtons.Controls.Add(pnlSpacer);
             pnlButtons.Controls.Add(btnAddWaterBill);
             pnlButtons.Dock = DockStyle.Fill;
-            pnlButtons.Location = new Point(771, 3);
+            pnlButtons.Location = new Point(747, 3);
             pnlButtons.Name = "pnlButtons";
-            pnlButtons.Size = new Size(510, 82);
+            pnlButtons.Size = new Size(494, 82);
             pnlButtons.TabIndex = 3;
             // 
             // btnEditWaterBill
             // 
             btnEditWaterBill.Dock = DockStyle.Right;
             btnEditWaterBill.FlatStyle = FlatStyle.Flat;
-            btnEditWaterBill.Location = new Point(182, 0);
+            btnEditWaterBill.Location = new Point(166, 0);
             btnEditWaterBill.Name = "btnEditWaterBill";
             btnEditWaterBill.Size = new Size(144, 82);
             btnEditWaterBill.TabIndex = 8;
@@ -275,7 +276,7 @@
             // pnlSpacer
             // 
             pnlSpacer.Dock = DockStyle.Right;
-            pnlSpacer.Location = new Point(326, 0);
+            pnlSpacer.Location = new Point(310, 0);
             pnlSpacer.Name = "pnlSpacer";
             pnlSpacer.Size = new Size(40, 82);
             pnlSpacer.TabIndex = 7;
@@ -284,7 +285,7 @@
             // 
             btnAddWaterBill.Dock = DockStyle.Right;
             btnAddWaterBill.FlatStyle = FlatStyle.Flat;
-            btnAddWaterBill.Location = new Point(366, 0);
+            btnAddWaterBill.Location = new Point(350, 0);
             btnAddWaterBill.Name = "btnAddWaterBill";
             btnAddWaterBill.Size = new Size(144, 82);
             btnAddWaterBill.TabIndex = 6;
@@ -296,9 +297,9 @@
             pnlTotalShares.Controls.Add(lblTotalSharesValue);
             pnlTotalShares.Controls.Add(lblTotalSharesTitle);
             pnlTotalShares.Dock = DockStyle.Fill;
-            pnlTotalShares.Location = new Point(515, 3);
+            pnlTotalShares.Location = new Point(499, 3);
             pnlTotalShares.Name = "pnlTotalShares";
-            pnlTotalShares.Size = new Size(250, 82);
+            pnlTotalShares.Size = new Size(242, 82);
             pnlTotalShares.TabIndex = 2;
             // 
             // lblTotalSharesValue
@@ -306,7 +307,7 @@
             lblTotalSharesValue.Dock = DockStyle.Top;
             lblTotalSharesValue.Location = new Point(0, 40);
             lblTotalSharesValue.Name = "lblTotalSharesValue";
-            lblTotalSharesValue.Size = new Size(250, 40);
+            lblTotalSharesValue.Size = new Size(242, 40);
             lblTotalSharesValue.TabIndex = 28;
             lblTotalSharesValue.Text = "****";
             lblTotalSharesValue.TextAlign = ContentAlignment.MiddleCenter;
@@ -316,7 +317,7 @@
             lblTotalSharesTitle.Dock = DockStyle.Top;
             lblTotalSharesTitle.Location = new Point(0, 0);
             lblTotalSharesTitle.Name = "lblTotalSharesTitle";
-            lblTotalSharesTitle.Size = new Size(250, 40);
+            lblTotalSharesTitle.Size = new Size(242, 40);
             lblTotalSharesTitle.TabIndex = 26;
             lblTotalSharesTitle.Text = "Total Shares (+ owner)";
             lblTotalSharesTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -326,9 +327,9 @@
             pnlCurrentTotal.Controls.Add(lblCurrentTotalBillValue);
             pnlCurrentTotal.Controls.Add(pnlCurrentTotalBillTitle);
             pnlCurrentTotal.Dock = DockStyle.Fill;
-            pnlCurrentTotal.Location = new Point(259, 3);
+            pnlCurrentTotal.Location = new Point(251, 3);
             pnlCurrentTotal.Name = "pnlCurrentTotal";
-            pnlCurrentTotal.Size = new Size(250, 82);
+            pnlCurrentTotal.Size = new Size(242, 82);
             pnlCurrentTotal.TabIndex = 1;
             // 
             // lblCurrentTotalBillValue
@@ -336,7 +337,7 @@
             lblCurrentTotalBillValue.Dock = DockStyle.Top;
             lblCurrentTotalBillValue.Location = new Point(0, 40);
             lblCurrentTotalBillValue.Name = "lblCurrentTotalBillValue";
-            lblCurrentTotalBillValue.Size = new Size(250, 40);
+            lblCurrentTotalBillValue.Size = new Size(242, 40);
             lblCurrentTotalBillValue.TabIndex = 27;
             lblCurrentTotalBillValue.Text = "****";
             lblCurrentTotalBillValue.TextAlign = ContentAlignment.MiddleCenter;
@@ -346,7 +347,7 @@
             pnlCurrentTotalBillTitle.Dock = DockStyle.Top;
             pnlCurrentTotalBillTitle.Location = new Point(0, 0);
             pnlCurrentTotalBillTitle.Name = "pnlCurrentTotalBillTitle";
-            pnlCurrentTotalBillTitle.Size = new Size(250, 40);
+            pnlCurrentTotalBillTitle.Size = new Size(242, 40);
             pnlCurrentTotalBillTitle.TabIndex = 26;
             pnlCurrentTotalBillTitle.Text = "Current Total Bill";
             pnlCurrentTotalBillTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -358,7 +359,7 @@
             pnlWaterDate.Dock = DockStyle.Fill;
             pnlWaterDate.Location = new Point(3, 3);
             pnlWaterDate.Name = "pnlWaterDate";
-            pnlWaterDate.Size = new Size(250, 82);
+            pnlWaterDate.Size = new Size(242, 82);
             pnlWaterDate.TabIndex = 0;
             // 
             // dtpWaterDate
@@ -367,7 +368,7 @@
             dtpWaterDate.Font = new Font("Segoe UI", 10F);
             dtpWaterDate.Location = new Point(0, 40);
             dtpWaterDate.Name = "dtpWaterDate";
-            dtpWaterDate.Size = new Size(250, 30);
+            dtpWaterDate.Size = new Size(242, 30);
             dtpWaterDate.TabIndex = 26;
             dtpWaterDate.Value = new DateTime(2026, 8, 23, 0, 0, 0, 0);
             // 
@@ -376,7 +377,7 @@
             lblWaterDateTitle.Dock = DockStyle.Top;
             lblWaterDateTitle.Location = new Point(0, 0);
             lblWaterDateTitle.Name = "lblWaterDateTitle";
-            lblWaterDateTitle.Size = new Size(250, 40);
+            lblWaterDateTitle.Size = new Size(242, 40);
             lblWaterDateTitle.TabIndex = 25;
             lblWaterDateTitle.Text = "Date";
             lblWaterDateTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -388,7 +389,7 @@
             pnlHeaderWaterTitle.Dock = DockStyle.Top;
             pnlHeaderWaterTitle.Location = new Point(0, 0);
             pnlHeaderWaterTitle.Name = "pnlHeaderWaterTitle";
-            pnlHeaderWaterTitle.Size = new Size(1284, 60);
+            pnlHeaderWaterTitle.Size = new Size(1244, 60);
             pnlHeaderWaterTitle.TabIndex = 0;
             // 
             // lblWaterTitle
@@ -397,7 +398,7 @@
             lblWaterTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblWaterTitle.Location = new Point(0, 0);
             lblWaterTitle.Name = "lblWaterTitle";
-            lblWaterTitle.Size = new Size(1282, 58);
+            lblWaterTitle.Size = new Size(1242, 58);
             lblWaterTitle.TabIndex = 1;
             lblWaterTitle.Text = "Water Bill Monitor";
             lblWaterTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -409,7 +410,7 @@
             tabElectricity.Location = new Point(4, 40);
             tabElectricity.Name = "tabElectricity";
             tabElectricity.Padding = new Padding(3);
-            tabElectricity.Size = new Size(1292, 706);
+            tabElectricity.Size = new Size(1252, 666);
             tabElectricity.TabIndex = 1;
             tabElectricity.Text = "Electricity Utility";
             tabElectricity.UseVisualStyleBackColor = true;
@@ -420,7 +421,7 @@
             pnlElectricityContent.Dock = DockStyle.Fill;
             pnlElectricityContent.Location = new Point(3, 138);
             pnlElectricityContent.Name = "pnlElectricityContent";
-            pnlElectricityContent.Size = new Size(1286, 565);
+            pnlElectricityContent.Size = new Size(1246, 525);
             pnlElectricityContent.TabIndex = 19;
             // 
             // dgvElectricityData
@@ -432,7 +433,7 @@
             dgvElectricityData.Location = new Point(0, 0);
             dgvElectricityData.Name = "dgvElectricityData";
             dgvElectricityData.RowHeadersWidth = 51;
-            dgvElectricityData.Size = new Size(1286, 565);
+            dgvElectricityData.Size = new Size(1246, 525);
             dgvElectricityData.TabIndex = 20;
             // 
             // Column6
@@ -476,7 +477,7 @@
             pnlElectricityHeader.Dock = DockStyle.Top;
             pnlElectricityHeader.Location = new Point(3, 3);
             pnlElectricityHeader.Name = "pnlElectricityHeader";
-            pnlElectricityHeader.Size = new Size(1286, 135);
+            pnlElectricityHeader.Size = new Size(1246, 135);
             pnlElectricityHeader.TabIndex = 18;
             // 
             // pnlElectricityButtons
@@ -485,7 +486,7 @@
             pnlElectricityButtons.Controls.Add(pnlSpacers);
             pnlElectricityButtons.Controls.Add(btnAddElectricity);
             pnlElectricityButtons.Dock = DockStyle.Right;
-            pnlElectricityButtons.Location = new Point(915, 60);
+            pnlElectricityButtons.Location = new Point(875, 60);
             pnlElectricityButtons.Name = "pnlElectricityButtons";
             pnlElectricityButtons.Size = new Size(369, 73);
             pnlElectricityButtons.TabIndex = 2;
@@ -558,7 +559,7 @@
             pnlHeaderElectricityTitle.Dock = DockStyle.Top;
             pnlHeaderElectricityTitle.Location = new Point(0, 0);
             pnlHeaderElectricityTitle.Name = "pnlHeaderElectricityTitle";
-            pnlHeaderElectricityTitle.Size = new Size(1284, 60);
+            pnlHeaderElectricityTitle.Size = new Size(1244, 60);
             pnlHeaderElectricityTitle.TabIndex = 0;
             // 
             // pnlElectricityTitle
@@ -567,7 +568,7 @@
             pnlElectricityTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             pnlElectricityTitle.Location = new Point(0, 0);
             pnlElectricityTitle.Name = "pnlElectricityTitle";
-            pnlElectricityTitle.Size = new Size(1282, 58);
+            pnlElectricityTitle.Size = new Size(1242, 58);
             pnlElectricityTitle.TabIndex = 1;
             pnlElectricityTitle.Text = "Electricity Bill Monitor";
             pnlElectricityTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -579,7 +580,7 @@
             tabOther.Location = new Point(4, 40);
             tabOther.Name = "tabOther";
             tabOther.Padding = new Padding(3);
-            tabOther.Size = new Size(1292, 706);
+            tabOther.Size = new Size(1252, 666);
             tabOther.TabIndex = 2;
             tabOther.Text = "Other";
             tabOther.UseVisualStyleBackColor = true;
@@ -590,7 +591,7 @@
             pnlOtherContent.Dock = DockStyle.Fill;
             pnlOtherContent.Location = new Point(3, 138);
             pnlOtherContent.Name = "pnlOtherContent";
-            pnlOtherContent.Size = new Size(1286, 565);
+            pnlOtherContent.Size = new Size(1246, 525);
             pnlOtherContent.TabIndex = 3;
             // 
             // dgvOtherData
@@ -602,7 +603,7 @@
             dgvOtherData.Location = new Point(0, 0);
             dgvOtherData.Name = "dgvOtherData";
             dgvOtherData.RowHeadersWidth = 51;
-            dgvOtherData.Size = new Size(1286, 565);
+            dgvOtherData.Size = new Size(1246, 525);
             dgvOtherData.TabIndex = 3;
             // 
             // Column10
@@ -647,7 +648,7 @@
             pnlOtherHeader.Dock = DockStyle.Top;
             pnlOtherHeader.Location = new Point(3, 3);
             pnlOtherHeader.Name = "pnlOtherHeader";
-            pnlOtherHeader.Size = new Size(1286, 135);
+            pnlOtherHeader.Size = new Size(1246, 135);
             pnlOtherHeader.TabIndex = 0;
             // 
             // pnlOtherDate
@@ -685,7 +686,7 @@
             // 
             btnOtherAdd.Dock = DockStyle.Right;
             btnOtherAdd.FlatStyle = FlatStyle.Flat;
-            btnOtherAdd.Location = new Point(1142, 58);
+            btnOtherAdd.Location = new Point(1102, 58);
             btnOtherAdd.Name = "btnOtherAdd";
             btnOtherAdd.Size = new Size(144, 77);
             btnOtherAdd.TabIndex = 10;
@@ -698,7 +699,7 @@
             lblOtherTitles.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblOtherTitles.Location = new Point(0, 0);
             lblOtherTitles.Name = "lblOtherTitles";
-            lblOtherTitles.Size = new Size(1286, 58);
+            lblOtherTitles.Size = new Size(1246, 58);
             lblOtherTitles.TabIndex = 2;
             lblOtherTitles.Text = "Other";
             lblOtherTitles.TextAlign = ContentAlignment.MiddleCenter;

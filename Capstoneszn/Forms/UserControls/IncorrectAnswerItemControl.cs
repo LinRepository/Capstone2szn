@@ -16,5 +16,21 @@ namespace Capstoneszn.Forms.UserControls
         {
             InitializeComponent();
         }
+
+        private void lblQuestionNo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void IncorrectAnswerItemControl_Load(object sender, EventArgs e)
+        {
+
+        }
+        public void SetData(int questionNo, string question, string answer)
+        {
+            lblQuestionNo.Text = "Question " + questionNo;
+            lblQuestion.Text = question;
+            lblQuestionAnswer.Text = "Your answer: " + answer;
+        }
     }
 }

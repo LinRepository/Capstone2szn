@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             tableLayoutPanel1 = new TableLayoutPanel();
-            lblQuestionNo = new Label();
-            lblQuestion = new Label();
             lblQuestionAnswer = new Label();
+            lblQuestion = new Label();
+            lblQuestionNo = new Label();
+            panel1 = new Panel();
             tableLayoutPanel1.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -52,18 +54,18 @@
             tableLayoutPanel1.Size = new Size(300, 150);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // lblQuestionNo
+            // lblQuestionAnswer
             // 
-            lblQuestionNo.BorderStyle = BorderStyle.FixedSingle;
-            lblQuestionNo.Dock = DockStyle.Fill;
-            lblQuestionNo.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblQuestionNo.ForeColor = Color.White;
-            lblQuestionNo.Location = new Point(3, 0);
-            lblQuestionNo.Name = "lblQuestionNo";
-            lblQuestionNo.Size = new Size(294, 50);
-            lblQuestionNo.TabIndex = 6;
-            lblQuestionNo.Text = "Question No #";
-            lblQuestionNo.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionAnswer.BorderStyle = BorderStyle.FixedSingle;
+            lblQuestionAnswer.Dock = DockStyle.Fill;
+            lblQuestionAnswer.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionAnswer.ForeColor = Color.White;
+            lblQuestionAnswer.Location = new Point(3, 100);
+            lblQuestionAnswer.Name = "lblQuestionAnswer";
+            lblQuestionAnswer.Size = new Size(294, 50);
+            lblQuestionAnswer.TabIndex = 8;
+            lblQuestionAnswer.Text = "Your answer: [answer]";
+            lblQuestionAnswer.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblQuestion
             // 
@@ -75,31 +77,43 @@
             lblQuestion.Name = "lblQuestion";
             lblQuestion.Size = new Size(294, 50);
             lblQuestion.TabIndex = 7;
-            lblQuestion.Text = "What is your progress?";
+            lblQuestion.Text = "[Question]";
             lblQuestion.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblQuestionAnswer
+            // lblQuestionNo
             // 
-            lblQuestionAnswer.BorderStyle = BorderStyle.FixedSingle;
-            lblQuestionAnswer.Dock = DockStyle.Fill;
-            lblQuestionAnswer.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblQuestionAnswer.ForeColor = Color.White;
-            lblQuestionAnswer.Location = new Point(3, 100);
-            lblQuestionAnswer.Name = "lblQuestionAnswer";
-            lblQuestionAnswer.Size = new Size(294, 50);
-            lblQuestionAnswer.TabIndex = 8;
-            lblQuestionAnswer.Text = "Your Answer: nganga";
-            lblQuestionAnswer.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionNo.BorderStyle = BorderStyle.FixedSingle;
+            lblQuestionNo.Dock = DockStyle.Fill;
+            lblQuestionNo.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionNo.ForeColor = Color.White;
+            lblQuestionNo.Location = new Point(3, 0);
+            lblQuestionNo.Name = "lblQuestionNo";
+            lblQuestionNo.Size = new Size(294, 50);
+            lblQuestionNo.TabIndex = 6;
+            lblQuestionNo.Text = "[Question No.]";
+            lblQuestionNo.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionNo.Click += lblQuestionNo_Click;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(300, 150);
+            panel1.TabIndex = 1;
             // 
             // IncorrectAnswerItemControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
-            Controls.Add(tableLayoutPanel1);
+            Controls.Add(panel1);
             Name = "IncorrectAnswerItemControl";
             Size = new Size(300, 150);
+            Load += IncorrectAnswerItemControl_Load;
             tableLayoutPanel1.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -109,5 +123,6 @@
         private Label lblQuestionAnswer;
         private Label lblQuestion;
         private Label lblQuestionNo;
+        private Panel panel1;
     }
 }

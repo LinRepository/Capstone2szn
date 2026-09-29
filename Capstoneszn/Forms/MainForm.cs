@@ -40,19 +40,28 @@ namespace Capstoneszn
 
             SaveButtonTexts();
 
-            // Initialize time immediately
-            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt");
-            lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy");
+            // 1. Initialize and start a timer programmatically
+            System.Windows.Forms.Timer clockTimer = new System.Windows.Forms.Timer();
+            clockTimer.Interval = 1000; // 1 second
+            clockTimer.Tick += (s, ev) => UpdateDateTime();
+            clockTimer.Start();
+
+            // 2. Initial immediate time display on load
+            UpdateDateTime();
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // Shows live time with AM/PM
+            // Executes every 1000ms (1 second) to create smooth, live ticking
+            UpdateDateTime();
         }
-        private void timer2_Tick(object sender, EventArgs e)
+
+        // Single helper method to keep code clean and maintainable
+        private void UpdateDateTime()
         {
-            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // Shows live time with AM/PM
-            lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy"); // Keeps the date current
+            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // e.g., 09:23:25 AM
+            lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy"); // e.g., September 29, 2026
         }
+
 
         private void SaveButtonTexts()
         {

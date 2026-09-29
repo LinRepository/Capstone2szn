@@ -87,9 +87,10 @@
             // btnSetPassword
             // 
             btnSetPassword.Cursor = Cursors.Hand;
-            btnSetPassword.Location = new Point(339, 9);
+            btnSetPassword.Dock = DockStyle.Right;
+            btnSetPassword.Location = new Point(345, 5);
             btnSetPassword.Name = "btnSetPassword";
-            btnSetPassword.Size = new Size(130, 29);
+            btnSetPassword.Size = new Size(130, 38);
             btnSetPassword.TabIndex = 4;
             btnSetPassword.Text = "Set Password";
             btnSetPassword.UseVisualStyleBackColor = true;
@@ -125,14 +126,16 @@
             pnlPasswordResetActionButtons.Dock = DockStyle.Bottom;
             pnlPasswordResetActionButtons.Location = new Point(0, 403);
             pnlPasswordResetActionButtons.Name = "pnlPasswordResetActionButtons";
+            pnlPasswordResetActionButtons.Padding = new Padding(5);
             pnlPasswordResetActionButtons.Size = new Size(482, 50);
             pnlPasswordResetActionButtons.TabIndex = 7;
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(191, 9);
+            btnCancel.Dock = DockStyle.Right;
+            btnCancel.Location = new Point(221, 5);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(124, 29);
+            btnCancel.Size = new Size(124, 38);
             btnCancel.TabIndex = 5;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;

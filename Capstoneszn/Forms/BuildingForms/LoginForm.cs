@@ -81,7 +81,7 @@ namespace Capstoneszn
 
                         if (result != null)
                         {
-                            string userRole = result.ToString();
+                            string userRole = result.ToString() ?? "";
                             //MessageBox.Show($"Login successful! Welcome, {userRole}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                             // --> WIPE THE CREDENTIALS CLEAN HERE <--
@@ -114,7 +114,17 @@ namespace Capstoneszn
 
         private void lnkForgotPassword_Click(object sender, EventArgs e)
         {
-            ForgetForm ff = new ForgetForm();
+            string username = txtLoginUsername.Text.Trim();
+
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("Please enter your username first.", "Username required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtLoginUsername.Focus();
+                return;
+            }
+
+            ForgetForm ff = new ForgetForm(username);
             ff.Show();
 
             //HIDE

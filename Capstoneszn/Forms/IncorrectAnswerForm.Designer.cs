@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             pnlWrongAnswerHeader = new Panel();
-            pnlWrongAnswerActionsButtons = new Panel();
-            pnlWrongAnswerContent = new Panel();
             lblWrongAnswerTitle = new Label();
+            pnlWrongAnswerActionsButtons = new Panel();
             btnWrongAnswerOK = new Button();
-            lblIncorrectDescription = new Label();
+            pnlWrongAnswerContent = new Panel();
             flpIncorrectAnswers = new FlowLayoutPanel();
+            lblIncorrectDescription = new Label();
             pnlWrongAnswerHeader.SuspendLayout();
             pnlWrongAnswerActionsButtons.SuspendLayout();
             pnlWrongAnswerContent.SuspendLayout();
@@ -50,26 +50,6 @@
             pnlWrongAnswerHeader.Size = new Size(482, 60);
             pnlWrongAnswerHeader.TabIndex = 0;
             // 
-            // pnlWrongAnswerActionsButtons
-            // 
-            pnlWrongAnswerActionsButtons.BorderStyle = BorderStyle.FixedSingle;
-            pnlWrongAnswerActionsButtons.Controls.Add(btnWrongAnswerOK);
-            pnlWrongAnswerActionsButtons.Dock = DockStyle.Bottom;
-            pnlWrongAnswerActionsButtons.Location = new Point(0, 403);
-            pnlWrongAnswerActionsButtons.Name = "pnlWrongAnswerActionsButtons";
-            pnlWrongAnswerActionsButtons.Size = new Size(482, 50);
-            pnlWrongAnswerActionsButtons.TabIndex = 1;
-            // 
-            // pnlWrongAnswerContent
-            // 
-            pnlWrongAnswerContent.Controls.Add(flpIncorrectAnswers);
-            pnlWrongAnswerContent.Controls.Add(lblIncorrectDescription);
-            pnlWrongAnswerContent.Dock = DockStyle.Fill;
-            pnlWrongAnswerContent.Location = new Point(0, 60);
-            pnlWrongAnswerContent.Name = "pnlWrongAnswerContent";
-            pnlWrongAnswerContent.Size = new Size(482, 343);
-            pnlWrongAnswerContent.TabIndex = 2;
-            // 
             // lblWrongAnswerTitle
             // 
             lblWrongAnswerTitle.BorderStyle = BorderStyle.FixedSingle;
@@ -83,6 +63,16 @@
             lblWrongAnswerTitle.Text = "Incorrect Answers";
             lblWrongAnswerTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // pnlWrongAnswerActionsButtons
+            // 
+            pnlWrongAnswerActionsButtons.BorderStyle = BorderStyle.FixedSingle;
+            pnlWrongAnswerActionsButtons.Controls.Add(btnWrongAnswerOK);
+            pnlWrongAnswerActionsButtons.Dock = DockStyle.Bottom;
+            pnlWrongAnswerActionsButtons.Location = new Point(0, 403);
+            pnlWrongAnswerActionsButtons.Name = "pnlWrongAnswerActionsButtons";
+            pnlWrongAnswerActionsButtons.Size = new Size(482, 50);
+            pnlWrongAnswerActionsButtons.TabIndex = 1;
+            // 
             // btnWrongAnswerOK
             // 
             btnWrongAnswerOK.Cursor = Cursors.Hand;
@@ -92,6 +82,30 @@
             btnWrongAnswerOK.TabIndex = 0;
             btnWrongAnswerOK.Text = "OK";
             btnWrongAnswerOK.UseVisualStyleBackColor = true;
+            btnWrongAnswerOK.Click += btnWrongAnswerOK_Click;
+            // 
+            // pnlWrongAnswerContent
+            // 
+            pnlWrongAnswerContent.Controls.Add(flpIncorrectAnswers);
+            pnlWrongAnswerContent.Controls.Add(lblIncorrectDescription);
+            pnlWrongAnswerContent.Dock = DockStyle.Fill;
+            pnlWrongAnswerContent.Location = new Point(0, 60);
+            pnlWrongAnswerContent.Name = "pnlWrongAnswerContent";
+            pnlWrongAnswerContent.Size = new Size(482, 343);
+            pnlWrongAnswerContent.TabIndex = 2;
+            // 
+            // flpIncorrectAnswers
+            // 
+            flpIncorrectAnswers.AutoScroll = true;
+            flpIncorrectAnswers.BorderStyle = BorderStyle.FixedSingle;
+            flpIncorrectAnswers.Dock = DockStyle.Fill;
+            flpIncorrectAnswers.FlowDirection = FlowDirection.TopDown;
+            flpIncorrectAnswers.Location = new Point(0, 40);
+            flpIncorrectAnswers.Name = "flpIncorrectAnswers";
+            flpIncorrectAnswers.Size = new Size(482, 303);
+            flpIncorrectAnswers.TabIndex = 6;
+            flpIncorrectAnswers.WrapContents = false;
+            flpIncorrectAnswers.Paint += flpIncorrectAnswers_Paint;
             // 
             // lblIncorrectDescription
             // 
@@ -105,17 +119,6 @@
             lblIncorrectDescription.TabIndex = 5;
             lblIncorrectDescription.Text = "All 3 security questions were answered incorrectly.";
             lblIncorrectDescription.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // flpIncorrectAnswers
-            // 
-            flpIncorrectAnswers.AutoScroll = true;
-            flpIncorrectAnswers.BorderStyle = BorderStyle.FixedSingle;
-            flpIncorrectAnswers.Dock = DockStyle.Fill;
-            flpIncorrectAnswers.FlowDirection = FlowDirection.TopDown;
-            flpIncorrectAnswers.Location = new Point(0, 40);
-            flpIncorrectAnswers.Name = "flpIncorrectAnswers";
-            flpIncorrectAnswers.Size = new Size(482, 303);
-            flpIncorrectAnswers.TabIndex = 6;
             // 
             // IncorrectAnswerForm
             // 
@@ -134,6 +137,7 @@
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Incorrect Answer";
+            Load += IncorrectAnswerForm_Load;
             pnlWrongAnswerHeader.ResumeLayout(false);
             pnlWrongAnswerActionsButtons.ResumeLayout(false);
             pnlWrongAnswerContent.ResumeLayout(false);

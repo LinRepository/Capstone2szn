@@ -31,16 +31,16 @@
             lblSecurityVerificationTitle = new Label();
             lblSecurityVerificationDescription = new Label();
             lblQuestionOne = new Label();
-            lblQuestion2 = new Label();
-            lblQuestion3 = new Label();
+            lblQuestionTwo = new Label();
+            lblQuestionThree = new Label();
             btnVerify = new Button();
             txtQuestionOne = new TextBox();
             txtQuestionTwo = new TextBox();
             txtQuestionThree = new TextBox();
             pnlSecurityVerificationHeader = new Panel();
             pnlSecurityVerificationActionButtons = new Panel();
-            pnlSecurityVerificationContent = new Panel();
             btnCancel = new Button();
+            pnlSecurityVerificationContent = new Panel();
             pnlSecurityVerificationHeader.SuspendLayout();
             pnlSecurityVerificationActionButtons.SuspendLayout();
             pnlSecurityVerificationContent.SuspendLayout();
@@ -77,34 +77,34 @@
             lblQuestionOne.ForeColor = Color.White;
             lblQuestionOne.Location = new Point(111, 81);
             lblQuestionOne.Name = "lblQuestionOne";
-            lblQuestionOne.Size = new Size(155, 31);
+            lblQuestionOne.Size = new Size(124, 31);
             lblQuestionOne.TabIndex = 2;
-            lblQuestionOne.Text = "Question no.1";
+            lblQuestionOne.Text = "Question 1";
             lblQuestionOne.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblQuestion2
+            // lblQuestionTwo
             // 
-            lblQuestion2.AutoSize = true;
-            lblQuestion2.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblQuestion2.ForeColor = Color.White;
-            lblQuestion2.Location = new Point(111, 189);
-            lblQuestion2.Name = "lblQuestion2";
-            lblQuestion2.Size = new Size(155, 31);
-            lblQuestion2.TabIndex = 3;
-            lblQuestion2.Text = "Question no.2";
-            lblQuestion2.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionTwo.AutoSize = true;
+            lblQuestionTwo.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionTwo.ForeColor = Color.White;
+            lblQuestionTwo.Location = new Point(111, 189);
+            lblQuestionTwo.Name = "lblQuestionTwo";
+            lblQuestionTwo.Size = new Size(124, 31);
+            lblQuestionTwo.TabIndex = 3;
+            lblQuestionTwo.Text = "Question 2";
+            lblQuestionTwo.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblQuestion3
+            // lblQuestionThree
             // 
-            lblQuestion3.AutoSize = true;
-            lblQuestion3.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblQuestion3.ForeColor = Color.White;
-            lblQuestion3.Location = new Point(111, 298);
-            lblQuestion3.Name = "lblQuestion3";
-            lblQuestion3.Size = new Size(155, 31);
-            lblQuestion3.TabIndex = 4;
-            lblQuestion3.Text = "Question no.3";
-            lblQuestion3.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionThree.AutoSize = true;
+            lblQuestionThree.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionThree.ForeColor = Color.White;
+            lblQuestionThree.Location = new Point(111, 298);
+            lblQuestionThree.Name = "lblQuestionThree";
+            lblQuestionThree.Size = new Size(124, 31);
+            lblQuestionThree.TabIndex = 4;
+            lblQuestionThree.Text = "Question 3";
+            lblQuestionThree.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnVerify
             // 
@@ -163,22 +163,6 @@
             pnlSecurityVerificationActionButtons.Size = new Size(632, 60);
             pnlSecurityVerificationActionButtons.TabIndex = 10;
             // 
-            // pnlSecurityVerificationContent
-            // 
-            pnlSecurityVerificationContent.BorderStyle = BorderStyle.FixedSingle;
-            pnlSecurityVerificationContent.Controls.Add(txtQuestionOne);
-            pnlSecurityVerificationContent.Controls.Add(lblSecurityVerificationDescription);
-            pnlSecurityVerificationContent.Controls.Add(txtQuestionTwo);
-            pnlSecurityVerificationContent.Controls.Add(txtQuestionThree);
-            pnlSecurityVerificationContent.Controls.Add(lblQuestion3);
-            pnlSecurityVerificationContent.Controls.Add(lblQuestion2);
-            pnlSecurityVerificationContent.Controls.Add(lblQuestionOne);
-            pnlSecurityVerificationContent.Dock = DockStyle.Fill;
-            pnlSecurityVerificationContent.Location = new Point(0, 50);
-            pnlSecurityVerificationContent.Name = "pnlSecurityVerificationContent";
-            pnlSecurityVerificationContent.Size = new Size(632, 443);
-            pnlSecurityVerificationContent.TabIndex = 11;
-            // 
             // btnCancel
             // 
             btnCancel.Cursor = Cursors.Hand;
@@ -190,6 +174,22 @@
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
+            // 
+            // pnlSecurityVerificationContent
+            // 
+            pnlSecurityVerificationContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlSecurityVerificationContent.Controls.Add(txtQuestionOne);
+            pnlSecurityVerificationContent.Controls.Add(lblSecurityVerificationDescription);
+            pnlSecurityVerificationContent.Controls.Add(txtQuestionTwo);
+            pnlSecurityVerificationContent.Controls.Add(txtQuestionThree);
+            pnlSecurityVerificationContent.Controls.Add(lblQuestionThree);
+            pnlSecurityVerificationContent.Controls.Add(lblQuestionTwo);
+            pnlSecurityVerificationContent.Controls.Add(lblQuestionOne);
+            pnlSecurityVerificationContent.Dock = DockStyle.Fill;
+            pnlSecurityVerificationContent.Location = new Point(0, 50);
+            pnlSecurityVerificationContent.Name = "pnlSecurityVerificationContent";
+            pnlSecurityVerificationContent.Size = new Size(632, 443);
+            pnlSecurityVerificationContent.TabIndex = 11;
             // 
             // ForgetForm
             // 
@@ -220,8 +220,8 @@
         private Label lblSecurityVerificationTitle;
         private Label lblSecurityVerificationDescription;
         private Label lblQuestionOne;
-        private Label lblQuestion2;
-        private Label lblQuestion3;
+        private Label lblQuestionTwo;
+        private Label lblQuestionThree;
         private Button btnVerify;
         private TextBox txtQuestionOne;
         private TextBox txtQuestionTwo;
