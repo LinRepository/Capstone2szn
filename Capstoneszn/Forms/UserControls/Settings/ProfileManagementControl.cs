@@ -9,16 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Capstoneszn.Forms.SettingsForms;
+using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.UserControls.Settings
 {
     public partial class ProfileManagementControl : UserControl
     {
         public int CurrentUserId { get; set; } = 1;
-        //private SettingsControl sc;
         public ProfileManagementControl()
         {
             InitializeComponent();
+            LoadUsername();
         }
 
         private void btnBackProfileManagement_Click(object sender, EventArgs e)
@@ -38,16 +39,34 @@ namespace Capstoneszn.Forms.UserControls.Settings
                 editForm.StartPosition = FormStartPosition.CenterScreen;
                 editForm.TopMost = true;
                 editForm.WindowState = FormWindowState.Normal;
-                editForm.ShowDialog();
                 editForm.StartPosition = FormStartPosition.CenterParent;
 
                 if (editForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    lblProfileNameValue.Text = editForm.UpdatedName;         // from txtName
-                    lblProfileUsernameValue.Text = editForm.UpdatedUsername; // from txtUsername (already saved to DB)
+                    LoadUsername();
                 }
             }
-            MessageBox.Show("Edit Profile clicked");
+        }
+
+        private void ProfileManagementControl_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void LoadUsername()
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT Name, Username FROM Users WHERE User_id = @id", conn);
+                cmd.Parameters.AddWithValue("@id", CurrentUserId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    lblProfileNameValue.Text = reader["Name"].ToString();
+                    lblProfileUsernameValue.Text = reader["Username"].ToString();
+                }
+            }
         }
     }
 }
