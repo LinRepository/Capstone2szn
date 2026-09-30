@@ -244,6 +244,7 @@
             btnChangePassword.TabIndex = 1;
             btnChangePassword.Text = "Change Password";
             btnChangePassword.UseVisualStyleBackColor = true;
+            btnChangePassword.Click += btnChangePassword_Click;
             // 
             // btnEditProfile
             // 

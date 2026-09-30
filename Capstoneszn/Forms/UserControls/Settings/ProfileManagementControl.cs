@@ -68,5 +68,15 @@ namespace Capstoneszn.Forms.UserControls.Settings
                 }
             }
         }
+
+        private void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            using (ChangePasswordForm changeForm = new ChangePasswordForm(CurrentUserId))
+            {
+                changeForm.StartPosition = FormStartPosition.CenterScreen;
+                changeForm.TopMost = true;
+                changeForm.ShowDialog();
+            }
+        }
     }
 }

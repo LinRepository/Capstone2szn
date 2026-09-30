@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             pnlChangePasswordHeader = new Panel();
+            lblChangePasswordTitle = new Label();
             pnlChangePasswordActions = new Panel();
             btnCancelChangePassword = new Button();
             btnSaveNewPassword = new Button();
-            lblChangePasswordTitle = new Label();
             pnlChangePasswordContent = new Panel();
             tblChangePasswordInformation = new TableLayoutPanel();
+            lblConfirmNewPassword = new Label();
+            lblNewPassword = new Label();
             lblCurrentPassword = new Label();
             txtCurrentPassword = new TextBox();
             txtNewPassword = new TextBox();
             txtConfirmNewPassword = new TextBox();
-            lblNewPassword = new Label();
-            lblConfirmNewPassword = new Label();
             pnlChangePasswordHeader.SuspendLayout();
             pnlChangePasswordActions.SuspendLayout();
             pnlChangePasswordContent.SuspendLayout();
@@ -55,6 +55,19 @@
             pnlChangePasswordHeader.Name = "pnlChangePasswordHeader";
             pnlChangePasswordHeader.Size = new Size(482, 70);
             pnlChangePasswordHeader.TabIndex = 0;
+            // 
+            // lblChangePasswordTitle
+            // 
+            lblChangePasswordTitle.Dock = DockStyle.Fill;
+            lblChangePasswordTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblChangePasswordTitle.ForeColor = Color.White;
+            lblChangePasswordTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblChangePasswordTitle.Location = new Point(0, 0);
+            lblChangePasswordTitle.Name = "lblChangePasswordTitle";
+            lblChangePasswordTitle.Size = new Size(482, 70);
+            lblChangePasswordTitle.TabIndex = 13;
+            lblChangePasswordTitle.Text = "Change Password";
+            lblChangePasswordTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlChangePasswordActions
             // 
@@ -85,19 +98,7 @@
             btnSaveNewPassword.TabIndex = 0;
             btnSaveNewPassword.Text = "Save";
             btnSaveNewPassword.UseVisualStyleBackColor = true;
-            // 
-            // lblChangePasswordTitle
-            // 
-            lblChangePasswordTitle.Dock = DockStyle.Fill;
-            lblChangePasswordTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblChangePasswordTitle.ForeColor = Color.White;
-            lblChangePasswordTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblChangePasswordTitle.Location = new Point(0, 0);
-            lblChangePasswordTitle.Name = "lblChangePasswordTitle";
-            lblChangePasswordTitle.Size = new Size(482, 70);
-            lblChangePasswordTitle.TabIndex = 13;
-            lblChangePasswordTitle.Text = "Change Password";
-            lblChangePasswordTitle.TextAlign = ContentAlignment.MiddleCenter;
+            btnSaveNewPassword.Click += btnSaveNewPassword_Click;
             // 
             // pnlChangePasswordContent
             // 
@@ -128,6 +129,32 @@
             tblChangePasswordInformation.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
             tblChangePasswordInformation.Size = new Size(482, 213);
             tblChangePasswordInformation.TabIndex = 0;
+            // 
+            // lblConfirmNewPassword
+            // 
+            lblConfirmNewPassword.Dock = DockStyle.Fill;
+            lblConfirmNewPassword.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmNewPassword.ForeColor = Color.White;
+            lblConfirmNewPassword.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmNewPassword.Location = new Point(3, 141);
+            lblConfirmNewPassword.Name = "lblConfirmNewPassword";
+            lblConfirmNewPassword.Size = new Size(186, 72);
+            lblConfirmNewPassword.TabIndex = 17;
+            lblConfirmNewPassword.Text = "Confirm New Password";
+            lblConfirmNewPassword.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblNewPassword
+            // 
+            lblNewPassword.Dock = DockStyle.Fill;
+            lblNewPassword.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblNewPassword.ForeColor = Color.White;
+            lblNewPassword.ImageAlign = ContentAlignment.MiddleRight;
+            lblNewPassword.Location = new Point(3, 70);
+            lblNewPassword.Name = "lblNewPassword";
+            lblNewPassword.Size = new Size(186, 71);
+            lblNewPassword.TabIndex = 16;
+            lblNewPassword.Text = "New Password";
+            lblNewPassword.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblCurrentPassword
             // 
@@ -171,32 +198,6 @@
             txtConfirmNewPassword.Size = new Size(261, 40);
             txtConfirmNewPassword.TabIndex = 15;
             txtConfirmNewPassword.UseSystemPasswordChar = true;
-            // 
-            // lblNewPassword
-            // 
-            lblNewPassword.Dock = DockStyle.Fill;
-            lblNewPassword.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNewPassword.ForeColor = Color.White;
-            lblNewPassword.ImageAlign = ContentAlignment.MiddleRight;
-            lblNewPassword.Location = new Point(3, 70);
-            lblNewPassword.Name = "lblNewPassword";
-            lblNewPassword.Size = new Size(186, 71);
-            lblNewPassword.TabIndex = 16;
-            lblNewPassword.Text = "New Password";
-            lblNewPassword.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmNewPassword
-            // 
-            lblConfirmNewPassword.Dock = DockStyle.Fill;
-            lblConfirmNewPassword.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmNewPassword.ForeColor = Color.White;
-            lblConfirmNewPassword.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmNewPassword.Location = new Point(3, 141);
-            lblConfirmNewPassword.Name = "lblConfirmNewPassword";
-            lblConfirmNewPassword.Size = new Size(186, 72);
-            lblConfirmNewPassword.TabIndex = 17;
-            lblConfirmNewPassword.Text = "Confirm New Password";
-            lblConfirmNewPassword.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // ChangePasswordForm
             // 
