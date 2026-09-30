@@ -255,6 +255,7 @@
             btnEditProfile.TabIndex = 0;
             btnEditProfile.Text = "Edit Profile";
             btnEditProfile.UseVisualStyleBackColor = true;
+            btnEditProfile.Click += btnEditProfile_Click;
             // 
             // ProfileManagementControl
             // 

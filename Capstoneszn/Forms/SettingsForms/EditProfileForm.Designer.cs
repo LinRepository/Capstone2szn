@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             pnlEditProfileHeader = new Panel();
-            pnlEditProfileActions = new Panel();
             lblEditProfileTitle = new Label();
-            btnCancelEditProfile = new Button();
+            pnlEditProfileActions = new Panel();
             btnSaveProfileChanges = new Button();
+            btnCancelEditProfile = new Button();
             pnlEditProfileContent = new Panel();
             tblEditProfileInformation = new TableLayoutPanel();
-            txtName = new TextBox();
-            txtUsername = new TextBox();
-            lblEditProfileName = new Label();
-            lblEditProfileRole = new Label();
-            lblEditProfileRoleValue = new Label();
             lblEditProfileUsername = new Label();
+            lblEditProfileRoleValue = new Label();
+            lblEditProfileRole = new Label();
+            lblEditProfileName = new Label();
+            txtUsername = new TextBox();
+            txtName = new TextBox();
             pnlEditProfileHeader.SuspendLayout();
             pnlEditProfileActions.SuspendLayout();
             pnlEditProfileContent.SuspendLayout();
@@ -56,16 +56,6 @@
             pnlEditProfileHeader.Size = new Size(482, 60);
             pnlEditProfileHeader.TabIndex = 0;
             // 
-            // pnlEditProfileActions
-            // 
-            pnlEditProfileActions.Controls.Add(btnSaveProfileChanges);
-            pnlEditProfileActions.Controls.Add(btnCancelEditProfile);
-            pnlEditProfileActions.Dock = DockStyle.Bottom;
-            pnlEditProfileActions.Location = new Point(0, 293);
-            pnlEditProfileActions.Name = "pnlEditProfileActions";
-            pnlEditProfileActions.Size = new Size(482, 60);
-            pnlEditProfileActions.TabIndex = 1;
-            // 
             // lblEditProfileTitle
             // 
             lblEditProfileTitle.Dock = DockStyle.Fill;
@@ -79,15 +69,15 @@
             lblEditProfileTitle.Text = "Edit Profile";
             lblEditProfileTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // btnCancelEditProfile
+            // pnlEditProfileActions
             // 
-            btnCancelEditProfile.Cursor = Cursors.Hand;
-            btnCancelEditProfile.Location = new Point(261, 19);
-            btnCancelEditProfile.Name = "btnCancelEditProfile";
-            btnCancelEditProfile.Size = new Size(94, 29);
-            btnCancelEditProfile.TabIndex = 0;
-            btnCancelEditProfile.Text = "Cancel";
-            btnCancelEditProfile.UseVisualStyleBackColor = true;
+            pnlEditProfileActions.Controls.Add(btnSaveProfileChanges);
+            pnlEditProfileActions.Controls.Add(btnCancelEditProfile);
+            pnlEditProfileActions.Dock = DockStyle.Bottom;
+            pnlEditProfileActions.Location = new Point(0, 293);
+            pnlEditProfileActions.Name = "pnlEditProfileActions";
+            pnlEditProfileActions.Size = new Size(482, 60);
+            pnlEditProfileActions.TabIndex = 1;
             // 
             // btnSaveProfileChanges
             // 
@@ -98,6 +88,18 @@
             btnSaveProfileChanges.TabIndex = 1;
             btnSaveProfileChanges.Text = "Save";
             btnSaveProfileChanges.UseVisualStyleBackColor = true;
+            btnSaveProfileChanges.Click += btnSaveProfileChanges_Click;
+            // 
+            // btnCancelEditProfile
+            // 
+            btnCancelEditProfile.Cursor = Cursors.Hand;
+            btnCancelEditProfile.Location = new Point(261, 19);
+            btnCancelEditProfile.Name = "btnCancelEditProfile";
+            btnCancelEditProfile.Size = new Size(94, 29);
+            btnCancelEditProfile.TabIndex = 0;
+            btnCancelEditProfile.Text = "Cancel";
+            btnCancelEditProfile.UseVisualStyleBackColor = true;
+            btnCancelEditProfile.Click += btnCancelEditProfile_Click;
             // 
             // pnlEditProfileContent
             // 
@@ -129,49 +131,18 @@
             tblEditProfileInformation.Size = new Size(482, 233);
             tblEditProfileInformation.TabIndex = 0;
             // 
-            // txtName
+            // lblEditProfileUsername
             // 
-            txtName.Location = new Point(171, 25);
-            txtName.Margin = new Padding(3, 25, 3, 3);
-            txtName.Multiline = true;
-            txtName.Name = "txtName";
-            txtName.Size = new Size(299, 35);
-            txtName.TabIndex = 0;
-            // 
-            // txtUsername
-            // 
-            txtUsername.Location = new Point(171, 179);
-            txtUsername.Margin = new Padding(3, 25, 3, 3);
-            txtUsername.Multiline = true;
-            txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(299, 35);
-            txtUsername.TabIndex = 1;
-            // 
-            // lblEditProfileName
-            // 
-            lblEditProfileName.Dock = DockStyle.Fill;
-            lblEditProfileName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblEditProfileName.ForeColor = Color.White;
-            lblEditProfileName.ImageAlign = ContentAlignment.MiddleRight;
-            lblEditProfileName.Location = new Point(3, 0);
-            lblEditProfileName.Name = "lblEditProfileName";
-            lblEditProfileName.Size = new Size(162, 77);
-            lblEditProfileName.TabIndex = 13;
-            lblEditProfileName.Text = "Name:";
-            lblEditProfileName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblEditProfileRole
-            // 
-            lblEditProfileRole.Dock = DockStyle.Fill;
-            lblEditProfileRole.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblEditProfileRole.ForeColor = Color.White;
-            lblEditProfileRole.ImageAlign = ContentAlignment.MiddleRight;
-            lblEditProfileRole.Location = new Point(3, 77);
-            lblEditProfileRole.Name = "lblEditProfileRole";
-            lblEditProfileRole.Size = new Size(162, 77);
-            lblEditProfileRole.TabIndex = 14;
-            lblEditProfileRole.Text = "Role:";
-            lblEditProfileRole.TextAlign = ContentAlignment.MiddleCenter;
+            lblEditProfileUsername.Dock = DockStyle.Fill;
+            lblEditProfileUsername.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditProfileUsername.ForeColor = Color.White;
+            lblEditProfileUsername.ImageAlign = ContentAlignment.MiddleRight;
+            lblEditProfileUsername.Location = new Point(3, 154);
+            lblEditProfileUsername.Name = "lblEditProfileUsername";
+            lblEditProfileUsername.Size = new Size(162, 79);
+            lblEditProfileUsername.TabIndex = 16;
+            lblEditProfileUsername.Text = "Username:";
+            lblEditProfileUsername.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblEditProfileRoleValue
             // 
@@ -186,18 +157,49 @@
             lblEditProfileRoleValue.Text = "RollerCoaster";
             lblEditProfileRoleValue.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // lblEditProfileUsername
+            // lblEditProfileRole
             // 
-            lblEditProfileUsername.Dock = DockStyle.Fill;
-            lblEditProfileUsername.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblEditProfileUsername.ForeColor = Color.White;
-            lblEditProfileUsername.ImageAlign = ContentAlignment.MiddleRight;
-            lblEditProfileUsername.Location = new Point(3, 154);
-            lblEditProfileUsername.Name = "lblEditProfileUsername";
-            lblEditProfileUsername.Size = new Size(162, 79);
-            lblEditProfileUsername.TabIndex = 16;
-            lblEditProfileUsername.Text = "Username:";
-            lblEditProfileUsername.TextAlign = ContentAlignment.MiddleCenter;
+            lblEditProfileRole.Dock = DockStyle.Fill;
+            lblEditProfileRole.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditProfileRole.ForeColor = Color.White;
+            lblEditProfileRole.ImageAlign = ContentAlignment.MiddleRight;
+            lblEditProfileRole.Location = new Point(3, 77);
+            lblEditProfileRole.Name = "lblEditProfileRole";
+            lblEditProfileRole.Size = new Size(162, 77);
+            lblEditProfileRole.TabIndex = 14;
+            lblEditProfileRole.Text = "Role:";
+            lblEditProfileRole.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblEditProfileName
+            // 
+            lblEditProfileName.Dock = DockStyle.Fill;
+            lblEditProfileName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditProfileName.ForeColor = Color.White;
+            lblEditProfileName.ImageAlign = ContentAlignment.MiddleRight;
+            lblEditProfileName.Location = new Point(3, 0);
+            lblEditProfileName.Name = "lblEditProfileName";
+            lblEditProfileName.Size = new Size(162, 77);
+            lblEditProfileName.TabIndex = 13;
+            lblEditProfileName.Text = "Name:";
+            lblEditProfileName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // txtUsername
+            // 
+            txtUsername.Location = new Point(171, 179);
+            txtUsername.Margin = new Padding(3, 25, 3, 3);
+            txtUsername.Multiline = true;
+            txtUsername.Name = "txtUsername";
+            txtUsername.Size = new Size(299, 35);
+            txtUsername.TabIndex = 1;
+            // 
+            // txtName
+            // 
+            txtName.Location = new Point(171, 25);
+            txtName.Margin = new Padding(3, 25, 3, 3);
+            txtName.Multiline = true;
+            txtName.Name = "txtName";
+            txtName.Size = new Size(299, 35);
+            txtName.TabIndex = 0;
             // 
             // EditProfileForm
             // 
