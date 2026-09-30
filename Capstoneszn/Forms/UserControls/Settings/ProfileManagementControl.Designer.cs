@@ -266,6 +266,7 @@
             Controls.Add(pnlProfileManagementHeader);
             Name = "ProfileManagementControl";
             Size = new Size(1300, 750);
+            Load += ProfileManagementControl_Load;
             pnlProfileManagementHeader.ResumeLayout(false);
             pnlProfileManagementContent.ResumeLayout(false);
             pnlProfileCenter.ResumeLayout(false);

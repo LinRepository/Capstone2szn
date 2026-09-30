@@ -49,13 +49,13 @@ namespace Capstoneszn.Forms.SettingsForms
 
             try
             {
-                if (!newUsername.Equals(originalUsername, StringComparison.OrdinalIgnoreCase))
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
-                    using (SqlConnection conn = DatabaseHelper.GetConnection())
-                    {
-                        conn.Open();
+                    conn.Open();
 
-                        // Check if username is already taken by another user
+                    // Only check for duplicates if the username changed
+                    if (!newUsername.Equals(originalUsername, StringComparison.OrdinalIgnoreCase))
+                    {
                         using (SqlCommand check = new SqlCommand(
                             "SELECT COUNT(*) FROM Users WHERE Username = @Username AND User_id <> @UserId", conn))
                         {
@@ -69,15 +69,16 @@ namespace Capstoneszn.Forms.SettingsForms
                                 return;
                             }
                         }
+                    }
 
-                        // Update username in Users table
-                        using (SqlCommand update = new SqlCommand(
-                            "UPDATE Users SET Username = @Username WHERE User_id = @UserId", conn))
-                        {
-                            update.Parameters.AddWithValue("@Username", newUsername);
-                            update.Parameters.AddWithValue("@UserId", userId);
-                            update.ExecuteNonQuery();
-                        }
+                    // Update Name and Username in Users table
+                    using (SqlCommand update = new SqlCommand(
+                        "UPDATE Users SET Name = @Name, Username = @Username WHERE User_id = @UserId", conn))
+                    {
+                        update.Parameters.AddWithValue("@Name", newName);
+                        update.Parameters.AddWithValue("@Username", newUsername);
+                        update.Parameters.AddWithValue("@UserId", userId);
+                        update.ExecuteNonQuery();
                     }
                 }
 
