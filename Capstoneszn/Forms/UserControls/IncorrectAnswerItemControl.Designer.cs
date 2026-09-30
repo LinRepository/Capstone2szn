@@ -51,7 +51,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.Size = new Size(300, 150);
+            tableLayoutPanel1.Size = new Size(452, 150);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // lblQuestionAnswer
@@ -62,7 +62,7 @@
             lblQuestionAnswer.ForeColor = Color.White;
             lblQuestionAnswer.Location = new Point(3, 100);
             lblQuestionAnswer.Name = "lblQuestionAnswer";
-            lblQuestionAnswer.Size = new Size(294, 50);
+            lblQuestionAnswer.Size = new Size(446, 50);
             lblQuestionAnswer.TabIndex = 8;
             lblQuestionAnswer.Text = "Your answer: [answer]";
             lblQuestionAnswer.TextAlign = ContentAlignment.MiddleCenter;
@@ -75,7 +75,7 @@
             lblQuestion.ForeColor = Color.White;
             lblQuestion.Location = new Point(3, 50);
             lblQuestion.Name = "lblQuestion";
-            lblQuestion.Size = new Size(294, 50);
+            lblQuestion.Size = new Size(446, 50);
             lblQuestion.TabIndex = 7;
             lblQuestion.Text = "[Question]";
             lblQuestion.TextAlign = ContentAlignment.MiddleCenter;
@@ -88,7 +88,7 @@
             lblQuestionNo.ForeColor = Color.White;
             lblQuestionNo.Location = new Point(3, 0);
             lblQuestionNo.Name = "lblQuestionNo";
-            lblQuestionNo.Size = new Size(294, 50);
+            lblQuestionNo.Size = new Size(446, 50);
             lblQuestionNo.TabIndex = 6;
             lblQuestionNo.Text = "[Question No.]";
             lblQuestionNo.TextAlign = ContentAlignment.MiddleCenter;
@@ -100,7 +100,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(300, 150);
+            panel1.Size = new Size(452, 150);
             panel1.TabIndex = 1;
             // 
             // IncorrectAnswerItemControl
@@ -110,7 +110,7 @@
             BackColor = Color.FromArgb(11, 20, 38);
             Controls.Add(panel1);
             Name = "IncorrectAnswerItemControl";
-            Size = new Size(300, 150);
+            Size = new Size(452, 150);
             Load += IncorrectAnswerItemControl_Load;
             tableLayoutPanel1.ResumeLayout(false);
             panel1.ResumeLayout(false);
