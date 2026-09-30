@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle17 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle18 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
             pnlPaymentHistoryHeader = new Panel();
             lblPaymentHistoryTitle = new Label();
             pnlSearch = new Panel();
-            pnlPaymentHistoryContent = new Panel();
             txtSearch = new TextBox();
+            pnlPaymentHistoryContent = new Panel();
             tabPaymentHistory = new TabControl();
             tabRent = new TabPage();
-            tabMaintenance = new TabPage();
             dgvRent = new DataGridView();
-            dgvMaintenance = new DataGridView();
             colRentDate = new DataGridViewTextBoxColumn();
             colRentTime = new DataGridViewTextBoxColumn();
             colRentRoom = new DataGridViewTextBoxColumn();
@@ -50,6 +50,8 @@
             colRentMethod = new DataGridViewTextBoxColumn();
             colRentAmount = new DataGridViewTextBoxColumn();
             colRentReceipt = new DataGridViewButtonColumn();
+            tabMaintenance = new TabPage();
+            dgvMaintenance = new DataGridView();
             colMaintenanceDate = new DataGridViewTextBoxColumn();
             colMaintenanceTime = new DataGridViewTextBoxColumn();
             colMaintenanceRoom = new DataGridViewTextBoxColumn();
@@ -57,14 +59,23 @@
             colMaintenanceIssue = new DataGridViewTextBoxColumn();
             colMaintenanceAmount = new DataGridViewTextBoxColumn();
             colMaintenanceReceipt = new DataGridViewButtonColumn();
+            tabUtilities = new TabPage();
+            dgvUtilities = new DataGridView();
+            colUtilitiesDate = new DataGridViewTextBoxColumn();
+            colUtilitiesTime = new DataGridViewTextBoxColumn();
+            colUtilitiesUtility = new DataGridViewTextBoxColumn();
+            colUtilitiesAmount = new DataGridViewTextBoxColumn();
+            colUtilitiesReceipt = new DataGridViewButtonColumn();
             pnlPaymentHistoryHeader.SuspendLayout();
             pnlSearch.SuspendLayout();
             pnlPaymentHistoryContent.SuspendLayout();
             tabPaymentHistory.SuspendLayout();
             tabRent.SuspendLayout();
-            tabMaintenance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvRent).BeginInit();
+            tabMaintenance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvMaintenance).BeginInit();
+            tabUtilities.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvUtilities).BeginInit();
             SuspendLayout();
             // 
             // pnlPaymentHistoryHeader
@@ -101,16 +112,6 @@
             pnlSearch.Size = new Size(1300, 60);
             pnlSearch.TabIndex = 1;
             // 
-            // pnlPaymentHistoryContent
-            // 
-            pnlPaymentHistoryContent.BorderStyle = BorderStyle.FixedSingle;
-            pnlPaymentHistoryContent.Controls.Add(tabPaymentHistory);
-            pnlPaymentHistoryContent.Dock = DockStyle.Fill;
-            pnlPaymentHistoryContent.Location = new Point(0, 140);
-            pnlPaymentHistoryContent.Name = "pnlPaymentHistoryContent";
-            pnlPaymentHistoryContent.Size = new Size(1300, 610);
-            pnlPaymentHistoryContent.TabIndex = 2;
-            // 
             // txtSearch
             // 
             txtSearch.Cursor = Cursors.IBeam;
@@ -122,10 +123,21 @@
             txtSearch.Text = "Search History";
             txtSearch.TextAlign = HorizontalAlignment.Center;
             // 
+            // pnlPaymentHistoryContent
+            // 
+            pnlPaymentHistoryContent.BorderStyle = BorderStyle.FixedSingle;
+            pnlPaymentHistoryContent.Controls.Add(tabPaymentHistory);
+            pnlPaymentHistoryContent.Dock = DockStyle.Fill;
+            pnlPaymentHistoryContent.Location = new Point(0, 140);
+            pnlPaymentHistoryContent.Name = "pnlPaymentHistoryContent";
+            pnlPaymentHistoryContent.Size = new Size(1300, 610);
+            pnlPaymentHistoryContent.TabIndex = 2;
+            // 
             // tabPaymentHistory
             // 
             tabPaymentHistory.Controls.Add(tabRent);
             tabPaymentHistory.Controls.Add(tabMaintenance);
+            tabPaymentHistory.Controls.Add(tabUtilities);
             tabPaymentHistory.Dock = DockStyle.Fill;
             tabPaymentHistory.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             tabPaymentHistory.Location = new Point(0, 0);
@@ -145,17 +157,6 @@
             tabRent.TabIndex = 0;
             tabRent.Text = "Rent";
             // 
-            // tabMaintenance
-            // 
-            tabMaintenance.BackColor = Color.FromArgb(11, 20, 38);
-            tabMaintenance.Controls.Add(dgvMaintenance);
-            tabMaintenance.Location = new Point(4, 37);
-            tabMaintenance.Name = "tabMaintenance";
-            tabMaintenance.Padding = new Padding(3);
-            tabMaintenance.Size = new Size(1290, 567);
-            tabMaintenance.TabIndex = 1;
-            tabMaintenance.Text = "Maintenance";
-            // 
             // dgvRent
             // 
             dgvRent.AllowUserToAddRows = false;
@@ -165,25 +166,25 @@
             dgvRent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvRent.BorderStyle = BorderStyle.None;
             dgvRent.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            dgvRent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle15.BackColor = SystemColors.Control;
+            dataGridViewCellStyle15.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle15.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle15.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle15.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle15.WrapMode = DataGridViewTriState.True;
+            dgvRent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle15;
             dgvRent.ColumnHeadersHeight = 35;
             dgvRent.Columns.AddRange(new DataGridViewColumn[] { colRentDate, colRentTime, colRentRoom, colRentType, colRentTag, colRentMethod, colRentAmount, colRentReceipt });
             dgvRent.Cursor = Cursors.Hand;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = SystemColors.Window;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            dgvRent.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle16.BackColor = SystemColors.Window;
+            dataGridViewCellStyle16.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle16.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle16.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle16.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle16.WrapMode = DataGridViewTriState.False;
+            dgvRent.DefaultCellStyle = dataGridViewCellStyle16;
             dgvRent.Dock = DockStyle.Fill;
             dgvRent.Location = new Point(3, 3);
             dgvRent.MultiSelect = false;
@@ -195,46 +196,6 @@
             dgvRent.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvRent.Size = new Size(1284, 561);
             dgvRent.TabIndex = 5;
-            // 
-            // dgvMaintenance
-            // 
-            dgvMaintenance.AllowUserToAddRows = false;
-            dgvMaintenance.AllowUserToDeleteRows = false;
-            dgvMaintenance.AllowUserToResizeColumns = false;
-            dgvMaintenance.AllowUserToResizeRows = false;
-            dgvMaintenance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvMaintenance.BorderStyle = BorderStyle.None;
-            dgvMaintenance.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = SystemColors.Control;
-            dataGridViewCellStyle7.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
-            dgvMaintenance.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
-            dgvMaintenance.ColumnHeadersHeight = 35;
-            dgvMaintenance.Columns.AddRange(new DataGridViewColumn[] { colMaintenanceDate, colMaintenanceTime, colMaintenanceRoom, colMaintenanceResponsible, colMaintenanceIssue, colMaintenanceAmount, colMaintenanceReceipt });
-            dgvMaintenance.Cursor = Cursors.Hand;
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = SystemColors.Window;
-            dataGridViewCellStyle8.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle8.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
-            dgvMaintenance.DefaultCellStyle = dataGridViewCellStyle8;
-            dgvMaintenance.Dock = DockStyle.Fill;
-            dgvMaintenance.Location = new Point(3, 3);
-            dgvMaintenance.MultiSelect = false;
-            dgvMaintenance.Name = "dgvMaintenance";
-            dgvMaintenance.ReadOnly = true;
-            dgvMaintenance.RowHeadersVisible = false;
-            dgvMaintenance.RowHeadersWidth = 51;
-            dgvMaintenance.RowTemplate.Height = 35;
-            dgvMaintenance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMaintenance.Size = new Size(1284, 561);
-            dgvMaintenance.TabIndex = 6;
             // 
             // colRentDate
             // 
@@ -292,6 +253,57 @@
             colRentReceipt.Name = "colRentReceipt";
             colRentReceipt.ReadOnly = true;
             // 
+            // tabMaintenance
+            // 
+            tabMaintenance.BackColor = Color.FromArgb(11, 20, 38);
+            tabMaintenance.Controls.Add(dgvMaintenance);
+            tabMaintenance.Location = new Point(4, 37);
+            tabMaintenance.Name = "tabMaintenance";
+            tabMaintenance.Padding = new Padding(3);
+            tabMaintenance.Size = new Size(1290, 567);
+            tabMaintenance.TabIndex = 1;
+            tabMaintenance.Text = "Maintenance";
+            // 
+            // dgvMaintenance
+            // 
+            dgvMaintenance.AllowUserToAddRows = false;
+            dgvMaintenance.AllowUserToDeleteRows = false;
+            dgvMaintenance.AllowUserToResizeColumns = false;
+            dgvMaintenance.AllowUserToResizeRows = false;
+            dgvMaintenance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvMaintenance.BorderStyle = BorderStyle.None;
+            dgvMaintenance.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewCellStyle17.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle17.BackColor = SystemColors.Control;
+            dataGridViewCellStyle17.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle17.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle17.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle17.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle17.WrapMode = DataGridViewTriState.True;
+            dgvMaintenance.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            dgvMaintenance.ColumnHeadersHeight = 35;
+            dgvMaintenance.Columns.AddRange(new DataGridViewColumn[] { colMaintenanceDate, colMaintenanceTime, colMaintenanceRoom, colMaintenanceResponsible, colMaintenanceIssue, colMaintenanceAmount, colMaintenanceReceipt });
+            dgvMaintenance.Cursor = Cursors.Hand;
+            dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle18.BackColor = SystemColors.Window;
+            dataGridViewCellStyle18.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle18.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle18.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = DataGridViewTriState.False;
+            dgvMaintenance.DefaultCellStyle = dataGridViewCellStyle18;
+            dgvMaintenance.Dock = DockStyle.Fill;
+            dgvMaintenance.Location = new Point(3, 3);
+            dgvMaintenance.MultiSelect = false;
+            dgvMaintenance.Name = "dgvMaintenance";
+            dgvMaintenance.ReadOnly = true;
+            dgvMaintenance.RowHeadersVisible = false;
+            dgvMaintenance.RowHeadersWidth = 51;
+            dgvMaintenance.RowTemplate.Height = 35;
+            dgvMaintenance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvMaintenance.Size = new Size(1284, 561);
+            dgvMaintenance.TabIndex = 6;
+            // 
             // colMaintenanceDate
             // 
             colMaintenanceDate.HeaderText = "Date";
@@ -341,6 +353,92 @@
             colMaintenanceReceipt.Name = "colMaintenanceReceipt";
             colMaintenanceReceipt.ReadOnly = true;
             // 
+            // tabUtilities
+            // 
+            tabUtilities.BackColor = Color.FromArgb(11, 20, 38);
+            tabUtilities.Controls.Add(dgvUtilities);
+            tabUtilities.Location = new Point(4, 37);
+            tabUtilities.Name = "tabUtilities";
+            tabUtilities.Padding = new Padding(3);
+            tabUtilities.Size = new Size(1290, 567);
+            tabUtilities.TabIndex = 2;
+            tabUtilities.Text = "Utilities";
+            // 
+            // dgvUtilities
+            // 
+            dgvUtilities.AllowUserToAddRows = false;
+            dgvUtilities.AllowUserToDeleteRows = false;
+            dgvUtilities.AllowUserToResizeColumns = false;
+            dgvUtilities.AllowUserToResizeRows = false;
+            dgvUtilities.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvUtilities.BorderStyle = BorderStyle.None;
+            dgvUtilities.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle13.BackColor = SystemColors.Control;
+            dataGridViewCellStyle13.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle13.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle13.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle13.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle13.WrapMode = DataGridViewTriState.True;
+            dgvUtilities.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
+            dgvUtilities.ColumnHeadersHeight = 35;
+            dgvUtilities.Columns.AddRange(new DataGridViewColumn[] { colUtilitiesDate, colUtilitiesTime, colUtilitiesUtility, colUtilitiesAmount, colUtilitiesReceipt });
+            dgvUtilities.Cursor = Cursors.Hand;
+            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle14.BackColor = SystemColors.Window;
+            dataGridViewCellStyle14.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle14.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle14.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle14.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle14.WrapMode = DataGridViewTriState.False;
+            dgvUtilities.DefaultCellStyle = dataGridViewCellStyle14;
+            dgvUtilities.Dock = DockStyle.Fill;
+            dgvUtilities.Location = new Point(3, 3);
+            dgvUtilities.MultiSelect = false;
+            dgvUtilities.Name = "dgvUtilities";
+            dgvUtilities.ReadOnly = true;
+            dgvUtilities.RowHeadersVisible = false;
+            dgvUtilities.RowHeadersWidth = 51;
+            dgvUtilities.RowTemplate.Height = 35;
+            dgvUtilities.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvUtilities.Size = new Size(1284, 561);
+            dgvUtilities.TabIndex = 7;
+            // 
+            // colUtilitiesDate
+            // 
+            colUtilitiesDate.HeaderText = "Date";
+            colUtilitiesDate.MinimumWidth = 6;
+            colUtilitiesDate.Name = "colUtilitiesDate";
+            colUtilitiesDate.ReadOnly = true;
+            // 
+            // colUtilitiesTime
+            // 
+            colUtilitiesTime.HeaderText = "Time";
+            colUtilitiesTime.MinimumWidth = 6;
+            colUtilitiesTime.Name = "colUtilitiesTime";
+            colUtilitiesTime.ReadOnly = true;
+            // 
+            // colUtilitiesUtility
+            // 
+            colUtilitiesUtility.HeaderText = "Utility";
+            colUtilitiesUtility.MinimumWidth = 6;
+            colUtilitiesUtility.Name = "colUtilitiesUtility";
+            colUtilitiesUtility.ReadOnly = true;
+            // 
+            // colUtilitiesAmount
+            // 
+            colUtilitiesAmount.HeaderText = "Amount";
+            colUtilitiesAmount.MinimumWidth = 6;
+            colUtilitiesAmount.Name = "colUtilitiesAmount";
+            colUtilitiesAmount.ReadOnly = true;
+            // 
+            // colUtilitiesReceipt
+            // 
+            colUtilitiesReceipt.HeaderText = "Receipt";
+            colUtilitiesReceipt.MinimumWidth = 6;
+            colUtilitiesReceipt.Name = "colUtilitiesReceipt";
+            colUtilitiesReceipt.ReadOnly = true;
+            // 
             // PaymentHistoryControl
             // 
             BackColor = Color.FromArgb(11, 20, 38);
@@ -356,9 +454,11 @@
             pnlPaymentHistoryContent.ResumeLayout(false);
             tabPaymentHistory.ResumeLayout(false);
             tabRent.ResumeLayout(false);
-            tabMaintenance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvRent).EndInit();
+            tabMaintenance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvMaintenance).EndInit();
+            tabUtilities.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvUtilities).EndInit();
             ResumeLayout(false);
 
         }
@@ -391,5 +491,12 @@
         private DataGridViewTextBoxColumn colMaintenanceIssue;
         private DataGridViewTextBoxColumn colMaintenanceAmount;
         private DataGridViewButtonColumn colMaintenanceReceipt;
+        private TabPage tabUtilities;
+        private DataGridView dgvUtilities;
+        private DataGridViewTextBoxColumn colUtilitiesDate;
+        private DataGridViewTextBoxColumn colUtilitiesTime;
+        private DataGridViewTextBoxColumn colUtilitiesUtility;
+        private DataGridViewTextBoxColumn colUtilitiesAmount;
+        private DataGridViewButtonColumn colUtilitiesReceipt;
     }
 }

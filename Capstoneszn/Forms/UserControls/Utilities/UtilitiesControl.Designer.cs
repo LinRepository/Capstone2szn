@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             pnlUtilitiesContent = new Panel();
             tabUtilities = new TabControl();
             tabWater = new TabPage();
@@ -165,14 +165,14 @@
             // dgvWaterBillData
             // 
             dgvWaterBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvWaterBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvWaterBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvWaterBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvWaterBillData.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5 });
             dgvWaterBillData.Dock = DockStyle.Fill;
@@ -309,7 +309,7 @@
             lblTotalSharesValue.Name = "lblTotalSharesValue";
             lblTotalSharesValue.Size = new Size(242, 40);
             lblTotalSharesValue.TabIndex = 28;
-            lblTotalSharesValue.Text = "****";
+            lblTotalSharesValue.Text = "₱***";
             lblTotalSharesValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblTotalSharesTitle
@@ -339,7 +339,7 @@
             lblCurrentTotalBillValue.Name = "lblCurrentTotalBillValue";
             lblCurrentTotalBillValue.Size = new Size(242, 40);
             lblCurrentTotalBillValue.TabIndex = 27;
-            lblCurrentTotalBillValue.Text = "****";
+            lblCurrentTotalBillValue.Text = "₱***";
             lblCurrentTotalBillValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlCurrentTotalBillTitle
@@ -366,6 +366,7 @@
             // 
             dtpWaterDate.Dock = DockStyle.Fill;
             dtpWaterDate.Font = new Font("Segoe UI", 10F);
+            dtpWaterDate.Format = DateTimePickerFormat.Short;
             dtpWaterDate.Location = new Point(0, 40);
             dtpWaterDate.Name = "dtpWaterDate";
             dtpWaterDate.Size = new Size(242, 30);

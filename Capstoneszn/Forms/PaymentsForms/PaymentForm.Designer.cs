@@ -38,7 +38,6 @@
             pnlPaymentContent = new Panel();
             pnlAmountReferenceNumber = new Panel();
             pnlPaymentAmount = new Panel();
-            lblAmountValue = new Label();
             lblPaymentAmount = new Label();
             pnlReferenceNumber = new Panel();
             txtReferenceNumber = new TextBox();
@@ -59,6 +58,7 @@
             pnlPaymentDate = new Panel();
             lblPaymentDate = new Label();
             dtpPaymentDate = new DateTimePicker();
+            txtAmountValue = new TextBox();
             pnlPaymentHeader.SuspendLayout();
             pnlPaymentActions.SuspendLayout();
             pnlPaymentContent.SuspendLayout();
@@ -181,27 +181,13 @@
             // 
             // pnlPaymentAmount
             // 
-            pnlPaymentAmount.Controls.Add(lblAmountValue);
+            pnlPaymentAmount.Controls.Add(txtAmountValue);
             pnlPaymentAmount.Controls.Add(lblPaymentAmount);
             pnlPaymentAmount.Dock = DockStyle.Right;
             pnlPaymentAmount.Location = new Point(387, 0);
             pnlPaymentAmount.Name = "pnlPaymentAmount";
             pnlPaymentAmount.Size = new Size(375, 82);
             pnlPaymentAmount.TabIndex = 1;
-            // 
-            // lblAmountValue
-            // 
-            lblAmountValue.Dock = DockStyle.Top;
-            lblAmountValue.Font = new Font("Segoe UI", 13.8F);
-            lblAmountValue.ForeColor = Color.White;
-            lblAmountValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblAmountValue.Location = new Point(0, 31);
-            lblAmountValue.Margin = new Padding(0);
-            lblAmountValue.Name = "lblAmountValue";
-            lblAmountValue.Size = new Size(375, 38);
-            lblAmountValue.TabIndex = 9;
-            lblAmountValue.Text = "₱***";
-            lblAmountValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblPaymentAmount
             // 
@@ -431,6 +417,17 @@
             dtpPaymentDate.Size = new Size(369, 27);
             dtpPaymentDate.TabIndex = 0;
             // 
+            // txtAmountValue
+            // 
+            txtAmountValue.BorderStyle = BorderStyle.FixedSingle;
+            txtAmountValue.Location = new Point(3, 28);
+            txtAmountValue.Name = "txtAmountValue";
+            txtAmountValue.Size = new Size(369, 27);
+            txtAmountValue.TabIndex = 10;
+            txtAmountValue.Text = "₱****";
+            txtAmountValue.TextAlign = HorizontalAlignment.Center;
+            txtAmountValue.Visible = false;
+            // 
             // PaymentForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -501,9 +498,9 @@
         private RadioButton RadioBtnGCash;
         private RadioButton RadioBtnCash;
         private Button btnClear;
-        private Label lblAmountValue;
         private Label lblPaymentAmount;
         private TextBox txtReferenceNumber;
         private Label lblReferenceNumber;
+        private TextBox txtAmountValue;
     }
 }
