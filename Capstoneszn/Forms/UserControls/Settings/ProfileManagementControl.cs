@@ -78,5 +78,15 @@ namespace Capstoneszn.Forms.UserControls.Settings
                 changeForm.ShowDialog();
             }
         }
+
+        private void btnManageSecurityQuestions_Click(object sender, EventArgs e)
+        {
+            using (SecurityQuestionsForm questionsForm = new SecurityQuestionsForm(CurrentUserId))
+            {
+                questionsForm.StartPosition = FormStartPosition.CenterScreen;
+                questionsForm.TopMost = true;
+                questionsForm.ShowDialog();
+            }
+        }
     }
 }
