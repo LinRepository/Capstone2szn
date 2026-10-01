@@ -28,14 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             pnlUtilitiesContent = new Panel();
             tabUtilities = new TabControl();
             tabWater = new TabPage();
             pnlWaterContent = new Panel();
             dgvWaterBillData = new DataGridView();
+            colWaterRoom = new DataGridViewTextBoxColumn();
+            colWaterTenant = new DataGridViewTextBoxColumn();
+            colWaterDueDate = new DataGridViewTextBoxColumn();
+            colWaterAmount = new DataGridViewTextBoxColumn();
+            colWaterStatus = new DataGridViewTextBoxColumn();
             pnlWaterHeader = new Panel();
             tblWaterActions = new TableLayoutPanel();
             pnlButtons = new Panel();
@@ -55,6 +60,11 @@
             lblWaterTitle = new Label();
             tabElectricity = new TabPage();
             pnlElectricityContent = new Panel();
+            dgvElectricityBillData = new DataGridView();
+            colElectricityRoom = new DataGridViewTextBoxColumn();
+            colElectricityAccountName = new DataGridViewTextBoxColumn();
+            colElectricityAmount = new DataGridViewTextBoxColumn();
+            colElectricityStatus = new DataGridViewButtonColumn();
             pnlElectricityHeader = new Panel();
             pnlElectricityButtons = new Panel();
             btnEditElectricity = new Button();
@@ -67,6 +77,12 @@
             pnlElectricityTitle = new Label();
             tabOther = new TabPage();
             pnlOtherContent = new Panel();
+            dgvOtherBillData = new DataGridView();
+            colOtherDate = new DataGridViewTextBoxColumn();
+            colOtherUtilityName = new DataGridViewTextBoxColumn();
+            colOtherName = new DataGridViewTextBoxColumn();
+            colOtherAmount = new DataGridViewTextBoxColumn();
+            colOtherEdit = new DataGridViewButtonColumn();
             pnlOtherHeader = new Panel();
             pnlOtherDate = new Panel();
             dtpOtherDate = new DateTimePicker();
@@ -75,22 +91,6 @@
             lblOtherTitles = new Label();
             lblOtherTitle = new Label();
             btnAddOther = new Button();
-            colWaterRoom = new DataGridViewTextBoxColumn();
-            colWaterTenant = new DataGridViewTextBoxColumn();
-            colWaterDueDate = new DataGridViewTextBoxColumn();
-            colWaterAmount = new DataGridViewTextBoxColumn();
-            colWaterStatus = new DataGridViewTextBoxColumn();
-            dgvElectricityBillData = new DataGridView();
-            dgvOtherBillData = new DataGridView();
-            colOtherDate = new DataGridViewTextBoxColumn();
-            colOtherUtilityName = new DataGridViewTextBoxColumn();
-            colOtherName = new DataGridViewTextBoxColumn();
-            colOtherAmount = new DataGridViewTextBoxColumn();
-            colOtherEdit = new DataGridViewButtonColumn();
-            colElectricityRoom = new DataGridViewTextBoxColumn();
-            colElectricityAccountName = new DataGridViewTextBoxColumn();
-            colElectricityAmount = new DataGridViewTextBoxColumn();
-            colElectricityStatus = new DataGridViewButtonColumn();
             pnlUtilitiesContent.SuspendLayout();
             tabUtilities.SuspendLayout();
             tabWater.SuspendLayout();
@@ -105,16 +105,16 @@
             pnlHeaderWaterTitle.SuspendLayout();
             tabElectricity.SuspendLayout();
             pnlElectricityContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvElectricityBillData).BeginInit();
             pnlElectricityHeader.SuspendLayout();
             pnlElectricityButtons.SuspendLayout();
             pnlDate.SuspendLayout();
             pnlHeaderElectricityTitle.SuspendLayout();
             tabOther.SuspendLayout();
             pnlOtherContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvOtherBillData).BeginInit();
             pnlOtherHeader.SuspendLayout();
             pnlOtherDate.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvElectricityBillData).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvOtherBillData).BeginInit();
             SuspendLayout();
             // 
             // pnlUtilitiesContent
@@ -171,14 +171,14 @@
             dgvWaterBillData.AllowUserToResizeRows = false;
             dgvWaterBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvWaterBillData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.BackColor = SystemColors.Control;
-            dataGridViewCellStyle10.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle10.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = DataGridViewTriState.True;
-            dgvWaterBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvWaterBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvWaterBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvWaterBillData.Columns.AddRange(new DataGridViewColumn[] { colWaterRoom, colWaterTenant, colWaterDueDate, colWaterAmount, colWaterStatus });
             dgvWaterBillData.Dock = DockStyle.Fill;
@@ -190,6 +190,43 @@
             dgvWaterBillData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvWaterBillData.Size = new Size(1244, 508);
             dgvWaterBillData.TabIndex = 12;
+            // 
+            // colWaterRoom
+            // 
+            colWaterRoom.FillWeight = 50F;
+            colWaterRoom.HeaderText = "Room";
+            colWaterRoom.MinimumWidth = 6;
+            colWaterRoom.Name = "colWaterRoom";
+            colWaterRoom.ReadOnly = true;
+            // 
+            // colWaterTenant
+            // 
+            colWaterTenant.FillWeight = 150F;
+            colWaterTenant.HeaderText = "Tenant";
+            colWaterTenant.MinimumWidth = 6;
+            colWaterTenant.Name = "colWaterTenant";
+            colWaterTenant.ReadOnly = true;
+            // 
+            // colWaterDueDate
+            // 
+            colWaterDueDate.HeaderText = "Due Date";
+            colWaterDueDate.MinimumWidth = 6;
+            colWaterDueDate.Name = "colWaterDueDate";
+            colWaterDueDate.ReadOnly = true;
+            // 
+            // colWaterAmount
+            // 
+            colWaterAmount.HeaderText = "Amount";
+            colWaterAmount.MinimumWidth = 6;
+            colWaterAmount.Name = "colWaterAmount";
+            colWaterAmount.ReadOnly = true;
+            // 
+            // colWaterStatus
+            // 
+            colWaterStatus.HeaderText = "Status";
+            colWaterStatus.MinimumWidth = 6;
+            colWaterStatus.Name = "colWaterStatus";
+            colWaterStatus.ReadOnly = true;
             // 
             // pnlWaterHeader
             // 
@@ -397,6 +434,62 @@
             pnlElectricityContent.Size = new Size(1246, 525);
             pnlElectricityContent.TabIndex = 19;
             // 
+            // dgvElectricityBillData
+            // 
+            dgvElectricityBillData.AllowUserToAddRows = false;
+            dgvElectricityBillData.AllowUserToDeleteRows = false;
+            dgvElectricityBillData.AllowUserToResizeRows = false;
+            dgvElectricityBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvElectricityBillData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 14F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvElectricityBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvElectricityBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvElectricityBillData.Columns.AddRange(new DataGridViewColumn[] { colElectricityRoom, colElectricityAccountName, colElectricityAmount, colElectricityStatus });
+            dgvElectricityBillData.Dock = DockStyle.Fill;
+            dgvElectricityBillData.Location = new Point(0, 0);
+            dgvElectricityBillData.Name = "dgvElectricityBillData";
+            dgvElectricityBillData.ReadOnly = true;
+            dgvElectricityBillData.RowHeadersVisible = false;
+            dgvElectricityBillData.RowHeadersWidth = 51;
+            dgvElectricityBillData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvElectricityBillData.Size = new Size(1246, 525);
+            dgvElectricityBillData.TabIndex = 13;
+            // 
+            // colElectricityRoom
+            // 
+            colElectricityRoom.FillWeight = 50F;
+            colElectricityRoom.HeaderText = "Room";
+            colElectricityRoom.MinimumWidth = 6;
+            colElectricityRoom.Name = "colElectricityRoom";
+            colElectricityRoom.ReadOnly = true;
+            // 
+            // colElectricityAccountName
+            // 
+            colElectricityAccountName.HeaderText = "Account Name";
+            colElectricityAccountName.MinimumWidth = 6;
+            colElectricityAccountName.Name = "colElectricityAccountName";
+            colElectricityAccountName.ReadOnly = true;
+            // 
+            // colElectricityAmount
+            // 
+            colElectricityAmount.HeaderText = "Amount";
+            colElectricityAmount.MinimumWidth = 6;
+            colElectricityAmount.Name = "colElectricityAmount";
+            colElectricityAmount.ReadOnly = true;
+            // 
+            // colElectricityStatus
+            // 
+            colElectricityStatus.HeaderText = "Status";
+            colElectricityStatus.MinimumWidth = 6;
+            colElectricityStatus.Name = "colElectricityStatus";
+            colElectricityStatus.ReadOnly = true;
+            // 
             // pnlElectricityHeader
             // 
             pnlElectricityHeader.BorderStyle = BorderStyle.FixedSingle;
@@ -523,6 +616,69 @@
             pnlOtherContent.Size = new Size(1246, 525);
             pnlOtherContent.TabIndex = 3;
             // 
+            // dgvOtherBillData
+            // 
+            dgvOtherBillData.AllowUserToAddRows = false;
+            dgvOtherBillData.AllowUserToDeleteRows = false;
+            dgvOtherBillData.AllowUserToResizeRows = false;
+            dgvOtherBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvOtherBillData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 14F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvOtherBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dgvOtherBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOtherBillData.Columns.AddRange(new DataGridViewColumn[] { colOtherDate, colOtherUtilityName, colOtherName, colOtherAmount, colOtherEdit });
+            dgvOtherBillData.Dock = DockStyle.Fill;
+            dgvOtherBillData.Location = new Point(0, 0);
+            dgvOtherBillData.Name = "dgvOtherBillData";
+            dgvOtherBillData.ReadOnly = true;
+            dgvOtherBillData.RowHeadersVisible = false;
+            dgvOtherBillData.RowHeadersWidth = 51;
+            dgvOtherBillData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvOtherBillData.Size = new Size(1246, 525);
+            dgvOtherBillData.TabIndex = 14;
+            // 
+            // colOtherDate
+            // 
+            colOtherDate.FillWeight = 50F;
+            colOtherDate.HeaderText = "Date";
+            colOtherDate.MinimumWidth = 6;
+            colOtherDate.Name = "colOtherDate";
+            colOtherDate.ReadOnly = true;
+            // 
+            // colOtherUtilityName
+            // 
+            colOtherUtilityName.HeaderText = "Utility Name";
+            colOtherUtilityName.MinimumWidth = 6;
+            colOtherUtilityName.Name = "colOtherUtilityName";
+            colOtherUtilityName.ReadOnly = true;
+            // 
+            // colOtherName
+            // 
+            colOtherName.HeaderText = "Name";
+            colOtherName.MinimumWidth = 6;
+            colOtherName.Name = "colOtherName";
+            colOtherName.ReadOnly = true;
+            // 
+            // colOtherAmount
+            // 
+            colOtherAmount.HeaderText = "Amount";
+            colOtherAmount.MinimumWidth = 6;
+            colOtherAmount.Name = "colOtherAmount";
+            colOtherAmount.ReadOnly = true;
+            // 
+            // colOtherEdit
+            // 
+            colOtherEdit.HeaderText = "Edit";
+            colOtherEdit.MinimumWidth = 6;
+            colOtherEdit.Name = "colOtherEdit";
+            colOtherEdit.ReadOnly = true;
+            // 
             // pnlOtherHeader
             // 
             pnlOtherHeader.Controls.Add(pnlOtherDate);
@@ -601,162 +757,6 @@
             btnAddOther.Size = new Size(75, 23);
             btnAddOther.TabIndex = 0;
             // 
-            // colWaterRoom
-            // 
-            colWaterRoom.FillWeight = 50F;
-            colWaterRoom.HeaderText = "Room";
-            colWaterRoom.MinimumWidth = 6;
-            colWaterRoom.Name = "colWaterRoom";
-            colWaterRoom.ReadOnly = true;
-            // 
-            // colWaterTenant
-            // 
-            colWaterTenant.FillWeight = 150F;
-            colWaterTenant.HeaderText = "Tenant";
-            colWaterTenant.MinimumWidth = 6;
-            colWaterTenant.Name = "colWaterTenant";
-            colWaterTenant.ReadOnly = true;
-            // 
-            // colWaterDueDate
-            // 
-            colWaterDueDate.HeaderText = "Due Date";
-            colWaterDueDate.MinimumWidth = 6;
-            colWaterDueDate.Name = "colWaterDueDate";
-            colWaterDueDate.ReadOnly = true;
-            // 
-            // colWaterAmount
-            // 
-            colWaterAmount.HeaderText = "Amount";
-            colWaterAmount.MinimumWidth = 6;
-            colWaterAmount.Name = "colWaterAmount";
-            colWaterAmount.ReadOnly = true;
-            // 
-            // colWaterStatus
-            // 
-            colWaterStatus.HeaderText = "Status";
-            colWaterStatus.MinimumWidth = 6;
-            colWaterStatus.Name = "colWaterStatus";
-            colWaterStatus.ReadOnly = true;
-            // 
-            // dgvElectricityBillData
-            // 
-            dgvElectricityBillData.AllowUserToAddRows = false;
-            dgvElectricityBillData.AllowUserToDeleteRows = false;
-            dgvElectricityBillData.AllowUserToResizeRows = false;
-            dgvElectricityBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvElectricityBillData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle11.BackColor = SystemColors.Control;
-            dataGridViewCellStyle11.Font = new Font("Segoe UI", 14F);
-            dataGridViewCellStyle11.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle11.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = DataGridViewTriState.True;
-            dgvElectricityBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
-            dgvElectricityBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvElectricityBillData.Columns.AddRange(new DataGridViewColumn[] { colElectricityRoom, colElectricityAccountName, colElectricityAmount, colElectricityStatus });
-            dgvElectricityBillData.Dock = DockStyle.Fill;
-            dgvElectricityBillData.Location = new Point(0, 0);
-            dgvElectricityBillData.Name = "dgvElectricityBillData";
-            dgvElectricityBillData.ReadOnly = true;
-            dgvElectricityBillData.RowHeadersVisible = false;
-            dgvElectricityBillData.RowHeadersWidth = 51;
-            dgvElectricityBillData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvElectricityBillData.Size = new Size(1246, 525);
-            dgvElectricityBillData.TabIndex = 13;
-            // 
-            // dgvOtherBillData
-            // 
-            dgvOtherBillData.AllowUserToAddRows = false;
-            dgvOtherBillData.AllowUserToDeleteRows = false;
-            dgvOtherBillData.AllowUserToResizeRows = false;
-            dgvOtherBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvOtherBillData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle12.BackColor = SystemColors.Control;
-            dataGridViewCellStyle12.Font = new Font("Segoe UI", 14F);
-            dataGridViewCellStyle12.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = DataGridViewTriState.True;
-            dgvOtherBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle12;
-            dgvOtherBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvOtherBillData.Columns.AddRange(new DataGridViewColumn[] { colOtherDate, colOtherUtilityName, colOtherName, colOtherAmount, colOtherEdit });
-            dgvOtherBillData.Dock = DockStyle.Fill;
-            dgvOtherBillData.Location = new Point(0, 0);
-            dgvOtherBillData.Name = "dgvOtherBillData";
-            dgvOtherBillData.ReadOnly = true;
-            dgvOtherBillData.RowHeadersVisible = false;
-            dgvOtherBillData.RowHeadersWidth = 51;
-            dgvOtherBillData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvOtherBillData.Size = new Size(1246, 525);
-            dgvOtherBillData.TabIndex = 14;
-            // 
-            // colOtherDate
-            // 
-            colOtherDate.FillWeight = 50F;
-            colOtherDate.HeaderText = "Date";
-            colOtherDate.MinimumWidth = 6;
-            colOtherDate.Name = "colOtherDate";
-            colOtherDate.ReadOnly = true;
-            // 
-            // colOtherUtilityName
-            // 
-            colOtherUtilityName.HeaderText = "Utility Name";
-            colOtherUtilityName.MinimumWidth = 6;
-            colOtherUtilityName.Name = "colOtherUtilityName";
-            colOtherUtilityName.ReadOnly = true;
-            // 
-            // colOtherName
-            // 
-            colOtherName.HeaderText = "Name";
-            colOtherName.MinimumWidth = 6;
-            colOtherName.Name = "colOtherName";
-            colOtherName.ReadOnly = true;
-            // 
-            // colOtherAmount
-            // 
-            colOtherAmount.HeaderText = "Amount";
-            colOtherAmount.MinimumWidth = 6;
-            colOtherAmount.Name = "colOtherAmount";
-            colOtherAmount.ReadOnly = true;
-            // 
-            // colOtherEdit
-            // 
-            colOtherEdit.HeaderText = "Edit";
-            colOtherEdit.MinimumWidth = 6;
-            colOtherEdit.Name = "colOtherEdit";
-            colOtherEdit.ReadOnly = true;
-            // 
-            // colElectricityRoom
-            // 
-            colElectricityRoom.FillWeight = 50F;
-            colElectricityRoom.HeaderText = "Room";
-            colElectricityRoom.MinimumWidth = 6;
-            colElectricityRoom.Name = "colElectricityRoom";
-            colElectricityRoom.ReadOnly = true;
-            // 
-            // colElectricityAccountName
-            // 
-            colElectricityAccountName.HeaderText = "Account Name";
-            colElectricityAccountName.MinimumWidth = 6;
-            colElectricityAccountName.Name = "colElectricityAccountName";
-            colElectricityAccountName.ReadOnly = true;
-            // 
-            // colElectricityAmount
-            // 
-            colElectricityAmount.HeaderText = "Amount";
-            colElectricityAmount.MinimumWidth = 6;
-            colElectricityAmount.Name = "colElectricityAmount";
-            colElectricityAmount.ReadOnly = true;
-            // 
-            // colElectricityStatus
-            // 
-            colElectricityStatus.HeaderText = "Status";
-            colElectricityStatus.MinimumWidth = 6;
-            colElectricityStatus.Name = "colElectricityStatus";
-            colElectricityStatus.ReadOnly = true;
-            // 
             // UtilitiesControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -780,16 +780,16 @@
             pnlHeaderWaterTitle.ResumeLayout(false);
             tabElectricity.ResumeLayout(false);
             pnlElectricityContent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvElectricityBillData).EndInit();
             pnlElectricityHeader.ResumeLayout(false);
             pnlElectricityButtons.ResumeLayout(false);
             pnlDate.ResumeLayout(false);
             pnlHeaderElectricityTitle.ResumeLayout(false);
             tabOther.ResumeLayout(false);
             pnlOtherContent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvOtherBillData).EndInit();
             pnlOtherHeader.ResumeLayout(false);
             pnlOtherDate.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvElectricityBillData).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvOtherBillData).EndInit();
             ResumeLayout(false);
         }
 
