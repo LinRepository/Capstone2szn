@@ -16,5 +16,15 @@ namespace Capstoneszn.Forms.EmployeeForms
         {
             InitializeComponent();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void EditEmployeeForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
