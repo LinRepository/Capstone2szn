@@ -102,6 +102,7 @@
             btnCancelUtilityAccount.TabIndex = 0;
             btnCancelUtilityAccount.Text = "Cancel";
             btnCancelUtilityAccount.UseVisualStyleBackColor = true;
+            btnCancelUtilityAccount.Click += btnCancelUtilityAccount_Click;
             // 
             // pnlUtilityAccountContent
             // 

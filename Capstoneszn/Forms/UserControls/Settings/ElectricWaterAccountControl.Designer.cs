@@ -173,6 +173,7 @@
             btnAddWaterAccount.TabIndex = 0;
             btnAddWaterAccount.Text = "Add Water Account";
             btnAddWaterAccount.UseVisualStyleBackColor = true;
+            btnAddWaterAccount.Click += btnAddWaterAccount_Click;
             // 
             // pnlElectricityAccounts
             // 
@@ -230,6 +231,7 @@
             btnAddElectricityAccount.TabIndex = 0;
             btnAddElectricityAccount.Text = "Add Electricity Account";
             btnAddElectricityAccount.UseVisualStyleBackColor = true;
+            btnAddElectricityAccount.Click += btnAddElectricityAccount_Click;
             // 
             // ElectricWaterAccountControl
             // 

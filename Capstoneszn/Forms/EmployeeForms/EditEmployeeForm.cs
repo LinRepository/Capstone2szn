@@ -8,18 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Capstoneszn.Forms.SettingsForms
+namespace Capstoneszn.Forms.EmployeeForms
 {
-    public partial class AddUtilityAccountForm : Form
+    public partial class EditEmployeeForm : Form
     {
-        public AddUtilityAccountForm()
+        public EditEmployeeForm()
         {
             InitializeComponent();
-        }
-
-        private void btnCancelUtilityAccount_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }
