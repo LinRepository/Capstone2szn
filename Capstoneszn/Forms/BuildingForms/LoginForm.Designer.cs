@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Login));
             pnlLoginHeader = new Panel();
             lblLoginFormTitle = new Label();
             pnlLoginContent = new Panel();
@@ -171,11 +172,10 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Anchor = AnchorStyles.None;
-            pictureBox1.Image = Properties.Resources.catlogin;
-            pictureBox1.Location = new Point(254, 26);
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(227, 5);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(170, 150);
+            pictureBox1.Size = new Size(200, 200);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;

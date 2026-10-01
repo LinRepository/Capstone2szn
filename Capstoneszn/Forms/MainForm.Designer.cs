@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             pnlSideBar = new Panel();
             flpNavigation = new FlowLayoutPanel();
             btnHome = new Button();
@@ -483,11 +484,11 @@
             // Logo
             // 
             Logo.Anchor = AnchorStyles.None;
-            Logo.BackColor = Color.White;
-            Logo.Image = Properties.Resources.catlogin;
-            Logo.Location = new Point(39, 8);
+            Logo.BackColor = Color.FromArgb(11, 20, 38);
+            Logo.Image = (Image)resources.GetObject("Logo.Image");
+            Logo.Location = new Point(33, 1);
             Logo.Name = "Logo";
-            Logo.Size = new Size(100, 100);
+            Logo.Size = new Size(119, 119);
             Logo.SizeMode = PictureBoxSizeMode.StretchImage;
             Logo.TabIndex = 1;
             Logo.TabStop = false;

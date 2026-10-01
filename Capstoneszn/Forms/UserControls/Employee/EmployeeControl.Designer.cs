@@ -141,6 +141,7 @@
             btnAddEmployee.TabIndex = 2;
             btnAddEmployee.Text = "Add Employee";
             btnAddEmployee.UseVisualStyleBackColor = true;
+            btnAddEmployee.Click += btnAddEmployee_Click;
             // 
             // pnlSpacing
             // 

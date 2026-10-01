@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms.EmployeeForms;
 
 namespace Capstoneszn.UserControls
 {
@@ -15,6 +16,12 @@ namespace Capstoneszn.UserControls
         public EmployeeControl()
         {
             InitializeComponent();
+        }
+
+        private void btnAddEmployee_Click(object sender, EventArgs e)
+        {
+            AddEmployeeForm aef = new AddEmployeeForm();
+            aef.ShowDialog();
         }
     }
 }

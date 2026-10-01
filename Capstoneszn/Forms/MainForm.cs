@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Capstoneszn.Forms;
 using Capstoneszn.UserControls;
+using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn
 {
@@ -21,8 +22,14 @@ namespace Capstoneszn
         //ROOMS
         private int checkbuildingId;
 
-        
+
         private int checkcurrentBuildingId;
+        private string currentBuildingName = ""; //Added ni Lin
+        public static int CurrentUserId;   //Added ni Lin
+
+        public static string CurrentUsername = "";   //Added ni Lin
+        public static string CurrentUserRole = "";   //Added ni Lin
+
         // 1. The NEW Constructor used for db
         public MainForm(int buildingId, string buildingName)
         {
@@ -31,6 +38,7 @@ namespace Capstoneszn
 
             checkcurrentBuildingId = buildingId; //BUILDING CREATION
             checkbuildingId = buildingId; //ROOMS MODULE
+            currentBuildingName = buildingName; //Lin
         }
 
         //MAIN FORM 
@@ -48,18 +56,73 @@ namespace Capstoneszn
 
             // 2. Initial immediate time display on load
             UpdateDateTime();
+
+            //Para to sa building name to
+            try
+            {
+                lblSystemName.Text = GetBuildingName();
+            }
+            catch (Exception ex)
+            {
+                lblSystemName.Text = "Building Name";
+                MessageBox.Show("Could not load building name: " + ex.Message,
+                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            //Para sa user
+            lblCurrentUser.Text = CurrentUsername;
+            lblUserRole.Text = CurrentUserRole;
+
         }
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            // Executes every 1000ms (1 second) to create smooth, live ticking
-            UpdateDateTime();
-        }
+
 
         // Single helper method to keep code clean and maintainable
         private void UpdateDateTime()
         {
             lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // e.g., 09:23:25 AM
             lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy"); // e.g., September 29, 2026
+        }
+        //Load building name
+        private string GetBuildingName()
+        {
+            string buildingName = "Building Name";   // fallback
+
+            string query = "SELECT BuildingName FROM Buildings WHERE BuildingId = @id";
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@id", checkcurrentBuildingId);
+                conn.Open();
+
+                string? value = cmd.ExecuteScalar()?.ToString();
+
+                if (!string.IsNullOrWhiteSpace(value))
+                    buildingName = value;
+            }
+
+            return buildingName;
+        }
+        //Load user info
+        private void LoadUserInfo()
+        {
+            string query = "SELECT Username, Role FROM Users WHERE UserId = @id";
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@id", CurrentUserId);
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        lblCurrentUser.Text = reader["Username"]?.ToString() ?? "User";
+                        lblUserRole.Text = reader["Role"]?.ToString() ?? "User Role";
+                    }
+                }
+            }
         }
 
 

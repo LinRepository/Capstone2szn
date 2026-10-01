@@ -7,6 +7,8 @@ namespace Capstoneszn
 {
     public partial class Login : Form
     {
+        public static string CurrentUsername = "";
+        public static string CurrentUserRole = "";
 
         public Login()
         {
@@ -82,7 +84,10 @@ namespace Capstoneszn
                         if (result != null)
                         {
                             string userRole = result.ToString() ?? "";
-                            //MessageBox.Show($"Login successful! Welcome, {userRole}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            MainForm.CurrentUsername = inputUsername;
+                            MainForm.CurrentUserRole = userRole;
+                            
 
                             // --> WIPE THE CREDENTIALS CLEAN HERE <--
                             txtLoginUsername.Clear();

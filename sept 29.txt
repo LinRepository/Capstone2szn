@@ -1,8 +1,0 @@
--added docking to utilities (utility mod)
--added docking payment history (payment histo mod)
--added new from (receipt)
--real time display
--can fetch and validate answer from security questions
--fetch wrong input security answer, indicate which answer is wrong then display it
--fetch hard coded questions from db
--Successfully added a 'Change Password' feature
