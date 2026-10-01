@@ -233,6 +233,7 @@
             btnManageSecurityQuestions.TabIndex = 2;
             btnManageSecurityQuestions.Text = "Manage Security Questions";
             btnManageSecurityQuestions.UseVisualStyleBackColor = true;
+            btnManageSecurityQuestions.Click += btnManageSecurityQuestions_Click;
             // 
             // btnChangePassword
             // 

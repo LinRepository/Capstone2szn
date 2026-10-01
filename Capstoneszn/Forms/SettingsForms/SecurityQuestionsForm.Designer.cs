@@ -80,28 +80,32 @@
             pnlSecurityQuestionsActions.Dock = DockStyle.Bottom;
             pnlSecurityQuestionsActions.Location = new Point(0, 373);
             pnlSecurityQuestionsActions.Name = "pnlSecurityQuestionsActions";
+            pnlSecurityQuestionsActions.Padding = new Padding(15);
             pnlSecurityQuestionsActions.Size = new Size(682, 80);
             pnlSecurityQuestionsActions.TabIndex = 0;
             // 
             // btnCancelSecurityQuestions
             // 
             btnCancelSecurityQuestions.Cursor = Cursors.Hand;
-            btnCancelSecurityQuestions.Location = new Point(417, 27);
+            btnCancelSecurityQuestions.Location = new Point(461, 15);
             btnCancelSecurityQuestions.Name = "btnCancelSecurityQuestions";
-            btnCancelSecurityQuestions.Size = new Size(94, 29);
+            btnCancelSecurityQuestions.Size = new Size(94, 50);
             btnCancelSecurityQuestions.TabIndex = 1;
             btnCancelSecurityQuestions.Text = "Cancel";
             btnCancelSecurityQuestions.UseVisualStyleBackColor = true;
+            btnCancelSecurityQuestions.Click += btnCancelSecurityQuestions_Click;
             // 
             // btnSaveSecurityQuestions
             // 
             btnSaveSecurityQuestions.Cursor = Cursors.Hand;
-            btnSaveSecurityQuestions.Location = new Point(544, 27);
+            btnSaveSecurityQuestions.Dock = DockStyle.Right;
+            btnSaveSecurityQuestions.Location = new Point(573, 15);
             btnSaveSecurityQuestions.Name = "btnSaveSecurityQuestions";
-            btnSaveSecurityQuestions.Size = new Size(94, 29);
+            btnSaveSecurityQuestions.Size = new Size(94, 50);
             btnSaveSecurityQuestions.TabIndex = 0;
             btnSaveSecurityQuestions.Text = "Save";
             btnSaveSecurityQuestions.UseVisualStyleBackColor = true;
+            btnSaveSecurityQuestions.Click += btnSaveSecurityQuestions_Click;
             // 
             // pnlSecurityQuestionsContent
             // 
@@ -226,6 +230,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Security Questions";
+            Load += SecurityQuestionsForm_Load;
             pnlSecurityQuestionsHeader.ResumeLayout(false);
             pnlSecurityQuestionsActions.ResumeLayout(false);
             pnlSecurityQuestionsContent.ResumeLayout(false);
