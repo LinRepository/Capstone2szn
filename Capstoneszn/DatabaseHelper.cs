@@ -14,6 +14,8 @@ namespace Capstoneszn
         // Your specific connection string for SQL Server Express
         private static readonly string connectionString = @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
 
+        //private static readonly string connectionString = @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
+
         // Method to get a new SQL connection whenever you need to query the database
         public static SqlConnection GetConnection()
         {
