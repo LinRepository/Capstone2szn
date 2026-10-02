@@ -33,13 +33,17 @@
             btnBackRoomAccount = new Button();
             pnlRoomAccountContent = new Panel();
             flpFloors = new FlowLayoutPanel();
-            pnlFloorSection = new Panel();
-            flpFloorRooms = new FlowLayoutPanel();
-            lblFloorTitle = new Label();
+            pnlFloorSection1 = new Panel();
+            flpFloorRooms1 = new FlowLayoutPanel();
+            lblFloorTitle1 = new Label();
+            pnlFloorSection2 = new Panel();
+            flpFloorRooms2 = new FlowLayoutPanel();
+            lblFloorTitle2 = new Label();
             pnlRoomAccountHeader.SuspendLayout();
             pnlRoomAccountContent.SuspendLayout();
             flpFloors.SuspendLayout();
-            pnlFloorSection.SuspendLayout();
+            pnlFloorSection1.SuspendLayout();
+            pnlFloorSection2.SuspendLayout();
             SuspendLayout();
             // 
             // pnlRoomAccountHeader
@@ -95,8 +99,10 @@
             // 
             flpFloors.AutoScroll = true;
             flpFloors.BorderStyle = BorderStyle.FixedSingle;
-            flpFloors.Controls.Add(pnlFloorSection);
+            flpFloors.Controls.Add(pnlFloorSection1);
+            flpFloors.Controls.Add(pnlFloorSection2);
             flpFloors.Dock = DockStyle.Fill;
+            flpFloors.FlowDirection = FlowDirection.TopDown;
             flpFloors.Location = new Point(15, 15);
             flpFloors.Name = "flpFloors";
             flpFloors.Padding = new Padding(5);
@@ -104,41 +110,81 @@
             flpFloors.TabIndex = 0;
             flpFloors.WrapContents = false;
             // 
-            // pnlFloorSection
+            // pnlFloorSection1
             // 
-            pnlFloorSection.Controls.Add(flpFloorRooms);
-            pnlFloorSection.Controls.Add(lblFloorTitle);
-            pnlFloorSection.Location = new Point(8, 8);
-            pnlFloorSection.Name = "pnlFloorSection";
-            pnlFloorSection.Size = new Size(250, 600);
-            pnlFloorSection.TabIndex = 0;
+            pnlFloorSection1.BorderStyle = BorderStyle.FixedSingle;
+            pnlFloorSection1.Controls.Add(flpFloorRooms1);
+            pnlFloorSection1.Controls.Add(lblFloorTitle1);
+            pnlFloorSection1.Location = new Point(8, 8);
+            pnlFloorSection1.Name = "pnlFloorSection1";
+            pnlFloorSection1.Padding = new Padding(5);
+            pnlFloorSection1.Size = new Size(1250, 200);
+            pnlFloorSection1.TabIndex = 0;
             // 
-            // flpFloorRooms
+            // flpFloorRooms1
             // 
-            flpFloorRooms.AutoScroll = true;
-            flpFloorRooms.BorderStyle = BorderStyle.FixedSingle;
-            flpFloorRooms.Dock = DockStyle.Fill;
-            flpFloorRooms.FlowDirection = FlowDirection.TopDown;
-            flpFloorRooms.Location = new Point(0, 50);
-            flpFloorRooms.Name = "flpFloorRooms";
-            flpFloorRooms.Padding = new Padding(10);
-            flpFloorRooms.Size = new Size(250, 550);
-            flpFloorRooms.TabIndex = 21;
-            flpFloorRooms.WrapContents = false;
+            flpFloorRooms1.AutoScroll = true;
+            flpFloorRooms1.BorderStyle = BorderStyle.FixedSingle;
+            flpFloorRooms1.Dock = DockStyle.Fill;
+            flpFloorRooms1.FlowDirection = FlowDirection.TopDown;
+            flpFloorRooms1.Location = new Point(5, 55);
+            flpFloorRooms1.Name = "flpFloorRooms1";
+            flpFloorRooms1.Padding = new Padding(10);
+            flpFloorRooms1.Size = new Size(1238, 138);
+            flpFloorRooms1.TabIndex = 21;
+            flpFloorRooms1.WrapContents = false;
             // 
-            // lblFloorTitle
+            // lblFloorTitle1
             // 
-            lblFloorTitle.Dock = DockStyle.Top;
-            lblFloorTitle.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFloorTitle.ForeColor = Color.White;
-            lblFloorTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblFloorTitle.Location = new Point(0, 0);
-            lblFloorTitle.Margin = new Padding(0);
-            lblFloorTitle.Name = "lblFloorTitle";
-            lblFloorTitle.Size = new Size(250, 50);
-            lblFloorTitle.TabIndex = 20;
-            lblFloorTitle.Text = "FLOOR 1";
-            lblFloorTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblFloorTitle1.Dock = DockStyle.Top;
+            lblFloorTitle1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFloorTitle1.ForeColor = Color.White;
+            lblFloorTitle1.ImageAlign = ContentAlignment.MiddleRight;
+            lblFloorTitle1.Location = new Point(5, 5);
+            lblFloorTitle1.Margin = new Padding(0);
+            lblFloorTitle1.Name = "lblFloorTitle1";
+            lblFloorTitle1.Size = new Size(1238, 50);
+            lblFloorTitle1.TabIndex = 20;
+            lblFloorTitle1.Text = "FLOOR 1";
+            lblFloorTitle1.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlFloorSection2
+            // 
+            pnlFloorSection2.BorderStyle = BorderStyle.FixedSingle;
+            pnlFloorSection2.Controls.Add(flpFloorRooms2);
+            pnlFloorSection2.Controls.Add(lblFloorTitle2);
+            pnlFloorSection2.Location = new Point(8, 214);
+            pnlFloorSection2.Name = "pnlFloorSection2";
+            pnlFloorSection2.Padding = new Padding(5);
+            pnlFloorSection2.Size = new Size(1250, 200);
+            pnlFloorSection2.TabIndex = 1;
+            // 
+            // flpFloorRooms2
+            // 
+            flpFloorRooms2.AutoScroll = true;
+            flpFloorRooms2.BorderStyle = BorderStyle.FixedSingle;
+            flpFloorRooms2.Dock = DockStyle.Fill;
+            flpFloorRooms2.FlowDirection = FlowDirection.TopDown;
+            flpFloorRooms2.Location = new Point(5, 55);
+            flpFloorRooms2.Name = "flpFloorRooms2";
+            flpFloorRooms2.Padding = new Padding(10);
+            flpFloorRooms2.Size = new Size(1238, 138);
+            flpFloorRooms2.TabIndex = 21;
+            flpFloorRooms2.WrapContents = false;
+            // 
+            // lblFloorTitle2
+            // 
+            lblFloorTitle2.Dock = DockStyle.Top;
+            lblFloorTitle2.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFloorTitle2.ForeColor = Color.White;
+            lblFloorTitle2.ImageAlign = ContentAlignment.MiddleRight;
+            lblFloorTitle2.Location = new Point(5, 5);
+            lblFloorTitle2.Margin = new Padding(0);
+            lblFloorTitle2.Name = "lblFloorTitle2";
+            lblFloorTitle2.Size = new Size(1238, 50);
+            lblFloorTitle2.TabIndex = 20;
+            lblFloorTitle2.Text = "FLOOR 2";
+            lblFloorTitle2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // BillingRoomAccountControl
             // 
@@ -152,7 +198,8 @@
             pnlRoomAccountHeader.ResumeLayout(false);
             pnlRoomAccountContent.ResumeLayout(false);
             flpFloors.ResumeLayout(false);
-            pnlFloorSection.ResumeLayout(false);
+            pnlFloorSection1.ResumeLayout(false);
+            pnlFloorSection2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -163,8 +210,11 @@
         private Label lblRoomAccountTitle;
         private Panel pnlRoomAccountContent;
         private FlowLayoutPanel flpFloors;
-        private Panel pnlFloorSection;
-        private Label lblFloorTitle;
-        private FlowLayoutPanel flpFloorRooms;
+        private Panel pnlFloorSection1;
+        private Label lblFloorTitle1;
+        private FlowLayoutPanel flpFloorRooms1;
+        private Panel pnlFloorSection2;
+        private FlowLayoutPanel flpFloorRooms2;
+        private Label lblFloorTitle2;
     }
 }

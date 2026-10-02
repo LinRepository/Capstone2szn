@@ -38,6 +38,7 @@
             pnlPaymentContent = new Panel();
             pnlAmountReferenceNumber = new Panel();
             pnlPaymentAmount = new Panel();
+            txtAmountValue = new TextBox();
             lblPaymentAmount = new Label();
             pnlReferenceNumber = new Panel();
             txtReferenceNumber = new TextBox();
@@ -58,7 +59,6 @@
             pnlPaymentDate = new Panel();
             lblPaymentDate = new Label();
             dtpPaymentDate = new DateTimePicker();
-            txtAmountValue = new TextBox();
             pnlPaymentHeader.SuspendLayout();
             pnlPaymentActions.SuspendLayout();
             pnlPaymentContent.SuspendLayout();
@@ -188,6 +188,17 @@
             pnlPaymentAmount.Name = "pnlPaymentAmount";
             pnlPaymentAmount.Size = new Size(375, 82);
             pnlPaymentAmount.TabIndex = 1;
+            // 
+            // txtAmountValue
+            // 
+            txtAmountValue.BorderStyle = BorderStyle.FixedSingle;
+            txtAmountValue.Location = new Point(3, 28);
+            txtAmountValue.Name = "txtAmountValue";
+            txtAmountValue.Size = new Size(369, 27);
+            txtAmountValue.TabIndex = 10;
+            txtAmountValue.Text = "₱****";
+            txtAmountValue.TextAlign = HorizontalAlignment.Center;
+            txtAmountValue.Visible = false;
             // 
             // lblPaymentAmount
             // 
@@ -416,17 +427,6 @@
             dtpPaymentDate.Name = "dtpPaymentDate";
             dtpPaymentDate.Size = new Size(369, 27);
             dtpPaymentDate.TabIndex = 0;
-            // 
-            // txtAmountValue
-            // 
-            txtAmountValue.BorderStyle = BorderStyle.FixedSingle;
-            txtAmountValue.Location = new Point(3, 28);
-            txtAmountValue.Name = "txtAmountValue";
-            txtAmountValue.Size = new Size(369, 27);
-            txtAmountValue.TabIndex = 10;
-            txtAmountValue.Text = "₱****";
-            txtAmountValue.TextAlign = HorizontalAlignment.Center;
-            txtAmountValue.Visible = false;
             // 
             // PaymentForm
             // 

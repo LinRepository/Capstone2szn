@@ -31,19 +31,32 @@
             pnlExpensesHeader = new Panel();
             lblExpensesTitle = new Label();
             btnBackExpenses = new Button();
-            pnlExpenseFilters = new Panel();
-            btnUtilitiesExpenses = new Button();
-            btnMaintenanceExpenses = new Button();
-            btnAllExpenses = new Button();
             pnlExpensesContent = new Panel();
-            dgvExpenses = new DataGridView();
-            colExpenseDate = new DataGridViewTextBoxColumn();
-            colExpenseDescription = new DataGridViewTextBoxColumn();
-            colExpenseAmount = new DataGridViewTextBoxColumn();
+            tabExpenses = new TabControl();
+            tabAll = new TabPage();
+            tabMaintenance = new TabPage();
+            dgvAll = new DataGridView();
+            colAllDate = new DataGridViewTextBoxColumn();
+            colAllDescription = new DataGridViewTextBoxColumn();
+            colAllAmount = new DataGridViewTextBoxColumn();
+            dgvMaintenance = new DataGridView();
+            colMaintenanaceDate = new DataGridViewTextBoxColumn();
+            colMaintenanceDescription = new DataGridViewTextBoxColumn();
+            colMaintenanceAmount = new DataGridViewTextBoxColumn();
+            tabUtilities = new TabPage();
+            dgvUtilities = new DataGridView();
+            colUtilitiesDate = new DataGridViewTextBoxColumn();
+            colUtilitiesDescription = new DataGridViewTextBoxColumn();
+            colUtilitiesAmount = new DataGridViewTextBoxColumn();
             pnlExpensesHeader.SuspendLayout();
-            pnlExpenseFilters.SuspendLayout();
             pnlExpensesContent.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvExpenses).BeginInit();
+            tabExpenses.SuspendLayout();
+            tabAll.SuspendLayout();
+            tabMaintenance.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAll).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvMaintenance).BeginInit();
+            tabUtilities.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvUtilities).BeginInit();
             SuspendLayout();
             // 
             // pnlExpensesHeader
@@ -84,99 +97,184 @@
             btnBackExpenses.UseVisualStyleBackColor = true;
             btnBackExpenses.Click += btnBackExpenses_Click;
             // 
-            // pnlExpenseFilters
-            // 
-            pnlExpenseFilters.BorderStyle = BorderStyle.FixedSingle;
-            pnlExpenseFilters.Controls.Add(btnUtilitiesExpenses);
-            pnlExpenseFilters.Controls.Add(btnMaintenanceExpenses);
-            pnlExpenseFilters.Controls.Add(btnAllExpenses);
-            pnlExpenseFilters.Dock = DockStyle.Top;
-            pnlExpenseFilters.Location = new Point(0, 90);
-            pnlExpenseFilters.Name = "pnlExpenseFilters";
-            pnlExpenseFilters.Padding = new Padding(10);
-            pnlExpenseFilters.Size = new Size(1300, 65);
-            pnlExpenseFilters.TabIndex = 1;
-            // 
-            // btnUtilitiesExpenses
-            // 
-            btnUtilitiesExpenses.Dock = DockStyle.Left;
-            btnUtilitiesExpenses.Location = new Point(310, 10);
-            btnUtilitiesExpenses.Name = "btnUtilitiesExpenses";
-            btnUtilitiesExpenses.Size = new Size(150, 43);
-            btnUtilitiesExpenses.TabIndex = 2;
-            btnUtilitiesExpenses.Text = "Utilities";
-            btnUtilitiesExpenses.UseVisualStyleBackColor = true;
-            // 
-            // btnMaintenanceExpenses
-            // 
-            btnMaintenanceExpenses.Dock = DockStyle.Left;
-            btnMaintenanceExpenses.Location = new Point(160, 10);
-            btnMaintenanceExpenses.Name = "btnMaintenanceExpenses";
-            btnMaintenanceExpenses.Size = new Size(150, 43);
-            btnMaintenanceExpenses.TabIndex = 1;
-            btnMaintenanceExpenses.Text = "Maintenance";
-            btnMaintenanceExpenses.UseVisualStyleBackColor = true;
-            // 
-            // btnAllExpenses
-            // 
-            btnAllExpenses.Dock = DockStyle.Left;
-            btnAllExpenses.Location = new Point(10, 10);
-            btnAllExpenses.Name = "btnAllExpenses";
-            btnAllExpenses.Size = new Size(150, 43);
-            btnAllExpenses.TabIndex = 0;
-            btnAllExpenses.Text = "ALL";
-            btnAllExpenses.UseVisualStyleBackColor = true;
-            // 
             // pnlExpensesContent
             // 
             pnlExpensesContent.BorderStyle = BorderStyle.FixedSingle;
-            pnlExpensesContent.Controls.Add(dgvExpenses);
+            pnlExpensesContent.Controls.Add(tabExpenses);
             pnlExpensesContent.Dock = DockStyle.Fill;
-            pnlExpensesContent.Location = new Point(0, 155);
+            pnlExpensesContent.Location = new Point(0, 90);
             pnlExpensesContent.Name = "pnlExpensesContent";
-            pnlExpensesContent.Size = new Size(1300, 595);
+            pnlExpensesContent.Size = new Size(1300, 660);
             pnlExpensesContent.TabIndex = 2;
             // 
-            // dgvExpenses
+            // tabExpenses
             // 
-            dgvExpenses.AllowUserToAddRows = false;
-            dgvExpenses.AllowUserToDeleteRows = false;
-            dgvExpenses.AllowUserToResizeRows = false;
-            dgvExpenses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvExpenses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvExpenses.Columns.AddRange(new DataGridViewColumn[] { colExpenseDate, colExpenseDescription, colExpenseAmount });
-            dgvExpenses.Dock = DockStyle.Fill;
-            dgvExpenses.Location = new Point(0, 0);
-            dgvExpenses.MultiSelect = false;
-            dgvExpenses.Name = "dgvExpenses";
-            dgvExpenses.ReadOnly = true;
-            dgvExpenses.RowHeadersVisible = false;
-            dgvExpenses.RowHeadersWidth = 51;
-            dgvExpenses.ScrollBars = ScrollBars.Vertical;
-            dgvExpenses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvExpenses.Size = new Size(1298, 593);
-            dgvExpenses.TabIndex = 0;
+            tabExpenses.Controls.Add(tabAll);
+            tabExpenses.Controls.Add(tabMaintenance);
+            tabExpenses.Controls.Add(tabUtilities);
+            tabExpenses.Dock = DockStyle.Fill;
+            tabExpenses.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            tabExpenses.Location = new Point(0, 0);
+            tabExpenses.Name = "tabExpenses";
+            tabExpenses.SelectedIndex = 0;
+            tabExpenses.Size = new Size(1298, 658);
+            tabExpenses.TabIndex = 0;
             // 
-            // colExpenseDate
+            // tabAll
             // 
-            colExpenseDate.HeaderText = "Date";
-            colExpenseDate.MinimumWidth = 6;
-            colExpenseDate.Name = "colExpenseDate";
-            colExpenseDate.ReadOnly = true;
+            tabAll.Controls.Add(dgvAll);
+            tabAll.Location = new Point(4, 37);
+            tabAll.Name = "tabAll";
+            tabAll.Padding = new Padding(3);
+            tabAll.Size = new Size(1290, 617);
+            tabAll.TabIndex = 0;
+            tabAll.Text = "All";
+            tabAll.UseVisualStyleBackColor = true;
             // 
-            // colExpenseDescription
+            // tabMaintenance
             // 
-            colExpenseDescription.HeaderText = "Description";
-            colExpenseDescription.MinimumWidth = 6;
-            colExpenseDescription.Name = "colExpenseDescription";
-            colExpenseDescription.ReadOnly = true;
+            tabMaintenance.Controls.Add(dgvMaintenance);
+            tabMaintenance.Location = new Point(4, 37);
+            tabMaintenance.Name = "tabMaintenance";
+            tabMaintenance.Padding = new Padding(3);
+            tabMaintenance.Size = new Size(1290, 617);
+            tabMaintenance.TabIndex = 1;
+            tabMaintenance.Text = "Maintenance";
+            tabMaintenance.UseVisualStyleBackColor = true;
             // 
-            // colExpenseAmount
+            // dgvAll
             // 
-            colExpenseAmount.HeaderText = "Amount";
-            colExpenseAmount.MinimumWidth = 6;
-            colExpenseAmount.Name = "colExpenseAmount";
-            colExpenseAmount.ReadOnly = true;
+            dgvAll.AllowUserToAddRows = false;
+            dgvAll.AllowUserToDeleteRows = false;
+            dgvAll.AllowUserToResizeRows = false;
+            dgvAll.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvAll.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvAll.Columns.AddRange(new DataGridViewColumn[] { colAllDate, colAllDescription, colAllAmount });
+            dgvAll.Dock = DockStyle.Fill;
+            dgvAll.Location = new Point(3, 3);
+            dgvAll.MultiSelect = false;
+            dgvAll.Name = "dgvAll";
+            dgvAll.ReadOnly = true;
+            dgvAll.RowHeadersVisible = false;
+            dgvAll.RowHeadersWidth = 51;
+            dgvAll.ScrollBars = ScrollBars.Vertical;
+            dgvAll.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvAll.Size = new Size(1284, 611);
+            dgvAll.TabIndex = 1;
+            // 
+            // colAllDate
+            // 
+            colAllDate.HeaderText = "Date";
+            colAllDate.MinimumWidth = 6;
+            colAllDate.Name = "colAllDate";
+            colAllDate.ReadOnly = true;
+            // 
+            // colAllDescription
+            // 
+            colAllDescription.HeaderText = "Description";
+            colAllDescription.MinimumWidth = 6;
+            colAllDescription.Name = "colAllDescription";
+            colAllDescription.ReadOnly = true;
+            // 
+            // colAllAmount
+            // 
+            colAllAmount.HeaderText = "Amount";
+            colAllAmount.MinimumWidth = 6;
+            colAllAmount.Name = "colAllAmount";
+            colAllAmount.ReadOnly = true;
+            // 
+            // dgvMaintenance
+            // 
+            dgvMaintenance.AllowUserToAddRows = false;
+            dgvMaintenance.AllowUserToDeleteRows = false;
+            dgvMaintenance.AllowUserToResizeRows = false;
+            dgvMaintenance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvMaintenance.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvMaintenance.Columns.AddRange(new DataGridViewColumn[] { colMaintenanaceDate, colMaintenanceDescription, colMaintenanceAmount });
+            dgvMaintenance.Dock = DockStyle.Fill;
+            dgvMaintenance.Location = new Point(3, 3);
+            dgvMaintenance.MultiSelect = false;
+            dgvMaintenance.Name = "dgvMaintenance";
+            dgvMaintenance.ReadOnly = true;
+            dgvMaintenance.RowHeadersVisible = false;
+            dgvMaintenance.RowHeadersWidth = 51;
+            dgvMaintenance.ScrollBars = ScrollBars.Vertical;
+            dgvMaintenance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvMaintenance.Size = new Size(1284, 611);
+            dgvMaintenance.TabIndex = 1;
+            // 
+            // colMaintenanaceDate
+            // 
+            colMaintenanaceDate.HeaderText = "Date";
+            colMaintenanaceDate.MinimumWidth = 6;
+            colMaintenanaceDate.Name = "colMaintenanaceDate";
+            colMaintenanaceDate.ReadOnly = true;
+            // 
+            // colMaintenanceDescription
+            // 
+            colMaintenanceDescription.HeaderText = "Description";
+            colMaintenanceDescription.MinimumWidth = 6;
+            colMaintenanceDescription.Name = "colMaintenanceDescription";
+            colMaintenanceDescription.ReadOnly = true;
+            // 
+            // colMaintenanceAmount
+            // 
+            colMaintenanceAmount.HeaderText = "Amount";
+            colMaintenanceAmount.MinimumWidth = 6;
+            colMaintenanceAmount.Name = "colMaintenanceAmount";
+            colMaintenanceAmount.ReadOnly = true;
+            // 
+            // tabUtilities
+            // 
+            tabUtilities.Controls.Add(dgvUtilities);
+            tabUtilities.Location = new Point(4, 37);
+            tabUtilities.Name = "tabUtilities";
+            tabUtilities.Padding = new Padding(3);
+            tabUtilities.Size = new Size(1290, 617);
+            tabUtilities.TabIndex = 2;
+            tabUtilities.Text = "Utilities";
+            tabUtilities.UseVisualStyleBackColor = true;
+            // 
+            // dgvUtilities
+            // 
+            dgvUtilities.AllowUserToAddRows = false;
+            dgvUtilities.AllowUserToDeleteRows = false;
+            dgvUtilities.AllowUserToResizeRows = false;
+            dgvUtilities.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvUtilities.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvUtilities.Columns.AddRange(new DataGridViewColumn[] { colUtilitiesDate, colUtilitiesDescription, colUtilitiesAmount });
+            dgvUtilities.Dock = DockStyle.Fill;
+            dgvUtilities.Location = new Point(3, 3);
+            dgvUtilities.MultiSelect = false;
+            dgvUtilities.Name = "dgvUtilities";
+            dgvUtilities.ReadOnly = true;
+            dgvUtilities.RowHeadersVisible = false;
+            dgvUtilities.RowHeadersWidth = 51;
+            dgvUtilities.ScrollBars = ScrollBars.Vertical;
+            dgvUtilities.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvUtilities.Size = new Size(1284, 611);
+            dgvUtilities.TabIndex = 1;
+            // 
+            // colUtilitiesDate
+            // 
+            colUtilitiesDate.HeaderText = "Date";
+            colUtilitiesDate.MinimumWidth = 6;
+            colUtilitiesDate.Name = "colUtilitiesDate";
+            colUtilitiesDate.ReadOnly = true;
+            // 
+            // colUtilitiesDescription
+            // 
+            colUtilitiesDescription.HeaderText = "Description";
+            colUtilitiesDescription.MinimumWidth = 6;
+            colUtilitiesDescription.Name = "colUtilitiesDescription";
+            colUtilitiesDescription.ReadOnly = true;
+            // 
+            // colUtilitiesAmount
+            // 
+            colUtilitiesAmount.HeaderText = "Amount";
+            colUtilitiesAmount.MinimumWidth = 6;
+            colUtilitiesAmount.Name = "colUtilitiesAmount";
+            colUtilitiesAmount.ReadOnly = true;
             // 
             // BillingExpensesControl
             // 
@@ -184,30 +282,42 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             Controls.Add(pnlExpensesContent);
-            Controls.Add(pnlExpenseFilters);
             Controls.Add(pnlExpensesHeader);
             Name = "BillingExpensesControl";
             Size = new Size(1300, 750);
             pnlExpensesHeader.ResumeLayout(false);
-            pnlExpenseFilters.ResumeLayout(false);
             pnlExpensesContent.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvExpenses).EndInit();
+            tabExpenses.ResumeLayout(false);
+            tabAll.ResumeLayout(false);
+            tabMaintenance.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvAll).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvMaintenance).EndInit();
+            tabUtilities.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvUtilities).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Panel pnlExpensesHeader;
-        private Panel pnlExpenseFilters;
         private Panel pnlExpensesContent;
         private Button btnBackExpenses;
         private Label lblExpensesTitle;
-        private Button btnUtilitiesExpenses;
-        private Button btnMaintenanceExpenses;
-        private Button btnAllExpenses;
-        private DataGridView dgvExpenses;
-        private DataGridViewTextBoxColumn colExpenseDate;
-        private DataGridViewTextBoxColumn colExpenseDescription;
-        private DataGridViewTextBoxColumn colExpenseAmount;
+        private TabControl tabExpenses;
+        private TabPage tabAll;
+        private DataGridView dgvAll;
+        private DataGridViewTextBoxColumn colAllDate;
+        private DataGridViewTextBoxColumn colAllDescription;
+        private DataGridViewTextBoxColumn colAllAmount;
+        private TabPage tabMaintenance;
+        private DataGridView dgvMaintenance;
+        private DataGridViewTextBoxColumn colMaintenanaceDate;
+        private DataGridViewTextBoxColumn colMaintenanceDescription;
+        private DataGridViewTextBoxColumn colMaintenanceAmount;
+        private TabPage tabUtilities;
+        private DataGridView dgvUtilities;
+        private DataGridViewTextBoxColumn colUtilitiesDate;
+        private DataGridViewTextBoxColumn colUtilitiesDescription;
+        private DataGridViewTextBoxColumn colUtilitiesAmount;
     }
 }

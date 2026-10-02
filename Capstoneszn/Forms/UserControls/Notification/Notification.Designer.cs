@@ -31,20 +31,19 @@
             pnlNotificationHeader = new Panel();
             lblNotificationTitle = new Label();
             pnlNotificationHeaderContent = new Panel();
+            panel1 = new Panel();
+            btnNotificationDelete = new Button();
             pnlNotificationSearchContainer = new Panel();
             txtNotificationSearch = new TextBox();
             picNotificationSearch = new PictureBox();
-            btnNotificationMarkAsRead = new Button();
-            btnNotificationDelete = new Button();
             pnlNotificationContent = new Panel();
             flpNotifications = new FlowLayoutPanel();
-            panel1 = new Panel();
             pnlNotificationHeader.SuspendLayout();
             pnlNotificationHeaderContent.SuspendLayout();
+            panel1.SuspendLayout();
             pnlNotificationSearchContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picNotificationSearch).BeginInit();
             pnlNotificationContent.SuspendLayout();
-            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // pnlNotificationHeader
@@ -81,6 +80,24 @@
             pnlNotificationHeaderContent.Size = new Size(1280, 75);
             pnlNotificationHeaderContent.TabIndex = 1;
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnNotificationDelete);
+            panel1.Dock = DockStyle.Right;
+            panel1.Location = new Point(1112, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(166, 73);
+            panel1.TabIndex = 5;
+            // 
+            // btnNotificationDelete
+            // 
+            btnNotificationDelete.Location = new Point(39, 26);
+            btnNotificationDelete.Name = "btnNotificationDelete";
+            btnNotificationDelete.Size = new Size(95, 29);
+            btnNotificationDelete.TabIndex = 0;
+            btnNotificationDelete.Text = "Delete";
+            btnNotificationDelete.UseVisualStyleBackColor = true;
+            // 
             // pnlNotificationSearchContainer
             // 
             pnlNotificationSearchContainer.BackColor = Color.Transparent;
@@ -114,24 +131,6 @@
             picNotificationSearch.TabIndex = 1;
             picNotificationSearch.TabStop = false;
             // 
-            // btnNotificationMarkAsRead
-            // 
-            btnNotificationMarkAsRead.Location = new Point(163, 26);
-            btnNotificationMarkAsRead.Name = "btnNotificationMarkAsRead";
-            btnNotificationMarkAsRead.Size = new Size(110, 29);
-            btnNotificationMarkAsRead.TabIndex = 1;
-            btnNotificationMarkAsRead.Text = "Mark as Read";
-            btnNotificationMarkAsRead.UseVisualStyleBackColor = true;
-            // 
-            // btnNotificationDelete
-            // 
-            btnNotificationDelete.Location = new Point(39, 26);
-            btnNotificationDelete.Name = "btnNotificationDelete";
-            btnNotificationDelete.Size = new Size(95, 29);
-            btnNotificationDelete.TabIndex = 0;
-            btnNotificationDelete.Text = "Delete";
-            btnNotificationDelete.UseVisualStyleBackColor = true;
-            // 
             // pnlNotificationContent
             // 
             pnlNotificationContent.Controls.Add(flpNotifications);
@@ -150,16 +149,6 @@
             flpNotifications.Size = new Size(1260, 550);
             flpNotifications.TabIndex = 0;
             // 
-            // panel1
-            // 
-            panel1.Controls.Add(btnNotificationDelete);
-            panel1.Controls.Add(btnNotificationMarkAsRead);
-            panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(978, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(300, 73);
-            panel1.TabIndex = 5;
-            // 
             // NotificationControl
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
@@ -176,11 +165,11 @@
             Load += NotificationControl_Load;
             pnlNotificationHeader.ResumeLayout(false);
             pnlNotificationHeaderContent.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             pnlNotificationSearchContainer.ResumeLayout(false);
             pnlNotificationSearchContainer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picNotificationSearch).EndInit();
             pnlNotificationContent.ResumeLayout(false);
-            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -191,7 +180,6 @@
         private Panel pnlNotificationHeaderContent;
         private Panel pnlNotificationContent;
         private FlowLayoutPanel flpNotifications;
-        private Button btnNotificationMarkAsRead;
         private Button btnNotificationDelete;
         private Panel pnlNotificationSearchContainer;
         private TextBox txtNotificationSearch;

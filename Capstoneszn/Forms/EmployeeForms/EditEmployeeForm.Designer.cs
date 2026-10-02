@@ -28,84 +28,84 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            textBox1 = new TextBox();
-            label2 = new Label();
-            label3 = new Label();
-            textBox2 = new TextBox();
-            button1 = new Button();
-            button2 = new Button();
+            lblEditEmployeeTitle = new Label();
+            txtEditFullName = new TextBox();
+            lblEditFullName = new Label();
+            lblEditAddress = new Label();
+            txtEditAddress = new TextBox();
+            btnSave = new Button();
+            btnCancel = new Button();
             SuspendLayout();
             // 
-            // label1
+            // lblEditEmployeeTitle
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(165, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(201, 28);
-            label1.TabIndex = 0;
-            label1.Text = "Edit Employee Details";
+            lblEditEmployeeTitle.AutoSize = true;
+            lblEditEmployeeTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditEmployeeTitle.ForeColor = Color.White;
+            lblEditEmployeeTitle.Location = new Point(165, 9);
+            lblEditEmployeeTitle.Name = "lblEditEmployeeTitle";
+            lblEditEmployeeTitle.Size = new Size(201, 28);
+            lblEditEmployeeTitle.TabIndex = 0;
+            lblEditEmployeeTitle.Text = "Edit Employee Details";
             // 
-            // textBox1
+            // txtEditFullName
             // 
-            textBox1.Location = new Point(71, 111);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(416, 40);
-            textBox1.TabIndex = 1;
+            txtEditFullName.Location = new Point(71, 111);
+            txtEditFullName.Multiline = true;
+            txtEditFullName.Name = "txtEditFullName";
+            txtEditFullName.Size = new Size(416, 40);
+            txtEditFullName.TabIndex = 1;
             // 
-            // label2
+            // lblEditFullName
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(71, 80);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 28);
-            label2.TabIndex = 0;
-            label2.Text = "Full Name";
+            lblEditFullName.AutoSize = true;
+            lblEditFullName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditFullName.ForeColor = Color.White;
+            lblEditFullName.Location = new Point(71, 80);
+            lblEditFullName.Name = "lblEditFullName";
+            lblEditFullName.Size = new Size(100, 28);
+            lblEditFullName.TabIndex = 0;
+            lblEditFullName.Text = "Full Name";
             // 
-            // label3
+            // lblEditAddress
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.White;
-            label3.Location = new Point(71, 172);
-            label3.Name = "label3";
-            label3.Size = new Size(82, 28);
-            label3.TabIndex = 0;
-            label3.Text = "Address";
+            lblEditAddress.AutoSize = true;
+            lblEditAddress.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditAddress.ForeColor = Color.White;
+            lblEditAddress.Location = new Point(71, 172);
+            lblEditAddress.Name = "lblEditAddress";
+            lblEditAddress.Size = new Size(82, 28);
+            lblEditAddress.TabIndex = 0;
+            lblEditAddress.Text = "Address";
             // 
-            // textBox2
+            // txtEditAddress
             // 
-            textBox2.Location = new Point(71, 203);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(416, 40);
-            textBox2.TabIndex = 1;
+            txtEditAddress.Location = new Point(71, 203);
+            txtEditAddress.Multiline = true;
+            txtEditAddress.Name = "txtEditAddress";
+            txtEditAddress.Size = new Size(416, 40);
+            txtEditAddress.TabIndex = 1;
             // 
-            // button1
+            // btnSave
             // 
-            button1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button1.Location = new Point(339, 294);
-            button1.Name = "button1";
-            button1.Size = new Size(148, 51);
-            button1.TabIndex = 2;
-            button1.Text = "Save changes";
-            button1.UseVisualStyleBackColor = true;
+            btnSave.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSave.Location = new Point(339, 294);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(148, 51);
+            btnSave.TabIndex = 2;
+            btnSave.Text = "Save changes";
+            btnSave.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnCancel
             // 
-            button2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button2.Location = new Point(224, 294);
-            button2.Name = "button2";
-            button2.Size = new Size(109, 51);
-            button2.TabIndex = 2;
-            button2.Text = "Cancel";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            btnCancel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnCancel.Location = new Point(224, 294);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(109, 51);
+            btnCancel.TabIndex = 2;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += button2_Click;
             // 
             // EditEmployeeForm
             // 
@@ -113,13 +113,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             ClientSize = new Size(548, 357);
-            Controls.Add(button2);
-            Controls.Add(button1);
-            Controls.Add(textBox2);
-            Controls.Add(label3);
-            Controls.Add(textBox1);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(btnCancel);
+            Controls.Add(btnSave);
+            Controls.Add(txtEditAddress);
+            Controls.Add(lblEditAddress);
+            Controls.Add(txtEditFullName);
+            Controls.Add(lblEditFullName);
+            Controls.Add(lblEditEmployeeTitle);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -132,12 +132,12 @@
 
         #endregion
 
-        private Label label1;
-        private TextBox textBox1;
-        private Label label2;
-        private Label label3;
-        private TextBox textBox2;
-        private Button button1;
-        private Button button2;
+        private Label lblEditEmployeeTitle;
+        private TextBox txtEditFullName;
+        private Label lblEditFullName;
+        private Label lblEditAddress;
+        private TextBox txtEditAddress;
+        private Button btnSave;
+        private Button btnCancel;
     }
 }

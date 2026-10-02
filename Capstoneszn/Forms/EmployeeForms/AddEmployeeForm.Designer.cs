@@ -28,180 +28,180 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBox1 = new TextBox();
-            panel1 = new Panel();
-            button2 = new Button();
-            button1 = new Button();
-            dateTimePicker1 = new DateTimePicker();
-            label3 = new Label();
-            textBox3 = new TextBox();
-            textBox4 = new TextBox();
-            textBox2 = new TextBox();
-            label4 = new Label();
-            label5 = new Label();
-            label6 = new Label();
-            label2 = new Label();
-            label1 = new Label();
-            panel1.SuspendLayout();
+            txtAddFullName = new TextBox();
+            AddEmployeeContent = new Panel();
+            btnCancel = new Button();
+            btnAdd = new Button();
+            dtpDate = new DateTimePicker();
+            lblAddEmployeeTitle = new Label();
+            txtAddPassword = new TextBox();
+            txtAddUsername = new TextBox();
+            txtAddAddress = new TextBox();
+            lblAddDateHired = new Label();
+            lblAddPassword = new Label();
+            lblAddUsername = new Label();
+            lblAddAddress = new Label();
+            lblAddFullName = new Label();
+            AddEmployeeContent.SuspendLayout();
             SuspendLayout();
             // 
-            // textBox1
+            // txtAddFullName
             // 
-            textBox1.Cursor = Cursors.IBeam;
-            textBox1.Font = new Font("Segoe UI", 12F);
-            textBox1.Location = new Point(66, 127);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(416, 40);
-            textBox1.TabIndex = 0;
+            txtAddFullName.Cursor = Cursors.IBeam;
+            txtAddFullName.Font = new Font("Segoe UI", 12F);
+            txtAddFullName.Location = new Point(66, 127);
+            txtAddFullName.Multiline = true;
+            txtAddFullName.Name = "txtAddFullName";
+            txtAddFullName.Size = new Size(416, 40);
+            txtAddFullName.TabIndex = 0;
             // 
-            // panel1
+            // AddEmployeeContent
             // 
-            panel1.Controls.Add(button2);
-            panel1.Controls.Add(button1);
-            panel1.Controls.Add(dateTimePicker1);
-            panel1.Controls.Add(label3);
-            panel1.Controls.Add(textBox3);
-            panel1.Controls.Add(textBox4);
-            panel1.Controls.Add(textBox2);
-            panel1.Controls.Add(label4);
-            panel1.Controls.Add(label5);
-            panel1.Controls.Add(label6);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(textBox1);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Padding = new Padding(20);
-            panel1.Size = new Size(548, 632);
-            panel1.TabIndex = 1;
+            AddEmployeeContent.Controls.Add(btnCancel);
+            AddEmployeeContent.Controls.Add(btnAdd);
+            AddEmployeeContent.Controls.Add(dtpDate);
+            AddEmployeeContent.Controls.Add(lblAddEmployeeTitle);
+            AddEmployeeContent.Controls.Add(txtAddPassword);
+            AddEmployeeContent.Controls.Add(txtAddUsername);
+            AddEmployeeContent.Controls.Add(txtAddAddress);
+            AddEmployeeContent.Controls.Add(lblAddDateHired);
+            AddEmployeeContent.Controls.Add(lblAddPassword);
+            AddEmployeeContent.Controls.Add(lblAddUsername);
+            AddEmployeeContent.Controls.Add(lblAddAddress);
+            AddEmployeeContent.Controls.Add(txtAddFullName);
+            AddEmployeeContent.Controls.Add(lblAddFullName);
+            AddEmployeeContent.Dock = DockStyle.Fill;
+            AddEmployeeContent.Location = new Point(0, 0);
+            AddEmployeeContent.Name = "AddEmployeeContent";
+            AddEmployeeContent.Padding = new Padding(20);
+            AddEmployeeContent.Size = new Size(548, 632);
+            AddEmployeeContent.TabIndex = 1;
             // 
-            // button2
+            // btnCancel
             // 
-            button2.Font = new Font("Segoe UI", 12F);
-            button2.Location = new Point(238, 566);
-            button2.Name = "button2";
-            button2.Size = new Size(119, 43);
-            button2.TabIndex = 4;
-            button2.Text = "Cancel";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            btnCancel.Font = new Font("Segoe UI", 12F);
+            btnCancel.Location = new Point(238, 566);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(119, 43);
+            btnCancel.TabIndex = 4;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += button2_Click;
             // 
-            // button1
+            // btnAdd
             // 
-            button1.Font = new Font("Segoe UI", 12F);
-            button1.Location = new Point(363, 566);
-            button1.Name = "button1";
-            button1.Size = new Size(119, 43);
-            button1.TabIndex = 4;
-            button1.Text = "Add";
-            button1.UseVisualStyleBackColor = true;
+            btnAdd.Font = new Font("Segoe UI", 12F);
+            btnAdd.Location = new Point(363, 566);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(119, 43);
+            btnAdd.TabIndex = 4;
+            btnAdd.Text = "Add";
+            btnAdd.UseVisualStyleBackColor = true;
             // 
-            // dateTimePicker1
+            // dtpDate
             // 
-            dateTimePicker1.Enabled = false;
-            dateTimePicker1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker1.Location = new Point(66, 311);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(416, 34);
-            dateTimePicker1.TabIndex = 3;
+            dtpDate.Enabled = false;
+            dtpDate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dtpDate.Location = new Point(66, 311);
+            dtpDate.Name = "dtpDate";
+            dtpDate.Size = new Size(416, 34);
+            dtpDate.TabIndex = 3;
             // 
-            // label3
+            // lblAddEmployeeTitle
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.White;
-            label3.Location = new Point(66, 20);
-            label3.Name = "label3";
-            label3.Size = new Size(388, 38);
-            label3.TabIndex = 2;
-            label3.Text = "Fill this form to add employee";
+            lblAddEmployeeTitle.AutoSize = true;
+            lblAddEmployeeTitle.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddEmployeeTitle.ForeColor = Color.White;
+            lblAddEmployeeTitle.Location = new Point(66, 20);
+            lblAddEmployeeTitle.Name = "lblAddEmployeeTitle";
+            lblAddEmployeeTitle.Size = new Size(388, 38);
+            lblAddEmployeeTitle.TabIndex = 2;
+            lblAddEmployeeTitle.Text = "Fill this form to add employee";
             // 
-            // textBox3
+            // txtAddPassword
             // 
-            textBox3.Font = new Font("Segoe UI", 12F);
-            textBox3.Location = new Point(66, 492);
-            textBox3.Multiline = true;
-            textBox3.Name = "textBox3";
-            textBox3.ReadOnly = true;
-            textBox3.Size = new Size(416, 40);
-            textBox3.TabIndex = 0;
+            txtAddPassword.Font = new Font("Segoe UI", 12F);
+            txtAddPassword.Location = new Point(66, 492);
+            txtAddPassword.Multiline = true;
+            txtAddPassword.Name = "txtAddPassword";
+            txtAddPassword.ReadOnly = true;
+            txtAddPassword.Size = new Size(416, 40);
+            txtAddPassword.TabIndex = 0;
             // 
-            // textBox4
+            // txtAddUsername
             // 
-            textBox4.Font = new Font("Segoe UI", 12F);
-            textBox4.Location = new Point(66, 397);
-            textBox4.Multiline = true;
-            textBox4.Name = "textBox4";
-            textBox4.PlaceholderText = " @Employee1";
-            textBox4.Size = new Size(416, 40);
-            textBox4.TabIndex = 0;
+            txtAddUsername.Font = new Font("Segoe UI", 12F);
+            txtAddUsername.Location = new Point(66, 397);
+            txtAddUsername.Multiline = true;
+            txtAddUsername.Name = "txtAddUsername";
+            txtAddUsername.PlaceholderText = " @Employee1";
+            txtAddUsername.Size = new Size(416, 40);
+            txtAddUsername.TabIndex = 0;
             // 
-            // textBox2
+            // txtAddAddress
             // 
-            textBox2.Cursor = Cursors.IBeam;
-            textBox2.Font = new Font("Segoe UI", 12F);
-            textBox2.Location = new Point(66, 219);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(416, 40);
-            textBox2.TabIndex = 0;
+            txtAddAddress.Cursor = Cursors.IBeam;
+            txtAddAddress.Font = new Font("Segoe UI", 12F);
+            txtAddAddress.Location = new Point(66, 219);
+            txtAddAddress.Multiline = true;
+            txtAddAddress.Name = "txtAddAddress";
+            txtAddAddress.Size = new Size(416, 40);
+            txtAddAddress.TabIndex = 0;
             // 
-            // label4
+            // lblAddDateHired
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.ForeColor = Color.White;
-            label4.Location = new Point(66, 280);
-            label4.Name = "label4";
-            label4.Size = new Size(106, 28);
-            label4.TabIndex = 1;
-            label4.Text = "Date Hired";
+            lblAddDateHired.AutoSize = true;
+            lblAddDateHired.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddDateHired.ForeColor = Color.White;
+            lblAddDateHired.Location = new Point(66, 280);
+            lblAddDateHired.Name = "lblAddDateHired";
+            lblAddDateHired.Size = new Size(106, 28);
+            lblAddDateHired.TabIndex = 1;
+            lblAddDateHired.Text = "Date Hired";
             // 
-            // label5
+            // lblAddPassword
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label5.ForeColor = Color.White;
-            label5.Location = new Point(66, 461);
-            label5.Name = "label5";
-            label5.Size = new Size(93, 28);
-            label5.TabIndex = 1;
-            label5.Text = "Password";
+            lblAddPassword.AutoSize = true;
+            lblAddPassword.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddPassword.ForeColor = Color.White;
+            lblAddPassword.Location = new Point(66, 461);
+            lblAddPassword.Name = "lblAddPassword";
+            lblAddPassword.Size = new Size(93, 28);
+            lblAddPassword.TabIndex = 1;
+            lblAddPassword.Text = "Password";
             // 
-            // label6
+            // lblAddUsername
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.ForeColor = Color.White;
-            label6.Location = new Point(66, 368);
-            label6.Name = "label6";
-            label6.Size = new Size(99, 28);
-            label6.TabIndex = 1;
-            label6.Text = "Username";
+            lblAddUsername.AutoSize = true;
+            lblAddUsername.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddUsername.ForeColor = Color.White;
+            lblAddUsername.Location = new Point(66, 368);
+            lblAddUsername.Name = "lblAddUsername";
+            lblAddUsername.Size = new Size(99, 28);
+            lblAddUsername.TabIndex = 1;
+            lblAddUsername.Text = "Username";
             // 
-            // label2
+            // lblAddAddress
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(66, 188);
-            label2.Name = "label2";
-            label2.Size = new Size(82, 28);
-            label2.TabIndex = 1;
-            label2.Text = "Address";
+            lblAddAddress.AutoSize = true;
+            lblAddAddress.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddAddress.ForeColor = Color.White;
+            lblAddAddress.Location = new Point(66, 188);
+            lblAddAddress.Name = "lblAddAddress";
+            lblAddAddress.Size = new Size(82, 28);
+            lblAddAddress.TabIndex = 1;
+            lblAddAddress.Text = "Address";
             // 
-            // label1
+            // lblAddFullName
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(66, 96);
-            label1.Name = "label1";
-            label1.Size = new Size(100, 28);
-            label1.TabIndex = 1;
-            label1.Text = "Full Name";
+            lblAddFullName.AutoSize = true;
+            lblAddFullName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddFullName.ForeColor = Color.White;
+            lblAddFullName.Location = new Point(66, 96);
+            lblAddFullName.Name = "lblAddFullName";
+            lblAddFullName.Size = new Size(100, 28);
+            lblAddFullName.TabIndex = 1;
+            lblAddFullName.Text = "Full Name";
             // 
             // AddEmployeeForm
             // 
@@ -209,7 +209,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             ClientSize = new Size(548, 632);
-            Controls.Add(panel1);
+            Controls.Add(AddEmployeeContent);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -218,26 +218,26 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AddEmployeeForm";
             Load += AddEmployeeForm_Load;
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            AddEmployeeContent.ResumeLayout(false);
+            AddEmployeeContent.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private TextBox textBox1;
-        private Panel panel1;
-        private Label label1;
-        private TextBox textBox2;
-        private Label label2;
-        private Label label3;
-        private DateTimePicker dateTimePicker1;
-        private TextBox textBox3;
-        private Label label4;
-        private Label label5;
-        private Button button2;
-        private Button button1;
-        private TextBox textBox4;
-        private Label label6;
+        private TextBox txtAddFullName;
+        private Panel AddEmployeeContent;
+        private Label lblAddFullName;
+        private TextBox txtAddAddress;
+        private Label lblAddAddress;
+        private Label lblAddEmployeeTitle;
+        private DateTimePicker dtpDate;
+        private TextBox txtAddPassword;
+        private Label lblAddDateHired;
+        private Label lblAddPassword;
+        private Button btnCancel;
+        private Button btnAdd;
+        private TextBox txtAddUsername;
+        private Label lblAddUsername;
     }
 }

@@ -77,7 +77,7 @@
             lblRoomNumber.Name = "lblRoomNumber";
             lblRoomNumber.Size = new Size(1160, 90);
             lblRoomNumber.TabIndex = 6;
-            lblRoomNumber.Text = "Room ###";
+            lblRoomNumber.Text = "Room 202";
             lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnBackRoomBilling
@@ -139,9 +139,9 @@
             lblTotalPaidValue.Location = new Point(244, 42);
             lblTotalPaidValue.Margin = new Padding(0);
             lblTotalPaidValue.Name = "lblTotalPaidValue";
-            lblTotalPaidValue.Size = new Size(70, 31);
+            lblTotalPaidValue.Size = new Size(62, 31);
             lblTotalPaidValue.TabIndex = 22;
-            lblTotalPaidValue.Text = "####";
+            lblTotalPaidValue.Text = "3000";
             lblTotalPaidValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblTotalPaidTitle
@@ -177,9 +177,9 @@
             lblCurrentDueValue.Location = new Point(223, 42);
             lblCurrentDueValue.Margin = new Padding(0);
             lblCurrentDueValue.Name = "lblCurrentDueValue";
-            lblCurrentDueValue.Size = new Size(70, 31);
+            lblCurrentDueValue.Size = new Size(62, 31);
             lblCurrentDueValue.TabIndex = 22;
-            lblCurrentDueValue.Text = "####";
+            lblCurrentDueValue.Text = "6000";
             lblCurrentDueValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblCurrentDueTitle
@@ -215,9 +215,9 @@
             lblTotalBillValue.Location = new Point(250, 42);
             lblTotalBillValue.Margin = new Padding(0);
             lblTotalBillValue.Name = "lblTotalBillValue";
-            lblTotalBillValue.Size = new Size(70, 31);
+            lblTotalBillValue.Size = new Size(62, 31);
             lblTotalBillValue.TabIndex = 22;
-            lblTotalBillValue.Text = "####";
+            lblTotalBillValue.Text = "3000";
             lblTotalBillValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblTotalBillTitle
