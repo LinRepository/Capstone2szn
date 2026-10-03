@@ -44,10 +44,15 @@ namespace Capstoneszn.UserControls
         public void SetStatusColor(string status)
         {
             Status = status;
-            // Matches your dashboard legend colors
-            if (status == "Available") this.BackColor = Color.LimeGreen;
-            else if (status == "Occupied") this.BackColor = Color.Crimson;
-            else if (status == "Maintenance") this.BackColor = Color.Gray;
+
+            // These must match the legend swatches in RoomsControl.Designer.cs
+            switch (status)
+            {
+                case "Available": this.BackColor = Color.Chartreuse; break;
+                case "Occupied": this.BackColor = Color.Crimson; break;
+                case "Maintenance": this.BackColor = Color.LightSlateGray; break;
+                default: this.BackColor = Color.White; break;  // Unconfigured
+            }
         }
 
         private void OnCardClicked(object sender, EventArgs e)

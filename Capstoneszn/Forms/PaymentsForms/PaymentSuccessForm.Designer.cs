@@ -36,21 +36,21 @@
             btnAnotherTransaction = new Button();
             btnPrintReceipt = new Button();
             pnlPaymentSuccessContent = new Panel();
-            pnlTransactionID = new Panel();
-            pnlDate = new Panel();
             pnlCategory = new Panel();
-            lblTransactionID = new Label();
-            lblDate = new Label();
-            lblCategory = new Label();
-            lblTransactionIDValue = new Label();
-            lblDateValue = new Label();
             lblCategoryValue = new Label();
+            lblCategory = new Label();
+            pnlDate = new Panel();
+            lblDateValue = new Label();
+            lblDate = new Label();
+            pnlTransactionID = new Panel();
+            lblTransactionIDValue = new Label();
+            lblTransactionID = new Label();
             pnlPaymentSuccessHeader.SuspendLayout();
             pnlPaymentSuccessActions.SuspendLayout();
             pnlPaymentSuccessContent.SuspendLayout();
-            pnlTransactionID.SuspendLayout();
-            pnlDate.SuspendLayout();
             pnlCategory.SuspendLayout();
+            pnlDate.SuspendLayout();
+            pnlTransactionID.SuspendLayout();
             SuspendLayout();
             // 
             // pnlPaymentSuccessHeader
@@ -110,6 +110,7 @@
             btnClose.TabIndex = 2;
             btnClose.Text = "Close";
             btnClose.UseVisualStyleBackColor = true;
+            btnClose.Click += btnClose_Click;
             // 
             // btnAnotherTransaction
             // 
@@ -119,6 +120,7 @@
             btnAnotherTransaction.TabIndex = 1;
             btnAnotherTransaction.Text = "Make Another Transaction";
             btnAnotherTransaction.UseVisualStyleBackColor = true;
+            btnAnotherTransaction.Click += btnAnotherTransaction_Click;
             // 
             // btnPrintReceipt
             // 
@@ -128,6 +130,7 @@
             btnPrintReceipt.TabIndex = 0;
             btnPrintReceipt.Text = "Print Receipt";
             btnPrintReceipt.UseVisualStyleBackColor = true;
+            btnPrintReceipt.Click += btnPrintReceipt_Click;
             // 
             // pnlPaymentSuccessContent
             // 
@@ -140,28 +143,6 @@
             pnlPaymentSuccessContent.Size = new Size(482, 263);
             pnlPaymentSuccessContent.TabIndex = 2;
             // 
-            // pnlTransactionID
-            // 
-            pnlTransactionID.BorderStyle = BorderStyle.FixedSingle;
-            pnlTransactionID.Controls.Add(lblTransactionIDValue);
-            pnlTransactionID.Controls.Add(lblTransactionID);
-            pnlTransactionID.Dock = DockStyle.Top;
-            pnlTransactionID.Location = new Point(0, 0);
-            pnlTransactionID.Name = "pnlTransactionID";
-            pnlTransactionID.Size = new Size(482, 85);
-            pnlTransactionID.TabIndex = 0;
-            // 
-            // pnlDate
-            // 
-            pnlDate.BorderStyle = BorderStyle.FixedSingle;
-            pnlDate.Controls.Add(lblDateValue);
-            pnlDate.Controls.Add(lblDate);
-            pnlDate.Dock = DockStyle.Top;
-            pnlDate.Location = new Point(0, 85);
-            pnlDate.Name = "pnlDate";
-            pnlDate.Size = new Size(482, 85);
-            pnlDate.TabIndex = 1;
-            // 
             // pnlCategory
             // 
             pnlCategory.BorderStyle = BorderStyle.FixedSingle;
@@ -173,31 +154,18 @@
             pnlCategory.Size = new Size(482, 85);
             pnlCategory.TabIndex = 2;
             // 
-            // lblTransactionID
+            // lblCategoryValue
             // 
-            lblTransactionID.AutoSize = true;
-            lblTransactionID.Font = new Font("Segoe UI", 13.2000008F);
-            lblTransactionID.ForeColor = Color.White;
-            lblTransactionID.ImageAlign = ContentAlignment.MiddleRight;
-            lblTransactionID.Location = new Point(3, 23);
-            lblTransactionID.Name = "lblTransactionID";
-            lblTransactionID.Size = new Size(158, 31);
-            lblTransactionID.TabIndex = 6;
-            lblTransactionID.Text = "Transaction ID";
-            lblTransactionID.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblDate
-            // 
-            lblDate.AutoSize = true;
-            lblDate.Font = new Font("Segoe UI", 13.2000008F);
-            lblDate.ForeColor = Color.White;
-            lblDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblDate.Location = new Point(3, 26);
-            lblDate.Name = "lblDate";
-            lblDate.Size = new Size(62, 31);
-            lblDate.TabIndex = 6;
-            lblDate.Text = "Date";
-            lblDate.TextAlign = ContentAlignment.MiddleCenter;
+            lblCategoryValue.AutoSize = true;
+            lblCategoryValue.Font = new Font("Segoe UI", 13.2000008F);
+            lblCategoryValue.ForeColor = Color.White;
+            lblCategoryValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblCategoryValue.Location = new Point(193, 28);
+            lblCategoryValue.Name = "lblCategoryValue";
+            lblCategoryValue.Size = new Size(23, 31);
+            lblCategoryValue.TabIndex = 8;
+            lblCategoryValue.Text = "-";
+            lblCategoryValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblCategory
             // 
@@ -212,18 +180,16 @@
             lblCategory.Text = "Category";
             lblCategory.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblTransactionIDValue
+            // pnlDate
             // 
-            lblTransactionIDValue.AutoSize = true;
-            lblTransactionIDValue.Font = new Font("Segoe UI", 13.2000008F);
-            lblTransactionIDValue.ForeColor = Color.White;
-            lblTransactionIDValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblTransactionIDValue.Location = new Point(193, 23);
-            lblTransactionIDValue.Name = "lblTransactionIDValue";
-            lblTransactionIDValue.Size = new Size(23, 31);
-            lblTransactionIDValue.TabIndex = 7;
-            lblTransactionIDValue.Text = "-";
-            lblTransactionIDValue.TextAlign = ContentAlignment.MiddleCenter;
+            pnlDate.BorderStyle = BorderStyle.FixedSingle;
+            pnlDate.Controls.Add(lblDateValue);
+            pnlDate.Controls.Add(lblDate);
+            pnlDate.Dock = DockStyle.Top;
+            pnlDate.Location = new Point(0, 85);
+            pnlDate.Name = "pnlDate";
+            pnlDate.Size = new Size(482, 85);
+            pnlDate.TabIndex = 1;
             // 
             // lblDateValue
             // 
@@ -238,18 +204,55 @@
             lblDateValue.Text = "-";
             lblDateValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblCategoryValue
+            // lblDate
             // 
-            lblCategoryValue.AutoSize = true;
-            lblCategoryValue.Font = new Font("Segoe UI", 13.2000008F);
-            lblCategoryValue.ForeColor = Color.White;
-            lblCategoryValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblCategoryValue.Location = new Point(193, 28);
-            lblCategoryValue.Name = "lblCategoryValue";
-            lblCategoryValue.Size = new Size(23, 31);
-            lblCategoryValue.TabIndex = 8;
-            lblCategoryValue.Text = "-";
-            lblCategoryValue.TextAlign = ContentAlignment.MiddleCenter;
+            lblDate.AutoSize = true;
+            lblDate.Font = new Font("Segoe UI", 13.2000008F);
+            lblDate.ForeColor = Color.White;
+            lblDate.ImageAlign = ContentAlignment.MiddleRight;
+            lblDate.Location = new Point(3, 26);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(62, 31);
+            lblDate.TabIndex = 6;
+            lblDate.Text = "Date";
+            lblDate.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlTransactionID
+            // 
+            pnlTransactionID.BorderStyle = BorderStyle.FixedSingle;
+            pnlTransactionID.Controls.Add(lblTransactionIDValue);
+            pnlTransactionID.Controls.Add(lblTransactionID);
+            pnlTransactionID.Dock = DockStyle.Top;
+            pnlTransactionID.Location = new Point(0, 0);
+            pnlTransactionID.Name = "pnlTransactionID";
+            pnlTransactionID.Size = new Size(482, 85);
+            pnlTransactionID.TabIndex = 0;
+            // 
+            // lblTransactionIDValue
+            // 
+            lblTransactionIDValue.AutoSize = true;
+            lblTransactionIDValue.Font = new Font("Segoe UI", 13.2000008F);
+            lblTransactionIDValue.ForeColor = Color.White;
+            lblTransactionIDValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblTransactionIDValue.Location = new Point(193, 23);
+            lblTransactionIDValue.Name = "lblTransactionIDValue";
+            lblTransactionIDValue.Size = new Size(23, 31);
+            lblTransactionIDValue.TabIndex = 7;
+            lblTransactionIDValue.Text = "-";
+            lblTransactionIDValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblTransactionID
+            // 
+            lblTransactionID.AutoSize = true;
+            lblTransactionID.Font = new Font("Segoe UI", 13.2000008F);
+            lblTransactionID.ForeColor = Color.White;
+            lblTransactionID.ImageAlign = ContentAlignment.MiddleRight;
+            lblTransactionID.Location = new Point(3, 23);
+            lblTransactionID.Name = "lblTransactionID";
+            lblTransactionID.Size = new Size(158, 31);
+            lblTransactionID.TabIndex = 6;
+            lblTransactionID.Text = "Transaction ID";
+            lblTransactionID.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // PaymentSuccessForm
             // 
@@ -266,16 +269,17 @@
             Name = "PaymentSuccessForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Payment Successful";
+            Load += PaymentSuccessForm_Load;
             pnlPaymentSuccessHeader.ResumeLayout(false);
             pnlPaymentSuccessHeader.PerformLayout();
             pnlPaymentSuccessActions.ResumeLayout(false);
             pnlPaymentSuccessContent.ResumeLayout(false);
-            pnlTransactionID.ResumeLayout(false);
-            pnlTransactionID.PerformLayout();
-            pnlDate.ResumeLayout(false);
-            pnlDate.PerformLayout();
             pnlCategory.ResumeLayout(false);
             pnlCategory.PerformLayout();
+            pnlDate.ResumeLayout(false);
+            pnlDate.PerformLayout();
+            pnlTransactionID.ResumeLayout(false);
+            pnlTransactionID.PerformLayout();
             ResumeLayout(false);
         }
 

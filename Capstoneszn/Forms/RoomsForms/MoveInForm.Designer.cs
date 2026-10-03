@@ -32,6 +32,7 @@
             lblMoveInDescription = new Label();
             lblMoveInTitle = new Label();
             pnlMoveInActions = new Panel();
+            btnClear = new Button();
             btnConfirmMoveIn = new Button();
             btnCancelMoveIn = new Button();
             pnlMoveInContent = new Panel();
@@ -53,7 +54,6 @@
             pnlFName = new Panel();
             lblFName = new Label();
             txtFName = new TextBox();
-            btnClear = new Button();
             pnlMoveInHeader.SuspendLayout();
             pnlMoveInActions.SuspendLayout();
             pnlMoveInContent.SuspendLayout();
@@ -117,6 +117,16 @@
             pnlMoveInActions.Name = "pnlMoveInActions";
             pnlMoveInActions.Size = new Size(582, 50);
             pnlMoveInActions.TabIndex = 1;
+            // 
+            // btnClear
+            // 
+            btnClear.Location = new Point(21, 10);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(94, 29);
+            btnClear.TabIndex = 2;
+            btnClear.Text = "Clear";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
             // 
             // btnConfirmMoveIn
             // 
@@ -217,11 +227,11 @@
             // txtContactNumber
             // 
             txtContactNumber.Cursor = Cursors.IBeam;
-            txtContactNumber.Dock = DockStyle.Fill;
-            txtContactNumber.Location = new Point(10, 10);
+            txtContactNumber.Dock = DockStyle.Right;
+            txtContactNumber.Location = new Point(213, 10);
             txtContactNumber.Multiline = true;
             txtContactNumber.Name = "txtContactNumber";
-            txtContactNumber.Size = new Size(558, 38);
+            txtContactNumber.Size = new Size(355, 38);
             txtContactNumber.TabIndex = 31;
             // 
             // pnlAddress
@@ -253,11 +263,11 @@
             // txtAddress
             // 
             txtAddress.Cursor = Cursors.IBeam;
-            txtAddress.Dock = DockStyle.Fill;
-            txtAddress.Location = new Point(10, 10);
+            txtAddress.Dock = DockStyle.Right;
+            txtAddress.Location = new Point(213, 10);
             txtAddress.Multiline = true;
             txtAddress.Name = "txtAddress";
-            txtAddress.Size = new Size(558, 38);
+            txtAddress.Size = new Size(355, 38);
             txtAddress.TabIndex = 38;
             // 
             // pnlLName
@@ -289,11 +299,11 @@
             // txtLName
             // 
             txtLName.Cursor = Cursors.IBeam;
-            txtLName.Dock = DockStyle.Fill;
-            txtLName.Location = new Point(10, 10);
+            txtLName.Dock = DockStyle.Right;
+            txtLName.Location = new Point(213, 10);
             txtLName.Multiline = true;
             txtLName.Name = "txtLName";
-            txtLName.Size = new Size(558, 38);
+            txtLName.Size = new Size(355, 38);
             txtLName.TabIndex = 37;
             // 
             // pnlMName
@@ -325,11 +335,11 @@
             // txtMName
             // 
             txtMName.Cursor = Cursors.IBeam;
-            txtMName.Dock = DockStyle.Fill;
-            txtMName.Location = new Point(10, 10);
+            txtMName.Dock = DockStyle.Right;
+            txtMName.Location = new Point(213, 10);
             txtMName.Multiline = true;
             txtMName.Name = "txtMName";
-            txtMName.Size = new Size(558, 38);
+            txtMName.Size = new Size(355, 38);
             txtMName.TabIndex = 36;
             // 
             // pnlFName
@@ -361,21 +371,12 @@
             // txtFName
             // 
             txtFName.Cursor = Cursors.IBeam;
-            txtFName.Dock = DockStyle.Fill;
-            txtFName.Location = new Point(10, 10);
+            txtFName.Dock = DockStyle.Right;
+            txtFName.Location = new Point(213, 10);
             txtFName.Multiline = true;
             txtFName.Name = "txtFName";
-            txtFName.Size = new Size(558, 38);
+            txtFName.Size = new Size(355, 38);
             txtFName.TabIndex = 30;
-            // 
-            // btnClear
-            // 
-            btnClear.Location = new Point(21, 10);
-            btnClear.Name = "btnClear";
-            btnClear.Size = new Size(94, 29);
-            btnClear.TabIndex = 2;
-            btnClear.Text = "Clear";
-            btnClear.UseVisualStyleBackColor = true;
             // 
             // MoveInForm
             // 

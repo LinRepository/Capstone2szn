@@ -32,8 +32,8 @@
             lblPaymentDescription = new Label();
             lblPaymentTitle = new Label();
             pnlPaymentActions = new Panel();
-            btnContinuePayment = new Button();
             btnClear = new Button();
+            btnContinuePayment = new Button();
             btnCancelPayment = new Button();
             pnlPaymentContent = new Panel();
             pnlAmountReferenceNumber = new Panel();
@@ -113,8 +113,8 @@
             // 
             // pnlPaymentActions
             // 
-            pnlPaymentActions.Controls.Add(btnContinuePayment);
             pnlPaymentActions.Controls.Add(btnClear);
+            pnlPaymentActions.Controls.Add(btnContinuePayment);
             pnlPaymentActions.Controls.Add(btnCancelPayment);
             pnlPaymentActions.Dock = DockStyle.Bottom;
             pnlPaymentActions.Location = new Point(0, 372);
@@ -122,6 +122,17 @@
             pnlPaymentActions.Name = "pnlPaymentActions";
             pnlPaymentActions.Size = new Size(782, 50);
             pnlPaymentActions.TabIndex = 1;
+            // 
+            // btnClear
+            // 
+            btnClear.Cursor = Cursors.Hand;
+            btnClear.Location = new Point(34, 11);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(94, 29);
+            btnClear.TabIndex = 2;
+            btnClear.Text = "Clear";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
             // 
             // btnContinuePayment
             // 
@@ -133,17 +144,6 @@
             btnContinuePayment.Text = "Confirm";
             btnContinuePayment.UseVisualStyleBackColor = true;
             btnContinuePayment.Click += btnContinuePayment_Click;
-            // 
-            // btnClear
-            // 
-            btnClear.Cursor = Cursors.Hand;
-            btnClear.Location = new Point(22, 11);
-            btnClear.Name = "btnClear";
-            btnClear.Size = new Size(94, 29);
-            btnClear.TabIndex = 0;
-            btnClear.Text = "Clear";
-            btnClear.UseVisualStyleBackColor = true;
-            btnClear.Click += btnCancelPayment_Click;
             // 
             // btnCancelPayment
             // 
@@ -198,7 +198,6 @@
             txtAmountValue.TabIndex = 10;
             txtAmountValue.Text = "₱****";
             txtAmountValue.TextAlign = HorizontalAlignment.Center;
-            txtAmountValue.Visible = false;
             // 
             // lblPaymentAmount
             // 
@@ -497,10 +496,10 @@
         private Panel pnlPaymentMethodOptions;
         private RadioButton RadioBtnGCash;
         private RadioButton RadioBtnCash;
-        private Button btnClear;
         private Label lblPaymentAmount;
         private TextBox txtReferenceNumber;
         private Label lblReferenceNumber;
         private TextBox txtAmountValue;
+        private Button btnClear;
     }
 }

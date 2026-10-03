@@ -88,7 +88,7 @@ namespace Capstoneszn.UserControls
                                 string rNum = reader.GetString(0);
                                 string rStatus = reader.GetString(1);
                                 _currentCapacity = reader.GetInt32(2);
-                                string rType = reader.GetString(3);
+                                string rType = reader.IsDBNull(3) ? "" : reader.GetString(3);
                                 decimal rPrice = reader.GetDecimal(4);
                                 _floorId = reader.GetInt32(5);
 
@@ -159,7 +159,14 @@ namespace Capstoneszn.UserControls
 
         private void btnMoveIn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Opening Move In form...");
+            using (MoveInForm moveIn = new MoveInForm(_roomId))
+            {
+                if (moveIn.ShowDialog() == DialogResult.OK)
+                {
+                    LoadRoomData();
+                    this.DialogResult = DialogResult.OK;
+                }
+            }
         }
 
         private void btnMoveOut_Click(object sender, EventArgs e)
@@ -247,7 +254,7 @@ namespace Capstoneszn.UserControls
                     }
 
                     // Update the room
-                    string updateQuery = "UPDATE Rooms SET RoomNumber = @num, Capacity = @cap, RoomType = @type, RoomPrice = @price WHERE RoomId = @rId";
+                    string updateQuery = @" UPDATE Rooms SET RoomNumber = @num, Capacity   = @cap, RoomType   = @type, RoomPrice  = @price, Status     = CASE WHEN Status = 'Unconfigured' THEN 'Available' ELSE Status END WHERE RoomId = @rId";
                     using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@num", newRoomNum);

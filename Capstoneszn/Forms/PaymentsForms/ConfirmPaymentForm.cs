@@ -14,10 +14,17 @@ namespace Capstoneszn.Forms
     public partial class ConfirmPaymentForm : Form
     {
 
-        public ConfirmPaymentForm()
+        public ConfirmPaymentForm(DateTime date, string category, string paymentType, string method, string referenceNo, decimal amount)
         {
             InitializeComponent();
 
+            lblConfirmDateValue.Text = date.ToString("MMMM d, yyyy");
+            lblConfirmCategoryValue.Text = category;
+            lblConfirmPaymentTypeValue.Text = paymentType;
+            lblConfirmPaymentMethodValue.Text = method;
+            lblConfirmReferenceValue.Text =
+                string.IsNullOrWhiteSpace(referenceNo) ? "N/A" : referenceNo;
+            lblConfirmAmountValue.Text = "₱" + amount.ToString("N2");
         }
 
         private void ConfirmPaymentForm_Load(object sender, EventArgs e)
@@ -33,7 +40,8 @@ namespace Capstoneszn.Forms
 
         private void btnConfirmPayment_Click(object sender, EventArgs e)
         {
-            
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

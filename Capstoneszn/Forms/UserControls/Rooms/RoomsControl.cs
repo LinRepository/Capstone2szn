@@ -76,7 +76,7 @@ namespace Capstoneszn.UserControls
                         flpFloorRooms.MaximumSize = new Size(maxWidth, 0);
 
                         // 3. Get all active rooms for THIS specific floor (Includes the Length Sort fix!)
-                        string roomQuery = "SELECT RoomId, RoomNumber, Status, Capacity FROM Rooms WHERE FloorId = @fId AND Status != 'Archived' ORDER BY LEN(RoomNumber) ASC, RoomNumber ASC";
+                        string roomQuery = @" SELECT r.RoomId, r.RoomNumber, r.Status, r.Capacity, (SELECT COUNT(*) FROM Tenants t WHERE t.RoomId = r.RoomId AND t.Status = 'Active' AND t.IsArchived = 0) AS TenantCount FROM Rooms r WHERE r.FloorId = @fId AND r.IsArchived = 0 ORDER BY LEN(r.RoomNumber) ASC, r.RoomNumber ASC";
                         using (SqlCommand cmdRoom = new SqlCommand(roomQuery, conn))
                         {
                             cmdRoom.Parameters.AddWithValue("@fId", floorId);
@@ -90,7 +90,8 @@ namespace Capstoneszn.UserControls
                                     card.SetStatusColor(reader.GetString(2));
 
                                     int capacity = reader.GetInt32(3);
-                                    card.Occupancy = "0/" + capacity;
+                                    int tenantCount = reader.GetInt32(4);
+                                    card.Occupancy = tenantCount + "/" + capacity;
 
                                     card.CardClicked += RoomCard_Clicked;
 
@@ -128,6 +129,7 @@ namespace Capstoneszn.UserControls
             }
         }
 
+        
 
         private void RoomsControl_Load(object sender, EventArgs e)
         {
