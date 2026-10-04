@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Capstoneszn.Forms
 {
@@ -115,6 +116,12 @@ namespace Capstoneszn.Forms
 
             int selectedFloorId = (int)cboFloor.SelectedValue;
 
+
+            // Single rooms are complete on creation; shared rooms need a capacity first
+            bool isSingle = (roomType == "Single Room");
+            int capacity = isSingle ? 1 : 0;
+            string status = isSingle ? "Available" : "Unconfigured";
+
             // 3. Database Check & Insertion
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             {
@@ -144,13 +151,15 @@ namespace Capstoneszn.Forms
                     }
 
                     // --- SAVE NEW ROOM ---
-                    string insertQuery = "INSERT INTO Rooms (FloorId, RoomNumber, RoomType, RoomPrice) VALUES (@floorId, @roomNum, @type, @price)";
+                    string insertQuery = @" INSERT INTO Rooms (FloorId, RoomNumber, RoomType, RoomPrice, Capacity, Status) VALUES (@floorId, @roomNum, @type, @price, @cap, @status)";
                     using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@floorId", selectedFloorId);
                         cmd.Parameters.AddWithValue("@roomNum", roomNumber);
                         cmd.Parameters.AddWithValue("@type", roomType);
                         cmd.Parameters.AddWithValue("@price", roomPrice);
+                        cmd.Parameters.AddWithValue("@cap", capacity);
+                        cmd.Parameters.AddWithValue("@status", status);
                         cmd.ExecuteNonQuery();
                     }
 

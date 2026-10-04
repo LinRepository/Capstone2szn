@@ -82,6 +82,7 @@
             btnConfirmAddRoom.TabIndex = 1;
             btnConfirmAddRoom.Text = "Add Room";
             btnConfirmAddRoom.UseVisualStyleBackColor = true;
+            btnConfirmAddRoom.Click += btnConfirmAddRoom_Click;
             // 
             // btnCancelAddRoom
             // 
@@ -91,6 +92,7 @@
             btnCancelAddRoom.TabIndex = 0;
             btnCancelAddRoom.Text = "Cancel";
             btnCancelAddRoom.UseVisualStyleBackColor = true;
+            btnCancelAddRoom.Click += btnCancelAddRoom_Click;
             // 
             // pnlAddRoomContent
             // 

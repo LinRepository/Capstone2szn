@@ -181,7 +181,7 @@
             lblRoomStatus.Location = new Point(270, 0);
             lblRoomStatus.Margin = new Padding(0);
             lblRoomStatus.Name = "lblRoomStatus";
-            lblRoomStatus.Size = new Size(85, 78);
+            lblRoomStatus.Size = new Size(100, 78);
             lblRoomStatus.TabIndex = 33;
             lblRoomStatus.Text = "Status";
             lblRoomStatus.TextAlign = ContentAlignment.MiddleCenter;
@@ -467,6 +467,7 @@
             cboRoomType.Name = "cboRoomType";
             cboRoomType.Size = new Size(250, 38);
             cboRoomType.TabIndex = 34;
+            cboRoomType.SelectedIndexChanged += cboRoomType_SelectedIndexChanged_1;
             // 
             // pnlRoomPricelbl
             // 

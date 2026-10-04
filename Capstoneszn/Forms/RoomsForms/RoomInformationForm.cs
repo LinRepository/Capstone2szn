@@ -51,18 +51,20 @@ namespace Capstoneszn.UserControls
         // --- UI STATE MANAGEMENT ---
         private void ToggleEditMode(bool isEdit)
         {
-            // Toggle Edit Fields - The FlowLayoutPanel automatically slides them up and down!
             pnlSetRoom.Visible = isEdit;
-            pnlSetCapacity.Visible = isEdit;
-            pnlRoomType.Visible = isEdit;
-            pnlRoomTypescbo.Visible = isEdit;
             pnlRoomPricelbl.Visible = isEdit;
             pnlRoomPrice.Visible = isEdit;
 
-            // Toggle the entire bottom action panel instead of individual buttons
+            // Type can only change while nobody lives here
+            bool canChangeType = isEdit && _currentTenantCount == 0;
+            pnlRoomType.Visible = canChangeType;
+            pnlRoomTypescbo.Visible = canChangeType;
+
+            // Capacity is a shared-room concept
+            pnlSetCapacity.Visible = isEdit && cboRoomType.Text == "Shared Room";
+
             pnlActionButtons.Visible = isEdit;
 
-            // Toggle top action buttons
             btnEdit.Visible = !isEdit;
             btnMoveIn.Visible = !isEdit;
             btnMoveOut.Visible = !isEdit;
@@ -205,7 +207,14 @@ namespace Capstoneszn.UserControls
         {
             string newRoomNum = txtSetRoom.Text.Trim();
             string newType = cboRoomType.Text;
-            int newCapacity = (int)nudSetCapacity.Value;
+            int newCapacity = (newType == "Single Room") ? 1 : (int)nudSetCapacity.Value;
+
+            if (newType == "Shared Room" && newCapacity < 1)
+            {
+                MessageBox.Show("Please set a capacity for this shared room.",
+                    "Capacity Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             // 1. Basic Validation
             if (string.IsNullOrEmpty(newRoomNum) || string.IsNullOrEmpty(txtRoomPrice.Text))
@@ -278,6 +287,17 @@ namespace Capstoneszn.UserControls
                     MessageBox.Show("Error saving changes: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void cboRoomType_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            bool isShared = cboRoomType.Text == "Shared Room";
+
+            if (pnlActionButtons.Visible)      // only while editing
+                pnlSetCapacity.Visible = isShared;
+
+            if (!isShared)
+                nudSetCapacity.Value = 1;
         }
     }
 }

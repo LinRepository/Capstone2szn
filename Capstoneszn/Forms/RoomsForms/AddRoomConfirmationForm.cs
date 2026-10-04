@@ -21,5 +21,15 @@ namespace Capstoneszn.Forms
         {
 
         }
+
+        private void btnCancelAddRoom_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnConfirmAddRoom_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
