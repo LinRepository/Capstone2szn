@@ -223,6 +223,7 @@
             pnlReferenceNumber.Name = "pnlReferenceNumber";
             pnlReferenceNumber.Size = new Size(375, 82);
             pnlReferenceNumber.TabIndex = 0;
+            pnlReferenceNumber.Paint += pnlReferenceNumber_Paint;
             // 
             // txtReferenceNumber
             // 
@@ -232,6 +233,7 @@
             txtReferenceNumber.Size = new Size(369, 27);
             txtReferenceNumber.TabIndex = 9;
             txtReferenceNumber.Visible = false;
+            txtReferenceNumber.TextChanged += txtReferenceNumber_TextChanged;
             // 
             // lblReferenceNumber
             // 
@@ -367,6 +369,7 @@
             RadioBtnGCash.TabStop = true;
             RadioBtnGCash.Text = "Gcash";
             RadioBtnGCash.UseVisualStyleBackColor = true;
+            RadioBtnGCash.CheckedChanged += RadioBtnGCash_CheckedChanged;
             // 
             // RadioBtnCash
             // 
