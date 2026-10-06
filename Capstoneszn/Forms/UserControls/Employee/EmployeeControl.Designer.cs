@@ -217,6 +217,7 @@
             dgvEmployee.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvEmployee.Size = new Size(1268, 533);
             dgvEmployee.TabIndex = 0;
+            dgvEmployee.CellContentClick += dgvEmployee_CellContentClick;
             // 
             // colEmployeeID
             // 
@@ -278,6 +279,7 @@
             Name = "EmployeeControl";
             Padding = new Padding(10);
             Size = new Size(1300, 750);
+            Load += EmployeeControl_Load;
             pnlEmployeeHeader.ResumeLayout(false);
             pnlContentHeaderEmployee.ResumeLayout(false);
             pnlActiveEmployee.ResumeLayout(false);

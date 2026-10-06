@@ -97,6 +97,7 @@
             btnAdd.TabIndex = 4;
             btnAdd.Text = "Add";
             btnAdd.UseVisualStyleBackColor = true;
+            btnAdd.Click += btnAdd_Click;
             // 
             // dtpDate
             // 
@@ -124,7 +125,6 @@
             txtAddPassword.Location = new Point(66, 492);
             txtAddPassword.Multiline = true;
             txtAddPassword.Name = "txtAddPassword";
-            txtAddPassword.ReadOnly = true;
             txtAddPassword.Size = new Size(416, 40);
             txtAddPassword.TabIndex = 0;
             // 
