@@ -209,13 +209,40 @@ namespace Capstoneszn.Forms
                             newTenantId = (int)cmd.ExecuteScalar();
                         }
 
+                        // 2b. Anchor the billing cycle and create the first bill
+                        DateTime start = _data.DateOccupied;
+
+                        using (var cmd = new SqlCommand(
+                            @"UPDATE Rooms SET BillingAnchorDate = @start
+                              WHERE RoomId = @rid AND BillingAnchorDate IS NULL;", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
+                            cmd.Parameters.AddWithValue("@start", start);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        int billId;
+                        using (var cmd = new SqlCommand(
+                            @"INSERT INTO Bills (RoomId, BillingPeriodStart, BillingPeriodEnd, DueDate, Amount)
+                              VALUES (@rid, @start,
+                                      DATEADD(DAY, -1, DATEADD(MONTH, 1, @start)),
+                                      @start, @amt);
+                              SELECT CAST(SCOPE_IDENTITY() AS INT);", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
+                            cmd.Parameters.AddWithValue("@start", start);
+                            cmd.Parameters.AddWithValue("@amt", amount);
+                            billId = (int)cmd.ExecuteScalar();
+                        }
+
                         // 3. Insert payment
-                        string paySql = @" INSERT INTO Payments (TenantId, RoomId, ReceiptNo, PaymentCategory, PaymentType, Amount, PaymentMethod, ReferenceNo, PaymentDate) VALUES (@tid, @rid, @rcpt, @cat, @type, @amt, @method, @ref, @pdate);";
+                        string paySql = @" INSERT INTO Payments (TenantId, RoomId, BillId, ReceiptNo, PaymentCategory, PaymentType, Amount, PaymentMethod, ReferenceNo, PaymentDate) VALUES (@tid, @rid, @bill, @rcpt, @cat, @type, @amt, @method, @ref, @pdate);";
 
                         using (var cmd = new SqlCommand(paySql, conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@tid", newTenantId);
                             cmd.Parameters.AddWithValue("@rid", _data.RoomId);
+                            cmd.Parameters.AddWithValue("@bill", billId);
                             cmd.Parameters.AddWithValue("@rcpt", receiptNo);
                             cmd.Parameters.AddWithValue("@cat", cboPaymentCategory.Text);
                             cmd.Parameters.AddWithValue("@type", cboPaymentType.Text);
@@ -225,6 +252,23 @@ namespace Capstoneszn.Forms
                                 string.IsNullOrWhiteSpace(refNo)
                                     ? (object)DBNull.Value : refNo);
                             cmd.Parameters.AddWithValue("@pdate", dtpPaymentDate.Value.Date);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // 3b. Recompute the bill from its payments
+                        using (var cmd = new SqlCommand(
+                            @"UPDATE Bills
+                              SET AmountPaid = ISNULL((SELECT SUM(p.Amount) FROM Payments p
+                                                       WHERE p.BillId = Bills.BillId), 0),
+                                  Status = CASE
+                                      WHEN ISNULL((SELECT SUM(p.Amount) FROM Payments p
+                                                   WHERE p.BillId = Bills.BillId), 0) >= Amount THEN 'Paid'
+                                      WHEN ISNULL((SELECT SUM(p.Amount) FROM Payments p
+                                                   WHERE p.BillId = Bills.BillId), 0) > 0 THEN 'Partially Paid'
+                                      ELSE 'Unpaid' END
+                              WHERE BillId = @bid;", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@bid", billId);
                             cmd.ExecuteNonQuery();
                         }
 
