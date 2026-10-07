@@ -57,7 +57,6 @@
             lblUtilitiesBill = new Label();
             lblMaintenanceBillValue = new Label();
             lblMaintenanceBill = new Label();
-            lblRentBillValue = new Label();
             lblRentBill = new Label();
             pnlBillingSummaryHeader = new Panel();
             lblBillingSummary = new Label();
@@ -81,6 +80,9 @@
             lblTenantDetailsTitle = new Label();
             btnCloseTenantDetails = new Button();
             btnEditTenant = new Button();
+            lblRentBillValue = new Label();
+            lblAvaialbleBalance = new Label();
+            lblAvailableBalanceValue = new Label();
             pnlSearch.SuspendLayout();
             pnlSearchContent.SuspendLayout();
             pnlSearchContainer.SuspendLayout();
@@ -313,25 +315,28 @@
             tblBillingSummary.ColumnCount = 2;
             tblBillingSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tblBillingSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-            tblBillingSummary.Controls.Add(lblWaterBillValue, 1, 4);
-            tblBillingSummary.Controls.Add(lblWaterBill, 0, 4);
-            tblBillingSummary.Controls.Add(lblElectricityBillValue, 1, 3);
-            tblBillingSummary.Controls.Add(lblElectricityBill, 0, 3);
-            tblBillingSummary.Controls.Add(lblUtilitiesBillValue, 1, 2);
-            tblBillingSummary.Controls.Add(lblUtilitiesBill, 0, 2);
-            tblBillingSummary.Controls.Add(lblMaintenanceBillValue, 1, 1);
-            tblBillingSummary.Controls.Add(lblMaintenanceBill, 0, 1);
-            tblBillingSummary.Controls.Add(lblRentBillValue, 1, 0);
-            tblBillingSummary.Controls.Add(lblRentBill, 0, 0);
+            tblBillingSummary.Controls.Add(lblAvailableBalanceValue, 1, 0);
+            tblBillingSummary.Controls.Add(lblAvaialbleBalance, 0, 0);
+            tblBillingSummary.Controls.Add(lblWaterBill, 0, 5);
+            tblBillingSummary.Controls.Add(lblWaterBillValue, 1, 5);
+            tblBillingSummary.Controls.Add(lblElectricityBill, 0, 4);
+            tblBillingSummary.Controls.Add(lblElectricityBillValue, 1, 4);
+            tblBillingSummary.Controls.Add(lblUtilitiesBill, 0, 3);
+            tblBillingSummary.Controls.Add(lblUtilitiesBillValue, 1, 3);
+            tblBillingSummary.Controls.Add(lblMaintenanceBill, 0, 2);
+            tblBillingSummary.Controls.Add(lblMaintenanceBillValue, 1, 2);
+            tblBillingSummary.Controls.Add(lblRentBill, 0, 1);
+            tblBillingSummary.Controls.Add(lblRentBillValue, 1, 1);
             tblBillingSummary.Dock = DockStyle.Fill;
             tblBillingSummary.Location = new Point(0, 40);
             tblBillingSummary.Name = "tblBillingSummary";
-            tblBillingSummary.RowCount = 5;
-            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tblBillingSummary.RowCount = 6;
+            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tblBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             tblBillingSummary.Size = new Size(365, 181);
             tblBillingSummary.TabIndex = 12;
             // 
@@ -341,7 +346,7 @@
             lblWaterBillValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblWaterBillValue.ForeColor = Color.White;
             lblWaterBillValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblWaterBillValue.Location = new Point(149, 144);
+            lblWaterBillValue.Location = new Point(149, 150);
             lblWaterBillValue.Name = "lblWaterBillValue";
             lblWaterBillValue.Size = new Size(19, 25);
             lblWaterBillValue.TabIndex = 12;
@@ -354,7 +359,7 @@
             lblWaterBill.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblWaterBill.ForeColor = Color.White;
             lblWaterBill.ImageAlign = ContentAlignment.MiddleRight;
-            lblWaterBill.Location = new Point(3, 144);
+            lblWaterBill.Location = new Point(3, 150);
             lblWaterBill.Name = "lblWaterBill";
             lblWaterBill.Size = new Size(85, 25);
             lblWaterBill.TabIndex = 11;
@@ -367,7 +372,7 @@
             lblElectricityBillValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblElectricityBillValue.ForeColor = Color.White;
             lblElectricityBillValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityBillValue.Location = new Point(149, 108);
+            lblElectricityBillValue.Location = new Point(149, 120);
             lblElectricityBillValue.Name = "lblElectricityBillValue";
             lblElectricityBillValue.Size = new Size(19, 25);
             lblElectricityBillValue.TabIndex = 10;
@@ -380,7 +385,7 @@
             lblElectricityBill.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblElectricityBill.ForeColor = Color.White;
             lblElectricityBill.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityBill.Location = new Point(3, 108);
+            lblElectricityBill.Location = new Point(3, 120);
             lblElectricityBill.Name = "lblElectricityBill";
             lblElectricityBill.Size = new Size(112, 25);
             lblElectricityBill.TabIndex = 9;
@@ -393,7 +398,7 @@
             lblUtilitiesBillValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUtilitiesBillValue.ForeColor = Color.White;
             lblUtilitiesBillValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblUtilitiesBillValue.Location = new Point(149, 72);
+            lblUtilitiesBillValue.Location = new Point(149, 90);
             lblUtilitiesBillValue.Name = "lblUtilitiesBillValue";
             lblUtilitiesBillValue.Size = new Size(19, 25);
             lblUtilitiesBillValue.TabIndex = 8;
@@ -406,7 +411,7 @@
             lblUtilitiesBill.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUtilitiesBill.ForeColor = Color.White;
             lblUtilitiesBill.ImageAlign = ContentAlignment.MiddleRight;
-            lblUtilitiesBill.Location = new Point(3, 72);
+            lblUtilitiesBill.Location = new Point(3, 90);
             lblUtilitiesBill.Name = "lblUtilitiesBill";
             lblUtilitiesBill.Size = new Size(96, 25);
             lblUtilitiesBill.TabIndex = 7;
@@ -419,7 +424,7 @@
             lblMaintenanceBillValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblMaintenanceBillValue.ForeColor = Color.White;
             lblMaintenanceBillValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblMaintenanceBillValue.Location = new Point(149, 36);
+            lblMaintenanceBillValue.Location = new Point(149, 60);
             lblMaintenanceBillValue.Name = "lblMaintenanceBillValue";
             lblMaintenanceBillValue.Size = new Size(19, 25);
             lblMaintenanceBillValue.TabIndex = 6;
@@ -432,25 +437,12 @@
             lblMaintenanceBill.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblMaintenanceBill.ForeColor = Color.White;
             lblMaintenanceBill.ImageAlign = ContentAlignment.MiddleRight;
-            lblMaintenanceBill.Location = new Point(3, 36);
+            lblMaintenanceBill.Location = new Point(3, 60);
             lblMaintenanceBill.Name = "lblMaintenanceBill";
             lblMaintenanceBill.Size = new Size(139, 25);
             lblMaintenanceBill.TabIndex = 5;
             lblMaintenanceBill.Text = "Maintenance Bill";
             lblMaintenanceBill.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblRentBillValue
-            // 
-            lblRentBillValue.AutoSize = true;
-            lblRentBillValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRentBillValue.ForeColor = Color.White;
-            lblRentBillValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblRentBillValue.Location = new Point(149, 0);
-            lblRentBillValue.Name = "lblRentBillValue";
-            lblRentBillValue.Size = new Size(19, 25);
-            lblRentBillValue.TabIndex = 3;
-            lblRentBillValue.Text = "-";
-            lblRentBillValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblRentBill
             // 
@@ -458,7 +450,7 @@
             lblRentBill.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRentBill.ForeColor = Color.White;
             lblRentBill.ImageAlign = ContentAlignment.MiddleRight;
-            lblRentBill.Location = new Point(3, 0);
+            lblRentBill.Location = new Point(3, 30);
             lblRentBill.Name = "lblRentBill";
             lblRentBill.Size = new Size(74, 25);
             lblRentBill.TabIndex = 4;
@@ -772,6 +764,45 @@
             btnEditTenant.UseVisualStyleBackColor = true;
             btnEditTenant.Click += btnEditTenant_Click;
             // 
+            // lblRentBillValue
+            // 
+            lblRentBillValue.AutoSize = true;
+            lblRentBillValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRentBillValue.ForeColor = Color.White;
+            lblRentBillValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblRentBillValue.Location = new Point(149, 30);
+            lblRentBillValue.Name = "lblRentBillValue";
+            lblRentBillValue.Size = new Size(19, 25);
+            lblRentBillValue.TabIndex = 3;
+            lblRentBillValue.Text = "-";
+            lblRentBillValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblAvaialbleBalance
+            // 
+            lblAvaialbleBalance.AutoSize = true;
+            lblAvaialbleBalance.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAvaialbleBalance.ForeColor = Color.White;
+            lblAvaialbleBalance.ImageAlign = ContentAlignment.MiddleRight;
+            lblAvaialbleBalance.Location = new Point(3, 0);
+            lblAvaialbleBalance.Name = "lblAvaialbleBalance";
+            lblAvaialbleBalance.Size = new Size(83, 30);
+            lblAvaialbleBalance.TabIndex = 13;
+            lblAvaialbleBalance.Text = "Available Balance";
+            lblAvaialbleBalance.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblAvailableBalanceValue
+            // 
+            lblAvailableBalanceValue.AutoSize = true;
+            lblAvailableBalanceValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAvailableBalanceValue.ForeColor = Color.White;
+            lblAvailableBalanceValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblAvailableBalanceValue.Location = new Point(149, 0);
+            lblAvailableBalanceValue.Name = "lblAvailableBalanceValue";
+            lblAvailableBalanceValue.Size = new Size(19, 25);
+            lblAvailableBalanceValue.TabIndex = 14;
+            lblAvailableBalanceValue.Text = "-";
+            lblAvailableBalanceValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // TenantsControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -845,7 +876,6 @@
         private Label lblUtilitiesBill;
         private Label lblMaintenanceBillValue;
         private Label lblMaintenanceBill;
-        private Label lblRentBillValue;
         private Label lblRentBill;
         private Label lblContactNumberTitle;
         private Label lblAddressTitle;
@@ -857,5 +887,8 @@
         private Label lblLastNameValue;
         private Label lblMiddleNameValue;
         private Label lblFirstNameValue;
+        private Label lblRentBillValue;
+        private Label lblAvailableBalanceValue;
+        private Label lblAvaialbleBalance;
     }
 }

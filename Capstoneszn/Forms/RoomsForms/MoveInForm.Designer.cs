@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             pnlMoveInHeader = new Panel();
-            lblMoveInDescription = new Label();
             lblMoveInTitle = new Label();
             pnlMoveInActions = new Panel();
             btnClear = new Button();
@@ -68,28 +67,13 @@
             // pnlMoveInHeader
             // 
             pnlMoveInHeader.BorderStyle = BorderStyle.FixedSingle;
-            pnlMoveInHeader.Controls.Add(lblMoveInDescription);
             pnlMoveInHeader.Controls.Add(lblMoveInTitle);
             pnlMoveInHeader.Dock = DockStyle.Top;
             pnlMoveInHeader.Location = new Point(0, 0);
             pnlMoveInHeader.Margin = new Padding(0);
             pnlMoveInHeader.Name = "pnlMoveInHeader";
-            pnlMoveInHeader.Size = new Size(582, 75);
+            pnlMoveInHeader.Size = new Size(582, 45);
             pnlMoveInHeader.TabIndex = 0;
-            // 
-            // lblMoveInDescription
-            // 
-            lblMoveInDescription.Dock = DockStyle.Bottom;
-            lblMoveInDescription.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblMoveInDescription.ForeColor = Color.White;
-            lblMoveInDescription.ImageAlign = ContentAlignment.MiddleRight;
-            lblMoveInDescription.Location = new Point(0, 37);
-            lblMoveInDescription.Margin = new Padding(0);
-            lblMoveInDescription.Name = "lblMoveInDescription";
-            lblMoveInDescription.Size = new Size(580, 36);
-            lblMoveInDescription.TabIndex = 26;
-            lblMoveInDescription.Text = "Enter the tenant information below";
-            lblMoveInDescription.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblMoveInTitle
             // 
@@ -112,7 +96,7 @@
             pnlMoveInActions.Controls.Add(btnConfirmMoveIn);
             pnlMoveInActions.Controls.Add(btnCancelMoveIn);
             pnlMoveInActions.Dock = DockStyle.Bottom;
-            pnlMoveInActions.Location = new Point(0, 433);
+            pnlMoveInActions.Location = new Point(0, 413);
             pnlMoveInActions.Margin = new Padding(0);
             pnlMoveInActions.Name = "pnlMoveInActions";
             pnlMoveInActions.Size = new Size(582, 50);
@@ -120,7 +104,7 @@
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(21, 10);
+            btnClear.Location = new Point(231, 10);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(94, 29);
             btnClear.TabIndex = 2;
@@ -160,9 +144,9 @@
             pnlMoveInContent.Controls.Add(pnlMName);
             pnlMoveInContent.Controls.Add(pnlFName);
             pnlMoveInContent.Dock = DockStyle.Fill;
-            pnlMoveInContent.Location = new Point(0, 75);
+            pnlMoveInContent.Location = new Point(0, 45);
             pnlMoveInContent.Name = "pnlMoveInContent";
-            pnlMoveInContent.Size = new Size(582, 358);
+            pnlMoveInContent.Size = new Size(582, 368);
             pnlMoveInContent.TabIndex = 2;
             // 
             // pnlDate
@@ -173,7 +157,7 @@
             pnlDate.Dock = DockStyle.Fill;
             pnlDate.Location = new Point(0, 300);
             pnlDate.Name = "pnlDate";
-            pnlDate.Size = new Size(580, 56);
+            pnlDate.Size = new Size(580, 66);
             pnlDate.TabIndex = 48;
             // 
             // dtpMoveInDate
@@ -186,14 +170,13 @@
             // 
             // lblMoveInDate
             // 
-            lblMoveInDate.Dock = DockStyle.Left;
             lblMoveInDate.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblMoveInDate.ForeColor = Color.White;
             lblMoveInDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblMoveInDate.Location = new Point(0, 0);
+            lblMoveInDate.Location = new Point(7, 2);
             lblMoveInDate.Margin = new Padding(0);
             lblMoveInDate.Name = "lblMoveInDate";
-            lblMoveInDate.Size = new Size(210, 54);
+            lblMoveInDate.Size = new Size(210, 49);
             lblMoveInDate.TabIndex = 28;
             lblMoveInDate.Text = "Date";
             lblMoveInDate.TextAlign = ContentAlignment.MiddleCenter;
@@ -383,7 +366,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(582, 483);
+            ClientSize = new Size(582, 463);
             Controls.Add(pnlMoveInContent);
             Controls.Add(pnlMoveInActions);
             Controls.Add(pnlMoveInHeader);
@@ -414,7 +397,6 @@
         #endregion
 
         private Panel pnlMoveInHeader;
-        private Label lblMoveInDescription;
         private Label lblMoveInTitle;
         private Panel pnlMoveInActions;
         private Button btnConfirmMoveIn;
