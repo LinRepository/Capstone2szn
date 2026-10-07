@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
 using Capstoneszn.Forms.RoomsForms;
+using Capstoneszn.Forms.PaymentsForms;
 
 namespace Capstoneszn.Forms
 {
     public partial class PaymentForm : Form
-    {  
+    {
         private MoveInData _data;
         private decimal _roomPrice;
         public PaymentForm(MoveInData data)
@@ -114,6 +115,9 @@ namespace Capstoneszn.Forms
             txtReferenceNumber.Clear();
             RadioBtnCash.Checked = true;
             // Amount, Category, Payment Type and Date are fixed - don't clear them
+
+            New_Make_Payment newPaymentForm = new New_Make_Payment();
+            newPaymentForm.ShowDialog();
         }
 
         private void LoadRoomPrice()
@@ -302,6 +306,21 @@ namespace Capstoneszn.Forms
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void txtReferenceNumber_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlReferenceNumber_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void RadioBtnGCash_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
