@@ -22,45 +22,80 @@ namespace Capstoneszn.Forms.SettingsForms
 
         private void btnSaveSecurityQuestions_Click(object sender, EventArgs e)
         {
-            string a1 = txtAnswer1.Text.Trim();
-            string a2 = txtAnswer2.Text.Trim();
-            string a3 = txtAnswer3.Text.Trim();
+            // Trim only. Answers are CASE-SENSITIVE, matching how they are verified.
+            string a1 = SecurityHelper.NormalizeAnswer(txtAnswer1.Text);
+            string a2 = SecurityHelper.NormalizeAnswer(txtAnswer2.Text);
+            string a3 = SecurityHelper.NormalizeAnswer(txtAnswer3.Text);
 
-            if (a1 == "" || a2 == "" || a3 == "")
+            if (a1.Length == 0 || a2.Length == 0 || a3.Length == 0)
             {
                 MessageBox.Show("Please answer all three questions.", "Security Questions",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            string updateQuery = @"UPDATE Users
-                           SET SecurityAnswer1 = @Answer1,
-                               SecurityAnswer2 = @Answer2,
-                               SecurityAnswer3 = @Answer3
-                           WHERE user_id = @UserID";
+            if (MessageBox.Show(
+                    "Your answers are case-sensitive and cannot be viewed again once saved. " +
+                    "You will need them exactly as typed to recover a forgotten password.\n\nSave these answers?",
+                    "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            {
+                return;
+            }
 
             try
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
-                using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Answer1", a1);
-                    cmd.Parameters.AddWithValue("@Answer2", a2);
-                    cmd.Parameters.AddWithValue("@Answer3", a3);
-                    cmd.Parameters.AddWithValue("@UserID", _userId);
-
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+
+                    // All three save together or none do, so the account can never be
+                    // left with a mix of old and new answers.
+                    using (SqlTransaction tx = conn.BeginTransaction())
+                    {
+                        int rows = 0;
+                        string[] answers = { a1, a2, a3 };
+
+                        for (int number = 1; number <= 3; number++)
+                        {
+                            using (SqlCommand cmd = new SqlCommand(
+                                @"UPDATE SecurityQuestions
+                                  SET AnswerHash = @AnswerHash
+                                  WHERE UserId = @UserId AND QuestionNumber = @Number", conn, tx))
+                            {
+                                cmd.Parameters.Add("@AnswerHash", SqlDbType.NVarChar, 255).Value =
+                                    SecurityHelper.Hash(answers[number - 1]);
+                                cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = _userId;
+                                cmd.Parameters.Add("@Number", SqlDbType.Int).Value = number;
+
+                                rows += cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        if (rows != 3)
+                        {
+                            tx.Rollback();
+                            MessageBox.Show("Security questions are incomplete for this account. Nothing was saved.",
+                                "Security Questions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        tx.Commit();
+                    }
                 }
+
+                txtAnswer1.Clear();
+                txtAnswer2.Clear();
+                txtAnswer3.Clear();
 
                 MessageBox.Show("Security answers updated successfully.", "Security Questions",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Error saving answers: " + ex.Message, "Security Questions",
+                MessageBox.Show("Unable to save the security answers.", "Security Questions",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -72,37 +107,45 @@ namespace Capstoneszn.Forms.SettingsForms
 
         private void SecurityQuestionsForm_Load(object sender, EventArgs e)
         {
-            string query = @"SELECT SecurityQuestion1, SecurityQuestion2, SecurityQuestion3
-                     FROM Users WHERE user_id = @UserID";
-
             try
             {
+                var questions = new Dictionary<int, string>();
+
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT QuestionNumber, QuestionText
+                      FROM SecurityQuestions
+                      WHERE UserId = @UserId
+                      ORDER BY QuestionNumber", conn))
                 {
-                    cmd.Parameters.AddWithValue("@UserID", _userId);
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = _userId;
                     conn.Open();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (!reader.Read())
-                        {
-                            MessageBox.Show("User not found.", "Security Questions",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            this.Close();
-                            return;
-                        }
-
-                        lblQuestion1.Text = reader["SecurityQuestion1"].ToString();
-                        lblQuestion2.Text = reader["SecurityQuestion2"].ToString();
-                        lblQuestion3.Text = reader["SecurityQuestion3"].ToString();
-                    }
+                    using (SqlDataReader r = cmd.ExecuteReader())
+                        while (r.Read()) questions[r.GetInt32(0)] = r.GetString(1);
                 }
+
+                if (questions.Count < 3)
+                {
+                    MessageBox.Show("Security questions are not set up for this account.",
+                        "Security Questions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.Close();
+                    return;
+                }
+
+                lblQuestion1.Text = questions[1];
+                lblQuestion2.Text = questions[2];
+                lblQuestion3.Text = questions[3];
+
+                // The answer boxes stay empty on purpose. Stored answers are hashed,
+                // so they cannot be read back and displayed - all three are re-entered.
+                txtAnswer1.Focus();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Database error: " + ex.Message, "Security Questions",
+                MessageBox.Show("Unable to load the security questions.", "Security Questions",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
             }
         }
     }

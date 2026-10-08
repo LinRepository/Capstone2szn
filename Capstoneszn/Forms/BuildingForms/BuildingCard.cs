@@ -22,7 +22,7 @@ namespace Capstoneszn.Forms.BuildingForms
         }
 
         // Custom event to notify the Selection Form when this card is clicked
-        public event EventHandler CardClicked;
+        public event EventHandler? CardClicked;
 
         public BuildingCard()
         {

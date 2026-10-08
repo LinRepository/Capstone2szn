@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
 using Capstoneszn.Forms.RoomsForms;
-using Capstoneszn.Forms.PaymentsForms;
 
 namespace Capstoneszn.Forms
 {
@@ -101,7 +100,9 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            using (ConfirmPaymentForm confirm = new ConfirmPaymentForm(dtpPaymentDate.Value.Date, cboPaymentCategory.Text, cboPaymentType.Text, method, refNo, amount))
+            using (ConfirmPaymentForm confirm = new ConfirmPaymentForm(
+                dtpPaymentDate.Value.Date, cboPaymentCategory.Text,
+                cboPaymentType.Text, method, refNo, amount))
             {
                 if (confirm.ShowDialog(this) != DialogResult.OK)
                     return;
@@ -115,9 +116,6 @@ namespace Capstoneszn.Forms
             txtReferenceNumber.Clear();
             RadioBtnCash.Checked = true;
             // Amount, Category, Payment Type and Date are fixed - don't clear them
-
-            New_Make_Payment newPaymentForm = new New_Make_Payment();
-            newPaymentForm.ShowDialog();
         }
 
         private void LoadRoomPrice()
@@ -132,7 +130,8 @@ namespace Capstoneszn.Forms
                     {
                         cmd.Parameters.AddWithValue("@rid", _data.RoomId);
                         object result = cmd.ExecuteScalar();
-                        _roomPrice = (result == null || result == DBNull.Value) ? 0m : Convert.ToDecimal(result);
+                        _roomPrice = (result == null || result == DBNull.Value)
+                            ? 0m : Convert.ToDecimal(result);
                     }
 
                     txtAmountValue.Text = _roomPrice.ToString("N2");
@@ -160,7 +159,7 @@ namespace Capstoneszn.Forms
                 {
                     try
                     {
-                        // 1. Re-check capacity — the form may have sat open a while
+                        // 1. Re-check capacity - the form may have sat open a while
                         string capSql = @"
                             SELECT r.Capacity,
                                    (SELECT COUNT(*) FROM Tenants t
@@ -188,7 +187,7 @@ namespace Capstoneszn.Forms
                             return;
                         }
 
-                        // 2. Insert tenant
+                        // 2. Insert the tenant
                         string tenantSql = @"
                             INSERT INTO Tenants
                                 (RoomId, FirstName, MiddleName, LastName, Address,
@@ -227,8 +226,10 @@ namespace Capstoneszn.Forms
 
                         int billId;
                         using (var cmd = new SqlCommand(
-                            @"INSERT INTO Bills (RoomId, BillingPeriodStart, BillingPeriodEnd, DueDate, Amount)
-                              VALUES (@rid, @start,
+                            @"INSERT INTO Bills
+                                  (RoomId, BillCategory, BillingPeriodStart,
+                                   BillingPeriodEnd, DueDate, Amount)
+                              VALUES (@rid, 'Rent', @start,
                                       DATEADD(DAY, -1, DATEADD(MONTH, 1, @start)),
                                       @start, @amt);
                               SELECT CAST(SCOPE_IDENTITY() AS INT);", conn, tx))
@@ -239,9 +240,30 @@ namespace Capstoneszn.Forms
                             billId = (int)cmd.ExecuteScalar();
                         }
 
-                        // 3. Insert payment
-                        string paySql = @" INSERT INTO Payments (TenantId, RoomId, BillId, ReceiptNo, PaymentCategory, PaymentType, Amount, PaymentMethod, ReferenceNo, PaymentDate) VALUES (@tid, @rid, @bill, @rcpt, @cat, @type, @amt, @method, @ref, @pdate);";
+                        // 2c. This tenant's share. They are alone in the room,
+                        //     so the share is the whole bill.
+                        using (var cmd = new SqlCommand(
+                            @"INSERT INTO BillTenants (BillId, TenantId, Share)
+                              VALUES (@bid, @tid, @share);", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@bid", billId);
+                            cmd.Parameters.AddWithValue("@tid", newTenantId);
+                            cmd.Parameters.AddWithValue("@share", amount);
+                            cmd.ExecuteNonQuery();
+                        }
 
+                        // 3. Record the money received
+                        string paySql = @"
+                            INSERT INTO Payments
+                                (TenantId, RoomId, BillId, ReceiptNo, PaymentCategory,
+                                 PaymentType, Amount, PaymentMethod, ReferenceNo,
+                                 PaymentDate, CoversRoom, RecordedBy)
+                            VALUES (@tid, @rid, @bill, @rcpt, @cat,
+                                    @type, @amt, @method, @ref,
+                                    @pdate, 0, @by);
+                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                        int paymentId;
                         using (var cmd = new SqlCommand(paySql, conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@tid", newTenantId);
@@ -256,30 +278,54 @@ namespace Capstoneszn.Forms
                                 string.IsNullOrWhiteSpace(refNo)
                                     ? (object)DBNull.Value : refNo);
                             cmd.Parameters.AddWithValue("@pdate", dtpPaymentDate.Value.Date);
+                            //cmd.Parameters.AddWithValue("@by", MainForm.CurrentUserId);
+                            paymentId = (int)cmd.ExecuteScalar();
+                        }
+
+                        // 3b. Allocate that money to the share it settles
+                        using (var cmd = new SqlCommand(
+                            @"INSERT INTO PaymentAllocations
+                                  (PaymentId, BillId, TenantId, Amount)
+                              VALUES (@pid, @bid, @tid, @amt);", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@pid", paymentId);
+                            cmd.Parameters.AddWithValue("@bid", billId);
+                            cmd.Parameters.AddWithValue("@tid", newTenantId);
+                            cmd.Parameters.AddWithValue("@amt", amount);
                             cmd.ExecuteNonQuery();
                         }
 
-                        // 3b. Recompute the bill from its payments
-                        using (var cmd = new SqlCommand(
-                            @"UPDATE Bills
-                              SET AmountPaid = ISNULL((SELECT SUM(p.Amount) FROM Payments p
-                                                       WHERE p.BillId = Bills.BillId), 0),
-                                  Status = CASE
-                                      WHEN ISNULL((SELECT SUM(p.Amount) FROM Payments p
-                                                   WHERE p.BillId = Bills.BillId), 0) >= Amount THEN 'Paid'
-                                      WHEN ISNULL((SELECT SUM(p.Amount) FROM Payments p
-                                                   WHERE p.BillId = Bills.BillId), 0) > 0 THEN 'Partially Paid'
-                                      ELSE 'Unpaid' END
-                              WHERE BillId = @bid;", conn, tx))
+                        // 3c. Recompute the bill from its allocations
+                        using (var cmd = new SqlCommand(@"
+                            UPDATE Bills
+                            SET AmountPaid = ISNULL((SELECT SUM(a.Amount)
+                                                     FROM PaymentAllocations a
+                                                     WHERE a.BillId = Bills.BillId), 0),
+                                Status = CASE
+                                    WHEN ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
+                                                 WHERE a.BillId = Bills.BillId), 0) >= Amount
+                                         THEN 'Paid'
+                                    WHEN ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
+                                                 WHERE a.BillId = Bills.BillId), 0) > 0
+                                         THEN 'Partially Paid'
+                                    ELSE 'Unpaid' END
+                            WHERE BillId = @bid;", conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@bid", billId);
                             cmd.ExecuteNonQuery();
                         }
 
-                        // 4. Recompute room status from the live tenant count
-                        string statusSql = @" UPDATE Rooms SET Status = CASE WHEN (SELECT COUNT(*) FROM Tenants t WHERE t.RoomId = Rooms.RoomId AND t.Status = 'Active' AND t.IsArchived = 0) > 0 THEN 'Occupied' ELSE 'Available' END WHERE RoomId = @rid AND Status IN ('Available', 'Occupied');";
-
-                        using (var cmd = new SqlCommand(statusSql, conn, tx))
+                        // 4. Keep room status in step with the live tenant count
+                        using (var cmd = new SqlCommand(@"
+                            UPDATE Rooms
+                            SET Status = CASE
+                                    WHEN (SELECT COUNT(*) FROM Tenants t
+                                          WHERE t.RoomId = Rooms.RoomId
+                                            AND t.Status = 'Active'
+                                            AND t.IsArchived = 0) > 0
+                                    THEN 'Occupied' ELSE 'Available' END
+                            WHERE RoomId = @rid AND Status IN ('Available', 'Occupied');",
+                            conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@rid", _data.RoomId);
                             cmd.ExecuteNonQuery();
@@ -296,6 +342,7 @@ namespace Capstoneszn.Forms
                     }
                 }
             }
+
             if (!saved) return;
 
             using (PaymentSuccessForm success = new PaymentSuccessForm(

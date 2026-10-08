@@ -30,24 +30,24 @@
         {
             pnlPaymentDetails = new Panel();
             tblPaymentDetails = new TableLayoutPanel();
-            lblConfirmReferenceValue = new Label();
-            lblConfirmReferenceTitle = new Label();
-            lblConfirmAmountValue = new Label();
-            lblConfirmAmountTitle = new Label();
-            lblConfirmPaymentMethodValue = new Label();
-            lblConfirmPaymentMethodTitle = new Label();
             lblConfirmCategoryValue = new Label();
             lblConfirmCategoryTitle = new Label();
             lblConfirmDateValue = new Label();
             lblConfirmDateTitle = new Label();
+            lblConfirmReferenceTitle = new Label();
+            lblConfirmReferenceValue = new Label();
+            lblConfirmAmountTitle = new Label();
+            lblConfirmAmountValue = new Label();
+            lblConfirmPaymentTypeTitle = new Label();
+            lblConfirmPaymentMethodTitle = new Label();
+            lblConfirmPaymentMethodValue = new Label();
+            lblConfirmPaymentTypeValue = new Label();
             pnlPaymentHeader = new Panel();
             lblPaymentSummary = new Label();
             lblConfirmationTitle = new Label();
             panel2 = new Panel();
             btnConfirmPayment = new Button();
             btnCancelPayment = new Button();
-            lblConfirmPaymentTypeValue = new Label();
-            lblConfirmPaymentTypeTitle = new Label();
             pnlPaymentDetails.SuspendLayout();
             tblPaymentDetails.SuspendLayout();
             pnlPaymentHeader.SuspendLayout();
@@ -92,84 +92,6 @@
             tblPaymentDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
             tblPaymentDetails.Size = new Size(482, 338);
             tblPaymentDetails.TabIndex = 1;
-            // 
-            // lblConfirmReferenceValue
-            // 
-            lblConfirmReferenceValue.AutoSize = true;
-            lblConfirmReferenceValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmReferenceValue.ForeColor = Color.White;
-            lblConfirmReferenceValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmReferenceValue.Location = new Point(244, 224);
-            lblConfirmReferenceValue.Name = "lblConfirmReferenceValue";
-            lblConfirmReferenceValue.Size = new Size(19, 25);
-            lblConfirmReferenceValue.TabIndex = 14;
-            lblConfirmReferenceValue.Text = "-";
-            lblConfirmReferenceValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmReferenceTitle
-            // 
-            lblConfirmReferenceTitle.AutoSize = true;
-            lblConfirmReferenceTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmReferenceTitle.ForeColor = Color.White;
-            lblConfirmReferenceTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmReferenceTitle.Location = new Point(3, 224);
-            lblConfirmReferenceTitle.Name = "lblConfirmReferenceTitle";
-            lblConfirmReferenceTitle.Size = new Size(158, 25);
-            lblConfirmReferenceTitle.TabIndex = 13;
-            lblConfirmReferenceTitle.Text = "Reference Number";
-            lblConfirmReferenceTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmAmountValue
-            // 
-            lblConfirmAmountValue.AutoSize = true;
-            lblConfirmAmountValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmAmountValue.ForeColor = Color.White;
-            lblConfirmAmountValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmAmountValue.Location = new Point(244, 280);
-            lblConfirmAmountValue.Name = "lblConfirmAmountValue";
-            lblConfirmAmountValue.Size = new Size(57, 25);
-            lblConfirmAmountValue.TabIndex = 12;
-            lblConfirmAmountValue.Text = "₱0.00";
-            lblConfirmAmountValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmAmountTitle
-            // 
-            lblConfirmAmountTitle.AutoSize = true;
-            lblConfirmAmountTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmAmountTitle.ForeColor = Color.White;
-            lblConfirmAmountTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmAmountTitle.Location = new Point(3, 280);
-            lblConfirmAmountTitle.Name = "lblConfirmAmountTitle";
-            lblConfirmAmountTitle.Size = new Size(77, 25);
-            lblConfirmAmountTitle.TabIndex = 11;
-            lblConfirmAmountTitle.Text = "Amount";
-            lblConfirmAmountTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmPaymentMethodValue
-            // 
-            lblConfirmPaymentMethodValue.AutoSize = true;
-            lblConfirmPaymentMethodValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmPaymentMethodValue.ForeColor = Color.White;
-            lblConfirmPaymentMethodValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmPaymentMethodValue.Location = new Point(244, 168);
-            lblConfirmPaymentMethodValue.Name = "lblConfirmPaymentMethodValue";
-            lblConfirmPaymentMethodValue.Size = new Size(19, 25);
-            lblConfirmPaymentMethodValue.TabIndex = 10;
-            lblConfirmPaymentMethodValue.Text = "-";
-            lblConfirmPaymentMethodValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmPaymentMethodTitle
-            // 
-            lblConfirmPaymentMethodTitle.AutoSize = true;
-            lblConfirmPaymentMethodTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmPaymentMethodTitle.ForeColor = Color.White;
-            lblConfirmPaymentMethodTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmPaymentMethodTitle.Location = new Point(3, 168);
-            lblConfirmPaymentMethodTitle.Name = "lblConfirmPaymentMethodTitle";
-            lblConfirmPaymentMethodTitle.Size = new Size(148, 25);
-            lblConfirmPaymentMethodTitle.TabIndex = 9;
-            lblConfirmPaymentMethodTitle.Text = "Payment Method\n";
-            lblConfirmPaymentMethodTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblConfirmCategoryValue
             // 
@@ -222,6 +144,110 @@
             lblConfirmDateTitle.TabIndex = 5;
             lblConfirmDateTitle.Text = "Date";
             lblConfirmDateTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmReferenceTitle
+            // 
+            lblConfirmReferenceTitle.AutoSize = true;
+            lblConfirmReferenceTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmReferenceTitle.ForeColor = Color.White;
+            lblConfirmReferenceTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmReferenceTitle.Location = new Point(3, 224);
+            lblConfirmReferenceTitle.Name = "lblConfirmReferenceTitle";
+            lblConfirmReferenceTitle.Size = new Size(158, 25);
+            lblConfirmReferenceTitle.TabIndex = 13;
+            lblConfirmReferenceTitle.Text = "Reference Number";
+            lblConfirmReferenceTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmReferenceValue
+            // 
+            lblConfirmReferenceValue.AutoSize = true;
+            lblConfirmReferenceValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmReferenceValue.ForeColor = Color.White;
+            lblConfirmReferenceValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmReferenceValue.Location = new Point(244, 224);
+            lblConfirmReferenceValue.Name = "lblConfirmReferenceValue";
+            lblConfirmReferenceValue.Size = new Size(19, 25);
+            lblConfirmReferenceValue.TabIndex = 14;
+            lblConfirmReferenceValue.Text = "-";
+            lblConfirmReferenceValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmAmountTitle
+            // 
+            lblConfirmAmountTitle.AutoSize = true;
+            lblConfirmAmountTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmAmountTitle.ForeColor = Color.White;
+            lblConfirmAmountTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmAmountTitle.Location = new Point(3, 280);
+            lblConfirmAmountTitle.Name = "lblConfirmAmountTitle";
+            lblConfirmAmountTitle.Size = new Size(77, 25);
+            lblConfirmAmountTitle.TabIndex = 11;
+            lblConfirmAmountTitle.Text = "Amount";
+            lblConfirmAmountTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmAmountValue
+            // 
+            lblConfirmAmountValue.AutoSize = true;
+            lblConfirmAmountValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmAmountValue.ForeColor = Color.White;
+            lblConfirmAmountValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmAmountValue.Location = new Point(244, 280);
+            lblConfirmAmountValue.Name = "lblConfirmAmountValue";
+            lblConfirmAmountValue.Size = new Size(57, 25);
+            lblConfirmAmountValue.TabIndex = 12;
+            lblConfirmAmountValue.Text = "₱0.00";
+            lblConfirmAmountValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmPaymentTypeTitle
+            // 
+            lblConfirmPaymentTypeTitle.AutoSize = true;
+            lblConfirmPaymentTypeTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmPaymentTypeTitle.ForeColor = Color.White;
+            lblConfirmPaymentTypeTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmPaymentTypeTitle.Location = new Point(3, 112);
+            lblConfirmPaymentTypeTitle.Name = "lblConfirmPaymentTypeTitle";
+            lblConfirmPaymentTypeTitle.Size = new Size(122, 25);
+            lblConfirmPaymentTypeTitle.TabIndex = 15;
+            lblConfirmPaymentTypeTitle.Text = "Payment Type";
+            lblConfirmPaymentTypeTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmPaymentMethodTitle
+            // 
+            lblConfirmPaymentMethodTitle.AutoSize = true;
+            lblConfirmPaymentMethodTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmPaymentMethodTitle.ForeColor = Color.White;
+            lblConfirmPaymentMethodTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmPaymentMethodTitle.Location = new Point(3, 168);
+            lblConfirmPaymentMethodTitle.Name = "lblConfirmPaymentMethodTitle";
+            lblConfirmPaymentMethodTitle.Size = new Size(148, 25);
+            lblConfirmPaymentMethodTitle.TabIndex = 9;
+            lblConfirmPaymentMethodTitle.Text = "Payment Method\n";
+            lblConfirmPaymentMethodTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmPaymentMethodValue
+            // 
+            lblConfirmPaymentMethodValue.AutoSize = true;
+            lblConfirmPaymentMethodValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmPaymentMethodValue.ForeColor = Color.White;
+            lblConfirmPaymentMethodValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmPaymentMethodValue.Location = new Point(244, 168);
+            lblConfirmPaymentMethodValue.Name = "lblConfirmPaymentMethodValue";
+            lblConfirmPaymentMethodValue.Size = new Size(19, 25);
+            lblConfirmPaymentMethodValue.TabIndex = 10;
+            lblConfirmPaymentMethodValue.Text = "-";
+            lblConfirmPaymentMethodValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblConfirmPaymentTypeValue
+            // 
+            lblConfirmPaymentTypeValue.AutoSize = true;
+            lblConfirmPaymentTypeValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblConfirmPaymentTypeValue.ForeColor = Color.White;
+            lblConfirmPaymentTypeValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblConfirmPaymentTypeValue.Location = new Point(244, 112);
+            lblConfirmPaymentTypeValue.Name = "lblConfirmPaymentTypeValue";
+            lblConfirmPaymentTypeValue.Size = new Size(19, 25);
+            lblConfirmPaymentTypeValue.TabIndex = 16;
+            lblConfirmPaymentTypeValue.Text = "-";
+            lblConfirmPaymentTypeValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlPaymentHeader
             // 
@@ -289,37 +315,12 @@
             btnCancelPayment.UseVisualStyleBackColor = true;
             btnCancelPayment.Click += btnCancelPayment_Click;
             // 
-            // lblConfirmPaymentTypeValue
-            // 
-            lblConfirmPaymentTypeValue.AutoSize = true;
-            lblConfirmPaymentTypeValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmPaymentTypeValue.ForeColor = Color.White;
-            lblConfirmPaymentTypeValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmPaymentTypeValue.Location = new Point(244, 112);
-            lblConfirmPaymentTypeValue.Name = "lblConfirmPaymentTypeValue";
-            lblConfirmPaymentTypeValue.Size = new Size(19, 25);
-            lblConfirmPaymentTypeValue.TabIndex = 16;
-            lblConfirmPaymentTypeValue.Text = "-";
-            lblConfirmPaymentTypeValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblConfirmPaymentTypeTitle
-            // 
-            lblConfirmPaymentTypeTitle.AutoSize = true;
-            lblConfirmPaymentTypeTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblConfirmPaymentTypeTitle.ForeColor = Color.White;
-            lblConfirmPaymentTypeTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblConfirmPaymentTypeTitle.Location = new Point(3, 112);
-            lblConfirmPaymentTypeTitle.Name = "lblConfirmPaymentTypeTitle";
-            lblConfirmPaymentTypeTitle.Size = new Size(122, 25);
-            lblConfirmPaymentTypeTitle.TabIndex = 15;
-            lblConfirmPaymentTypeTitle.Text = "Payment Type";
-            lblConfirmPaymentTypeTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // ConfirmPaymentForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
+            AutoSize = true;
             BackColor = Color.FromArgb(11, 20, 38);
             ClientSize = new Size(482, 453);
             Controls.Add(pnlPaymentDetails);

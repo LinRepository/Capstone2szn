@@ -25,10 +25,7 @@ namespace Capstoneszn
 
         private int checkcurrentBuildingId;
         private string currentBuildingName = ""; //Added ni Lin
-        public static int CurrentUserId;   //Added ni Lin
 
-        public static string CurrentUsername = "";   //Added ni Lin
-        public static string CurrentUserRole = "";   //Added ni Lin
 
         // 1. The NEW Constructor used for db
         public MainForm(int buildingId, string buildingName)
@@ -48,13 +45,7 @@ namespace Capstoneszn
 
             SaveButtonTexts();
 
-            // 1. Initialize and start a timer programmatically
-            System.Windows.Forms.Timer clockTimer = new System.Windows.Forms.Timer();
-            clockTimer.Interval = 1000; // 1 second
-            clockTimer.Tick += (s, ev) => UpdateDateTime();
-            clockTimer.Start();
-
-            // 2. Initial immediate time display on load
+            //time
             UpdateDateTime();
 
             //Para to sa building name to
@@ -69,9 +60,10 @@ namespace Capstoneszn
                                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+
             //Para sa user
-            lblCurrentUser.Text = CurrentUsername;
-            lblUserRole.Text = CurrentUserRole;
+            lblCurrentUser.Text = Session.Name;
+            lblUserRole.Text = Session.Role;
 
         }
 
@@ -79,9 +71,9 @@ namespace Capstoneszn
         // Single helper method to keep code clean and maintainable
         private void UpdateDateTime()
         {
-            lblTime.Text = DateTime.Now.ToString("hh:mm:ss tt"); // e.g., 09:23:25 AM
             lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy"); // e.g., September 29, 2026
         }
+
         //Load building name
         private string GetBuildingName()
         {
@@ -103,28 +95,7 @@ namespace Capstoneszn
 
             return buildingName;
         }
-        //Load user info
-        private void LoadUserInfo()
-        {
-            string query = "SELECT Username, Role FROM Users WHERE UserId = @id";
-
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@id", CurrentUserId);
-                conn.Open();
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        lblCurrentUser.Text = reader["Username"]?.ToString() ?? "User";
-                        lblUserRole.Text = reader["Role"]?.ToString() ?? "User Role";
-                    }
-                }
-            }
-        }
-
+        
 
         private void SaveButtonTexts()
         {
@@ -146,6 +117,9 @@ namespace Capstoneszn
 
         private void LoadControl(UserControl userControl)
         {
+            foreach (Control c in pnlContent.Controls)
+                c.Dispose();
+
             pnlContent.Controls.Clear();
 
             userControl.Dock = DockStyle.Fill;
@@ -230,7 +204,7 @@ namespace Capstoneszn
 
         private void btnBillingManagement_Click(object sender, EventArgs e)
         {
-            LoadControl(new BillingManagementControl());
+            LoadControl(new BillingManagementControl(checkbuildingId));
         }
 
         private void btnReports_Click_1(object sender, EventArgs e)
@@ -260,28 +234,15 @@ namespace Capstoneszn
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            LogoutConfirmationForm confirmForm = new LogoutConfirmationForm();
 
-            // ShowDialog will pause execution here until the user clicks Yes or Cancel
-            if (confirmForm.ShowDialog() == DialogResult.Yes)
+            using (var confirmForm = new LogoutConfirmationForm())
             {
-                // If they clicked Yes, check if SelectBuildingForm is already open and hidden
-                var selectForm = Application.OpenForms.OfType<Login>().FirstOrDefault();
-
-                if (selectForm != null)
-                {
-                    // Show the existing one
-                    selectForm.Show();
-                }
-                else
-                {
-                    // If it doesn't exist for some reason, create a new one
-                    new Login().Show();
-                }
-
-                // Close the MainForm
-                this.Close();
+                if (confirmForm.ShowDialog(this) != DialogResult.Yes) return;
             }
+
+            Session.Clear();
+            Session.LoggingOut = true;
+            this.Close();
 
         }
         //SIDE PANEL BUTTONS
@@ -314,5 +275,6 @@ namespace Capstoneszn
         }
 
         #endregion
+
     }
 }

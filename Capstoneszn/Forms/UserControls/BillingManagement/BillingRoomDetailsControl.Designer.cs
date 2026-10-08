@@ -28,9 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pnlRoomBillingHeader = new Panel();
-            lblRoomNumber = new Label();
-            btnBackRoomBilling = new Button();
             pnlRoomBillingSummary = new Panel();
             tblRoomBillingSummary = new TableLayoutPanel();
             pnlTotalPaid = new Panel();
@@ -45,9 +42,15 @@
             pnlTenantPayments = new Panel();
             dgvTenantPayments = new DataGridView();
             colTenantName = new DataGridViewTextBoxColumn();
+            colShare = new DataGridViewTextBoxColumn();
             colPaid = new DataGridViewTextBoxColumn();
-            colMakePayment = new DataGridViewButtonColumn();
-            pnlRoomBillingHeader.SuspendLayout();
+            Balance = new DataGridViewTextBoxColumn();
+            Payment = new DataGridViewButtonColumn();
+            btnBackRoomBilling = new Button();
+            lblRoomNumber = new Label();
+            lblPeriodValue = new Label();
+            lblBillStatusValue = new Label();
+            pnlRoomBillingHeader = new Panel();
             pnlRoomBillingSummary.SuspendLayout();
             tblRoomBillingSummary.SuspendLayout();
             pnlTotalPaid.SuspendLayout();
@@ -55,43 +58,8 @@
             pnlTotalBill.SuspendLayout();
             pnlTenantPayments.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTenantPayments).BeginInit();
+            pnlRoomBillingHeader.SuspendLayout();
             SuspendLayout();
-            // 
-            // pnlRoomBillingHeader
-            // 
-            pnlRoomBillingHeader.Controls.Add(lblRoomNumber);
-            pnlRoomBillingHeader.Controls.Add(btnBackRoomBilling);
-            pnlRoomBillingHeader.Dock = DockStyle.Top;
-            pnlRoomBillingHeader.Location = new Point(0, 0);
-            pnlRoomBillingHeader.Name = "pnlRoomBillingHeader";
-            pnlRoomBillingHeader.Size = new Size(1300, 90);
-            pnlRoomBillingHeader.TabIndex = 0;
-            // 
-            // lblRoomNumber
-            // 
-            lblRoomNumber.Dock = DockStyle.Fill;
-            lblRoomNumber.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoomNumber.ForeColor = Color.White;
-            lblRoomNumber.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoomNumber.Location = new Point(140, 0);
-            lblRoomNumber.Name = "lblRoomNumber";
-            lblRoomNumber.Size = new Size(1160, 90);
-            lblRoomNumber.TabIndex = 6;
-            lblRoomNumber.Text = "Room 202";
-            lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnBackRoomBilling
-            // 
-            btnBackRoomBilling.Dock = DockStyle.Left;
-            btnBackRoomBilling.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackRoomBilling.Location = new Point(0, 0);
-            btnBackRoomBilling.Margin = new Padding(0);
-            btnBackRoomBilling.Name = "btnBackRoomBilling";
-            btnBackRoomBilling.Size = new Size(140, 90);
-            btnBackRoomBilling.TabIndex = 1;
-            btnBackRoomBilling.Text = "←";
-            btnBackRoomBilling.TextAlign = ContentAlignment.TopCenter;
-            btnBackRoomBilling.UseVisualStyleBackColor = true;
             // 
             // pnlRoomBillingSummary
             // 
@@ -250,7 +218,7 @@
             dgvTenantPayments.AllowUserToResizeRows = false;
             dgvTenantPayments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTenantPayments.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTenantPayments.Columns.AddRange(new DataGridViewColumn[] { colTenantName, colPaid, colMakePayment });
+            dgvTenantPayments.Columns.AddRange(new DataGridViewColumn[] { colTenantName, colShare, colPaid, Balance, Payment });
             dgvTenantPayments.Dock = DockStyle.Fill;
             dgvTenantPayments.Location = new Point(0, 0);
             dgvTenantPayments.MultiSelect = false;
@@ -270,6 +238,13 @@
             colTenantName.Name = "colTenantName";
             colTenantName.ReadOnly = true;
             // 
+            // colShare
+            // 
+            colShare.HeaderText = "Share";
+            colShare.MinimumWidth = 6;
+            colShare.Name = "colShare";
+            colShare.ReadOnly = true;
+            // 
             // colPaid
             // 
             colPaid.HeaderText = "Paid";
@@ -277,14 +252,84 @@
             colPaid.Name = "colPaid";
             colPaid.ReadOnly = true;
             // 
-            // colMakePayment
+            // Balance
             // 
-            colMakePayment.HeaderText = "Action";
-            colMakePayment.MinimumWidth = 6;
-            colMakePayment.Name = "colMakePayment";
-            colMakePayment.ReadOnly = true;
-            colMakePayment.Text = "Make Payment";
-            colMakePayment.UseColumnTextForButtonValue = true;
+            Balance.HeaderText = "colBalance";
+            Balance.MinimumWidth = 6;
+            Balance.Name = "Balance";
+            Balance.ReadOnly = true;
+            // 
+            // Payment
+            // 
+            Payment.HeaderText = "colPayment";
+            Payment.MinimumWidth = 6;
+            Payment.Name = "Payment";
+            Payment.ReadOnly = true;
+            // 
+            // btnBackRoomBilling
+            // 
+            btnBackRoomBilling.Dock = DockStyle.Left;
+            btnBackRoomBilling.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBackRoomBilling.Location = new Point(0, 0);
+            btnBackRoomBilling.Margin = new Padding(0);
+            btnBackRoomBilling.Name = "btnBackRoomBilling";
+            btnBackRoomBilling.Size = new Size(140, 90);
+            btnBackRoomBilling.TabIndex = 1;
+            btnBackRoomBilling.Text = "←";
+            btnBackRoomBilling.TextAlign = ContentAlignment.TopCenter;
+            btnBackRoomBilling.UseVisualStyleBackColor = true;
+            btnBackRoomBilling.Click += btnBackRoomBilling_Click;
+            // 
+            // lblRoomNumber
+            // 
+            lblRoomNumber.Dock = DockStyle.Left;
+            lblRoomNumber.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoomNumber.ForeColor = Color.White;
+            lblRoomNumber.ImageAlign = ContentAlignment.MiddleRight;
+            lblRoomNumber.Location = new Point(140, 0);
+            lblRoomNumber.Name = "lblRoomNumber";
+            lblRoomNumber.Size = new Size(292, 90);
+            lblRoomNumber.TabIndex = 6;
+            lblRoomNumber.Text = "Room 202";
+            lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblPeriodValue
+            // 
+            lblPeriodValue.Dock = DockStyle.Left;
+            lblPeriodValue.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblPeriodValue.ForeColor = Color.White;
+            lblPeriodValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblPeriodValue.Location = new Point(432, 0);
+            lblPeriodValue.Name = "lblPeriodValue";
+            lblPeriodValue.Size = new Size(292, 90);
+            lblPeriodValue.TabIndex = 7;
+            lblPeriodValue.Text = "PeriodValue";
+            lblPeriodValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblBillStatusValue
+            // 
+            lblBillStatusValue.Dock = DockStyle.Left;
+            lblBillStatusValue.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblBillStatusValue.ForeColor = Color.White;
+            lblBillStatusValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblBillStatusValue.Location = new Point(724, 0);
+            lblBillStatusValue.Name = "lblBillStatusValue";
+            lblBillStatusValue.Size = new Size(292, 90);
+            lblBillStatusValue.TabIndex = 8;
+            lblBillStatusValue.Text = "BillStatusValue";
+            lblBillStatusValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlRoomBillingHeader
+            // 
+            pnlRoomBillingHeader.Controls.Add(lblBillStatusValue);
+            pnlRoomBillingHeader.Controls.Add(lblPeriodValue);
+            pnlRoomBillingHeader.Controls.Add(lblRoomNumber);
+            pnlRoomBillingHeader.Controls.Add(btnBackRoomBilling);
+            pnlRoomBillingHeader.Dock = DockStyle.Top;
+            pnlRoomBillingHeader.Location = new Point(0, 0);
+            pnlRoomBillingHeader.Name = "pnlRoomBillingHeader";
+            pnlRoomBillingHeader.Size = new Size(1300, 90);
+            pnlRoomBillingHeader.TabIndex = 0;
             // 
             // BillingRoomDetailsControl
             // 
@@ -296,7 +341,6 @@
             Controls.Add(pnlRoomBillingHeader);
             Name = "BillingRoomDetailsControl";
             Size = new Size(1300, 750);
-            pnlRoomBillingHeader.ResumeLayout(false);
             pnlRoomBillingSummary.ResumeLayout(false);
             tblRoomBillingSummary.ResumeLayout(false);
             pnlTotalPaid.ResumeLayout(false);
@@ -307,14 +351,11 @@
             pnlTotalBill.PerformLayout();
             pnlTenantPayments.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTenantPayments).EndInit();
+            pnlRoomBillingHeader.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Panel pnlRoomBillingHeader;
-        private Button btnBackRoomBilling;
-        private Label lblRoomNumber;
         private Panel pnlRoomBillingSummary;
         private Panel pnlTenantPayments;
         private TableLayoutPanel tblRoomBillingSummary;
@@ -329,7 +370,14 @@
         private Label lblCurrentDueTitle;
         private DataGridView dgvTenantPayments;
         private DataGridViewTextBoxColumn colTenantName;
+        private DataGridViewTextBoxColumn colShare;
         private DataGridViewTextBoxColumn colPaid;
-        private DataGridViewButtonColumn colMakePayment;
+        private DataGridViewTextBoxColumn Balance;
+        private DataGridViewButtonColumn Payment;
+        private Button btnBackRoomBilling;
+        private Label lblRoomNumber;
+        private Label lblPeriodValue;
+        private Label lblBillStatusValue;
+        private Panel pnlRoomBillingHeader;
     }
 }

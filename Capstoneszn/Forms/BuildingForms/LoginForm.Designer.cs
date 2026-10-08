@@ -89,10 +89,9 @@
             txtLoginPassword.Cursor = Cursors.IBeam;
             txtLoginPassword.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             txtLoginPassword.Location = new Point(161, 328);
-            txtLoginPassword.Multiline = true;
             txtLoginPassword.Name = "txtLoginPassword";
             txtLoginPassword.PasswordChar = '*';
-            txtLoginPassword.Size = new Size(350, 40);
+            txtLoginPassword.Size = new Size(350, 31);
             txtLoginPassword.TabIndex = 23;
             txtLoginPassword.TextChanged += txtLoginPassword_TextChanged;
             // 
@@ -101,9 +100,8 @@
             txtLoginUsername.Cursor = Cursors.IBeam;
             txtLoginUsername.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             txtLoginUsername.Location = new Point(161, 239);
-            txtLoginUsername.Multiline = true;
             txtLoginUsername.Name = "txtLoginUsername";
-            txtLoginUsername.Size = new Size(350, 40);
+            txtLoginUsername.Size = new Size(350, 31);
             txtLoginUsername.TabIndex = 22;
             txtLoginUsername.TextChanged += txtLoginUsername_TextChanged;
             // 
@@ -196,7 +194,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Login";
-            Load += SelectBuildingForm_Load;
+            Load += Login_Load;
             pnlLoginHeader.ResumeLayout(false);
             pnlLoginContent.ResumeLayout(false);
             pnlLoginContent.PerformLayout();

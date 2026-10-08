@@ -57,7 +57,7 @@ namespace Capstoneszn.Forms.SettingsForms
                     if (!newUsername.Equals(originalUsername, StringComparison.OrdinalIgnoreCase))
                     {
                         using (SqlCommand check = new SqlCommand(
-                            "SELECT COUNT(*) FROM Users WHERE Username = @Username AND User_id <> @UserId", conn))
+                            "SELECT COUNT(*) FROM Users WHERE Username = @Username AND UserId <> @UserId", conn))
                         {
                             check.Parameters.AddWithValue("@Username", newUsername);
                             check.Parameters.AddWithValue("@UserId", userId);
@@ -73,7 +73,7 @@ namespace Capstoneszn.Forms.SettingsForms
 
                     // Update Name and Username in Users table
                     using (SqlCommand update = new SqlCommand(
-                        "UPDATE Users SET Name = @Name, Username = @Username WHERE User_id = @UserId", conn))
+                        "UPDATE Users SET Name = @Name, Username = @Username WHERE UserId = @UserId", conn))
                     {
                         update.Parameters.AddWithValue("@Name", newName);
                         update.Parameters.AddWithValue("@Username", newUsername);
@@ -85,6 +85,13 @@ namespace Capstoneszn.Forms.SettingsForms
                 UpdatedName = newName;
                 UpdatedUsername = newUsername;
 
+                // Keep the live session in step with the database
+                if (Session.UserId == userId)
+                {
+                    Session.Name = newName;
+                    Session.Username = newUsername;
+                }
+
                 MessageBox.Show("Profile updated successfully.", "Edit Profile",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -93,7 +100,7 @@ namespace Capstoneszn.Forms.SettingsForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error updating profile: " + ex.Message, "Error",
+                MessageBox.Show("Unable to save the profile changes.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

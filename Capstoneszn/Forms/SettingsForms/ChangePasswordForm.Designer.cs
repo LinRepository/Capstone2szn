@@ -215,6 +215,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Change Password";
+            Load += ChangePasswordForm_Load;
             pnlChangePasswordHeader.ResumeLayout(false);
             pnlChangePasswordActions.ResumeLayout(false);
             pnlChangePasswordContent.ResumeLayout(false);

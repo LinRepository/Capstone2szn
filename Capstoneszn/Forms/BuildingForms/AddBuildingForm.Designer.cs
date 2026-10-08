@@ -47,11 +47,10 @@
             // txtBuildingName
             // 
             txtBuildingName.Location = new Point(101, 58);
-            txtBuildingName.Multiline = true;
             txtBuildingName.Name = "txtBuildingName";
-            txtBuildingName.Size = new Size(400, 50);
+            txtBuildingName.PlaceholderText = "Enter Building Name";
+            txtBuildingName.Size = new Size(400, 27);
             txtBuildingName.TabIndex = 1;
-            txtBuildingName.Text = "Enter Building Name";
             txtBuildingName.TextAlign = HorizontalAlignment.Center;
             // 
             // lblBuildingName
@@ -68,9 +67,11 @@
             // nudFloors
             // 
             nudFloors.Location = new Point(241, 134);
+            nudFloors.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudFloors.Name = "nudFloors";
             nudFloors.Size = new Size(125, 27);
             nudFloors.TabIndex = 3;
+            nudFloors.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // btnCancel
             // 

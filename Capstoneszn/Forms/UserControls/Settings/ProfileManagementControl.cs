@@ -57,7 +57,7 @@ namespace Capstoneszn.Forms.UserControls.Settings
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT Name, Username FROM Users WHERE User_id = @id", conn);
+                SqlCommand cmd = new SqlCommand("SELECT Name, Username FROM Users WHERE UserId = @id", conn);
                 cmd.Parameters.AddWithValue("@id", CurrentUserId);
 
                 SqlDataReader reader = cmd.ExecuteReader();

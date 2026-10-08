@@ -65,6 +65,7 @@
             BackColor = Color.LightSlateGray;
             Controls.Add(lblBuildingContent);
             Controls.Add(lblBuildingNameCard);
+            Cursor = Cursors.Hand;
             Name = "BuildingCard";
             Size = new Size(250, 200);
             Load += BuildingCard_Load;

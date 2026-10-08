@@ -14,6 +14,8 @@ namespace Capstoneszn.Forms.SettingsForms
     public partial class ChangePasswordForm : Form
     {
         private readonly int _userId;
+        private const int MinPasswordLength = 8;
+
         public ChangePasswordForm(int userId)
         {
             _userId = userId;
@@ -22,11 +24,12 @@ namespace Capstoneszn.Forms.SettingsForms
 
         private void btnSaveNewPassword_Click(object sender, EventArgs e)
         {
+            // Passwords are never trimmed - taken exactly as typed, the same way
+            // the login form reads them.
             string currentPassword = txtCurrentPassword.Text;
             string newPassword = txtNewPassword.Text;
             string confirmPassword = txtConfirmNewPassword.Text;
 
-            // 1. Basic validation
             if (string.IsNullOrWhiteSpace(currentPassword) ||
                 string.IsNullOrWhiteSpace(newPassword) ||
                 string.IsNullOrWhiteSpace(confirmPassword))
@@ -40,20 +43,24 @@ namespace Capstoneszn.Forms.SettingsForms
             {
                 MessageBox.Show("New password and confirmation do not match.", "Change Password",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtConfirmNewPassword.Clear();
+                txtConfirmNewPassword.Focus();
                 return;
             }
 
-            if (newPassword.Length < 2)
+            if (newPassword.Length < MinPasswordLength)
             {
-                MessageBox.Show("New password must be at least 2 characters.", "Change Password",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"New password must be at least {MinPasswordLength} characters.",
+                    "Change Password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNewPassword.SelectAll();
+                txtNewPassword.Focus();
                 return;
             }
 
             if (newPassword == currentPassword)
             {
-                MessageBox.Show("New password must be different from the current one.", "Change Password",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("New password must be different from the current one.",
+                    "Change Password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -63,42 +70,66 @@ namespace Capstoneszn.Forms.SettingsForms
                 {
                     conn.Open();
 
-                    // 2. Verify the current password
-                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE user_id = @UserID AND Password = @CurrentPassword";
-                    string updateQuery = "UPDATE Users SET Password = @NewPassword WHERE user_id = @UserID";
-                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
-                    {
-                        checkCmd.Parameters.Add("@UserID", SqlDbType.Int).Value = _userId;
-                        checkCmd.Parameters.Add("@CurrentPassword", SqlDbType.NVarChar).Value = currentPassword;
+                    // 1. Fetch the stored hash. The typed password is never sent to SQL Server.
+                    string storedHash;
 
-                        int match = (int)checkCmd.ExecuteScalar();
-                        if (match == 0)
+                    using (SqlCommand cmd = new SqlCommand(
+                        "SELECT Password FROM Users WHERE UserId = @UserId", conn))
+                    {
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = _userId;
+                        object? result = cmd.ExecuteScalar();
+
+                        if (result == null)
                         {
-                            MessageBox.Show("Current password is incorrect.", "Change Password",
+                            MessageBox.Show("User not found.", "Change Password",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
+
+                        storedHash = (string)result;
                     }
 
-                    // 3. Update to the new password
-                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                    // 2. Verify the current password in C#
+                    if (!SecurityHelper.Verify(currentPassword, storedHash))
                     {
-                        updateCmd.Parameters.Add("@NewPassword", SqlDbType.NVarChar).Value = newPassword;
-                        updateCmd.Parameters.Add("@UserID", SqlDbType.Int).Value = _userId;
-                        updateCmd.ExecuteNonQuery();
+                        MessageBox.Show("Current password is incorrect.", "Change Password",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtCurrentPassword.Clear();
+                        txtCurrentPassword.Focus();
+                        return;
+                    }
+
+                    // 3. Hash the new password before it reaches the database
+                    using (SqlCommand cmd = new SqlCommand(
+                        "UPDATE Users SET Password = @Password WHERE UserId = @UserId", conn))
+                    {
+                        cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 255).Value =
+                            SecurityHelper.Hash(newPassword);
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = _userId;
+                        cmd.ExecuteNonQuery();
                     }
                 }
 
+                txtCurrentPassword.Clear();
+                txtNewPassword.Clear();
+                txtConfirmNewPassword.Clear();
+
                 MessageBox.Show("Password changed successfully.", "Change Password",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Error changing password: " + ex.Message, "Change Password",
+                MessageBox.Show("Unable to change the password.", "Change Password",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void ChangePasswordForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

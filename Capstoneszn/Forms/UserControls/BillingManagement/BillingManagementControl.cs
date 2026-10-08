@@ -13,15 +13,20 @@ namespace Capstoneszn.UserControls
 {
     public partial class BillingManagementControl : UserControl
     {
-        public BillingManagementControl()
+
+        private int _buildingId;
+
+        public BillingManagementControl(int buildingId)
         {
             InitializeComponent();
+            _buildingId = buildingId;
+
         }
 
         private void lblRoomAccount_Click(object sender, EventArgs e)
         {
             // 1. Create the new Room Account control
-            BillingRoomAccountControl accountControl = new BillingRoomAccountControl();
+            BillingRoomAccountControl accountControl = new BillingRoomAccountControl(_buildingId);
 
             // 2. Make it fill the parent container
             accountControl.Dock = DockStyle.Fill;

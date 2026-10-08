@@ -14,7 +14,9 @@ namespace Capstoneszn
 {
     public partial class PasswordResetForm : Form
     {
-        private string _username;
+        private const int MinPasswordLength = 8;
+
+        private readonly string _username;
         public PasswordResetForm(string username)
         {
             InitializeComponent();
@@ -23,37 +25,36 @@ namespace Capstoneszn
 
         private void btnReturnLogin_Click(object sender, EventArgs e)
         {
-            // Find the original hidden Login Form
-            var login = Application.OpenForms.OfType<Login>().FirstOrDefault();
-
-            if (login != null)
-            {
-                login.Show();
-            }
-            else
-            {
-                // Fallback just in case it doesn't exist
-                new Login().Show();
-            }
-
             // Close the current Forget Form
             this.Close();
         }
 
         private void btnSetPassword_Click(object sender, EventArgs e)
         {
-            string newPass = txtResetPassword.Text.Trim();
-            string confirmPass = txtConfirmResetPassword.Text.Trim();
+            // Not trimmed - a password is taken exactly as typed, the same way
+            // the login form reads it. Trimming here would let someone set a
+            // password they then cannot type.
+            string newPass = txtResetPassword.Text;
+            string confirmPass = txtConfirmResetPassword.Text;
 
-            // 1. Empty checks
-            if (newPass == "")
+            if (string.IsNullOrWhiteSpace(newPass))
             {
                 MessageBox.Show("Please enter a new password.", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtResetPassword.Focus();
                 return;
             }
-            if (confirmPass == "")
+
+            if (newPass.Length < MinPasswordLength)
+            {
+                MessageBox.Show($"Password must be at least {MinPasswordLength} characters.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtResetPassword.SelectAll();
+                txtResetPassword.Focus();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(confirmPass))
             {
                 MessageBox.Show("Please confirm your new password.", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -61,7 +62,6 @@ namespace Capstoneszn
                 return;
             }
 
-            // 2. Both must match
             if (newPass != confirmPass)
             {
                 MessageBox.Show("Passwords do not match.", "Warning",
@@ -71,34 +71,41 @@ namespace Capstoneszn
                 return;
             }
 
-            // 3. Save to database
             try
             {
+                // Hash BEFORE it reaches the database. Storing the raw password
+                // here would break login, since Verify cannot read a non-hash.
+                string hashed = SecurityHelper.Hash(newPass);
+
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 using (SqlCommand cmd = new SqlCommand(
                     "UPDATE Users SET Password = @Password WHERE Username = @Username", conn))
                 {
-                    cmd.Parameters.AddWithValue("@Password", newPass);
-                    cmd.Parameters.AddWithValue("@Username", _username);
+                    cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 255).Value = hashed;
+                    cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = _username;
                     conn.Open();
 
                     int rows = cmd.ExecuteNonQuery();
 
-                    if (rows > 0)
-                    {
-                        new PasswordSuccessForm().Show();
-                        this.Close();
-                    }
-                    else
+                    if (rows == 0)
                     {
                         MessageBox.Show("User not found. Password was not changed.", "Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
                 }
+
+                txtResetPassword.Clear();
+                txtConfirmResetPassword.Clear();
+
+                using (var success = new PasswordSuccessForm())
+                    success.ShowDialog(this);
+
+                this.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Database error: " + ex.Message, "Error",
+                MessageBox.Show("Unable to save the new password.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

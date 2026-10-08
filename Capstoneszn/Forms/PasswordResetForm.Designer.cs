@@ -69,18 +69,16 @@
             // txtResetPassword
             // 
             txtResetPassword.Location = new Point(76, 136);
-            txtResetPassword.Multiline = true;
             txtResetPassword.Name = "txtResetPassword";
-            txtResetPassword.Size = new Size(330, 40);
+            txtResetPassword.Size = new Size(330, 27);
             txtResetPassword.TabIndex = 2;
             txtResetPassword.UseSystemPasswordChar = true;
             // 
             // txtConfirmResetPassword
             // 
             txtConfirmResetPassword.Location = new Point(76, 238);
-            txtConfirmResetPassword.Multiline = true;
             txtConfirmResetPassword.Name = "txtConfirmResetPassword";
-            txtConfirmResetPassword.Size = new Size(330, 40);
+            txtConfirmResetPassword.Size = new Size(330, 27);
             txtConfirmResetPassword.TabIndex = 3;
             txtConfirmResetPassword.UseSystemPasswordChar = true;
             // 

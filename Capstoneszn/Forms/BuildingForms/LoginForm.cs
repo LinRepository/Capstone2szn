@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Data;
 using System.Windows.Forms;
 using Capstoneszn.Forms.BuildingForms;
 using Microsoft.Data.SqlClient;
@@ -7,20 +8,12 @@ namespace Capstoneszn
 {
     public partial class Login : Form
     {
-        public static string CurrentUsername = "";
-        public static string CurrentUserRole = "";
 
         public Login()
         {
             InitializeComponent();
         }
 
-        private void SelectBuildingForm_Load(object sender, EventArgs e)
-        {
-
-
-
-        }
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
@@ -39,82 +32,110 @@ namespace Capstoneszn
 
         private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkShowPassword.Checked)
-            {
-                // Show the actual typed letters
-                txtLoginPassword.PasswordChar = '\0';
-            }
-            else
-            {
-                // Hide the text behind asterisks
-                txtLoginPassword.PasswordChar = '*';
-            }
+            txtLoginPassword.PasswordChar = chkShowPassword.Checked ? '\0' : '*';
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string inputUsername = txtLoginUsername.Text.Trim();
-            string inputPassword = txtLoginPassword.Text; // Passwords shouldn't be trimmed just in case of intentional spaces
 
-            // 1. Prevent empty submissions
+            string inputUsername = txtLoginUsername.Text.Trim();
+            string inputPassword = txtLoginPassword.Text;   // never trim a password
+
             if (string.IsNullOrEmpty(inputUsername) || string.IsNullOrEmpty(inputPassword))
             {
-                MessageBox.Show("Please enter both username and password.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter both username and password.", "Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Connect to SQL Server and verify credentials
             try
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
 
-                    // Parameterized query to prevent SQL Injection
-                    string query = "SELECT Role FROM Users WHERE Username = @Username AND Password = @Password";
+                    string query = @"SELECT u.UserId, u.Password, u.Role, u.Name,
+                                            e.EmploymentStatus, e.ArchivedAt
+                                     FROM Users u
+                                     LEFT JOIN Employees e ON e.EmployeeID = u.EmployeeID
+                                     WHERE u.Username = @Username";
+
+                    int userId;
+                    string storedHash, userRole, displayName;
+                    string? empStatus;
+                    bool isArchived;
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Username", inputUsername);
-                        cmd.Parameters.AddWithValue("@Password", inputPassword);
+                        cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = inputUsername;
 
-                        // ExecuteScalar grabs the first column of the matching row (the Role)
-                        object result = cmd.ExecuteScalar();
-
-                        if (result != null)
+                        using (SqlDataReader r = cmd.ExecuteReader())
                         {
-                            string userRole = result.ToString() ?? "";
+                            // Username not found - same message as a wrong password,
+                            // so an attacker can't discover which usernames are valid.
+                            if (!r.Read())
+                            {
+                                ShowInvalidCredentials();
+                                return;
+                            }
 
-                            MainForm.CurrentUsername = inputUsername;
-                            MainForm.CurrentUserRole = userRole;
-                            
-
-                            // --> WIPE THE CREDENTIALS CLEAN HERE <--
-                            txtLoginUsername.Clear();
-                            txtLoginPassword.Clear();
-                            chkShowPassword.Checked = false; // Reset the checkbox as well
-
-                            // To ensure the asterisks come back for the next user
-                            txtLoginPassword.PasswordChar = '*';
-
-                            // 3. Open the Building Selection Form and hide Login
-                            BuildingSelection bs = new BuildingSelection();
-                            bs.Show();
-                            this.Hide();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            userId = r.GetInt32(0);
+                            storedHash = r.GetString(1);
+                            userRole = r.GetString(2);
+                            displayName = r.IsDBNull(3) ? inputUsername : r.GetString(3);
+                            empStatus = r.IsDBNull(4) ? null : r.GetString(4);
+                            isArchived = !r.IsDBNull(5);
                         }
                     }
+
+                    // The password itself is never sent to SQL Server - we fetch the
+                    // stored hash by username, then verify here in C#.
+                    if (!SecurityHelper.Verify(inputPassword, storedHash))
+                    {
+                        ShowInvalidCredentials();
+                        return;
+                    }
+
+                    // Caretaker logins are frozen when the employee is inactive or archived
+                    if (userRole == "Caretaker" && (isArchived || empStatus != "Active"))
+                    {
+                        MessageBox.Show("This account is no longer active. Contact the landlord.",
+                            "Account Disabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    Session.UserId = userId;
+                    Session.Username = inputUsername;
+                    Session.Role = userRole;
+                    Session.Name = displayName;
+
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Database error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Unable to connect to the database.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
+            ClearLoginFields();
 
+            BuildingSelection bs = new BuildingSelection();
+            bs.FormClosed += (s2, e2) =>
+            {
+                if (Session.LoggingOut)
+                {
+                    Session.LoggingOut = false;
+                    ClearLoginFields();
+                    this.Show();
+                }
+                else
+                {
+                    this.Close();   // user closed the picker - quit
+                }
+            };
+            bs.Show();
+            this.Hide();
         }
 
         private void lnkForgotPassword_Click(object sender, EventArgs e)
@@ -130,11 +151,32 @@ namespace Capstoneszn
             }
 
             ForgetForm ff = new ForgetForm(username);
+            ff.FormClosed += (s2, e2) => { txtLoginPassword.Clear(); this.Show(); };
             ff.Show();
-
-            //HIDE
             this.Hide();
         }
+
+        private void ShowInvalidCredentials()
+        {
+            MessageBox.Show("Invalid username or password.", "Login Failed",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            txtLoginPassword.Clear();
+            txtLoginPassword.Focus();
+        }
+        private void ClearLoginFields()
+        {
+            txtLoginUsername.Clear();
+            txtLoginPassword.Clear();
+            chkShowPassword.Checked = false;
+            txtLoginPassword.PasswordChar = '*';
+        }
+
+        private void Login_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 
 }

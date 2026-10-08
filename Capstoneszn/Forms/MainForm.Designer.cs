@@ -52,7 +52,6 @@
             lblCurrentUser = new Label();
             pnlDateTime = new Panel();
             lblDate = new Label();
-            lblTime = new Label();
             pnlSystemName = new Panel();
             lblSystemName = new Label();
             pnlLogo = new Panel();
@@ -411,7 +410,6 @@
             // pnlDateTime
             // 
             pnlDateTime.Controls.Add(lblDate);
-            pnlDateTime.Controls.Add(lblTime);
             pnlDateTime.Dock = DockStyle.Fill;
             pnlDateTime.Location = new Point(431, 3);
             pnlDateTime.Name = "pnlDateTime";
@@ -422,7 +420,7 @@
             // lblDate
             // 
             lblDate.BorderStyle = BorderStyle.FixedSingle;
-            lblDate.Dock = DockStyle.Fill;
+            lblDate.Dock = DockStyle.Right;
             lblDate.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDate.ForeColor = Color.White;
             lblDate.ImageAlign = ContentAlignment.MiddleRight;
@@ -432,20 +430,6 @@
             lblDate.TabIndex = 3;
             lblDate.Text = "MM:DD:YYYY";
             lblDate.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblTime
-            // 
-            lblTime.BorderStyle = BorderStyle.FixedSingle;
-            lblTime.Dock = DockStyle.Left;
-            lblTime.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTime.ForeColor = Color.White;
-            lblTime.ImageAlign = ContentAlignment.MiddleRight;
-            lblTime.Location = new Point(5, 5);
-            lblTime.Name = "lblTime";
-            lblTime.Size = new Size(170, 109);
-            lblTime.TabIndex = 2;
-            lblTime.Text = "00:00";
-            lblTime.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlSystemName
             // 
@@ -578,7 +562,6 @@
         private Label lblCurrentUser;
         private Panel pnlDateTime;
         private Label lblDate;
-        private Label lblTime;
         private Panel pnlSystemName;
         private Label lblSystemName;
         private Panel pnlLogo;

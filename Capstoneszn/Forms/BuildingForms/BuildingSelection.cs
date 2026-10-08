@@ -86,18 +86,16 @@ namespace Capstoneszn.Forms.BuildingForms
         // This triggers when ANY dynamically created BuildingCard is clicked
         private void BuildingCard_Clicked(object sender, EventArgs e)
         {
-            BuildingCard clickedCard = sender as BuildingCard;
 
-            if (clickedCard != null)
-            {
-                int selectedBuildingId = clickedCard.BuildingId;
-                string selectedBuildingName = clickedCard.BuildingName;
+            if (sender is not BuildingCard clickedCard) return;
 
-                
-                MainForm mainForm = new MainForm(selectedBuildingId, selectedBuildingName);
-                mainForm.Show();
-                this.Hide();
-            }
+            Session.BuildingId = clickedCard.BuildingId;
+
+            MainForm mainForm = new MainForm(clickedCard.BuildingId, clickedCard.BuildingName);
+            mainForm.FormClosed += (s2, e2) => this.Close();
+            mainForm.Show();
+            this.Hide();
+
         }
 
         private void flpBuildings_Paint(object sender, PaintEventArgs e)
