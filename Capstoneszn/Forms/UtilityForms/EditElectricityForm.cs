@@ -15,6 +15,26 @@ namespace Capstoneszn.Forms.UtilityForms
         public EditElectricityForm()
         {
             InitializeComponent();
+
+            RadioBtnRooms.CheckedChanged += Mode_CheckedChanged;
+            RadioBtnAdmin.CheckedChanged += Mode_CheckedChanged;
+        }
+
+        private void EditElectricityForm_Load(object sender, EventArgs e)
+        {
+            RadioBtnRooms.Checked = true;
+        }
+        private void Mode_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (sender is not RadioButton rb || !rb.Checked) return;
+
+            UserControl editor = rb == RadioBtnRooms
+                ? new EditElectricityRooms()
+                : new EditElectricityAdmin();
+
+            pnlElectricityContent.Controls.Clear();
+            editor.Dock = DockStyle.Fill;
+            pnlElectricityContent.Controls.Add(editor);
         }
     }
 }

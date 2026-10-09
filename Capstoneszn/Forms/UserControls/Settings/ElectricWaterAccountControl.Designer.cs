@@ -198,6 +198,7 @@
             flpElectricityAccounts.Size = new Size(624, 534);
             flpElectricityAccounts.TabIndex = 1;
             flpElectricityAccounts.WrapContents = false;
+            flpElectricityAccounts.Paint += flpElectricityAccounts_Paint;
             // 
             // pnlElectricityHeader
             // 
