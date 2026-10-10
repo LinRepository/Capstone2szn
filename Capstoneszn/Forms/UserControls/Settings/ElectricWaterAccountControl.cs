@@ -36,5 +36,10 @@ namespace Capstoneszn.Forms.UserControls.Settings
             AddUtilityAccountForm addutilaccountform = new AddUtilityAccountForm();
             addutilaccountform.ShowDialog();
         }
+
+        private void flpElectricityAccounts_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

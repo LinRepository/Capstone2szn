@@ -10,21 +10,11 @@ using System.Windows.Forms;
 
 namespace Capstoneszn.Forms.UtilityForms
 {
-    public partial class AddOtherForm : Form
+    public partial class EditElectricityAdmin : UserControl
     {
-        public AddOtherForm()
+        public EditElectricityAdmin()
         {
             InitializeComponent();
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }

@@ -8,18 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Capstoneszn.Forms.UtilityForms
+namespace Capstoneszn.Forms.UserControls.Utilities
 {
-    public partial class AddOtherForm : Form
+    public partial class RecordExpensesForm : Form
     {
-        public AddOtherForm()
+        public RecordExpensesForm()
         {
             InitializeComponent();
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
