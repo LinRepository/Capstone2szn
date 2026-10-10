@@ -63,10 +63,10 @@
             // 
             txtEditTenantFName.Cursor = Cursors.IBeam;
             txtEditTenantFName.Dock = DockStyle.Right;
+            txtEditTenantFName.Font = new Font("Segoe UI", 13.2000008F);
             txtEditTenantFName.Location = new Point(213, 10);
-            txtEditTenantFName.Multiline = true;
             txtEditTenantFName.Name = "txtEditTenantFName";
-            txtEditTenantFName.Size = new Size(355, 38);
+            txtEditTenantFName.Size = new Size(355, 37);
             txtEditTenantFName.TabIndex = 30;
             // 
             // pnlFName
@@ -113,10 +113,10 @@
             // 
             txtEditTenantMName.Cursor = Cursors.IBeam;
             txtEditTenantMName.Dock = DockStyle.Right;
+            txtEditTenantMName.Font = new Font("Segoe UI", 13.2000008F);
             txtEditTenantMName.Location = new Point(213, 10);
-            txtEditTenantMName.Multiline = true;
             txtEditTenantMName.Name = "txtEditTenantMName";
-            txtEditTenantMName.Size = new Size(355, 38);
+            txtEditTenantMName.Size = new Size(355, 37);
             txtEditTenantMName.TabIndex = 36;
             // 
             // pnlMName
@@ -149,10 +149,10 @@
             // 
             txtEditTenantLName.Cursor = Cursors.IBeam;
             txtEditTenantLName.Dock = DockStyle.Right;
+            txtEditTenantLName.Font = new Font("Segoe UI", 13.2000008F);
             txtEditTenantLName.Location = new Point(213, 10);
-            txtEditTenantLName.Multiline = true;
             txtEditTenantLName.Name = "txtEditTenantLName";
-            txtEditTenantLName.Size = new Size(355, 38);
+            txtEditTenantLName.Size = new Size(355, 37);
             txtEditTenantLName.TabIndex = 37;
             // 
             // pnlLName
@@ -185,10 +185,10 @@
             // 
             txtEditTenantAddress.Cursor = Cursors.IBeam;
             txtEditTenantAddress.Dock = DockStyle.Right;
+            txtEditTenantAddress.Font = new Font("Segoe UI", 13.2000008F);
             txtEditTenantAddress.Location = new Point(213, 10);
-            txtEditTenantAddress.Multiline = true;
             txtEditTenantAddress.Name = "txtEditTenantAddress";
-            txtEditTenantAddress.Size = new Size(355, 38);
+            txtEditTenantAddress.Size = new Size(355, 37);
             txtEditTenantAddress.TabIndex = 38;
             // 
             // pnlAddress
@@ -221,10 +221,10 @@
             // 
             txtEditTenantContactNumber.Cursor = Cursors.IBeam;
             txtEditTenantContactNumber.Dock = DockStyle.Right;
+            txtEditTenantContactNumber.Font = new Font("Segoe UI", 13.2000008F);
             txtEditTenantContactNumber.Location = new Point(213, 10);
-            txtEditTenantContactNumber.Multiline = true;
             txtEditTenantContactNumber.Name = "txtEditTenantContactNumber";
-            txtEditTenantContactNumber.Size = new Size(355, 38);
+            txtEditTenantContactNumber.Size = new Size(355, 37);
             txtEditTenantContactNumber.TabIndex = 31;
             // 
             // pnlEditTenantContent
@@ -328,6 +328,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Edit Tenant";
+            Load += EditTenant_Load;
             pnlFName.ResumeLayout(false);
             pnlFName.PerformLayout();
             pnlMName.ResumeLayout(false);

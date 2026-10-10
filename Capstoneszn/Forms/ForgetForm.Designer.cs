@@ -193,9 +193,11 @@
             // 
             // ForgetForm
             // 
+            AcceptButton = btnVerify;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
+            CancelButton = btnCancel;
             ClientSize = new Size(632, 553);
             Controls.Add(pnlSecurityVerificationContent);
             Controls.Add(pnlSecurityVerificationActionButtons);
@@ -206,7 +208,7 @@
             Name = "ForgetForm";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "ForgetForm";
+            Text = "Security Verification";
             Load += ForgetForm_Load;
             pnlSecurityVerificationHeader.ResumeLayout(false);
             pnlSecurityVerificationActionButtons.ResumeLayout(false);

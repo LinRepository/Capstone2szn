@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
+using Capstoneszn.Forms.PaymentsForms;
 
 namespace Capstoneszn.Forms.UserControls.BillingManagement
 {
@@ -28,18 +29,20 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             colTenantName.DataPropertyName = "TenantName";
             colShare.DataPropertyName = "Share";
             colPaid.DataPropertyName = "Paid";
-            Balance.DataPropertyName = "Balance";
+            colBalance.DataPropertyName = "Balance";
 
             colShare.DefaultCellStyle.Format = "N2";
             colPaid.DefaultCellStyle.Format = "N2";
-            Balance.DefaultCellStyle.Format = "N2";
+            colBalance.DefaultCellStyle.Format = "N2";
             colShare.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             colPaid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Balance.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            colBalance.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
             dgvTenantPayments.CellContentClick += dgvTenantPayments_CellContentClick;
             dgvTenantPayments.CellFormatting += dgvTenantPayments_CellFormatting;
-            btnBackRoomBilling.Click += btnBackRoomBilling_Click;
+
+            // btnBackRoomBilling.Click is wired by the designer - do NOT add it
+            // here as well, or Back fires twice and the second pass crashes.
 
             LoadBilling();
 
@@ -58,7 +61,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                     {
                         cmd.Parameters.AddWithValue("@rid", _roomId);
                         object rn = cmd.ExecuteScalar();
-                        lblRoomNumber.Text = "Room " + (rn == null ? "-" : rn.ToString());
+                        lblRoomNumber.Text = "Room " +
+                            ((rn == null || rn == DBNull.Value) ? "-" : rn.ToString());
                     }
 
                     // Current period = the most recent rent bill for this room
@@ -127,7 +131,7 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             // position: credit held, minus everything still unpaid.
             string sql = @"
                 SELECT t.TenantId,
-                       t.FirstName + ' ' + t.LastName AS TenantName,
+                       ISNULL(t.FirstName,'') + ' ' + ISNULL(t.LastName,'') AS TenantName,
                        ISNULL(bt.Share, 0) AS Share,
                        ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
                                WHERE a.BillId = @bid AND a.TenantId = t.TenantId), 0) AS Paid,
@@ -167,13 +171,16 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             DataRowView row = dgvTenantPayments.Rows[e.RowIndex].DataBoundItem as DataRowView;
             if (row == null) return;
 
-            if (e.ColumnIndex == Payment.Index)
+            if (e.ColumnIndex == colPayment.Index)
             {
                 decimal share = Convert.ToDecimal(row["Share"]);
                 decimal pd = Convert.ToDecimal(row["Paid"]);
-                e.Value = (share - pd > 0) ? "Make Payment" : "Paid";
+
+                if (share <= 0) e.Value = "Not billed";
+                else if (share - pd > 0) e.Value = "Make Payment";
+                else e.Value = "Paid";
             }
-            else if (e.ColumnIndex == Balance.Index)
+            else if (e.ColumnIndex == colBalance.Index)
             {
                 decimal bal = Convert.ToDecimal(row["Balance"]);
                 e.CellStyle.ForeColor = bal < 0 ? Color.Crimson
@@ -184,7 +191,7 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
         private void dgvTenantPayments_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex != Payment.Index) return;
+            if (e.RowIndex < 0 || e.ColumnIndex != colPayment.Index) return;
 
             if (_currentBillId <= 0)
             {
@@ -198,6 +205,14 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
             decimal share = Convert.ToDecimal(row["Share"]);
             decimal pd = Convert.ToDecimal(row["Paid"]);
+
+            if (share <= 0)
+            {
+                MessageBox.Show("This tenant joined after the bill was generated, so they have no share for this period. They will be billed from the next period.",
+                    "Not Billed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             if (share - pd <= 0)
             {
                 MessageBox.Show("This tenant's share is already settled for the period.",
@@ -207,19 +222,20 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
             int tenantId = Convert.ToInt32(row["TenantId"]);
 
-            MessageBox.Show("Payment for TenantId " + tenantId +
-                            ", bill " + _currentBillId + " - form pending.",
-                "Make Payment", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            // Once BillingPaymentForm is wired:
-            // using (var pay = new BillingPaymentForm(_roomId, tenantId))
-            //     if (pay.ShowDialog() == DialogResult.OK) LoadBilling();
+            using (var pay = new BillingPaymentForm(_roomId, tenantId))
+            {
+                if (pay.ShowDialog(this) == DialogResult.OK)
+                    LoadBilling();   // refresh totals, grid and button captions
+            }
         }
 
 
         private void btnBackRoomBilling_Click(object sender, EventArgs e)
         {
-            foreach (Control ctrl in this.Parent.Controls)
+            Control parent = this.Parent;
+            if (parent == null) return;
+
+            foreach (Control ctrl in parent.Controls)
             {
                 if (ctrl is BillingRoomAccountControl)
                 {
@@ -229,7 +245,7 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 }
             }
 
-            this.Parent.Controls.Remove(this);
+            parent.Controls.Remove(this);
             this.Dispose();
         }
     }

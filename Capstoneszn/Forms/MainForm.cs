@@ -23,7 +23,7 @@ namespace Capstoneszn
         private int checkbuildingId;
 
 
-        private int checkcurrentBuildingId;
+        
         private string currentBuildingName = ""; //Added ni Lin
 
 
@@ -33,7 +33,6 @@ namespace Capstoneszn
             InitializeComponent();
             pnlSideBar.Width = SidebarExpandedWidth;
 
-            checkcurrentBuildingId = buildingId; //BUILDING CREATION
             checkbuildingId = buildingId; //ROOMS MODULE
             currentBuildingName = buildingName; //Lin
         }
@@ -48,17 +47,7 @@ namespace Capstoneszn
             //time
             UpdateDateTime();
 
-            //Para to sa building name to
-            try
-            {
-                lblSystemName.Text = GetBuildingName();
-            }
-            catch (Exception ex)
-            {
-                lblSystemName.Text = "Building Name";
-                MessageBox.Show("Could not load building name: " + ex.Message,
-                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            lblSystemName.Text = string.IsNullOrWhiteSpace(currentBuildingName)  ? "Building Name" : currentBuildingName;
 
 
             //Para sa user
@@ -73,29 +62,7 @@ namespace Capstoneszn
         {
             lblDate.Text = DateTime.Now.ToString("MMMM dd, yyyy"); // e.g., September 29, 2026
         }
-
-        //Load building name
-        private string GetBuildingName()
-        {
-            string buildingName = "Building Name";   // fallback
-
-            string query = "SELECT BuildingName FROM Buildings WHERE BuildingId = @id";
-
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@id", checkcurrentBuildingId);
-                conn.Open();
-
-                string? value = cmd.ExecuteScalar()?.ToString();
-
-                if (!string.IsNullOrWhiteSpace(value))
-                    buildingName = value;
-            }
-
-            return buildingName;
-        }
-        
+       
 
         private void SaveButtonTexts()
         {
@@ -117,13 +84,12 @@ namespace Capstoneszn
 
         private void LoadControl(UserControl userControl)
         {
-            foreach (Control c in pnlContent.Controls)
-                c.Dispose();
+            for (int i = pnlContent.Controls.Count - 1; i >= 0; i--)
+                pnlContent.Controls[i].Dispose();
 
             pnlContent.Controls.Clear();
 
             userControl.Dock = DockStyle.Fill;
-
             pnlContent.Controls.Add(userControl);
         }
 

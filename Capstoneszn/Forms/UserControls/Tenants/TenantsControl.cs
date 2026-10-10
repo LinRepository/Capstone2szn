@@ -53,24 +53,32 @@ namespace Capstoneszn.UserControls
                 {
                     conn.Open();
                     string sql = @"
-                        SELECT t.TenantId, r.RoomNumber, t.FirstName, t.MiddleName,
-                               t.LastName, t.Address, t.ContactNumber, t.DateOccupied
-                        FROM Tenants t
-                        LEFT JOIN Rooms r ON r.RoomId = t.RoomId
-                        WHERE t.Status = 'Active' AND t.IsArchived = 0
-                        ORDER BY t.LastName, t.FirstName;";
+                SELECT t.TenantId, r.RoomNumber, t.FirstName, t.MiddleName,
+                       t.LastName, t.Address, t.ContactNumber, t.DateOccupied
+                FROM Tenants t
+                INNER JOIN Rooms  r ON r.RoomId  = t.RoomId
+                INNER JOIN Floors f ON f.FloorId = r.FloorId
+                WHERE f.BuildingId = @BuildingId
+                  AND t.Status = 'Active'
+                  AND t.IsArchived = 0
+                ORDER BY t.LastName, t.FirstName;";
 
-                    _tenants = new DataTable();
-                    using (var da = new SqlDataAdapter(sql, conn))
-                        da.Fill(_tenants);
+                    using (var cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.Add("@BuildingId", SqlDbType.Int).Value = Session.BuildingId;
+
+                        _tenants = new DataTable();
+                        using (var da = new SqlDataAdapter(cmd))
+                            da.Fill(_tenants);
+                    }
 
                     dgvTenants.DataSource = _tenants;
                     dgvTenants.ClearSelection();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    MessageBox.Show("Error loading tenants: " + ex.Message,
-                        "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Unable to load tenants.", "Database Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -111,9 +119,9 @@ namespace Capstoneszn.UserControls
         {
             if (_tenants == null) return;
 
-            string term = txtSearch.Text.Trim().Replace("'", "''");   // escape quotes
+            string term = EscapeFilter(txtSearch.Text.Trim());
 
-            _tenants.DefaultView.RowFilter = string.IsNullOrEmpty(term)
+            _tenants.DefaultView.RowFilter = term.Length == 0
                 ? ""
                 : $"FirstName LIKE '%{term}%' OR LastName LIKE '%{term}%' " +
                   $"OR MiddleName LIKE '%{term}%' OR RoomNumber LIKE '%{term}%' " +
@@ -121,6 +129,17 @@ namespace Capstoneszn.UserControls
 
             pnlTenantDetails.Visible = false;   // old selection no longer valid
             _selectedTenantId = -1;
+        }
+
+        // RowFilter treats [ ] * % as pattern characters. Without escaping,
+        // typing a single "[" throws a SyntaxErrorException.
+        private static string EscapeFilter(string s)
+        {
+            return (s ?? string.Empty)
+                .Replace("[", "[[]")   // must come first
+                .Replace("%", "[%]")
+                .Replace("*", "[*]")
+                .Replace("'", "''");
         }
 
         private void dgvTenants_CellContentClick(object sender, DataGridViewCellEventArgs e)

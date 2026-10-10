@@ -278,7 +278,7 @@ namespace Capstoneszn.Forms
                                 string.IsNullOrWhiteSpace(refNo)
                                     ? (object)DBNull.Value : refNo);
                             cmd.Parameters.AddWithValue("@pdate", dtpPaymentDate.Value.Date);
-                            //cmd.Parameters.AddWithValue("@by", MainForm.CurrentUserId);
+                            cmd.Parameters.Add("@by", SqlDbType.Int).Value = Session.UserId;
                             paymentId = (int)cmd.ExecuteScalar();
                         }
 

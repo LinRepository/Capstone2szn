@@ -3,13 +3,13 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Capstoneszn.Forms.UserControls;
 
 namespace Capstoneszn
 {
@@ -64,8 +64,9 @@ namespace Capstoneszn
                             while (r.Read()) questions[r.GetInt32(0)] = r.GetString(1);
                     }
 
-                    // An account with no questions seeded can't use this recovery path
-                    if (questions.Count < 3)
+                    // Check the KEYS we are about to use, not just how many rows came back.
+                    // Count == 3 does not guarantee the numbers are 1, 2 and 3.
+                    if (!questions.ContainsKey(1) || !questions.ContainsKey(2) || !questions.ContainsKey(3))
                     {
                         MessageBox.Show(
                             "This account has no security questions set up, so the password cannot be reset here.",
@@ -77,12 +78,26 @@ namespace Capstoneszn
                     lblQuestionOne.Text = questions[1];
                     lblQuestionTwo.Text = questions[2];
                     lblQuestionThree.Text = questions[3];
+
+                    // Tab order puts the button panel ahead of the content panel,
+                    // so focus would otherwise land on Verify instead of the first answer.
+                    txtQuestionOne.Select();
                 }
             }
-            catch (Exception)
+            catch (SqlException ex)
             {
-                MessageBox.Show("Unable to connect to the database.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "A database error occurred. Please make sure SQL Server is running and try again.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "Something went wrong while loading your security questions.",
+                    "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
             }
         }
@@ -118,7 +133,8 @@ namespace Capstoneszn
                         while (r.Read()) hashes[r.GetInt32(0)] = r.GetString(1);
                 }
 
-                if (hashes.Count < 3)
+                // Same key check as in Load - guard what we actually index into.
+                if (!hashes.ContainsKey(1) || !hashes.ContainsKey(2) || !hashes.ContainsKey(3))
                 {
                     MessageBox.Show("Security questions are incomplete for this account.", "Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -143,19 +159,37 @@ namespace Capstoneszn
                 }
                 else
                 {
-                    IncorrectAnswerForm wrongForm = new IncorrectAnswerForm();
+                    // Deliberately generic. Naming which questions failed - or even how many -
+                    // would let an attacker verify answers one at a time instead of all three
+                    // together, which is the whole point of a multi-question check.
+                    MessageBox.Show(
+                        "One or more of your answers is incorrect. Please try again.",
+                        "Verification Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
 
-                    if (!ok1) wrongForm.AddWrongAnswer(1, lblQuestionOne.Text, a1);
-                    if (!ok2) wrongForm.AddWrongAnswer(2, lblQuestionTwo.Text, a2);
-                    if (!ok3) wrongForm.AddWrongAnswer(3, lblQuestionThree.Text, a3);
-
-                    wrongForm.ShowDialog(this);
+                    // Clear ALL three, never just the failed ones. Clearing only the wrong
+                    // boxes would leak the same information visually that the old form
+                    // leaked in text.
+                    txtQuestionOne.Clear();
+                    txtQuestionTwo.Clear();
+                    txtQuestionThree.Clear();
+                    txtQuestionOne.Focus();
                 }
             }
-            catch (Exception)
+            catch (SqlException ex)
             {
-                MessageBox.Show("Unable to connect to the database.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "A database error occurred. Please make sure SQL Server is running and try again.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "Something went wrong while verifying your answers.",
+                    "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

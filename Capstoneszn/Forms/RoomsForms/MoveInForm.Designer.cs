@@ -211,10 +211,10 @@
             // 
             txtContactNumber.Cursor = Cursors.IBeam;
             txtContactNumber.Dock = DockStyle.Right;
+            txtContactNumber.Font = new Font("Segoe UI", 13.2000008F);
             txtContactNumber.Location = new Point(213, 10);
-            txtContactNumber.Multiline = true;
             txtContactNumber.Name = "txtContactNumber";
-            txtContactNumber.Size = new Size(355, 38);
+            txtContactNumber.Size = new Size(355, 37);
             txtContactNumber.TabIndex = 31;
             // 
             // pnlAddress
@@ -247,10 +247,10 @@
             // 
             txtAddress.Cursor = Cursors.IBeam;
             txtAddress.Dock = DockStyle.Right;
+            txtAddress.Font = new Font("Segoe UI", 13.2000008F);
             txtAddress.Location = new Point(213, 10);
-            txtAddress.Multiline = true;
             txtAddress.Name = "txtAddress";
-            txtAddress.Size = new Size(355, 38);
+            txtAddress.Size = new Size(355, 37);
             txtAddress.TabIndex = 38;
             // 
             // pnlLName
@@ -283,10 +283,10 @@
             // 
             txtLName.Cursor = Cursors.IBeam;
             txtLName.Dock = DockStyle.Right;
+            txtLName.Font = new Font("Segoe UI", 13.2000008F);
             txtLName.Location = new Point(213, 10);
-            txtLName.Multiline = true;
             txtLName.Name = "txtLName";
-            txtLName.Size = new Size(355, 38);
+            txtLName.Size = new Size(355, 37);
             txtLName.TabIndex = 37;
             // 
             // pnlMName
@@ -319,10 +319,10 @@
             // 
             txtMName.Cursor = Cursors.IBeam;
             txtMName.Dock = DockStyle.Right;
+            txtMName.Font = new Font("Segoe UI", 13.2000008F);
             txtMName.Location = new Point(213, 10);
-            txtMName.Multiline = true;
             txtMName.Name = "txtMName";
-            txtMName.Size = new Size(355, 38);
+            txtMName.Size = new Size(355, 37);
             txtMName.TabIndex = 36;
             // 
             // pnlFName
@@ -355,10 +355,10 @@
             // 
             txtFName.Cursor = Cursors.IBeam;
             txtFName.Dock = DockStyle.Right;
+            txtFName.Font = new Font("Segoe UI", 13.2000008F);
             txtFName.Location = new Point(213, 10);
-            txtFName.Multiline = true;
             txtFName.Name = "txtFName";
-            txtFName.Size = new Size(355, 38);
+            txtFName.Size = new Size(355, 37);
             txtFName.TabIndex = 30;
             // 
             // MoveInForm

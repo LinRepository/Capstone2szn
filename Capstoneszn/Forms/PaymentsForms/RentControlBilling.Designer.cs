@@ -29,9 +29,17 @@
         private void InitializeComponent()
         {
             pnlButtons = new Panel();
-            RadioBtnRoom = new RadioButton();
+            panel2 = new Panel();
             RadioBtnIndividualTenant = new RadioButton();
+            RadioBtnRoom = new RadioButton();
+            panel1 = new Panel();
+            lblDescription1 = new Label();
+            lblDescription2 = new Label();
             pnlTenantInformation = new Panel();
+            lblOutstandingValue = new Label();
+            lblOutstanding = new Label();
+            lblShareValue = new Label();
+            lblShare = new Label();
             lblBalanceValue = new Label();
             lblPeriodValue = new Label();
             lblTenantValue = new Label();
@@ -40,18 +48,10 @@
             lblPeriod = new Label();
             lblTenant = new Label();
             lblRoom = new Label();
-            lblShare = new Label();
-            lblShareValue = new Label();
-            lblOutstanding = new Label();
-            lblOutstandingValue = new Label();
-            lblDescription1 = new Label();
-            lblDescription2 = new Label();
-            panel1 = new Panel();
-            panel2 = new Panel();
             pnlButtons.SuspendLayout();
-            pnlTenantInformation.SuspendLayout();
-            panel1.SuspendLayout();
             panel2.SuspendLayout();
+            panel1.SuspendLayout();
+            pnlTenantInformation.SuspendLayout();
             SuspendLayout();
             // 
             // pnlButtons
@@ -64,22 +64,15 @@
             pnlButtons.Size = new Size(825, 169);
             pnlButtons.TabIndex = 1;
             // 
-            // RadioBtnRoom
+            // panel2
             // 
-            RadioBtnRoom.Appearance = Appearance.Button;
-            RadioBtnRoom.BackColor = Color.FromArgb(11, 20, 38);
-            RadioBtnRoom.FlatStyle = FlatStyle.Flat;
-            RadioBtnRoom.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            RadioBtnRoom.ForeColor = Color.White;
-            RadioBtnRoom.Location = new Point(443, 10);
-            RadioBtnRoom.Margin = new Padding(0);
-            RadioBtnRoom.Name = "RadioBtnRoom";
-            RadioBtnRoom.Size = new Size(324, 62);
-            RadioBtnRoom.TabIndex = 7;
-            RadioBtnRoom.TabStop = true;
-            RadioBtnRoom.Text = "Whole Room";
-            RadioBtnRoom.TextAlign = ContentAlignment.MiddleCenter;
-            RadioBtnRoom.UseVisualStyleBackColor = false;
+            panel2.Controls.Add(RadioBtnIndividualTenant);
+            panel2.Controls.Add(RadioBtnRoom);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(0, 9);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(825, 80);
+            panel2.TabIndex = 41;
             // 
             // RadioBtnIndividualTenant
             // 
@@ -97,6 +90,63 @@
             RadioBtnIndividualTenant.Text = "Individual Tenant";
             RadioBtnIndividualTenant.TextAlign = ContentAlignment.MiddleCenter;
             RadioBtnIndividualTenant.UseVisualStyleBackColor = false;
+            RadioBtnIndividualTenant.CheckedChanged += RadioBtnIndividualTenant_CheckedChanged;
+            // 
+            // RadioBtnRoom
+            // 
+            RadioBtnRoom.Appearance = Appearance.Button;
+            RadioBtnRoom.BackColor = Color.FromArgb(11, 20, 38);
+            RadioBtnRoom.FlatStyle = FlatStyle.Flat;
+            RadioBtnRoom.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            RadioBtnRoom.ForeColor = Color.White;
+            RadioBtnRoom.Location = new Point(443, 10);
+            RadioBtnRoom.Margin = new Padding(0);
+            RadioBtnRoom.Name = "RadioBtnRoom";
+            RadioBtnRoom.Size = new Size(324, 62);
+            RadioBtnRoom.TabIndex = 7;
+            RadioBtnRoom.TabStop = true;
+            RadioBtnRoom.Text = "Whole Room";
+            RadioBtnRoom.TextAlign = ContentAlignment.MiddleCenter;
+            RadioBtnRoom.UseVisualStyleBackColor = false;
+            RadioBtnRoom.CheckedChanged += RadioBtnRoom_CheckedChanged;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(lblDescription1);
+            panel1.Controls.Add(lblDescription2);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 89);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(825, 80);
+            panel1.TabIndex = 40;
+            // 
+            // lblDescription1
+            // 
+            lblDescription1.AutoSize = true;
+            lblDescription1.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDescription1.ForeColor = Color.White;
+            lblDescription1.ImageAlign = ContentAlignment.MiddleRight;
+            lblDescription1.Location = new Point(43, 0);
+            lblDescription1.Margin = new Padding(0);
+            lblDescription1.Name = "lblDescription1";
+            lblDescription1.Size = new Size(143, 31);
+            lblDescription1.TabIndex = 38;
+            lblDescription1.Text = "Description1";
+            lblDescription1.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblDescription2
+            // 
+            lblDescription2.AutoSize = true;
+            lblDescription2.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDescription2.ForeColor = Color.White;
+            lblDescription2.ImageAlign = ContentAlignment.MiddleRight;
+            lblDescription2.Location = new Point(43, 45);
+            lblDescription2.Margin = new Padding(0);
+            lblDescription2.Name = "lblDescription2";
+            lblDescription2.Size = new Size(143, 31);
+            lblDescription2.TabIndex = 39;
+            lblDescription2.Text = "Description2";
+            lblDescription2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlTenantInformation
             // 
@@ -117,6 +167,62 @@
             pnlTenantInformation.Name = "pnlTenantInformation";
             pnlTenantInformation.Size = new Size(825, 181);
             pnlTenantInformation.TabIndex = 2;
+            // 
+            // lblOutstandingValue
+            // 
+            lblOutstandingValue.AutoSize = true;
+            lblOutstandingValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOutstandingValue.ForeColor = Color.White;
+            lblOutstandingValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblOutstandingValue.Location = new Point(658, 147);
+            lblOutstandingValue.Margin = new Padding(0);
+            lblOutstandingValue.Name = "lblOutstandingValue";
+            lblOutstandingValue.Size = new Size(70, 31);
+            lblOutstandingValue.TabIndex = 40;
+            lblOutstandingValue.Text = "####";
+            lblOutstandingValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblOutstanding
+            // 
+            lblOutstanding.AutoSize = true;
+            lblOutstanding.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOutstanding.ForeColor = Color.White;
+            lblOutstanding.ImageAlign = ContentAlignment.MiddleRight;
+            lblOutstanding.Location = new Point(463, 147);
+            lblOutstanding.Margin = new Padding(0);
+            lblOutstanding.Name = "lblOutstanding";
+            lblOutstanding.Size = new Size(142, 31);
+            lblOutstanding.TabIndex = 39;
+            lblOutstanding.Text = "Outstanding";
+            lblOutstanding.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblShareValue
+            // 
+            lblShareValue.AutoSize = true;
+            lblShareValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblShareValue.ForeColor = Color.White;
+            lblShareValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblShareValue.Location = new Point(183, 147);
+            lblShareValue.Margin = new Padding(0);
+            lblShareValue.Name = "lblShareValue";
+            lblShareValue.Size = new Size(70, 31);
+            lblShareValue.TabIndex = 38;
+            lblShareValue.Text = "####";
+            lblShareValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblShare
+            // 
+            lblShare.AutoSize = true;
+            lblShare.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblShare.ForeColor = Color.White;
+            lblShare.ImageAlign = ContentAlignment.MiddleRight;
+            lblShare.Location = new Point(43, 147);
+            lblShare.Margin = new Padding(0);
+            lblShare.Name = "lblShare";
+            lblShare.Size = new Size(71, 31);
+            lblShare.TabIndex = 37;
+            lblShare.Text = "Share";
+            lblShare.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblBalanceValue
             // 
@@ -230,110 +336,6 @@
             lblRoom.Text = "Room";
             lblRoom.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblShare
-            // 
-            lblShare.AutoSize = true;
-            lblShare.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblShare.ForeColor = Color.White;
-            lblShare.ImageAlign = ContentAlignment.MiddleRight;
-            lblShare.Location = new Point(43, 147);
-            lblShare.Margin = new Padding(0);
-            lblShare.Name = "lblShare";
-            lblShare.Size = new Size(71, 31);
-            lblShare.TabIndex = 37;
-            lblShare.Text = "Share";
-            lblShare.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblShareValue
-            // 
-            lblShareValue.AutoSize = true;
-            lblShareValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblShareValue.ForeColor = Color.White;
-            lblShareValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblShareValue.Location = new Point(183, 147);
-            lblShareValue.Margin = new Padding(0);
-            lblShareValue.Name = "lblShareValue";
-            lblShareValue.Size = new Size(70, 31);
-            lblShareValue.TabIndex = 38;
-            lblShareValue.Text = "####";
-            lblShareValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblOutstanding
-            // 
-            lblOutstanding.AutoSize = true;
-            lblOutstanding.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblOutstanding.ForeColor = Color.White;
-            lblOutstanding.ImageAlign = ContentAlignment.MiddleRight;
-            lblOutstanding.Location = new Point(463, 147);
-            lblOutstanding.Margin = new Padding(0);
-            lblOutstanding.Name = "lblOutstanding";
-            lblOutstanding.Size = new Size(142, 31);
-            lblOutstanding.TabIndex = 39;
-            lblOutstanding.Text = "Outstanding";
-            lblOutstanding.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblOutstandingValue
-            // 
-            lblOutstandingValue.AutoSize = true;
-            lblOutstandingValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblOutstandingValue.ForeColor = Color.White;
-            lblOutstandingValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblOutstandingValue.Location = new Point(658, 147);
-            lblOutstandingValue.Margin = new Padding(0);
-            lblOutstandingValue.Name = "lblOutstandingValue";
-            lblOutstandingValue.Size = new Size(70, 31);
-            lblOutstandingValue.TabIndex = 40;
-            lblOutstandingValue.Text = "####";
-            lblOutstandingValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblDescription1
-            // 
-            lblDescription1.AutoSize = true;
-            lblDescription1.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDescription1.ForeColor = Color.White;
-            lblDescription1.ImageAlign = ContentAlignment.MiddleRight;
-            lblDescription1.Location = new Point(43, 0);
-            lblDescription1.Margin = new Padding(0);
-            lblDescription1.Name = "lblDescription1";
-            lblDescription1.Size = new Size(143, 31);
-            lblDescription1.TabIndex = 38;
-            lblDescription1.Text = "Description1";
-            lblDescription1.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblDescription2
-            // 
-            lblDescription2.AutoSize = true;
-            lblDescription2.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDescription2.ForeColor = Color.White;
-            lblDescription2.ImageAlign = ContentAlignment.MiddleRight;
-            lblDescription2.Location = new Point(43, 45);
-            lblDescription2.Margin = new Padding(0);
-            lblDescription2.Name = "lblDescription2";
-            lblDescription2.Size = new Size(143, 31);
-            lblDescription2.TabIndex = 39;
-            lblDescription2.Text = "Description2";
-            lblDescription2.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(lblDescription1);
-            panel1.Controls.Add(lblDescription2);
-            panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 89);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(825, 80);
-            panel1.TabIndex = 40;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(RadioBtnIndividualTenant);
-            panel2.Controls.Add(RadioBtnRoom);
-            panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 9);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(825, 80);
-            panel2.TabIndex = 41;
-            // 
             // RentControlBilling
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -344,11 +346,11 @@
             Name = "RentControlBilling";
             Size = new Size(825, 350);
             pnlButtons.ResumeLayout(false);
-            pnlTenantInformation.ResumeLayout(false);
-            pnlTenantInformation.PerformLayout();
+            panel2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            panel2.ResumeLayout(false);
+            pnlTenantInformation.ResumeLayout(false);
+            pnlTenantInformation.PerformLayout();
             ResumeLayout(false);
         }
 

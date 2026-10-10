@@ -41,16 +41,16 @@
             lblTotalBillTitle = new Label();
             pnlTenantPayments = new Panel();
             dgvTenantPayments = new DataGridView();
-            colTenantName = new DataGridViewTextBoxColumn();
-            colShare = new DataGridViewTextBoxColumn();
-            colPaid = new DataGridViewTextBoxColumn();
-            Balance = new DataGridViewTextBoxColumn();
-            Payment = new DataGridViewButtonColumn();
             btnBackRoomBilling = new Button();
             lblRoomNumber = new Label();
             lblPeriodValue = new Label();
             lblBillStatusValue = new Label();
             pnlRoomBillingHeader = new Panel();
+            colTenantName = new DataGridViewTextBoxColumn();
+            colShare = new DataGridViewTextBoxColumn();
+            colPaid = new DataGridViewTextBoxColumn();
+            colBalance = new DataGridViewTextBoxColumn();
+            colPayment = new DataGridViewButtonColumn();
             pnlRoomBillingSummary.SuspendLayout();
             tblRoomBillingSummary.SuspendLayout();
             pnlTotalPaid.SuspendLayout();
@@ -218,7 +218,7 @@
             dgvTenantPayments.AllowUserToResizeRows = false;
             dgvTenantPayments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTenantPayments.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTenantPayments.Columns.AddRange(new DataGridViewColumn[] { colTenantName, colShare, colPaid, Balance, Payment });
+            dgvTenantPayments.Columns.AddRange(new DataGridViewColumn[] { colTenantName, colShare, colPaid, colBalance, colPayment });
             dgvTenantPayments.Dock = DockStyle.Fill;
             dgvTenantPayments.Location = new Point(0, 0);
             dgvTenantPayments.MultiSelect = false;
@@ -230,41 +230,6 @@
             dgvTenantPayments.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvTenantPayments.Size = new Size(1300, 535);
             dgvTenantPayments.TabIndex = 0;
-            // 
-            // colTenantName
-            // 
-            colTenantName.HeaderText = "Tenant";
-            colTenantName.MinimumWidth = 6;
-            colTenantName.Name = "colTenantName";
-            colTenantName.ReadOnly = true;
-            // 
-            // colShare
-            // 
-            colShare.HeaderText = "Share";
-            colShare.MinimumWidth = 6;
-            colShare.Name = "colShare";
-            colShare.ReadOnly = true;
-            // 
-            // colPaid
-            // 
-            colPaid.HeaderText = "Paid";
-            colPaid.MinimumWidth = 6;
-            colPaid.Name = "colPaid";
-            colPaid.ReadOnly = true;
-            // 
-            // Balance
-            // 
-            Balance.HeaderText = "colBalance";
-            Balance.MinimumWidth = 6;
-            Balance.Name = "Balance";
-            Balance.ReadOnly = true;
-            // 
-            // Payment
-            // 
-            Payment.HeaderText = "colPayment";
-            Payment.MinimumWidth = 6;
-            Payment.Name = "Payment";
-            Payment.ReadOnly = true;
             // 
             // btnBackRoomBilling
             // 
@@ -331,6 +296,41 @@
             pnlRoomBillingHeader.Size = new Size(1300, 90);
             pnlRoomBillingHeader.TabIndex = 0;
             // 
+            // colTenantName
+            // 
+            colTenantName.HeaderText = "Tenant";
+            colTenantName.MinimumWidth = 6;
+            colTenantName.Name = "colTenantName";
+            colTenantName.ReadOnly = true;
+            // 
+            // colShare
+            // 
+            colShare.HeaderText = "Share";
+            colShare.MinimumWidth = 6;
+            colShare.Name = "colShare";
+            colShare.ReadOnly = true;
+            // 
+            // colPaid
+            // 
+            colPaid.HeaderText = "Paid";
+            colPaid.MinimumWidth = 6;
+            colPaid.Name = "colPaid";
+            colPaid.ReadOnly = true;
+            // 
+            // colBalance
+            // 
+            colBalance.HeaderText = "Balance";
+            colBalance.MinimumWidth = 6;
+            colBalance.Name = "colBalance";
+            colBalance.ReadOnly = true;
+            // 
+            // colPayment
+            // 
+            colPayment.HeaderText = "Action Payment";
+            colPayment.MinimumWidth = 6;
+            colPayment.Name = "colPayment";
+            colPayment.ReadOnly = true;
+            // 
             // BillingRoomDetailsControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -369,15 +369,15 @@
         private Label lblCurrentDueValue;
         private Label lblCurrentDueTitle;
         private DataGridView dgvTenantPayments;
-        private DataGridViewTextBoxColumn colTenantName;
-        private DataGridViewTextBoxColumn colShare;
-        private DataGridViewTextBoxColumn colPaid;
-        private DataGridViewTextBoxColumn Balance;
-        private DataGridViewButtonColumn Payment;
         private Button btnBackRoomBilling;
         private Label lblRoomNumber;
         private Label lblPeriodValue;
         private Label lblBillStatusValue;
         private Panel pnlRoomBillingHeader;
+        private DataGridViewTextBoxColumn colTenantName;
+        private DataGridViewTextBoxColumn colShare;
+        private DataGridViewTextBoxColumn colPaid;
+        private DataGridViewTextBoxColumn colBalance;
+        private DataGridViewButtonColumn colPayment;
     }
 }
