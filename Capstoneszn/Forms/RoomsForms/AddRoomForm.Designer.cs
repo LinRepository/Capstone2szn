@@ -72,7 +72,7 @@
             lblAddRoomDescription.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAddRoomDescription.ForeColor = Color.White;
             lblAddRoomDescription.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddRoomDescription.Location = new Point(54, 36);
+            lblAddRoomDescription.Location = new Point(75, 39);
             lblAddRoomDescription.Name = "lblAddRoomDescription";
             lblAddRoomDescription.Size = new Size(273, 23);
             lblAddRoomDescription.TabIndex = 25;
@@ -85,7 +85,7 @@
             lblAddRoomTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAddRoomTitle.ForeColor = Color.White;
             lblAddRoomTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddRoomTitle.Location = new Point(131, 5);
+            lblAddRoomTitle.Location = new Point(153, 9);
             lblAddRoomTitle.Name = "lblAddRoomTitle";
             lblAddRoomTitle.Size = new Size(106, 28);
             lblAddRoomTitle.TabIndex = 24;
@@ -150,10 +150,11 @@
             // txtRoomPrice
             // 
             txtRoomPrice.Dock = DockStyle.Fill;
+            txtRoomPrice.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtRoomPrice.Location = new Point(190, 10);
-            txtRoomPrice.Multiline = true;
             txtRoomPrice.Name = "txtRoomPrice";
-            txtRoomPrice.Size = new Size(230, 38);
+            txtRoomPrice.PlaceholderText = "₱0.00";
+            txtRoomPrice.Size = new Size(230, 37);
             txtRoomPrice.TabIndex = 35;
             // 
             // lblRoomPrice
@@ -199,10 +200,11 @@
             // cboRoomType
             // 
             cboRoomType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboRoomType.Font = new Font("Segoe UI", 12F);
             cboRoomType.FormattingEnabled = true;
-            cboRoomType.Location = new Point(190, 17);
+            cboRoomType.Location = new Point(190, 11);
             cboRoomType.Name = "cboRoomType";
-            cboRoomType.Size = new Size(230, 28);
+            cboRoomType.Size = new Size(230, 36);
             cboRoomType.TabIndex = 31;
             // 
             // pnlRoomNumber
@@ -220,10 +222,10 @@
             // txtRoomNumber
             // 
             txtRoomNumber.Dock = DockStyle.Fill;
+            txtRoomNumber.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtRoomNumber.Location = new Point(190, 10);
-            txtRoomNumber.Multiline = true;
             txtRoomNumber.Name = "txtRoomNumber";
-            txtRoomNumber.Size = new Size(230, 38);
+            txtRoomNumber.Size = new Size(230, 37);
             txtRoomNumber.TabIndex = 35;
             // 
             // lblRoomNumber
@@ -268,17 +270,20 @@
             // cboFloor
             // 
             cboFloor.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboFloor.Font = new Font("Segoe UI", 12F);
             cboFloor.FormattingEnabled = true;
-            cboFloor.Location = new Point(190, 15);
+            cboFloor.Location = new Point(190, 11);
             cboFloor.Name = "cboFloor";
-            cboFloor.Size = new Size(230, 28);
+            cboFloor.Size = new Size(230, 36);
             cboFloor.TabIndex = 28;
             // 
             // AddRoomForm
             // 
+            AcceptButton = btnAddRoom;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
+            CancelButton = btnCancelAddRoom;
             ClientSize = new Size(432, 392);
             Controls.Add(pnlAddRoomContent);
             Controls.Add(pnlAddRoomActions);

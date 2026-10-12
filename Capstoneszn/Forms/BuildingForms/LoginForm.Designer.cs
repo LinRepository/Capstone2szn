@@ -89,6 +89,7 @@
             txtLoginPassword.Cursor = Cursors.IBeam;
             txtLoginPassword.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             txtLoginPassword.Location = new Point(161, 328);
+            txtLoginPassword.MaxLength = 72;
             txtLoginPassword.Name = "txtLoginPassword";
             txtLoginPassword.PasswordChar = '*';
             txtLoginPassword.Size = new Size(350, 31);
