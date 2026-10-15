@@ -34,9 +34,11 @@
             btnConfirm = new Button();
             btnCancel = new Button();
             pnlElectricityContent = new Panel();
-            txtElectricityAmount = new TextBox();
+            txtAccountName = new TextBox();
+            txtAccountNumber = new TextBox();
+            label1 = new Label();
             lblElectricityAmount = new Label();
-            cboElectricityRoom = new ComboBox();
+            cbAssignedRooms = new ComboBox();
             lblElectricityRoom = new Label();
             pnlElectrcityHeader.SuspendLayout();
             pnlElectricityActionButton.SuspendLayout();
@@ -50,7 +52,7 @@
             pnlElectrcityHeader.Dock = DockStyle.Top;
             pnlElectrcityHeader.Location = new Point(0, 0);
             pnlElectrcityHeader.Name = "pnlElectrcityHeader";
-            pnlElectrcityHeader.Size = new Size(382, 60);
+            pnlElectrcityHeader.Size = new Size(472, 60);
             pnlElectrcityHeader.TabIndex = 0;
             // 
             // lblAddElectricityBillTitle
@@ -61,7 +63,7 @@
             lblAddElectricityBillTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblAddElectricityBillTitle.Location = new Point(0, 0);
             lblAddElectricityBillTitle.Name = "lblAddElectricityBillTitle";
-            lblAddElectricityBillTitle.Size = new Size(380, 58);
+            lblAddElectricityBillTitle.Size = new Size(470, 58);
             lblAddElectricityBillTitle.TabIndex = 14;
             lblAddElectricityBillTitle.Text = "Add Electricity Bill";
             lblAddElectricityBillTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -71,9 +73,9 @@
             pnlElectricityActionButton.Controls.Add(btnConfirm);
             pnlElectricityActionButton.Controls.Add(btnCancel);
             pnlElectricityActionButton.Dock = DockStyle.Bottom;
-            pnlElectricityActionButton.Location = new Point(0, 303);
+            pnlElectricityActionButton.Location = new Point(0, 360);
             pnlElectricityActionButton.Name = "pnlElectricityActionButton";
-            pnlElectricityActionButton.Size = new Size(382, 50);
+            pnlElectricityActionButton.Size = new Size(472, 50);
             pnlElectricityActionButton.TabIndex = 1;
             // 
             // btnConfirm
@@ -84,6 +86,7 @@
             btnConfirm.TabIndex = 0;
             btnConfirm.Text = "Confirm";
             btnConfirm.UseVisualStyleBackColor = true;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // btnCancel
             // 
@@ -93,27 +96,51 @@
             btnCancel.TabIndex = 0;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
             // 
             // pnlElectricityContent
             // 
             pnlElectricityContent.BorderStyle = BorderStyle.FixedSingle;
-            pnlElectricityContent.Controls.Add(txtElectricityAmount);
+            pnlElectricityContent.Controls.Add(txtAccountName);
+            pnlElectricityContent.Controls.Add(txtAccountNumber);
+            pnlElectricityContent.Controls.Add(label1);
             pnlElectricityContent.Controls.Add(lblElectricityAmount);
-            pnlElectricityContent.Controls.Add(cboElectricityRoom);
+            pnlElectricityContent.Controls.Add(cbAssignedRooms);
             pnlElectricityContent.Controls.Add(lblElectricityRoom);
             pnlElectricityContent.Dock = DockStyle.Fill;
             pnlElectricityContent.Location = new Point(0, 60);
             pnlElectricityContent.Name = "pnlElectricityContent";
-            pnlElectricityContent.Size = new Size(382, 243);
+            pnlElectricityContent.Size = new Size(472, 300);
             pnlElectricityContent.TabIndex = 2;
             // 
-            // txtElectricityAmount
+            // txtAccountName
             // 
-            txtElectricityAmount.Location = new Point(65, 155);
-            txtElectricityAmount.Multiline = true;
-            txtElectricityAmount.Name = "txtElectricityAmount";
-            txtElectricityAmount.Size = new Size(251, 34);
-            txtElectricityAmount.TabIndex = 18;
+            txtAccountName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAccountName.Location = new Point(76, 51);
+            txtAccountName.Name = "txtAccountName";
+            txtAccountName.Size = new Size(321, 34);
+            txtAccountName.TabIndex = 18;
+            // 
+            // txtAccountNumber
+            // 
+            txtAccountNumber.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAccountNumber.Location = new Point(76, 139);
+            txtAccountNumber.Name = "txtAccountNumber";
+            txtAccountNumber.Size = new Size(321, 34);
+            txtAccountNumber.TabIndex = 18;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 13.2000008F);
+            label1.ForeColor = Color.White;
+            label1.ImageAlign = ContentAlignment.MiddleRight;
+            label1.Location = new Point(76, 17);
+            label1.Name = "label1";
+            label1.Size = new Size(161, 31);
+            label1.TabIndex = 17;
+            label1.Text = "Account name";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblElectricityAmount
             // 
@@ -121,21 +148,22 @@
             lblElectricityAmount.Font = new Font("Segoe UI", 13.2000008F);
             lblElectricityAmount.ForeColor = Color.White;
             lblElectricityAmount.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityAmount.Location = new Point(65, 121);
+            lblElectricityAmount.Location = new Point(76, 105);
             lblElectricityAmount.Name = "lblElectricityAmount";
-            lblElectricityAmount.Size = new Size(155, 31);
+            lblElectricityAmount.Size = new Size(184, 31);
             lblElectricityAmount.TabIndex = 17;
-            lblElectricityAmount.Text = "Enter Amount";
+            lblElectricityAmount.Text = "Account number";
             lblElectricityAmount.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // cboElectricityRoom
+            // cbAssignedRooms
             // 
-            cboElectricityRoom.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboElectricityRoom.FormattingEnabled = true;
-            cboElectricityRoom.Location = new Point(65, 61);
-            cboElectricityRoom.Name = "cboElectricityRoom";
-            cboElectricityRoom.Size = new Size(251, 28);
-            cboElectricityRoom.TabIndex = 16;
+            cbAssignedRooms.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbAssignedRooms.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbAssignedRooms.FormattingEnabled = true;
+            cbAssignedRooms.Location = new Point(76, 225);
+            cbAssignedRooms.Name = "cbAssignedRooms";
+            cbAssignedRooms.Size = new Size(321, 36);
+            cbAssignedRooms.TabIndex = 16;
             // 
             // lblElectricityRoom
             // 
@@ -143,11 +171,11 @@
             lblElectricityRoom.Font = new Font("Segoe UI", 13.2000008F);
             lblElectricityRoom.ForeColor = Color.White;
             lblElectricityRoom.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityRoom.Location = new Point(65, 27);
+            lblElectricityRoom.Location = new Point(76, 191);
             lblElectricityRoom.Name = "lblElectricityRoom";
-            lblElectricityRoom.Size = new Size(140, 31);
+            lblElectricityRoom.Size = new Size(173, 31);
             lblElectricityRoom.TabIndex = 15;
-            lblElectricityRoom.Text = "Select Room";
+            lblElectricityRoom.Text = "Assigned Room";
             lblElectricityRoom.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // AddElectricityForm
@@ -155,7 +183,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(382, 353);
+            ClientSize = new Size(472, 410);
             Controls.Add(pnlElectricityContent);
             Controls.Add(pnlElectricityActionButton);
             Controls.Add(pnlElectrcityHeader);
@@ -166,6 +194,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AddElectricityForm";
+            Load += AddElectricityForm_Load;
             pnlElectrcityHeader.ResumeLayout(false);
             pnlElectricityActionButton.ResumeLayout(false);
             pnlElectricityContent.ResumeLayout(false);
@@ -183,7 +212,9 @@
         private Button btnCancel;
         private Label lblElectricityRoom;
         private Label lblElectricityAmount;
-        private ComboBox cboElectricityRoom;
-        private TextBox txtElectricityAmount;
+        private ComboBox cbAssignedRooms;
+        private TextBox txtAccountNumber;
+        private TextBox txtAccountName;
+        private Label label1;
     }
 }

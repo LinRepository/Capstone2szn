@@ -28,270 +28,368 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pnlOtherHeader = new Panel();
-            lblAddOtherBillTitle = new Label();
-            pnlOtherActionButton = new Panel();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             btnConfirm = new Button();
             btnCancel = new Button();
-            pnlOtherContent = new Panel();
+            label1 = new Label();
+            label2 = new Label();
+            textBox1 = new TextBox();
+            dtpChargeDate = new DateTimePicker();
+            label3 = new Label();
+            rbTenant = new RadioButton();
+            rbOutsider = new RadioButton();
+            label4 = new Label();
+            cbTenant = new ComboBox();
+            label5 = new Label();
             txtAmount = new TextBox();
-            cboName = new ComboBox();
-            txtName = new TextBox();
-            panel1 = new Panel();
-            radiobtnOutsider = new RadioButton();
-            radiobtnTenant = new RadioButton();
-            dtpDate = new DateTimePicker();
-            txtUtilityName = new TextBox();
-            lblAmount = new Label();
-            lblName = new Label();
-            lblDate = new Label();
-            lblUtilityName = new Label();
-            pnlOtherHeader.SuspendLayout();
-            pnlOtherActionButton.SuspendLayout();
-            pnlOtherContent.SuspendLayout();
-            panel1.SuspendLayout();
+            btnAddtoList = new Button();
+            dgvCharges = new DataGridView();
+            colType = new DataGridViewTextBoxColumn();
+            colName = new DataGridViewTextBoxColumn();
+            colAmount = new DataGridViewTextBoxColumn();
+            colRemove = new DataGridViewButtonColumn();
+            label6 = new Label();
+            label7 = new Label();
+            lblTotalAmount = new Label();
+            txtOutsiderName = new TextBox();
+            label8 = new Label();
+            ((System.ComponentModel.ISupportInitialize)dgvCharges).BeginInit();
             SuspendLayout();
-            // 
-            // pnlOtherHeader
-            // 
-            pnlOtherHeader.BorderStyle = BorderStyle.FixedSingle;
-            pnlOtherHeader.Controls.Add(lblAddOtherBillTitle);
-            pnlOtherHeader.Dock = DockStyle.Top;
-            pnlOtherHeader.Location = new Point(0, 0);
-            pnlOtherHeader.Name = "pnlOtherHeader";
-            pnlOtherHeader.Size = new Size(482, 60);
-            pnlOtherHeader.TabIndex = 1;
-            // 
-            // lblAddOtherBillTitle
-            // 
-            lblAddOtherBillTitle.Dock = DockStyle.Fill;
-            lblAddOtherBillTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAddOtherBillTitle.ForeColor = Color.White;
-            lblAddOtherBillTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddOtherBillTitle.Location = new Point(0, 0);
-            lblAddOtherBillTitle.Name = "lblAddOtherBillTitle";
-            lblAddOtherBillTitle.Size = new Size(480, 58);
-            lblAddOtherBillTitle.TabIndex = 14;
-            lblAddOtherBillTitle.Text = "Add Other Bill";
-            lblAddOtherBillTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // pnlOtherActionButton
-            // 
-            pnlOtherActionButton.Controls.Add(btnConfirm);
-            pnlOtherActionButton.Controls.Add(btnCancel);
-            pnlOtherActionButton.Dock = DockStyle.Bottom;
-            pnlOtherActionButton.Location = new Point(0, 503);
-            pnlOtherActionButton.Name = "pnlOtherActionButton";
-            pnlOtherActionButton.Size = new Size(482, 50);
-            pnlOtherActionButton.TabIndex = 2;
             // 
             // btnConfirm
             // 
-            btnConfirm.Location = new Point(252, 9);
+            btnConfirm.BackColor = Color.White;
+            btnConfirm.FlatStyle = FlatStyle.Flat;
+            btnConfirm.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnConfirm.Location = new Point(559, 683);
             btnConfirm.Name = "btnConfirm";
-            btnConfirm.Size = new Size(94, 29);
+            btnConfirm.Size = new Size(100, 37);
             btnConfirm.TabIndex = 0;
             btnConfirm.Text = "Confirm";
-            btnConfirm.UseVisualStyleBackColor = true;
+            btnConfirm.UseVisualStyleBackColor = false;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(139, 9);
+            btnCancel.BackColor = Color.White;
+            btnCancel.FlatStyle = FlatStyle.Flat;
+            btnCancel.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnCancel.Location = new Point(453, 683);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(94, 29);
+            btnCancel.Size = new Size(100, 37);
             btnCancel.TabIndex = 0;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Click += btnCancel_Click;
             // 
-            // pnlOtherContent
+            // label1
             // 
-            pnlOtherContent.Controls.Add(txtAmount);
-            pnlOtherContent.Controls.Add(cboName);
-            pnlOtherContent.Controls.Add(txtName);
-            pnlOtherContent.Controls.Add(panel1);
-            pnlOtherContent.Controls.Add(dtpDate);
-            pnlOtherContent.Controls.Add(txtUtilityName);
-            pnlOtherContent.Controls.Add(lblAmount);
-            pnlOtherContent.Controls.Add(lblName);
-            pnlOtherContent.Controls.Add(lblDate);
-            pnlOtherContent.Controls.Add(lblUtilityName);
-            pnlOtherContent.Dock = DockStyle.Fill;
-            pnlOtherContent.Location = new Point(0, 60);
-            pnlOtherContent.Name = "pnlOtherContent";
-            pnlOtherContent.Size = new Size(482, 443);
-            pnlOtherContent.TabIndex = 3;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.White;
+            label1.Location = new Point(24, 40);
+            label1.Name = "label1";
+            label1.Size = new Size(113, 23);
+            label1.TabIndex = 1;
+            label1.Text = "Utilitiy Name:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(24, 95);
+            label2.Name = "label2";
+            label2.Size = new Size(110, 23);
+            label2.TabIndex = 1;
+            label2.Text = "Charge Date:";
+            // 
+            // textBox1
+            // 
+            textBox1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox1.Location = new Point(160, 33);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(499, 30);
+            textBox1.TabIndex = 2;
+            // 
+            // dtpChargeDate
+            // 
+            dtpChargeDate.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dtpChargeDate.Format = DateTimePickerFormat.Short;
+            dtpChargeDate.Location = new Point(160, 89);
+            dtpChargeDate.Name = "dtpChargeDate";
+            dtpChargeDate.Size = new Size(500, 30);
+            dtpChargeDate.TabIndex = 3;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.White;
+            label3.Location = new Point(24, 144);
+            label3.Name = "label3";
+            label3.Size = new Size(91, 23);
+            label3.TabIndex = 1;
+            label3.Text = "Charge To:";
+            // 
+            // rbTenant
+            // 
+            rbTenant.AutoSize = true;
+            rbTenant.Font = new Font("Segoe UI", 10.2F);
+            rbTenant.ForeColor = Color.White;
+            rbTenant.Location = new Point(160, 142);
+            rbTenant.Name = "rbTenant";
+            rbTenant.Size = new Size(82, 27);
+            rbTenant.TabIndex = 4;
+            rbTenant.TabStop = true;
+            rbTenant.Text = "Tenant";
+            rbTenant.UseVisualStyleBackColor = true;
+            // 
+            // rbOutsider
+            // 
+            rbOutsider.AutoSize = true;
+            rbOutsider.Font = new Font("Segoe UI", 10.2F);
+            rbOutsider.ForeColor = Color.White;
+            rbOutsider.Location = new Point(257, 142);
+            rbOutsider.Name = "rbOutsider";
+            rbOutsider.Size = new Size(96, 27);
+            rbOutsider.TabIndex = 4;
+            rbOutsider.TabStop = true;
+            rbOutsider.Text = "Outsider";
+            rbOutsider.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.White;
+            label4.Location = new Point(24, 198);
+            label4.Name = "label4";
+            label4.Size = new Size(65, 23);
+            label4.TabIndex = 1;
+            label4.Text = "Tenant:";
+            // 
+            // cbTenant
+            // 
+            cbTenant.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbTenant.FormattingEnabled = true;
+            cbTenant.Location = new Point(160, 190);
+            cbTenant.Name = "cbTenant";
+            cbTenant.Size = new Size(499, 31);
+            cbTenant.TabIndex = 5;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label5.ForeColor = Color.White;
+            label5.Location = new Point(24, 293);
+            label5.Name = "label5";
+            label5.Size = new Size(148, 46);
+            label5.TabIndex = 1;
+            label5.Text = "Amount:";
             // 
             // txtAmount
             // 
-            txtAmount.Location = new Point(82, 390);
-            txtAmount.Multiline = true;
+            txtAmount.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAmount.Location = new Point(201, 288);
             txtAmount.Name = "txtAmount";
-            txtAmount.Size = new Size(300, 40);
-            txtAmount.TabIndex = 25;
+            txtAmount.PlaceholderText = "0.00 ";
+            txtAmount.Size = new Size(458, 51);
+            txtAmount.TabIndex = 2;
+            txtAmount.TextAlign = HorizontalAlignment.Right;
             // 
-            // cboName
+            // btnAddtoList
             // 
-            cboName.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cboName.FormattingEnabled = true;
-            cboName.Location = new Point(82, 311);
-            cboName.Name = "cboName";
-            cboName.Size = new Size(300, 33);
-            cboName.TabIndex = 24;
+            btnAddtoList.BackColor = Color.White;
+            btnAddtoList.FlatStyle = FlatStyle.Flat;
+            btnAddtoList.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnAddtoList.Location = new Point(559, 345);
+            btnAddtoList.Name = "btnAddtoList";
+            btnAddtoList.Size = new Size(100, 37);
+            btnAddtoList.TabIndex = 0;
+            btnAddtoList.Text = "Add to list";
+            btnAddtoList.UseVisualStyleBackColor = false;
+            btnAddtoList.Click += btnAddtoList_Click;
             // 
-            // txtName
+            // dgvCharges
             // 
-            txtName.Location = new Point(82, 265);
-            txtName.Multiline = true;
-            txtName.Name = "txtName";
-            txtName.Size = new Size(300, 40);
-            txtName.TabIndex = 23;
+            dgvCharges.AllowUserToAddRows = false;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvCharges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvCharges.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvCharges.Columns.AddRange(new DataGridViewColumn[] { colType, colName, colAmount, colRemove });
+            dgvCharges.EditMode = DataGridViewEditMode.EditProgrammatically;
+            dgvCharges.Location = new Point(24, 388);
+            dgvCharges.Name = "dgvCharges";
+            dgvCharges.RowHeadersVisible = false;
+            dgvCharges.RowHeadersWidth = 51;
+            dgvCharges.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvCharges.Size = new Size(635, 240);
+            dgvCharges.TabIndex = 6;
+            dgvCharges.CellContentClick += dgvCharges_CellContentClick;
             // 
-            // panel1
+            // colType
             // 
-            panel1.Controls.Add(radiobtnOutsider);
-            panel1.Controls.Add(radiobtnTenant);
-            panel1.Location = new Point(82, 168);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(300, 60);
-            panel1.TabIndex = 22;
-            panel1.Paint += panel1_Paint;
+            colType.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colType.FillWeight = 40F;
+            colType.HeaderText = "Type";
+            colType.MinimumWidth = 6;
+            colType.Name = "colType";
             // 
-            // radiobtnOutsider
+            // colName
             // 
-            radiobtnOutsider.AutoSize = true;
-            radiobtnOutsider.ForeColor = Color.Transparent;
-            radiobtnOutsider.Location = new Point(157, 19);
-            radiobtnOutsider.Name = "radiobtnOutsider";
-            radiobtnOutsider.Size = new Size(86, 24);
-            radiobtnOutsider.TabIndex = 23;
-            radiobtnOutsider.TabStop = true;
-            radiobtnOutsider.Text = "Outsider";
-            radiobtnOutsider.UseVisualStyleBackColor = true;
+            colName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colName.HeaderText = "Name";
+            colName.MinimumWidth = 6;
+            colName.Name = "colName";
             // 
-            // radiobtnTenant
+            // colAmount
             // 
-            radiobtnTenant.AutoSize = true;
-            radiobtnTenant.ForeColor = Color.Transparent;
-            radiobtnTenant.Location = new Point(57, 19);
-            radiobtnTenant.Name = "radiobtnTenant";
-            radiobtnTenant.Size = new Size(74, 24);
-            radiobtnTenant.TabIndex = 0;
-            radiobtnTenant.TabStop = true;
-            radiobtnTenant.Text = "Tenant";
-            radiobtnTenant.UseVisualStyleBackColor = true;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "₱#,##0.00";
+            dataGridViewCellStyle2.NullValue = null;
+            colAmount.DefaultCellStyle = dataGridViewCellStyle2;
+            colAmount.HeaderText = "Amount";
+            colAmount.MinimumWidth = 6;
+            colAmount.Name = "colAmount";
+            colAmount.Width = 125;
             // 
-            // dtpDate
+            // colRemove
             // 
-            dtpDate.Location = new Point(82, 135);
-            dtpDate.Name = "dtpDate";
-            dtpDate.Size = new Size(300, 27);
-            dtpDate.TabIndex = 21;
+            colRemove.HeaderText = "Remove";
+            colRemove.MinimumWidth = 6;
+            colRemove.Name = "colRemove";
+            colRemove.Resizable = DataGridViewTriState.True;
+            colRemove.SortMode = DataGridViewColumnSortMode.Automatic;
+            colRemove.Text = "X";
+            colRemove.UseColumnTextForButtonValue = true;
+            colRemove.Width = 125;
             // 
-            // txtUtilityName
+            // label6
             // 
-            txtUtilityName.Location = new Point(82, 45);
-            txtUtilityName.Multiline = true;
-            txtUtilityName.Name = "txtUtilityName";
-            txtUtilityName.Size = new Size(300, 40);
-            txtUtilityName.TabIndex = 20;
+            label6.AutoSize = true;
+            label6.BackColor = Color.White;
+            label6.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.Location = new Point(201, 288);
+            label6.Name = "label6";
+            label6.Size = new Size(40, 46);
+            label6.TabIndex = 7;
+            label6.Text = "₱";
             // 
-            // lblAmount
+            // label7
             // 
-            lblAmount.AutoSize = true;
-            lblAmount.Font = new Font("Segoe UI", 13.2000008F);
-            lblAmount.ForeColor = Color.White;
-            lblAmount.ImageAlign = ContentAlignment.MiddleRight;
-            lblAmount.Location = new Point(82, 356);
-            lblAmount.Name = "lblAmount";
-            lblAmount.Size = new Size(96, 31);
-            lblAmount.TabIndex = 19;
-            lblAmount.Text = "Amount";
-            lblAmount.TextAlign = ContentAlignment.MiddleCenter;
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.ForeColor = Color.White;
+            label7.Location = new Point(479, 631);
+            label7.Name = "label7";
+            label7.Size = new Size(75, 23);
+            label7.TabIndex = 1;
+            label7.Text = "Total: ₱ ";
             // 
-            // lblName
+            // lblTotalAmount
             // 
-            lblName.AutoSize = true;
-            lblName.Font = new Font("Segoe UI", 13.2000008F);
-            lblName.ForeColor = Color.White;
-            lblName.ImageAlign = ContentAlignment.MiddleRight;
-            lblName.Location = new Point(82, 231);
-            lblName.Name = "lblName";
-            lblName.Size = new Size(75, 31);
-            lblName.TabIndex = 18;
-            lblName.Text = "Name";
-            lblName.TextAlign = ContentAlignment.MiddleCenter;
+            lblTotalAmount.AutoSize = true;
+            lblTotalAmount.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTotalAmount.ForeColor = Color.White;
+            lblTotalAmount.Location = new Point(614, 631);
+            lblTotalAmount.Name = "lblTotalAmount";
+            lblTotalAmount.Size = new Size(45, 23);
+            lblTotalAmount.TabIndex = 1;
+            lblTotalAmount.Text = "0.00";
             // 
-            // lblDate
+            // txtOutsiderName
             // 
-            lblDate.AutoSize = true;
-            lblDate.Font = new Font("Segoe UI", 13.2000008F);
-            lblDate.ForeColor = Color.White;
-            lblDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblDate.Location = new Point(82, 101);
-            lblDate.Name = "lblDate";
-            lblDate.Size = new Size(62, 31);
-            lblDate.TabIndex = 17;
-            lblDate.Text = "Date";
-            lblDate.TextAlign = ContentAlignment.MiddleCenter;
+            txtOutsiderName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtOutsiderName.Location = new Point(160, 240);
+            txtOutsiderName.Name = "txtOutsiderName";
+            txtOutsiderName.Size = new Size(499, 30);
+            txtOutsiderName.TabIndex = 2;
             // 
-            // lblUtilityName
+            // label8
             // 
-            lblUtilityName.AutoSize = true;
-            lblUtilityName.Font = new Font("Segoe UI", 13.2000008F);
-            lblUtilityName.ForeColor = Color.White;
-            lblUtilityName.ImageAlign = ContentAlignment.MiddleRight;
-            lblUtilityName.Location = new Point(82, 11);
-            lblUtilityName.Name = "lblUtilityName";
-            lblUtilityName.Size = new Size(142, 31);
-            lblUtilityName.TabIndex = 16;
-            lblUtilityName.Text = "Utility Name";
-            lblUtilityName.TextAlign = ContentAlignment.MiddleCenter;
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label8.ForeColor = Color.White;
+            label8.Location = new Point(24, 247);
+            label8.Name = "label8";
+            label8.Size = new Size(130, 23);
+            label8.TabIndex = 1;
+            label8.Text = "Outsider Name:";
             // 
             // AddOtherForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(482, 553);
-            Controls.Add(pnlOtherContent);
-            Controls.Add(pnlOtherActionButton);
-            Controls.Add(pnlOtherHeader);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            ClientSize = new Size(672, 733);
+            Controls.Add(label6);
+            Controls.Add(dgvCharges);
+            Controls.Add(cbTenant);
+            Controls.Add(rbOutsider);
+            Controls.Add(rbTenant);
+            Controls.Add(dtpChargeDate);
+            Controls.Add(txtAmount);
+            Controls.Add(txtOutsiderName);
+            Controls.Add(textBox1);
+            Controls.Add(label5);
+            Controls.Add(lblTotalAmount);
+            Controls.Add(label7);
+            Controls.Add(label8);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(btnAddtoList);
+            Controls.Add(btnCancel);
+            Controls.Add(btnConfirm);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AddOtherForm";
+            Padding = new Padding(10);
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AddOtherForm";
-            pnlOtherHeader.ResumeLayout(false);
-            pnlOtherActionButton.ResumeLayout(false);
-            pnlOtherContent.ResumeLayout(false);
-            pnlOtherContent.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            Load += AddOtherForm_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvCharges).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private Panel pnlOtherHeader;
-        private Label lblAddOtherBillTitle;
-        private Panel pnlOtherActionButton;
         private Button btnConfirm;
         private Button btnCancel;
-        private Panel pnlOtherContent;
-        private Label lblAmount;
-        private Label lblName;
-        private Label lblDate;
-        private Label lblUtilityName;
-        private TextBox txtUtilityName;
-        private DateTimePicker dtpDate;
-        private Panel panel1;
-        private RadioButton radiobtnOutsider;
-        private RadioButton radiobtnTenant;
-        private TextBox txtName;
-        private ComboBox cboName;
+        private Label label1;
+        private Label label2;
+        private TextBox textBox1;
+        private DateTimePicker dtpChargeDate;
+        private Label label3;
+        private RadioButton rbTenant;
+        private RadioButton rbOutsider;
+        private Label label4;
+        private ComboBox cbTenant;
+        private Label label5;
         private TextBox txtAmount;
+        private Button btnAddtoList;
+        private DataGridView dgvCharges;
+        private DataGridViewTextBoxColumn colType;
+        private DataGridViewTextBoxColumn colName;
+        private DataGridViewTextBoxColumn colAmount;
+        private DataGridViewButtonColumn colRemove;
+        private Label label6;
+        private Label label7;
+        private Label lblTotalAmount;
+        private TextBox txtOutsiderName;
+        private Label label8;
     }
 }

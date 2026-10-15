@@ -1,5 +1,6 @@
 ﻿using Capstoneszn.Forms.UserControls.Utilities;
 using Capstoneszn.Forms.UtilityForms;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,47 +15,387 @@ namespace Capstoneszn.UserControls
 {
     public partial class UtilitiesControl : UserControl
     {
+        private AdminWaterBillAccount? _waterAdmin;
+        private AdminElectricityAccount? _elecAdmin;
         public UtilitiesControl()
         {
             InitializeComponent();
-
-
+            SetupWaterGrid();
+            SetupElectricityGrid();
         }
+        private void SetupWaterGrid()
+        {
+            dgvWaterBillData.AutoGenerateColumns = false;
+            colWaterRoom.DataPropertyName = "Room";
+            colWaterTenant.DataPropertyName = "Tenant";
+            colWaterDueDate.DataPropertyName = "DueDate";
+            colWaterAmount.DataPropertyName = "Amount";
+            colWaterStatus.DataPropertyName = "Status";
+        }
+        public void LoadWaterTab()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Room");
+            dt.Columns.Add("Tenant");
+            dt.Columns.Add("DueDate");
+            dt.Columns.Add("Amount");
+            dt.Columns.Add("Status");
 
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    int billId = 0;
+                    decimal total = 0m;
+                    int shares = 0;
+                    DateTime due = DateTime.MinValue;
+
+                    string billSql = @"SELECT TOP 1 WaterBillID, TotalAmount, TotalShares, DueDate
+                   FROM dbo.WaterBills
+                   WHERE BuildingID = @BuildingId
+                     AND YEAR(BillingPeriodEnd)  = YEAR(@PickedDate)
+                     AND MONTH(BillingPeriodEnd) = MONTH(@PickedDate)
+                   ORDER BY BillingPeriodEnd DESC;";
+
+                    using (SqlCommand cmd = new SqlCommand(billSql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@BuildingId", Session.BuildingId);
+                        cmd.Parameters.AddWithValue("@PickedDate", dtpWaterDate.Value.Date);
+
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                billId = Convert.ToInt32(dr["WaterBillID"]);
+                                total = Convert.ToDecimal(dr["TotalAmount"]);
+                                shares = Convert.ToInt32(dr["TotalShares"]);
+                                due = Convert.ToDateTime(dr["DueDate"]);
+                            }
+                        }
+                    }
+
+                    if (billId == 0)
+                    {
+                        // 2a. No bill yet — show active tenants with blank charges
+                        lblCurrentTotalBillValue.Text = "—";
+                        lblTotalSharesValue.Text = "—";
+
+                        string sql = @"SELECT r.RoomNumber, t.FirstName, t.LastName
+                               FROM dbo.Tenants t
+                               JOIN dbo.Rooms  r ON r.RoomId  = t.RoomId
+                               JOIN dbo.Floors f ON f.FloorId = r.FloorId
+                               WHERE f.BuildingId = @BuildingId
+                                 AND t.Status     = 'Active'
+                                 AND t.IsArchived = 0
+                               ORDER BY r.RoomNumber, t.LastName;";
+
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@BuildingId", Session.BuildingId);
+
+                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            {
+                                while (dr.Read())
+                                {
+                                    dt.Rows.Add(
+                                        dr["RoomNumber"].ToString(),
+                                        dr["FirstName"].ToString() + " " + dr["LastName"].ToString(),
+                                        "—",
+                                        "—",
+                                        "No bill");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // 2b. Bill exists — every active tenant, charged or not
+                        lblCurrentTotalBillValue.Text = total.ToString("₱#,##0.00");
+                        lblTotalSharesValue.Text = shares.ToString();
+
+                        string sql = @"SELECT r.RoomNumber, t.FirstName, t.LastName, c.Amount, c.Status
+                   FROM dbo.Tenants t
+                   JOIN dbo.Rooms  r ON r.RoomId  = t.RoomId
+                   JOIN dbo.Floors f ON f.FloorId = r.FloorId
+                   LEFT JOIN dbo.TenantWaterCharges c
+                          ON c.TenantID = t.TenantId
+                         AND c.WaterBillID = @BillId
+                   WHERE f.BuildingId = @BuildingId
+                     AND t.Status     = 'Active'
+                     AND t.IsArchived = 0
+                   ORDER BY r.RoomNumber, t.LastName;";
+
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@BillId", billId);
+                            cmd.Parameters.AddWithValue("@BuildingId", Session.BuildingId);
+
+                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            {
+                                while (dr.Read())
+                                {
+                                    bool onBill = dr["Amount"] != DBNull.Value;
+
+                                    dt.Rows.Add(
+                                        dr["RoomNumber"].ToString(),
+                                        dr["FirstName"].ToString() + " " + dr["LastName"].ToString(),
+                                        onBill ? due.ToString("MMM d, yyyy") : "—",
+                                        onBill ? Convert.ToDecimal(dr["Amount"]).ToString("₱#,##0.00") : "—",
+                                        onBill ? dr["Status"].ToString() : "Not on this bill");
+                                }
+                            }
+                        }
+                    }
+
+                    dgvWaterBillData.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading water tab: " + ex.Message);
+                }
+            }
+        }
+        private void SetupElectricityGrid()
+        {
+            dgvElectricityBillData.AutoGenerateColumns = false;
+            colElectricityRoom.DataPropertyName = "Room";
+            colElectricityAccountName.DataPropertyName = "AccountName";
+            colElectricityAccountNumber.DataPropertyName = "AccountNumber";
+            colElectricityAmount.DataPropertyName = "Amount";
+            colElectricityStatus.DataPropertyName = "Status";
+        }
+        public void LoadElectricityTab()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Room");
+            dt.Columns.Add("AccountName");
+            dt.Columns.Add("AccountNumber");
+            dt.Columns.Add("Amount");
+            dt.Columns.Add("Status");
+            dt.Columns.Add("ChargeId", typeof(int));
+            dt.Columns.Add("AmountValue", typeof(decimal));
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    string sql = @"SELECT ua.AccountID, ua.AccountName, ua.AccountNumber,
+                        r.RoomNumber, c.Amount, c.Status, c.ChargeID
+                        FROM dbo.UtilityAccounts ua
+                        JOIN dbo.Rooms r ON r.RoomId = ua.RoomID
+                        LEFT JOIN dbo.ElectricityCharges c
+                        ON c.AccountID = ua.AccountID
+                        AND c.BillMonth = @BillMonth
+                        WHERE ua.BuildingID  = @BuildingId
+                        AND ua.UtilityType = 'Electricity'
+                        AND ua.RoomID IS NOT NULL
+                        AND ua.IsActive    = 1
+                        ORDER BY r.RoomNumber;";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        DateTime picked = dtpElectricityDate.Value.Date;
+                        DateTime billMonth = new DateTime(picked.Year, picked.Month, 1);
+
+                        cmd.Parameters.AddWithValue("@BuildingId", Session.BuildingId);
+                        cmd.Parameters.AddWithValue("@BillMonth", billMonth);
+
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                bool billed = dr["Amount"] != DBNull.Value;
+
+                                dt.Rows.Add(
+                                    dr["RoomNumber"].ToString(),
+                                    dr["AccountName"].ToString(),
+                                    dr["AccountNumber"].ToString(),
+                                    billed ? Convert.ToDecimal(dr["Amount"]).ToString("₱#,##0.00") : "—",
+                                    billed ? dr["Status"].ToString() : "No bill",
+                                    billed ? Convert.ToInt32(dr["ChargeID"]) : 0,
+                                    billed ? Convert.ToDecimal(dr["Amount"]) : 0m);
+                            }
+                        }
+                    }
+
+                    dgvElectricityBillData.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading electricity tab: " + ex.Message);
+                }
+            }
+        }
         private void btnEditWaterBill_Click(object sender, EventArgs e)
         {
-            EditWaterBillForm ewb = new EditWaterBillForm();
-            ewb.ShowDialog(this);
+            using var ewb = new EditWaterBillForm();
+
+            if (ewb.ShowDialog(this) == DialogResult.OK)
+            {
+                LoadWaterTab();
+                _waterAdmin?.LoadAccount();
+            }
         }
 
         private void btnEditElectricity_Click(object sender, EventArgs e)
         {
             using var frm = new EditElectricityForm();
-            frm.ShowDialog(this);
+
+            if (frm.ShowDialog(this) == DialogResult.OK)
+            {
+                LoadElectricityTab();
+                _elecAdmin?.LoadAccount();
+            }
         }
 
         private void UtilitiesControl_Load(object sender, EventArgs e)
         {
-            var admin = new AdminElectricityAccount { Dock = DockStyle.Fill };
-            pnlAdminAccount.Controls.Add(admin);
+            _waterAdmin = new AdminWaterBillAccount { Dock = DockStyle.Fill };
+            pnlWaterAdminAccount.Controls.Add(_waterAdmin);
+            _waterAdmin.LoadAccount();
+
+            dtpElectricityDate.Value = DateTime.Today;
+
+            _elecAdmin = new AdminElectricityAccount { Dock = DockStyle.Fill };
+            _elecAdmin.SelectedDate = dtpElectricityDate.Value.Date;
+            pnlElecAdminAccount.Controls.Add(_elecAdmin);
+            _elecAdmin.LoadAccount();
+
+            LoadWaterTab();
+            LoadElectricityTab();
         }
 
         private void btnAddElectricity_Click(object sender, EventArgs e)
         {
-            AddElectricityForm aef = new AddElectricityForm();
-            aef.ShowDialog(this);
-        }
+            using var aef = new AddElectricityForm();
 
-        private void btnOtherAdd_Click(object sender, EventArgs e)
-        {
-            AddOtherForm aof = new AddOtherForm();
-            aof.ShowDialog(this);
+            if (aef.ShowDialog(this) == DialogResult.OK)
+            {
+                LoadElectricityTab();
+                _elecAdmin?.LoadAccount();
+            }
         }
-
         private void btnAddWaterBill_Click(object sender, EventArgs e)
         {
-            AddWaterBillForm awf = new AddWaterBillForm();
-            awf.ShowDialog(this);
+            using var awf = new AddWaterBillForm();
+
+            if (awf.ShowDialog(this) == DialogResult.OK)
+            {
+                LoadWaterTab();
+                _waterAdmin?.LoadAccount();
+            }
+        }
+
+        private void dtpWaterDate_ValueChanged(object sender, EventArgs e)
+        {
+            LoadWaterTab();
+
+
+            if (_waterAdmin != null)
+            {
+                _waterAdmin.SelectedDate = dtpWaterDate.Value.Date;
+                _waterAdmin.LoadAccount();
+            }
+        }
+
+        private void dgvElectricityBillData_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // 1. Only react to clicks on the Status button, not the header or other columns
+            if (e.RowIndex < 0 || e.ColumnIndex != colElectricityStatus.Index) return;
+            if (dgvElectricityBillData.Rows[e.RowIndex].DataBoundItem is not DataRowView row) return;
+
+            // 2. No charge for this month yet → nothing to settle
+            int chargeId = row["ChargeId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ChargeId"]);
+            if (chargeId == 0) return;
+
+            string account = row["AccountName"].ToString() ?? "";
+            string status = row["Status"].ToString() ?? "";
+            decimal amount = Convert.ToDecimal(row["AmountValue"]);
+
+            // 3. Already paid → explain the lock and stop
+            if (status == "Paid")
+            {
+                MessageBox.Show(
+                    $"{account} is already settled for this month.\n\n" +
+                    "Paid bills are locked and can't be changed.",
+                    "Bill locked", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 4. Don't allow settling a bill with no amount
+            if (amount <= 0)
+            {
+                MessageBox.Show("This bill has no amount yet. Set it in Edit Bill first.",
+                    "No amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 5. The warning: show the amount, explain it's permanent, default to "No"
+            var confirm = MessageBox.Show(
+                $"Mark {account} as PAID?\n\n" +
+                $"Amount: ₱{amount:#,##0.00}\n\n" +
+                "Once marked paid, this bill is LOCKED:\n" +
+                "  • the amount can no longer be edited\n" +
+                "  • the status can't be changed back to Unpaid\n\n" +
+                "Please make sure the amount is correct before continuing.",
+                "Confirm payment",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (confirm != DialogResult.Yes) return;
+
+            // 6. Save — only if the row is still Unpaid
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    const string sql = @"
+                UPDATE dbo.ElectricityCharges
+                   SET Status = 'Paid', SettledDate = @Today, MarkedBy = @UserId
+                 WHERE ChargeID = @ChargeId
+                   AND Status = 'Unpaid';";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.Add("@ChargeId", SqlDbType.Int).Value = chargeId;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = Session.UserId;
+                        cmd.Parameters.Add("@Today", SqlDbType.Date).Value = DateTime.Today;
+
+                        if (cmd.ExecuteNonQuery() == 0)
+                            MessageBox.Show("This bill was already marked paid.", "Already paid",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
+                    LoadElectricityTab();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating status: " + ex.Message);
+                }
+            }
+        }
+
+        private void dtpElectricityDate_ValueChanged(object sender, EventArgs e)
+        {
+            LoadElectricityTab();
+
+            if (_elecAdmin != null)
+            {
+                _elecAdmin.SelectedDate = dtpElectricityDate.Value.Date;
+                _elecAdmin.LoadAccount();
+            }
+        }
+
+        private void dgvWaterBillData_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

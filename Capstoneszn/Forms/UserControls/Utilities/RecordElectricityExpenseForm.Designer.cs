@@ -1,6 +1,6 @@
 ﻿namespace Capstoneszn.Forms.UserControls.Utilities
 {
-    partial class RecordExpensesForm
+    partial class RecordElectricityExpenseForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,23 +30,23 @@
         {
             label1 = new Label();
             label2 = new Label();
-            dateTimePicker1 = new DateTimePicker();
+            dtpPaymentDate = new DateTimePicker();
             label3 = new Label();
-            textBox1 = new TextBox();
+            txtAmount = new TextBox();
             label4 = new Label();
-            button1 = new Button();
+            btnConfirmRecordElectricityExpense = new Button();
             btnCancel = new Button();
             SuspendLayout();
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.ForeColor = Color.White;
-            label1.Location = new Point(69, 24);
+            label1.Location = new Point(69, 19);
             label1.Name = "label1";
-            label1.Size = new Size(297, 20);
+            label1.Size = new Size(306, 53);
             label1.TabIndex = 0;
-            label1.Text = "This payment will create an expense record.";
+            label1.Text = "This payment will create an electricity bill expense record.";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label2
             // 
@@ -58,12 +58,13 @@
             label2.TabIndex = 0;
             label2.Text = "Date";
             // 
-            // dateTimePicker1
+            // dtpPaymentDate
             // 
-            dateTimePicker1.Location = new Point(69, 122);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(306, 27);
-            dateTimePicker1.TabIndex = 1;
+            dtpPaymentDate.Format = DateTimePickerFormat.Short;
+            dtpPaymentDate.Location = new Point(69, 122);
+            dtpPaymentDate.Name = "dtpPaymentDate";
+            dtpPaymentDate.Size = new Size(306, 27);
+            dtpPaymentDate.TabIndex = 1;
             // 
             // label3
             // 
@@ -76,15 +77,15 @@
             label3.TabIndex = 0;
             label3.Text = "Amount";
             // 
-            // textBox1
+            // txtAmount
             // 
-            textBox1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(69, 208);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "0.0 ";
-            textBox1.Size = new Size(306, 51);
-            textBox1.TabIndex = 2;
-            textBox1.TextAlign = HorizontalAlignment.Right;
+            txtAmount.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAmount.Location = new Point(69, 208);
+            txtAmount.Name = "txtAmount";
+            txtAmount.PlaceholderText = "0.0 ";
+            txtAmount.Size = new Size(306, 51);
+            txtAmount.TabIndex = 2;
+            txtAmount.TextAlign = HorizontalAlignment.Right;
             // 
             // label4
             // 
@@ -98,14 +99,15 @@
             label4.TabIndex = 0;
             label4.Text = "₱";
             // 
-            // button1
+            // btnConfirmRecordElectricityExpense
             // 
-            button1.Location = new Point(306, 302);
-            button1.Name = "button1";
-            button1.Size = new Size(112, 43);
-            button1.TabIndex = 3;
-            button1.Text = "Confirm";
-            button1.UseVisualStyleBackColor = true;
+            btnConfirmRecordElectricityExpense.Location = new Point(306, 302);
+            btnConfirmRecordElectricityExpense.Name = "btnConfirmRecordElectricityExpense";
+            btnConfirmRecordElectricityExpense.Size = new Size(112, 43);
+            btnConfirmRecordElectricityExpense.TabIndex = 3;
+            btnConfirmRecordElectricityExpense.Text = "Confirm";
+            btnConfirmRecordElectricityExpense.UseVisualStyleBackColor = true;
+            btnConfirmRecordElectricityExpense.Click += btnConfirmRecordElectricityExpense_Click;
             // 
             // btnCancel
             // 
@@ -117,26 +119,27 @@
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
             // 
-            // RecordExpensesForm
+            // RecordElectricityExpenseForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
             ClientSize = new Size(445, 366);
             Controls.Add(btnCancel);
-            Controls.Add(button1);
+            Controls.Add(btnConfirmRecordElectricityExpense);
             Controls.Add(label4);
-            Controls.Add(textBox1);
-            Controls.Add(dateTimePicker1);
+            Controls.Add(txtAmount);
+            Controls.Add(dtpPaymentDate);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "RecordExpensesForm";
+            Name = "RecordElectricityExpenseForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "RecordExpensesForm";
+            Text = "RecordElectricityExpenseForm";
+            Load += RecordElectricityExpenseForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -145,11 +148,11 @@
 
         private Label label1;
         private Label label2;
-        private DateTimePicker dateTimePicker1;
+        private DateTimePicker dtpPaymentDate;
         private Label label3;
-        private TextBox textBox1;
+        private TextBox txtAmount;
         private Label label4;
-        private Button button1;
+        private Button btnConfirmRecordElectricityExpense;
         private Button btnCancel;
     }
 }
