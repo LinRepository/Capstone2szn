@@ -33,7 +33,6 @@
             lblDescription = new Label();
             pnlPaymentSuccessActions = new Panel();
             btnClose = new Button();
-            btnAnotherTransaction = new Button();
             btnPrintReceipt = new Button();
             pnlPaymentSuccessContent = new Panel();
             pnlCategory = new Panel();
@@ -94,7 +93,6 @@
             // 
             pnlPaymentSuccessActions.BorderStyle = BorderStyle.FixedSingle;
             pnlPaymentSuccessActions.Controls.Add(btnClose);
-            pnlPaymentSuccessActions.Controls.Add(btnAnotherTransaction);
             pnlPaymentSuccessActions.Controls.Add(btnPrintReceipt);
             pnlPaymentSuccessActions.Dock = DockStyle.Bottom;
             pnlPaymentSuccessActions.Location = new Point(0, 323);
@@ -112,19 +110,9 @@
             btnClose.UseVisualStyleBackColor = true;
             btnClose.Click += btnClose_Click;
             // 
-            // btnAnotherTransaction
-            // 
-            btnAnotherTransaction.Location = new Point(146, 27);
-            btnAnotherTransaction.Name = "btnAnotherTransaction";
-            btnAnotherTransaction.Size = new Size(220, 29);
-            btnAnotherTransaction.TabIndex = 1;
-            btnAnotherTransaction.Text = "Make Another Transaction";
-            btnAnotherTransaction.UseVisualStyleBackColor = true;
-            btnAnotherTransaction.Click += btnAnotherTransaction_Click;
-            // 
             // btnPrintReceipt
             // 
-            btnPrintReceipt.Location = new Point(12, 27);
+            btnPrintReceipt.Location = new Point(229, 27);
             btnPrintReceipt.Name = "btnPrintReceipt";
             btnPrintReceipt.Size = new Size(125, 29);
             btnPrintReceipt.TabIndex = 0;
@@ -291,7 +279,6 @@
         private Label lblConfirmationTitle;
         private Label lblDescription;
         private Button btnClose;
-        private Button btnAnotherTransaction;
         private Button btnPrintReceipt;
         private Panel pnlCategory;
         private Panel pnlDate;

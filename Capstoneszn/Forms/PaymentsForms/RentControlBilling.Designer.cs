@@ -2,6 +2,7 @@
 {
     partial class RentControlBilling
     {
+
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -63,6 +64,7 @@
             pnlButtons.Name = "pnlButtons";
             pnlButtons.Size = new Size(825, 169);
             pnlButtons.TabIndex = 1;
+            pnlButtons.Paint += pnlButtons_Paint;
             // 
             // panel2
             // 
@@ -191,9 +193,9 @@
             lblOutstanding.Location = new Point(463, 147);
             lblOutstanding.Margin = new Padding(0);
             lblOutstanding.Name = "lblOutstanding";
-            lblOutstanding.Size = new Size(142, 31);
+            lblOutstanding.Size = new Size(129, 31);
             lblOutstanding.TabIndex = 39;
-            lblOutstanding.Text = "Outstanding";
+            lblOutstanding.Text = "Total Owed";
             lblOutstanding.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblShareValue
@@ -219,9 +221,9 @@
             lblShare.Location = new Point(43, 147);
             lblShare.Margin = new Padding(0);
             lblShare.Name = "lblShare";
-            lblShare.Size = new Size(71, 31);
+            lblShare.Size = new Size(126, 31);
             lblShare.TabIndex = 37;
-            lblShare.Text = "Share";
+            lblShare.Text = "This Period";
             lblShare.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblBalanceValue
@@ -376,5 +378,6 @@
         private Label lblDescription1;
         private Panel panel1;
         private Panel panel2;
+
     }
 }

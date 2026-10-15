@@ -117,27 +117,29 @@
             // nudUnitPrice
             // 
             nudUnitPrice.DecimalPlaces = 2;
+            nudUnitPrice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             nudUnitPrice.Location = new Point(124, 203);
             nudUnitPrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             nudUnitPrice.Name = "nudUnitPrice";
-            nudUnitPrice.Size = new Size(199, 27);
+            nudUnitPrice.Size = new Size(199, 34);
             nudUnitPrice.TabIndex = 44;
             nudUnitPrice.ThousandsSeparator = true;
             // 
             // nudQuantity
             // 
+            nudQuantity.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             nudQuantity.Location = new Point(124, 136);
             nudQuantity.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             nudQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudQuantity.Name = "nudQuantity";
-            nudQuantity.Size = new Size(199, 27);
+            nudQuantity.Size = new Size(199, 34);
             nudQuantity.TabIndex = 43;
             nudQuantity.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // txtMaterialName
             // 
+            txtMaterialName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtMaterialName.Location = new Point(124, 58);
-            txtMaterialName.Multiline = true;
             txtMaterialName.Name = "txtMaterialName";
             txtMaterialName.Size = new Size(199, 34);
             txtMaterialName.TabIndex = 42;

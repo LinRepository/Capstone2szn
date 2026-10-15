@@ -161,6 +161,16 @@ namespace Capstoneszn
                     }
                 }
             }
+            try
+            {
+                int generated = BillGenerator.RunForAllBuildings();
+                if (generated > 0)
+                    Debug.WriteLine($"BillGenerator: {generated} bill(s) created at login.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
 
             ClearLoginFields();
 

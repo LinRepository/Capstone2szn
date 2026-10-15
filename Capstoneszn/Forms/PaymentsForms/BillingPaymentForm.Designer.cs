@@ -2,6 +2,8 @@
 {
     partial class BillingPaymentForm
     {
+
+
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -175,10 +177,10 @@
             // 
             // txtAmount
             // 
+            txtAmount.Font = new Font("Segoe UI", 12F);
             txtAmount.Location = new Point(499, 32);
-            txtAmount.Multiline = true;
             txtAmount.Name = "txtAmount";
-            txtAmount.Size = new Size(300, 35);
+            txtAmount.Size = new Size(300, 34);
             txtAmount.TabIndex = 0;
             // 
             // panel8
@@ -193,10 +195,10 @@
             // 
             // txtReferenceNumber
             // 
+            txtReferenceNumber.Font = new Font("Segoe UI", 12F);
             txtReferenceNumber.Location = new Point(25, 32);
-            txtReferenceNumber.Multiline = true;
             txtReferenceNumber.Name = "txtReferenceNumber";
-            txtReferenceNumber.Size = new Size(300, 35);
+            txtReferenceNumber.Size = new Size(300, 34);
             txtReferenceNumber.TabIndex = 0;
             // 
             // lblReferenceNumber
@@ -230,22 +232,24 @@
             // radioButtonGcash
             // 
             radioButtonGcash.AutoSize = true;
-            radioButtonGcash.ForeColor = Color.Transparent;
+            radioButtonGcash.Font = new Font("Segoe UI", 10.8F);
+            radioButtonGcash.ForeColor = Color.White;
             radioButtonGcash.Location = new Point(682, 40);
             radioButtonGcash.Name = "radioButtonGcash";
-            radioButtonGcash.Size = new Size(69, 24);
+            radioButtonGcash.Size = new Size(83, 29);
             radioButtonGcash.TabIndex = 42;
             radioButtonGcash.TabStop = true;
-            radioButtonGcash.Text = "Gcash";
+            radioButtonGcash.Text = "GCash";
             radioButtonGcash.UseVisualStyleBackColor = true;
             // 
             // radioButtonCash
             // 
             radioButtonCash.AutoSize = true;
-            radioButtonCash.ForeColor = Color.Transparent;
+            radioButtonCash.Font = new Font("Segoe UI", 10.8F);
+            radioButtonCash.ForeColor = Color.White;
             radioButtonCash.Location = new Point(593, 40);
             radioButtonCash.Name = "radioButtonCash";
-            radioButtonCash.Size = new Size(61, 24);
+            radioButtonCash.Size = new Size(71, 29);
             radioButtonCash.TabIndex = 41;
             radioButtonCash.TabStop = true;
             radioButtonCash.Text = "Cash";
@@ -320,7 +324,7 @@
             lblCategory.Font = new Font("Segoe UI", 12F);
             lblCategory.ForeColor = Color.White;
             lblCategory.ImageAlign = ContentAlignment.MiddleRight;
-            lblCategory.Location = new Point(630, -2);
+            lblCategory.Location = new Point(630, 2);
             lblCategory.Margin = new Padding(0);
             lblCategory.Name = "lblCategory";
             lblCategory.Size = new Size(92, 28);
@@ -389,6 +393,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
+            CancelButton = btnCancel;
             ClientSize = new Size(832, 658);
             Controls.Add(pnlPaymentBottom);
             Controls.Add(pnlPaymentContent);
@@ -398,8 +403,8 @@
             MinimizeBox = false;
             Name = "BillingPaymentForm";
             ShowIcon = false;
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "BillingPaymentForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Make Payment";
             pnlPaymentHeader.ResumeLayout(false);
             pnlPaymentContent.ResumeLayout(false);
             pnlPaymentInput.ResumeLayout(false);
@@ -447,5 +452,6 @@
         private FlowLayoutPanel flpPaymentDetails;
         private Panel pnl4;
         private Label lblAfterPaymentValue;
+
     }
 }

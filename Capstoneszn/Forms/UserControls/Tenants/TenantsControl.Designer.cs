@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             pnlSearch = new Panel();
             lblTenantsTitle = new Label();
             pnlSearchContent = new Panel();
@@ -62,6 +62,7 @@
             lblRentBill = new Label();
             lblRentBillValue = new Label();
             pnlBillingSummaryHeader = new Panel();
+            btnViewDetails = new Button();
             lblBillingSummary = new Label();
             pnlTenantInfo = new Panel();
             tblTenantInfo = new TableLayoutPanel();
@@ -204,25 +205,25 @@
             dgvTenants.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTenants.BorderStyle = BorderStyle.None;
             dgvTenants.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvTenants.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvTenants.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvTenants.ColumnHeadersHeight = 35;
             dgvTenants.Columns.AddRange(new DataGridViewColumn[] { colRoom, colFname, colMname, colLname, colAddress, colContactNumber, colDateOccupied });
             dgvTenants.Cursor = Cursors.Hand;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dgvTenants.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvTenants.DefaultCellStyle = dataGridViewCellStyle2;
             dgvTenants.Dock = DockStyle.Fill;
             dgvTenants.Location = new Point(10, 10);
             dgvTenants.MultiSelect = false;
@@ -361,9 +362,9 @@
             lblAvaialbleBalance.ImageAlign = ContentAlignment.MiddleRight;
             lblAvaialbleBalance.Location = new Point(3, 0);
             lblAvaialbleBalance.Name = "lblAvaialbleBalance";
-            lblAvaialbleBalance.Size = new Size(83, 30);
+            lblAvaialbleBalance.Size = new Size(123, 30);
             lblAvaialbleBalance.TabIndex = 13;
-            lblAvaialbleBalance.Text = "Available Balance";
+            lblAvaialbleBalance.Text = "Rent Available Balance";
             lblAvaialbleBalance.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblWaterBill
@@ -499,6 +500,7 @@
             // pnlBillingSummaryHeader
             // 
             pnlBillingSummaryHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlBillingSummaryHeader.Controls.Add(btnViewDetails);
             pnlBillingSummaryHeader.Controls.Add(lblBillingSummary);
             pnlBillingSummaryHeader.Dock = DockStyle.Top;
             pnlBillingSummaryHeader.Location = new Point(0, 0);
@@ -506,15 +508,26 @@
             pnlBillingSummaryHeader.Size = new Size(365, 40);
             pnlBillingSummaryHeader.TabIndex = 11;
             // 
+            // btnViewDetails
+            // 
+            btnViewDetails.Cursor = Cursors.Hand;
+            btnViewDetails.Location = new Point(8, 6);
+            btnViewDetails.Name = "btnViewDetails";
+            btnViewDetails.Size = new Size(110, 29);
+            btnViewDetails.TabIndex = 12;
+            btnViewDetails.Text = "View Details";
+            btnViewDetails.UseVisualStyleBackColor = true;
+            btnViewDetails.Click += btnViewDetails_Click;
+            // 
             // lblBillingSummary
             // 
-            lblBillingSummary.Dock = DockStyle.Fill;
+            lblBillingSummary.Dock = DockStyle.Right;
             lblBillingSummary.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblBillingSummary.ForeColor = Color.White;
             lblBillingSummary.ImageAlign = ContentAlignment.MiddleRight;
-            lblBillingSummary.Location = new Point(0, 0);
+            lblBillingSummary.Location = new Point(123, 0);
             lblBillingSummary.Name = "lblBillingSummary";
-            lblBillingSummary.Size = new Size(363, 38);
+            lblBillingSummary.Size = new Size(240, 38);
             lblBillingSummary.TabIndex = 11;
             lblBillingSummary.Text = "Billing Summary";
             lblBillingSummary.TextAlign = ContentAlignment.MiddleCenter;
@@ -890,5 +903,6 @@
         private Label lblRentBillValue;
         private Label lblAvailableBalanceValue;
         private Label lblAvaialbleBalance;
+        private Button btnViewDetails;
     }
 }

@@ -73,6 +73,7 @@
             TenantContactNumber = new DataGridViewTextBoxColumn();
             pnlCurrentTenantsHeader = new Panel();
             lblCurrentTenantsTitle = new Label();
+            btnTransfer = new Button();
             pnlRoomHeader.SuspendLayout();
             pnlRoomStatus.SuspendLayout();
             panel8.SuspendLayout();
@@ -161,6 +162,7 @@
             // pnlRoomStatus
             // 
             pnlRoomStatus.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomStatus.Controls.Add(btnTransfer);
             pnlRoomStatus.Controls.Add(lblRoomStatus);
             pnlRoomStatus.Controls.Add(lblCurrentStatus);
             pnlRoomStatus.Controls.Add(panel8);
@@ -628,6 +630,17 @@
             lblCurrentTenantsTitle.Text = "Current Tenants";
             lblCurrentTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // btnTransfer
+            // 
+            btnTransfer.Cursor = Cursors.Hand;
+            btnTransfer.Location = new Point(739, 20);
+            btnTransfer.Name = "btnTransfer";
+            btnTransfer.Size = new Size(94, 40);
+            btnTransfer.TabIndex = 34;
+            btnTransfer.Text = "Transfer";
+            btnTransfer.UseVisualStyleBackColor = true;
+            btnTransfer.Click += btnTransfer_Click;
+            // 
             // RoomInformationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -718,5 +731,6 @@
         private Label lblRoomPrice;
         private Panel pnlRoomPrice;
         private TextBox txtRoomPrice;
+        private Button btnTransfer;
     }
 }

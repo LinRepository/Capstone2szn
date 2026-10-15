@@ -72,8 +72,6 @@
             // 
             // lblQuestionOne
             // 
-            lblQuestionOne.AutoSize = false;
-            lblQuestionOne.UseMnemonic = false;
             lblQuestionOne.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblQuestionOne.ForeColor = Color.White;
             lblQuestionOne.Location = new Point(66, 52);
@@ -82,11 +80,10 @@
             lblQuestionOne.TabIndex = 2;
             lblQuestionOne.Text = "Question 1";
             lblQuestionOne.TextAlign = ContentAlignment.MiddleLeft;
+            lblQuestionOne.UseMnemonic = false;
             // 
             // lblQuestionTwo
             // 
-            lblQuestionTwo.AutoSize = false;
-            lblQuestionTwo.UseMnemonic = false;
             lblQuestionTwo.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblQuestionTwo.ForeColor = Color.White;
             lblQuestionTwo.Location = new Point(66, 170);
@@ -95,11 +92,10 @@
             lblQuestionTwo.TabIndex = 3;
             lblQuestionTwo.Text = "Question 2";
             lblQuestionTwo.TextAlign = ContentAlignment.MiddleLeft;
+            lblQuestionTwo.UseMnemonic = false;
             // 
             // lblQuestionThree
             // 
-            lblQuestionThree.AutoSize = false;
-            lblQuestionThree.UseMnemonic = false;
             lblQuestionThree.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblQuestionThree.ForeColor = Color.White;
             lblQuestionThree.Location = new Point(66, 288);
@@ -108,6 +104,7 @@
             lblQuestionThree.TabIndex = 4;
             lblQuestionThree.Text = "Question 3";
             lblQuestionThree.TextAlign = ContentAlignment.MiddleLeft;
+            lblQuestionThree.UseMnemonic = false;
             // 
             // btnVerify
             // 
@@ -123,29 +120,29 @@
             // 
             // txtQuestionOne
             // 
-            txtQuestionOne.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtQuestionOne.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtQuestionOne.Location = new Point(66, 112);
             txtQuestionOne.MaxLength = 255;
             txtQuestionOne.Name = "txtQuestionOne";
-            txtQuestionOne.Size = new Size(500, 31);
+            txtQuestionOne.Size = new Size(500, 34);
             txtQuestionOne.TabIndex = 6;
             // 
             // txtQuestionTwo
             // 
-            txtQuestionTwo.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtQuestionTwo.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtQuestionTwo.Location = new Point(66, 230);
             txtQuestionTwo.MaxLength = 255;
             txtQuestionTwo.Name = "txtQuestionTwo";
-            txtQuestionTwo.Size = new Size(500, 31);
+            txtQuestionTwo.Size = new Size(500, 34);
             txtQuestionTwo.TabIndex = 7;
             // 
             // txtQuestionThree
             // 
-            txtQuestionThree.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtQuestionThree.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtQuestionThree.Location = new Point(66, 348);
             txtQuestionThree.MaxLength = 255;
             txtQuestionThree.Name = "txtQuestionThree";
-            txtQuestionThree.Size = new Size(500, 31);
+            txtQuestionThree.Size = new Size(500, 34);
             txtQuestionThree.TabIndex = 8;
             // 
             // pnlSecurityVerificationHeader
