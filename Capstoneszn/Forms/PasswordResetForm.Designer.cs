@@ -68,17 +68,21 @@
             // 
             // txtResetPassword
             // 
+            txtResetPassword.Font = new Font("Segoe UI", 13.2000008F);
             txtResetPassword.Location = new Point(76, 136);
+            txtResetPassword.MaxLength = 72;
             txtResetPassword.Name = "txtResetPassword";
-            txtResetPassword.Size = new Size(330, 27);
+            txtResetPassword.Size = new Size(330, 37);
             txtResetPassword.TabIndex = 2;
             txtResetPassword.UseSystemPasswordChar = true;
             // 
             // txtConfirmResetPassword
             // 
+            txtConfirmResetPassword.Font = new Font("Segoe UI", 13.2000008F);
             txtConfirmResetPassword.Location = new Point(76, 238);
+            txtConfirmResetPassword.MaxLength = 72;
             txtConfirmResetPassword.Name = "txtConfirmResetPassword";
-            txtConfirmResetPassword.Size = new Size(330, 27);
+            txtConfirmResetPassword.Size = new Size(330, 37);
             txtConfirmResetPassword.TabIndex = 3;
             txtConfirmResetPassword.UseSystemPasswordChar = true;
             // 
@@ -167,19 +171,22 @@
             // 
             // PasswordResetForm
             // 
+            AcceptButton = btnSetPassword;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
+            CancelButton = btnCancel;
             ClientSize = new Size(482, 453);
             Controls.Add(pnlPasswordResetContent);
             Controls.Add(pnlPasswordResetActionButtons);
             Controls.Add(pnlPasswordResetHeader);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "PasswordResetForm";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "PasswordResetForm";
+            Text = "Password Reset";
             Load += PasswordResetForm_Load;
             pnlPasswordResetHeader.ResumeLayout(false);
             pnlPasswordResetActionButtons.ResumeLayout(false);
@@ -199,7 +206,6 @@
         private Label lblPasswordResetTitle;
         private Panel pnlPasswordResetActionButtons;
         private Panel pnlPasswordResetContent;
-        private Button btnReturnLogin;
         private Label pnlPasswordResetDescription;
         private Button btnCancel;
     }

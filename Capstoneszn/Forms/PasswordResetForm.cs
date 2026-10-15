@@ -1,14 +1,15 @@
-﻿using Capstoneszn.Forms;
-using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms;
+using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn
 {
@@ -103,16 +104,25 @@ namespace Capstoneszn
 
                 this.Close();
             }
-            catch (Exception)
+            catch (SqlException ex)
             {
-                MessageBox.Show("Unable to save the new password.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "A database error occurred. Your password was not changed. " +
+                    "Please make sure SQL Server is running and try again.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Something went wrong. Your password was not changed.",
+                    "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void PasswordResetForm_Load(object sender, EventArgs e)
         {
-
+            txtResetPassword.Select();
         }
     }
 }

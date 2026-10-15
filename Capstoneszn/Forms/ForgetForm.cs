@@ -38,7 +38,7 @@ namespace Capstoneszn
                         cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = _username;
                         object? result = cmd.ExecuteScalar();
 
-                        if (result == null)
+                        if (result == null || result == DBNull.Value)
                         {
                             MessageBox.Show("User not found.", "Error",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -155,7 +155,7 @@ namespace Capstoneszn
                     using (var reset = new PasswordResetForm(_username))
                         reset.ShowDialog(this);
 
-                    this.Close();   // Login re-shows itself via its FormClosed handler
+                    this.Close();   // returns control to LoginForm's ShowDialog call
                 }
                 else
                 {

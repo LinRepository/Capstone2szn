@@ -119,8 +119,7 @@ namespace Capstoneszn.Forms
 
             // Single rooms are complete on creation; shared rooms need a capacity first
             bool isSingle = (roomType == "Single Room");
-            int capacity = isSingle ? 1 : 0;
-            string status = isSingle ? "Available" : "Unconfigured";
+            object capacity = isSingle ? (object)1 : DBNull.Value;
 
             // 3. Database Check & Insertion
             using (SqlConnection conn = DatabaseHelper.GetConnection())
@@ -150,16 +149,23 @@ namespace Capstoneszn.Forms
                         }
                     }
 
-                    // --- SAVE NEW ROOM ---
-                    string insertQuery = @" INSERT INTO Rooms (FloorId, RoomNumber, RoomType, RoomPrice, Capacity, Status) VALUES (@floorId, @roomNum, @type, @price, @cap, @status)";
+                    // BuildingId is stored on the room as well as the floor. It is what makes
+                    // room numbers unique per building rather than per floor, and a composite
+                    // FK keeps it in step with the floor's own building.
+                    string insertQuery = @"
+                        INSERT INTO Rooms (FloorId, BuildingId, RoomNumber, RoomType, RoomPrice, Capacity)
+                        VALUES (@floorId, @bId, @roomNum, @type, @price, @cap)";
+
                     using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
                     {
-                        cmd.Parameters.AddWithValue("@floorId", selectedFloorId);
-                        cmd.Parameters.AddWithValue("@roomNum", roomNumber);
-                        cmd.Parameters.AddWithValue("@type", roomType);
-                        cmd.Parameters.AddWithValue("@price", roomPrice);
-                        cmd.Parameters.AddWithValue("@cap", capacity);
-                        cmd.Parameters.AddWithValue("@status", status);
+                        cmd.Parameters.Add("@floorId", SqlDbType.Int).Value = selectedFloorId;
+                        cmd.Parameters.Add("@bId", SqlDbType.Int).Value = _buildingId;
+                        cmd.Parameters.Add("@roomNum", SqlDbType.NVarChar, 50).Value = roomNumber;
+                        cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = roomType;
+                        cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = roomPrice;
+                        cmd.Parameters["@price"].Precision = 18;
+                        cmd.Parameters["@price"].Scale = 2;
+                        cmd.Parameters.Add("@cap", SqlDbType.Int).Value = capacity;
                         cmd.ExecuteNonQuery();
                     }
 

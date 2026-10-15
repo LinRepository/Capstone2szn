@@ -73,6 +73,7 @@
             TenantContactNumber = new DataGridViewTextBoxColumn();
             pnlCurrentTenantsHeader = new Panel();
             lblCurrentTenantsTitle = new Label();
+            btnTransfer = new Button();
             pnlRoomHeader.SuspendLayout();
             pnlRoomStatus.SuspendLayout();
             panel8.SuspendLayout();
@@ -103,7 +104,7 @@
             pnlRoomHeader.Dock = DockStyle.Top;
             pnlRoomHeader.Location = new Point(0, 0);
             pnlRoomHeader.Name = "pnlRoomHeader";
-            pnlRoomHeader.Size = new Size(882, 50);
+            pnlRoomHeader.Size = new Size(1082, 50);
             pnlRoomHeader.TabIndex = 0;
             // 
             // btnCloseRoomInfo
@@ -111,7 +112,7 @@
             btnCloseRoomInfo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnCloseRoomInfo.FlatStyle = FlatStyle.Flat;
             btnCloseRoomInfo.ForeColor = Color.White;
-            btnCloseRoomInfo.Location = new Point(838, 9);
+            btnCloseRoomInfo.Location = new Point(1038, 9);
             btnCloseRoomInfo.Name = "btnCloseRoomInfo";
             btnCloseRoomInfo.Size = new Size(30, 30);
             btnCloseRoomInfo.TabIndex = 21;
@@ -137,7 +138,7 @@
             // btnMoveOut
             // 
             btnMoveOut.Cursor = Cursors.Hand;
-            btnMoveOut.Location = new Point(776, 20);
+            btnMoveOut.Location = new Point(974, 20);
             btnMoveOut.Name = "btnMoveOut";
             btnMoveOut.Size = new Size(94, 40);
             btnMoveOut.TabIndex = 1;
@@ -149,7 +150,7 @@
             // btnMoveIn
             // 
             btnMoveIn.Cursor = Cursors.Hand;
-            btnMoveIn.Location = new Point(676, 20);
+            btnMoveIn.Location = new Point(857, 20);
             btnMoveIn.Name = "btnMoveIn";
             btnMoveIn.Size = new Size(94, 40);
             btnMoveIn.TabIndex = 0;
@@ -161,6 +162,7 @@
             // pnlRoomStatus
             // 
             pnlRoomStatus.BorderStyle = BorderStyle.FixedSingle;
+            pnlRoomStatus.Controls.Add(btnTransfer);
             pnlRoomStatus.Controls.Add(lblRoomStatus);
             pnlRoomStatus.Controls.Add(lblCurrentStatus);
             pnlRoomStatus.Controls.Add(panel8);
@@ -169,7 +171,7 @@
             pnlRoomStatus.Dock = DockStyle.Top;
             pnlRoomStatus.Location = new Point(0, 50);
             pnlRoomStatus.Name = "pnlRoomStatus";
-            pnlRoomStatus.Size = new Size(882, 80);
+            pnlRoomStatus.Size = new Size(1082, 80);
             pnlRoomStatus.TabIndex = 1;
             // 
             // lblRoomStatus
@@ -181,7 +183,7 @@
             lblRoomStatus.Location = new Point(270, 0);
             lblRoomStatus.Margin = new Padding(0);
             lblRoomStatus.Name = "lblRoomStatus";
-            lblRoomStatus.Size = new Size(100, 78);
+            lblRoomStatus.Size = new Size(140, 78);
             lblRoomStatus.TabIndex = 33;
             lblRoomStatus.Text = "Status";
             lblRoomStatus.TextAlign = ContentAlignment.MiddleCenter;
@@ -226,7 +228,7 @@
             pnlRoomDetails.Dock = DockStyle.Fill;
             pnlRoomDetails.Location = new Point(0, 130);
             pnlRoomDetails.Name = "pnlRoomDetails";
-            pnlRoomDetails.Size = new Size(882, 558);
+            pnlRoomDetails.Size = new Size(1082, 558);
             pnlRoomDetails.TabIndex = 2;
             // 
             // tblRoomDetails
@@ -241,7 +243,7 @@
             tblRoomDetails.Name = "tblRoomDetails";
             tblRoomDetails.RowCount = 1;
             tblRoomDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tblRoomDetails.Size = new Size(882, 558);
+            tblRoomDetails.Size = new Size(1082, 558);
             tblRoomDetails.TabIndex = 0;
             // 
             // pnlRoomInformation
@@ -252,7 +254,7 @@
             pnlRoomInformation.Dock = DockStyle.Fill;
             pnlRoomInformation.Location = new Point(3, 3);
             pnlRoomInformation.Name = "pnlRoomInformation";
-            pnlRoomInformation.Size = new Size(346, 552);
+            pnlRoomInformation.Size = new Size(426, 552);
             pnlRoomInformation.TabIndex = 0;
             // 
             // flpRoomDetails
@@ -271,7 +273,7 @@
             flpRoomDetails.Location = new Point(0, 0);
             flpRoomDetails.Margin = new Padding(0);
             flpRoomDetails.Name = "flpRoomDetails";
-            flpRoomDetails.Size = new Size(344, 505);
+            flpRoomDetails.Size = new Size(424, 505);
             flpRoomDetails.TabIndex = 4;
             flpRoomDetails.WrapContents = false;
             // 
@@ -282,7 +284,7 @@
             pnlUnitData.Controls.Add(lblUnitNumberTitle);
             pnlUnitData.Location = new Point(3, 3);
             pnlUnitData.Name = "pnlUnitData";
-            pnlUnitData.Size = new Size(338, 55);
+            pnlUnitData.Size = new Size(418, 55);
             pnlUnitData.TabIndex = 32;
             // 
             // lblUnitNumberValue
@@ -291,7 +293,7 @@
             lblUnitNumberValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUnitNumberValue.ForeColor = Color.White;
             lblUnitNumberValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblUnitNumberValue.Location = new Point(164, 0);
+            lblUnitNumberValue.Location = new Point(200, 0);
             lblUnitNumberValue.Margin = new Padding(0);
             lblUnitNumberValue.Name = "lblUnitNumberValue";
             lblUnitNumberValue.Size = new Size(135, 53);
@@ -308,7 +310,7 @@
             lblUnitNumberTitle.Location = new Point(0, 0);
             lblUnitNumberTitle.Margin = new Padding(0);
             lblUnitNumberTitle.Name = "lblUnitNumberTitle";
-            lblUnitNumberTitle.Size = new Size(164, 53);
+            lblUnitNumberTitle.Size = new Size(200, 53);
             lblUnitNumberTitle.TabIndex = 23;
             lblUnitNumberTitle.Text = "Unit Number";
             lblUnitNumberTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -320,7 +322,7 @@
             pnlSetRoom.Controls.Add(lblSetRoom);
             pnlSetRoom.Location = new Point(3, 64);
             pnlSetRoom.Name = "pnlSetRoom";
-            pnlSetRoom.Size = new Size(338, 55);
+            pnlSetRoom.Size = new Size(418, 55);
             pnlSetRoom.TabIndex = 41;
             pnlSetRoom.Visible = false;
             // 
@@ -328,10 +330,9 @@
             // 
             txtSetRoom.Cursor = Cursors.IBeam;
             txtSetRoom.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSetRoom.Location = new Point(180, 3);
-            txtSetRoom.Multiline = true;
+            txtSetRoom.Location = new Point(245, 8);
             txtSetRoom.Name = "txtSetRoom";
-            txtSetRoom.Size = new Size(150, 47);
+            txtSetRoom.Size = new Size(150, 34);
             txtSetRoom.TabIndex = 30;
             txtSetRoom.TextAlign = HorizontalAlignment.Center;
             // 
@@ -344,7 +345,7 @@
             lblSetRoom.Location = new Point(0, 0);
             lblSetRoom.Margin = new Padding(0);
             lblSetRoom.Name = "lblSetRoom";
-            lblSetRoom.Size = new Size(164, 53);
+            lblSetRoom.Size = new Size(200, 53);
             lblSetRoom.TabIndex = 29;
             lblSetRoom.Text = "Set Room Number";
             lblSetRoom.TextAlign = ContentAlignment.MiddleCenter;
@@ -356,7 +357,7 @@
             pnlCapacityData.Controls.Add(lblCapacityTitle);
             pnlCapacityData.Location = new Point(3, 125);
             pnlCapacityData.Name = "pnlCapacityData";
-            pnlCapacityData.Size = new Size(338, 55);
+            pnlCapacityData.Size = new Size(418, 55);
             pnlCapacityData.TabIndex = 42;
             // 
             // lblCapacityValue
@@ -365,7 +366,7 @@
             lblCapacityValue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblCapacityValue.ForeColor = Color.White;
             lblCapacityValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblCapacityValue.Location = new Point(164, 0);
+            lblCapacityValue.Location = new Point(200, 0);
             lblCapacityValue.Margin = new Padding(0);
             lblCapacityValue.Name = "lblCapacityValue";
             lblCapacityValue.Size = new Size(135, 53);
@@ -382,7 +383,7 @@
             lblCapacityTitle.Location = new Point(0, 0);
             lblCapacityTitle.Margin = new Padding(0);
             lblCapacityTitle.Name = "lblCapacityTitle";
-            lblCapacityTitle.Size = new Size(164, 53);
+            lblCapacityTitle.Size = new Size(200, 53);
             lblCapacityTitle.TabIndex = 28;
             lblCapacityTitle.Text = "Capacity";
             lblCapacityTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -394,14 +395,14 @@
             pnlSetCapacity.Controls.Add(lblSetCapacity);
             pnlSetCapacity.Location = new Point(3, 186);
             pnlSetCapacity.Name = "pnlSetCapacity";
-            pnlSetCapacity.Size = new Size(338, 55);
+            pnlSetCapacity.Size = new Size(418, 55);
             pnlSetCapacity.TabIndex = 53;
             pnlSetCapacity.Visible = false;
             // 
             // nudSetCapacity
             // 
             nudSetCapacity.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            nudSetCapacity.Location = new Point(180, 9);
+            nudSetCapacity.Location = new Point(245, 8);
             nudSetCapacity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudSetCapacity.Name = "nudSetCapacity";
             nudSetCapacity.Size = new Size(150, 37);
@@ -417,7 +418,7 @@
             lblSetCapacity.Location = new Point(0, 0);
             lblSetCapacity.Margin = new Padding(0);
             lblSetCapacity.Name = "lblSetCapacity";
-            lblSetCapacity.Size = new Size(164, 53);
+            lblSetCapacity.Size = new Size(200, 53);
             lblSetCapacity.TabIndex = 29;
             lblSetCapacity.Text = "Set Capacity";
             lblSetCapacity.TextAlign = ContentAlignment.MiddleCenter;
@@ -429,20 +430,20 @@
             pnlRoomType.Location = new Point(3, 247);
             pnlRoomType.Name = "pnlRoomType";
             pnlRoomType.Padding = new Padding(5);
-            pnlRoomType.Size = new Size(338, 55);
+            pnlRoomType.Size = new Size(418, 55);
             pnlRoomType.TabIndex = 54;
             pnlRoomType.Visible = false;
             // 
             // lblRoomType
             // 
-            lblRoomType.Dock = DockStyle.Fill;
+            lblRoomType.Dock = DockStyle.Left;
             lblRoomType.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoomType.ForeColor = Color.White;
             lblRoomType.ImageAlign = ContentAlignment.MiddleRight;
             lblRoomType.Location = new Point(5, 5);
             lblRoomType.Margin = new Padding(0);
             lblRoomType.Name = "lblRoomType";
-            lblRoomType.Size = new Size(326, 43);
+            lblRoomType.Size = new Size(195, 43);
             lblRoomType.TabIndex = 29;
             lblRoomType.Text = "Select a Room Type";
             lblRoomType.TextAlign = ContentAlignment.MiddleCenter;
@@ -453,7 +454,7 @@
             pnlRoomTypescbo.Controls.Add(cboRoomType);
             pnlRoomTypescbo.Location = new Point(3, 308);
             pnlRoomTypescbo.Name = "pnlRoomTypescbo";
-            pnlRoomTypescbo.Size = new Size(338, 55);
+            pnlRoomTypescbo.Size = new Size(418, 55);
             pnlRoomTypescbo.TabIndex = 55;
             pnlRoomTypescbo.Visible = false;
             // 
@@ -463,7 +464,7 @@
             cboRoomType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboRoomType.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cboRoomType.FormattingEnabled = true;
-            cboRoomType.Location = new Point(45, 8);
+            cboRoomType.Location = new Point(85, 12);
             cboRoomType.Name = "cboRoomType";
             cboRoomType.Size = new Size(250, 38);
             cboRoomType.TabIndex = 34;
@@ -476,20 +477,20 @@
             pnlRoomPricelbl.Location = new Point(3, 369);
             pnlRoomPricelbl.Name = "pnlRoomPricelbl";
             pnlRoomPricelbl.Padding = new Padding(5);
-            pnlRoomPricelbl.Size = new Size(338, 55);
+            pnlRoomPricelbl.Size = new Size(418, 55);
             pnlRoomPricelbl.TabIndex = 56;
             pnlRoomPricelbl.Visible = false;
             // 
             // lblRoomPrice
             // 
-            lblRoomPrice.Dock = DockStyle.Fill;
+            lblRoomPrice.Dock = DockStyle.Left;
             lblRoomPrice.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoomPrice.ForeColor = Color.White;
             lblRoomPrice.ImageAlign = ContentAlignment.MiddleRight;
             lblRoomPrice.Location = new Point(5, 5);
             lblRoomPrice.Margin = new Padding(0);
             lblRoomPrice.Name = "lblRoomPrice";
-            lblRoomPrice.Size = new Size(326, 43);
+            lblRoomPrice.Size = new Size(195, 43);
             lblRoomPrice.TabIndex = 30;
             lblRoomPrice.Text = "Enter Room Price";
             lblRoomPrice.TextAlign = ContentAlignment.MiddleCenter;
@@ -500,7 +501,7 @@
             pnlRoomPrice.Controls.Add(txtRoomPrice);
             pnlRoomPrice.Location = new Point(3, 430);
             pnlRoomPrice.Name = "pnlRoomPrice";
-            pnlRoomPrice.Size = new Size(338, 55);
+            pnlRoomPrice.Size = new Size(418, 55);
             pnlRoomPrice.TabIndex = 57;
             pnlRoomPrice.Visible = false;
             // 
@@ -508,10 +509,9 @@
             // 
             txtRoomPrice.Cursor = Cursors.IBeam;
             txtRoomPrice.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtRoomPrice.Location = new Point(45, 3);
-            txtRoomPrice.Multiline = true;
+            txtRoomPrice.Location = new Point(45, 10);
             txtRoomPrice.Name = "txtRoomPrice";
-            txtRoomPrice.Size = new Size(250, 47);
+            txtRoomPrice.Size = new Size(250, 34);
             txtRoomPrice.TabIndex = 0;
             txtRoomPrice.TextAlign = HorizontalAlignment.Center;
             // 
@@ -523,7 +523,7 @@
             pnlActionButtons.Dock = DockStyle.Bottom;
             pnlActionButtons.Location = new Point(0, 505);
             pnlActionButtons.Name = "pnlActionButtons";
-            pnlActionButtons.Size = new Size(344, 45);
+            pnlActionButtons.Size = new Size(424, 45);
             pnlActionButtons.TabIndex = 3;
             pnlActionButtons.Visible = false;
             // 
@@ -554,9 +554,9 @@
             pnlCurrentTenants.Controls.Add(dgvCurrentTenants);
             pnlCurrentTenants.Controls.Add(pnlCurrentTenantsHeader);
             pnlCurrentTenants.Dock = DockStyle.Fill;
-            pnlCurrentTenants.Location = new Point(355, 3);
+            pnlCurrentTenants.Location = new Point(435, 3);
             pnlCurrentTenants.Name = "pnlCurrentTenants";
-            pnlCurrentTenants.Size = new Size(524, 552);
+            pnlCurrentTenants.Size = new Size(644, 552);
             pnlCurrentTenants.TabIndex = 1;
             // 
             // dgvCurrentTenants
@@ -574,7 +574,7 @@
             dgvCurrentTenants.RowHeadersVisible = false;
             dgvCurrentTenants.RowHeadersWidth = 51;
             dgvCurrentTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCurrentTenants.Size = new Size(524, 507);
+            dgvCurrentTenants.Size = new Size(644, 507);
             dgvCurrentTenants.TabIndex = 30;
             dgvCurrentTenants.CellContentClick += dgvCurrentTenants_CellContentClick;
             // 
@@ -613,7 +613,7 @@
             pnlCurrentTenantsHeader.Dock = DockStyle.Top;
             pnlCurrentTenantsHeader.Location = new Point(0, 0);
             pnlCurrentTenantsHeader.Name = "pnlCurrentTenantsHeader";
-            pnlCurrentTenantsHeader.Size = new Size(524, 45);
+            pnlCurrentTenantsHeader.Size = new Size(644, 45);
             pnlCurrentTenantsHeader.TabIndex = 29;
             // 
             // lblCurrentTenantsTitle
@@ -625,10 +625,21 @@
             lblCurrentTenantsTitle.Location = new Point(0, 0);
             lblCurrentTenantsTitle.Margin = new Padding(0);
             lblCurrentTenantsTitle.Name = "lblCurrentTenantsTitle";
-            lblCurrentTenantsTitle.Size = new Size(522, 43);
+            lblCurrentTenantsTitle.Size = new Size(642, 43);
             lblCurrentTenantsTitle.TabIndex = 28;
             lblCurrentTenantsTitle.Text = "Current Tenants";
             lblCurrentTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnTransfer
+            // 
+            btnTransfer.Cursor = Cursors.Hand;
+            btnTransfer.Location = new Point(739, 20);
+            btnTransfer.Name = "btnTransfer";
+            btnTransfer.Size = new Size(94, 40);
+            btnTransfer.TabIndex = 34;
+            btnTransfer.Text = "Transfer";
+            btnTransfer.UseVisualStyleBackColor = true;
+            btnTransfer.Click += btnTransfer_Click;
             // 
             // RoomInformationForm
             // 
@@ -636,7 +647,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(882, 688);
+            ClientSize = new Size(1082, 688);
             Controls.Add(pnlRoomDetails);
             Controls.Add(pnlRoomStatus);
             Controls.Add(pnlRoomHeader);
@@ -720,5 +731,6 @@
         private Label lblRoomPrice;
         private Panel pnlRoomPrice;
         private TextBox txtRoomPrice;
+        private Button btnTransfer;
     }
 }

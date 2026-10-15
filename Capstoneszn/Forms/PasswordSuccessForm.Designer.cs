@@ -97,6 +97,7 @@
             // 
             // PasswordSuccessForm
             // 
+            AcceptButton = btnReturn;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
@@ -107,8 +108,10 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "PasswordSuccessForm";
+            ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "PasswordSuccessForm";
+            Text = "Password Changed";
+            Load += PasswordSuccessForm_Load;
             pnlPasswordSuccessActionButton.ResumeLayout(false);
             pnlPasswordSuccessContent.ResumeLayout(false);
             ResumeLayout(false);

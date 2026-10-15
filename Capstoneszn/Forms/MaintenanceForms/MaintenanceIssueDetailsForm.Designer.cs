@@ -348,9 +348,9 @@
             lblUnitTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblUnitTitle.Location = new Point(150, 3);
             lblUnitTitle.Name = "lblUnitTitle";
-            lblUnitTitle.Size = new Size(42, 23);
+            lblUnitTitle.Size = new Size(55, 23);
             lblUnitTitle.TabIndex = 39;
-            lblUnitTitle.Text = "Unit";
+            lblUnitTitle.Text = "Room";
             lblUnitTitle.TextAlign = ContentAlignment.MiddleCenter;
             lblUnitTitle.Visible = false;
             // 

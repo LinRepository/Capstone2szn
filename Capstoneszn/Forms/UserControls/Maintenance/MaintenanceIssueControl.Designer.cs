@@ -136,7 +136,7 @@
             lblUnitValue.Name = "lblUnitValue";
             lblUnitValue.Size = new Size(200, 55);
             lblUnitValue.TabIndex = 42;
-            lblUnitValue.Text = "ROOM ###";
+            lblUnitValue.Text = "###";
             lblUnitValue.TextAlign = ContentAlignment.MiddleCenter;
             lblUnitValue.Visible = false;
             // 
@@ -151,7 +151,7 @@
             lblUnitTitle.Name = "lblUnitTitle";
             lblUnitTitle.Size = new Size(225, 55);
             lblUnitTitle.TabIndex = 41;
-            lblUnitTitle.Text = "Unit";
+            lblUnitTitle.Text = "Room";
             lblUnitTitle.TextAlign = ContentAlignment.MiddleCenter;
             lblUnitTitle.Visible = false;
             // 

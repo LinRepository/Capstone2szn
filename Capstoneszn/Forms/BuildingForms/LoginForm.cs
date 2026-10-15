@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Capstoneszn.Forms.BuildingForms;
+using Capstoneszn.Forms.SettingsForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn
@@ -47,6 +49,10 @@ namespace Capstoneszn
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            // Set inside the connection block, then acted on after it closes.
+            int loggedInUserId;
+            bool questionsConfigured;
 
             try
             {
@@ -109,13 +115,61 @@ namespace Capstoneszn
                     Session.Role = userRole;
                     Session.Name = displayName;
 
+                    loggedInUserId = userId;
+
+                    // Exactly three, not "three or more". A user sitting at one or two
+                    // rows is a broken state, and treating that as "not configured"
+                    // means the setup form reopens and repairs it.
+                    using (SqlCommand cmd = new SqlCommand(
+                        "SELECT COUNT(*) FROM SecurityQuestions WHERE UserId = @UserId", conn))
+                    {
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                        questionsConfigured = (int)cmd.ExecuteScalar() == 3;
+                    }
                 }
             }
-            catch (Exception)
+            catch (SqlException ex)
             {
-                MessageBox.Show("Unable to connect to the database.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "A database error occurred. Please make sure SQL Server is running and try again.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Something went wrong while signing you in.",
+                    "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // An account with no security questions cannot recover a forgotten
+            // password, and nothing would ever prompt the user to fix that. So the
+            // setup form opens here, before the dashboard, and cannot be skipped.
+            if (!questionsConfigured)
+            {
+                using (var setup = new SecurityQuestionsForm(loggedInUserId, true))
+                {
+                    if (setup.ShowDialog(this) != DialogResult.OK)
+                    {
+                        // They backed out - the login does not complete.
+                        Session.Clear();
+                        txtLoginPassword.Clear();
+                        txtLoginPassword.Focus();
+                        return;
+                    }
+                }
+            }
+            try
+            {
+                int generated = BillGenerator.RunForAllBuildings();
+                if (generated > 0)
+                    Debug.WriteLine($"BillGenerator: {generated} bill(s) created at login.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
             }
 
             ClearLoginFields();
@@ -150,10 +204,17 @@ namespace Capstoneszn
                 return;
             }
 
-            ForgetForm ff = new ForgetForm(username);
-            ff.FormClosed += (s2, e2) => { txtLoginPassword.Clear(); this.Show(); };
-            ff.Show();
-            this.Hide();
+            // Modal, with the login form left visible underneath. The old Show()/Hide()
+            // pair raced against ForgetForm closing itself during Load: Hide() ran after
+            // the FormClosed handler had already re-shown this form, leaving no window
+            // on screen at all. ShowDialog has no such ordering hazard.
+            using (ForgetForm ff = new ForgetForm(username))
+            {
+                ff.ShowDialog(this);
+            }
+
+            txtLoginPassword.Clear();
+            txtLoginPassword.Focus();
         }
 
         private void ShowInvalidCredentials()

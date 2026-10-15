@@ -13,6 +13,30 @@ namespace Capstoneszn.Forms.PaymentsForms
 {
     public partial class BillingPaymentForm : Form
     {
+        /* =================================================================
+           PAYMENT TYPE
+
+           Decided by the amount, never picked by hand:
+
+               amount == what is owed   ->  Full Payment
+               amount <  what is owed   ->  Partial Payment
+               amount >  what is owed   ->  Advance Payment
+                                            (including any payment made
+                                             when nothing is owed)
+
+           "What is owed" is this tenant's total for an Individual payment,
+           and the WHOLE ROOM's total for a Whole Room payment.
+
+           Because the type follows the money, a payment can never be
+           saved with a label that contradicts its amount.
+
+           The screen shows the full label; the database stores the short
+           code (CK_Payments_Type allows Full, Partial, Advance).
+           ================================================================= */
+
+        private const string FullPayment = "Full Payment";
+        private const string PartialPayment = "Partial Payment";
+        private const string AdvancePayment = "Advance Payment";
 
         private int _roomId;
         private int _tenantId;
@@ -22,6 +46,7 @@ namespace Capstoneszn.Forms.PaymentsForms
         {
             InitializeComponent();
 
+            // These two lines must stay first: LoadContext() below reads them.
             _roomId = roomId;
             _tenantId = tenantId;
 
@@ -33,12 +58,12 @@ namespace Capstoneszn.Forms.PaymentsForms
             cboCategoryType.SelectedIndex = 0;
             cboCategoryType.Enabled = false;
 
-            // --- Payment type: suggested from the amount, landlord can override
+            // --- Payment type: display only. It follows the amount.
             cboPaymentType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboPaymentType.Items.Clear();
             cboPaymentType.Items.AddRange(new object[]
-                { "Full Payment", "Partial Payment", "Down Payment" });
-            cboPaymentType.SelectedIndex = 0;
+                { FullPayment, PartialPayment, AdvancePayment });
+            cboPaymentType.Enabled = false;
 
             dtpDate.Value = DateTime.Today;
             dtpDate.MaxDate = DateTime.Today;   // no post-dating
@@ -50,9 +75,10 @@ namespace Capstoneszn.Forms.PaymentsForms
             txtAmount.KeyPress += Decimal_KeyPress;
             txtAmount.TextChanged += Amount_Changed;
 
-            btnConfirm.Click += btnConfirm_Click;
-            btnCancel.Click += btnCancel_Click;
-            btnClear.Click += btnClear_Click;
+            // btnConfirm, btnCancel and btnClear are wired in the designer.
+            // Do NOT wire them here as well: a second btnConfirm handler runs
+            // the whole confirm-and-save sequence again after the first one
+            // finishes, and saying Yes twice records the payment twice.
 
             LoadContext();
             PaymentMethod_Changed(null, EventArgs.Empty);
@@ -69,18 +95,38 @@ namespace Capstoneszn.Forms.PaymentsForms
             // Dock = Fill does not fill inside a FlowLayoutPanel, so size it
             _rent.Width = flpPaymentDetails.ClientSize.Width - 6;
 
-            _rent.ContextChanged += (s, e) => UpdatePreview();
+            // Switching Individual / Whole Room changes what the payment is
+            // measured against (this tenant's debt or the room's), so refill
+            // the amount with that figure. Setting the text re-runs the
+            // preview and the payment type through Amount_Changed.
+            _rent.ContextChanged += (s, e) =>
+            {
+                txtAmount.Text = _rent.OwedForMode > 0m ? _rent.OwedForMode.ToString("N2") : "";
+                UpdatePreview();
+                UpdatePaymentType();
+            };
 
             flpPaymentDetails.Controls.Add(_rent);
 
-            lblMakePaymentTitle.Text = "Make Payment - " + _rent.TenantName;
+            bool owesNothing = _rent.Outstanding <= 0;
+
+            lblMakePaymentTitle.Text =
+                (owesNothing ? "Pay in Advance - " : "Make Payment - ") + _rent.TenantName;
 
             // Start with the outstanding filled in; it is the common case
-            if (_rent.Outstanding > 0)
+            if (!owesNothing)
                 txtAmount.Text = _rent.Outstanding.ToString("N2");
 
             UpdatePreview();
+            UpdatePaymentType();
         }
+
+        /// <summary>
+        /// With something owed, the landlord picks Full, Partial or Down.
+        /// With nothing owed, the only honest label is Advance, so it is
+        /// fixed and the combo is locked.
+        /// </summary>
+        /// 
 
         private void Decimal_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -105,7 +151,7 @@ namespace Capstoneszn.Forms.PaymentsForms
         private void Amount_Changed(object sender, EventArgs e)
         {
             UpdatePreview();
-            SuggestPaymentType();
+            UpdatePaymentType();
         }
 
         private decimal ParsedAmount()
@@ -114,11 +160,94 @@ namespace Capstoneszn.Forms.PaymentsForms
             return amount;
         }
 
+        /* =================================================================
+           TYPE FROM AMOUNT
+           ================================================================= */
+
+        /// <summary>
+        /// The one rule for the payment type. Compares the amount with what
+        /// it is paying for: this tenant's debt (Individual) or the whole
+        /// room's debt (Whole Room).
+        /// </summary>
+        private string DerivePaymentType(decimal amount)
+        {
+            decimal owed = _rent.OwedForMode;
+
+            if (owed <= 0m) return AdvancePayment;
+            if (amount == owed) return FullPayment;
+            if (amount < owed) return PartialPayment;
+            return AdvancePayment;
+        }
+
+        /// <summary>
+        /// One line per tenant a Whole Room payment reaches, for the
+        /// confirmation message.
+        /// </summary>
+        /// 
+        private string WholeRoomLines(decimal amount)
+        {
+            var sb = new StringBuilder();
+            foreach (var part in _rent.WholeRoomSplit(amount))
+            {
+                if (part.Value <= 0m) continue;
+                sb.Append("    ").Append(_rent.NameOf(part.Key))
+                  .Append("   PHP ").Append(part.Value.ToString("N2")).Append('\n');
+            }
+            return sb.ToString();
+        }
+        /// <summary>The room's position after a Whole Room payment.</summary>
+        private string RoomAfterText(decimal amount)
+        {
+            decimal after = _rent.RoomOutstanding - amount;
+
+            if (after > 0m) return "Room still owes PHP " + after.ToString("N2");
+            if (after == 0m) return "Room fully settled";
+            return "Room settled, PHP " + Math.Abs(after).ToString("N2") +
+                   " advance split across " + _rent.RoomTenantCount + " tenant(s)";
+        }
+
+
+        private void UpdatePaymentType()
+        {
+            if (_rent == null) return;
+
+            decimal amount = ParsedAmount();
+
+            if (amount <= 0m)
+            {
+                cboPaymentType.SelectedIndex = -1;   // nothing typed yet
+                return;
+            }
+
+            cboPaymentType.SelectedItem = DerivePaymentType(amount);
+        }
+
+        /// <summary>
+        /// Screen label -> database code. CK_Payments_Type allows exactly
+        /// these three codes; move-in payments already store 'Full'.
+        /// </summary>
+        private static string PaymentTypeCode(string label)
+        {
+            switch (label)
+            {
+                case FullPayment: return "Full";
+                case PartialPayment: return "Partial";
+                case AdvancePayment: return "Advance";
+                default: throw new InvalidOperationException("Unknown payment type: " + label);
+            }
+        }
+
+        /* =================================================================
+           PREVIEW
+           ================================================================= */
+
         /// <summary>
         /// Shows what the tenant's balance becomes if this payment is saved.
         /// Any amount a tenant is credited moves their balance by exactly that
         /// much - what it settles versus what becomes credit nets out.
         /// </summary>
+
+
         private void UpdatePreview()
         {
             if (_rent == null) return;
@@ -130,6 +259,17 @@ namespace Capstoneszn.Forms.PaymentsForms
             {
                 lblAfterPaymentValue.Text = "Enter an amount";
                 lblAfterPaymentValue.ForeColor = Color.Silver;
+                return;
+            }
+
+            // Whole Room: what matters is the room, not one tenant.
+            if (_rent.CoversRoom)
+            {
+                decimal roomAfter = _rent.RoomOutstanding - amount;
+                lblAfterPaymentValue.Text = "After this payment: " + RoomAfterText(amount);
+                lblAfterPaymentValue.ForeColor = roomAfter > 0m ? Color.Salmon
+                                               : roomAfter < 0m ? Color.PaleGreen
+                                               : Color.White;
                 return;
             }
 
@@ -155,30 +295,10 @@ namespace Capstoneszn.Forms.PaymentsForms
                 color = Color.White;
             }
 
-            if (_rent.CoversRoom)
-                text += "   [this tenant's share: PHP " + credited.ToString("N2") + "]";
-
             lblAfterPaymentValue.Text = text;
             lblAfterPaymentValue.ForeColor = color;
         }
 
-        /// <summary>
-        /// A Down Payment is the FIRST partial payment on a bill; a Partial
-        /// is any later one. Suggest, never force - the landlord can override.
-        /// </summary>
-        private void SuggestPaymentType()
-        {
-            if (_rent == null || _rent.Outstanding <= 0) return;
-
-            decimal credited = _rent.ShareOf(ParsedAmount());
-
-            if (credited >= _rent.Outstanding)
-                cboPaymentType.SelectedItem = "Full Payment";
-            else if (_rent.HasPriorPayment)
-                cboPaymentType.SelectedItem = "Partial Payment";
-            else
-                cboPaymentType.SelectedItem = "Down Payment";
-        }
 
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -187,7 +307,7 @@ namespace Capstoneszn.Forms.PaymentsForms
             radioButtonCash.Checked = true;
             txtAmount.Text = _rent != null && _rent.Outstanding > 0
                 ? _rent.Outstanding.ToString("N2") : "";
-            // Category and date stay fixed
+            // Category and date stay fixed; the type follows the amount
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -216,6 +336,16 @@ namespace Capstoneszn.Forms.PaymentsForms
                 return;
             }
 
+            // The database stores money to the centavo. A third decimal
+            // would be rounded on the way in, and the allocations would no
+            // longer add up to the payment they came from.
+            if (amount != Math.Round(amount, 2))
+            {
+                MessageBox.Show("Enter the amount to at most two decimal places (centavos).",
+                    "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string method = radioButtonGcash.Checked ? "GCash" : "Cash";
             string refNo = txtReferenceNumber.Text.Trim();
 
@@ -226,47 +356,35 @@ namespace Capstoneszn.Forms.PaymentsForms
                 return;
             }
 
-            string payType = cboPaymentType.Text;
-            decimal credited = _rent.ShareOf(amount);
-
-            // Label and money must agree
-            if (payType == "Full Payment" && credited < _rent.Outstanding)
-            {
-                MessageBox.Show(
-                    "Full Payment needs PHP " + _rent.Outstanding.ToString("N2") +
-                    " for this tenant, but only PHP " + credited.ToString("N2") +
-                    " would be credited.\n\nChange the amount, or pick Partial or Down Payment.",
-                    "Amount doesn't match", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if ((payType == "Partial Payment" || payType == "Down Payment")
-                && credited >= _rent.Outstanding && _rent.Outstanding > 0)
-            {
-                MessageBox.Show(
-                    "This covers the full PHP " + _rent.Outstanding.ToString("N2") +
-                    " outstanding.\n\nSelect Full Payment instead.",
-                    "Amount doesn't match", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            // Recomputed here rather than read from the combo, so what is
+            // saved can never differ from the rule.
+            string payType = DerivePaymentType(amount);
 
             // --- Confirm ---
-            decimal after = _rent.Balance + credited;
-
-            string summary =
-                "Room:      " + lblMakePaymentTitle.Text.Replace("Make Payment - ", "") + "\n" +
+            string header =
+                (_rent.CoversRoom ? "Paid by:   " : "Tenant:    ") + _rent.TenantName + "\n" +
                 "Category:  " + cboCategoryType.Text + "\n" +
                 "Type:      " + payType + "\n" +
                 "Method:    " + method + (method == "GCash" ? "  (ref " + refNo + ")" : "") + "\n" +
-                "Amount:    PHP " + amount.ToString("N2") + "\n\n" +
-                (_rent.CoversRoom
-                    ? "Recorded as WHOLE ROOM - split across every active tenant.\n" +
-                      "This tenant is credited PHP " + credited.ToString("N2") + ".\n\n"
-                    : "Recorded for this tenant only.\n\n") +
-                "Balance after: " + (after >= 0 ? "+" : "-") +
-                "PHP " + Math.Abs(after).ToString("N2") +
-                (after > 0 ? " (advance)" : after < 0 ? " (still owing)" : "") +
-                "\n\nSave this payment?";
+                "Amount:    PHP " + amount.ToString("N2") + "\n\n";
+
+            string body;
+            if (_rent.CoversRoom)
+            {
+                body = "Recorded as WHOLE ROOM:\n" +
+                       WholeRoomLines(amount) + "\n" +
+                       RoomAfterText(amount) + ".";
+            }
+            else
+            {
+                decimal after = _rent.Balance + amount;
+                body = "Recorded for this tenant only.\n\n" +
+                       "Balance after: " + (after >= 0 ? "+" : "-") +
+                       "PHP " + Math.Abs(after).ToString("N2") +
+                       (after > 0 ? " (advance)" : after < 0 ? " (still owing)" : "");
+            }
+
+            string summary = header + body + "\n\nSave this payment?";
 
             if (MessageBox.Show(summary, "Confirm Payment",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
@@ -293,7 +411,7 @@ namespace Capstoneszn.Forms.PaymentsForms
                             _tenantId,
                             _rent.CoversRoom,
                             cboCategoryType.Text,
-                            payType,
+                            PaymentTypeCode(payType),     // stored as Full / Partial / Advance
                             amount,
                             method,
                             refNo,
@@ -306,9 +424,30 @@ namespace Capstoneszn.Forms.PaymentsForms
                     }
                     catch (Exception ex)
                     {
-                        tx.Rollback();
-                        MessageBox.Show("Payment failed, nothing was saved: " + ex.Message,
-                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // A failed rollback must not hide the real error.
+                        try { tx.Rollback(); }
+                        catch (Exception rollbackEx) { System.Diagnostics.Debug.WriteLine(rollbackEx); }
+
+                        // The filtered unique index on ReferenceNo is the
+                        // database refusing a GCash reference it has already
+                        // recorded. Say that in words, not as a SQL message.
+                        bool duplicateReference =
+                            ex is SqlException sqlEx &&
+                            (sqlEx.Number == 2601 || sqlEx.Number == 2627) &&
+                            sqlEx.Message.Contains("ReferenceNo");
+
+                        if (duplicateReference)
+                        {
+                            MessageBox.Show(
+                                "GCash reference " + refNo + " has already been recorded " +
+                                "for another payment.\n\nCheck the reference number. Nothing was saved.",
+                                "Duplicate Reference", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Payment failed, nothing was saved: " + ex.Message,
+                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }

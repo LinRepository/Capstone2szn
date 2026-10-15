@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Capstoneszn.Forms;
+using Capstoneszn.Forms.RoomsForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.UserControls
@@ -79,7 +80,12 @@ namespace Capstoneszn.UserControls
                     conn.Open();
 
                     // 1. Fetch Room Details (Added FloorId for duplicate checking later)
-                    string roomQuery = "SELECT RoomNumber, Status, Capacity, RoomType, RoomPrice, FloorId FROM Rooms WHERE RoomId = @rId";
+                    // Status comes from the view; Capacity and RoomPrice are nullable now
+                    // because an unconfigured room has neither.
+                    string roomQuery = @"
+                        SELECT v.RoomNumber, v.Status, v.Capacity, v.RoomType, v.RoomPrice, v.FloorId
+                        FROM   vwRoomStatus v
+                        WHERE  v.RoomId = @rId";
                     using (SqlCommand cmd = new SqlCommand(roomQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@rId", _roomId);
@@ -89,9 +95,9 @@ namespace Capstoneszn.UserControls
                             {
                                 string rNum = reader.GetString(0);
                                 string rStatus = reader.GetString(1);
-                                _currentCapacity = reader.GetInt32(2);
+                                _currentCapacity = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
                                 string rType = reader.IsDBNull(3) ? "" : reader.GetString(3);
-                                decimal rPrice = reader.GetDecimal(4);
+                                decimal rPrice = reader.IsDBNull(4) ? 0m : reader.GetDecimal(4);
                                 _floorId = reader.GetInt32(5);
 
                                 // Populate Read-Only Labels
@@ -108,7 +114,13 @@ namespace Capstoneszn.UserControls
                     }
 
                     // 2. Fetch Active Tenants and map to your specific Designer columns
-                    string tenantQuery = "SELECT TenantId, FirstName, LastName, ContactNumber FROM Tenants WHERE RoomId = @rId AND Status = 'Active'";
+                    // Occupancy lives in Tenancies now - Tenants holds only the person.
+                    string tenantQuery = @"
+                            SELECT t.TenantId, t.FirstName, t.LastName, t.ContactNumber
+                            FROM   Tenancies tn
+                            JOIN   Tenants   t ON t.TenantId = tn.TenantId
+                            WHERE  tn.RoomId = @rId AND tn.Status = 'Active'
+                            ORDER BY t.LastName, t.FirstName";
                     using (SqlCommand cmd = new SqlCommand(tenantQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@rId", _roomId);
@@ -173,7 +185,14 @@ namespace Capstoneszn.UserControls
 
         private void btnMoveOut_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Opening Move Out form...");
+            using (MoveOutForm moveOut = new MoveOutForm(_roomId))
+            {
+                if (moveOut.ShowDialog() == DialogResult.OK)
+                {
+                    LoadRoomData();
+                    this.DialogResult = DialogResult.OK;
+                }
+            }
         }
 
         private void btnCloseRoomInfo_Click(object sender, EventArgs e)
@@ -246,7 +265,12 @@ namespace Capstoneszn.UserControls
                     // Check for duplicate room number (only if they actually changed it from the original)
                     if (newRoomNum != lblUnitNumberValue.Text)
                     {
-                        string checkQuery = "SELECT COUNT(*) FROM Rooms WHERE RoomNumber = @rNum AND FloorId = @fId AND RoomId != @rId";
+                        string checkQuery = @"
+                            SELECT COUNT(*)
+                            FROM   Rooms r
+                            WHERE  r.RoomNumber = @rNum
+                              AND  r.BuildingId = (SELECT BuildingId FROM Rooms WHERE RoomId = @rId)
+                              AND  r.RoomId != @rId";
                         using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
                         {
                             checkCmd.Parameters.AddWithValue("@rNum", newRoomNum);
@@ -263,7 +287,15 @@ namespace Capstoneszn.UserControls
                     }
 
                     // Update the room
-                    string updateQuery = @" UPDATE Rooms SET RoomNumber = @num, Capacity   = @cap, RoomType   = @type, RoomPrice  = @price, Status     = CASE WHEN Status = 'Unconfigured' THEN 'Available' ELSE Status END WHERE RoomId = @rId";
+                    // No Status to maintain - setting a capacity and price is what moves the
+                    // card from white to green, and the view works that out on its own.
+                    string updateQuery = @"
+                        UPDATE Rooms
+                           SET RoomNumber = @num,
+                               Capacity   = @cap,
+                               RoomType   = @type,
+                               RoomPrice  = @price
+                         WHERE RoomId = @rId";
                     using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@num", newRoomNum);
@@ -298,6 +330,18 @@ namespace Capstoneszn.UserControls
 
             if (!isShared)
                 nudSetCapacity.Value = 1;
+        }
+
+        private void btnTransfer_Click(object sender, EventArgs e)
+        {
+            using (TransferForm transfer = new TransferForm(_roomId))
+            {
+                if (transfer.ShowDialog() == DialogResult.OK)
+                {
+                    LoadRoomData();
+                    this.DialogResult = DialogResult.OK;
+                }
+            }
         }
     }
 }

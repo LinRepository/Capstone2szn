@@ -44,12 +44,18 @@ namespace Capstoneszn
                     transaction = conn.BeginTransaction();
 
                     // Step A: Insert Building
-                    string insertBuildingQuery = "INSERT INTO Buildings (BuildingName) OUTPUT INSERTED.BuildingId VALUES (@bName);";
+                    // FloorCount is stored on the building as well as expanded into Floors
+                    // rows. Floors cannot be added after creation, so this number is the
+                    // permanent record of how tall the building is.
+                    string insertBuildingQuery =
+                        "INSERT INTO Buildings (BuildingName, FloorCount) " +
+                        "OUTPUT INSERTED.BuildingId VALUES (@bName, @fCount);";
                     int newBuildingId;
 
                     using (SqlCommand cmd = new SqlCommand(insertBuildingQuery, conn, transaction))
                     {
-                        cmd.Parameters.AddWithValue("@bName", buildingName);
+                        cmd.Parameters.Add("@bName", SqlDbType.NVarChar, 100).Value = buildingName;
+                        cmd.Parameters.Add("@fCount", SqlDbType.Int).Value = numberOfFloors;
                         newBuildingId = (int)cmd.ExecuteScalar();
                     }
 

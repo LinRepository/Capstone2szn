@@ -76,7 +76,16 @@ namespace Capstoneszn.UserControls
                         flpFloorRooms.MaximumSize = new Size(maxWidth, 0);
 
                         // 3. Get all active rooms for THIS specific floor (Includes the Length Sort fix!)
-                        string roomQuery = @" SELECT r.RoomId, r.RoomNumber, r.Status, r.Capacity, (SELECT COUNT(*) FROM Tenants t WHERE t.RoomId = r.RoomId AND t.Status = 'Active' AND t.IsArchived = 0) AS TenantCount FROM Rooms r WHERE r.FloorId = @fId AND r.IsArchived = 0 ORDER BY LEN(r.RoomNumber) ASC, r.RoomNumber ASC";
+                        string roomQuery = @"
+                        SELECT  v.RoomId,
+                        v.RoomNumber,
+                        v.Status,
+                        ISNULL(v.Capacity, 0) AS Capacity,
+                        v.ActiveTenants
+                        FROM    vwRoomStatus v
+                        WHERE   v.FloorId = @fId
+                        AND   v.IsArchived = 0
+                        ORDER BY LEN(v.RoomNumber) ASC, v.RoomNumber ASC";
                         using (SqlCommand cmdRoom = new SqlCommand(roomQuery, conn))
                         {
                             cmdRoom.Parameters.AddWithValue("@fId", floorId);
@@ -107,6 +116,7 @@ namespace Capstoneszn.UserControls
                 }
                 catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine(ex);
                     MessageBox.Show("Error loading rooms: " + ex.Message);
                 }
             }

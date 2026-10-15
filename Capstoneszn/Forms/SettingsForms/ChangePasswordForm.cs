@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -79,7 +80,7 @@ namespace Capstoneszn.Forms.SettingsForms
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = _userId;
                         object? result = cmd.ExecuteScalar();
 
-                        if (result == null)
+                        if (result == null || result == DBNull.Value)
                         {
                             MessageBox.Show("User not found.", "Change Password",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -106,7 +107,15 @@ namespace Capstoneszn.Forms.SettingsForms
                         cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 255).Value =
                             SecurityHelper.Hash(newPassword);
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = _userId;
-                        cmd.ExecuteNonQuery();
+
+                        int rows = cmd.ExecuteNonQuery();
+
+                        if (rows == 0)
+                        {
+                            MessageBox.Show("User not found. Password was not changed.", "Change Password",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                     }
                 }
 
@@ -120,16 +129,25 @@ namespace Capstoneszn.Forms.SettingsForms
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            catch (Exception)
+            catch (SqlException ex)
             {
-                MessageBox.Show("Unable to change the password.", "Change Password",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine(ex);
+                MessageBox.Show(
+                    "A database error occurred. Your password was not changed. " +
+                    "Please make sure SQL Server is running and try again.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Something went wrong. Your password was not changed.",
+                    "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void ChangePasswordForm_Load(object sender, EventArgs e)
         {
-
+            txtCurrentPassword.Select();
         }
     }
 }

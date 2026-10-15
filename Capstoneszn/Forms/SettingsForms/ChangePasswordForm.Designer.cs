@@ -171,39 +171,44 @@
             // 
             // txtCurrentPassword
             // 
+            txtCurrentPassword.Font = new Font("Segoe UI", 13.2000008F);
             txtCurrentPassword.Location = new Point(195, 15);
             txtCurrentPassword.Margin = new Padding(3, 15, 3, 3);
-            txtCurrentPassword.Multiline = true;
+            txtCurrentPassword.MaxLength = 100;
             txtCurrentPassword.Name = "txtCurrentPassword";
-            txtCurrentPassword.Size = new Size(261, 40);
+            txtCurrentPassword.Size = new Size(261, 37);
             txtCurrentPassword.TabIndex = 15;
             txtCurrentPassword.UseSystemPasswordChar = true;
             // 
             // txtNewPassword
             // 
+            txtNewPassword.Font = new Font("Segoe UI", 13.2000008F);
             txtNewPassword.Location = new Point(195, 85);
             txtNewPassword.Margin = new Padding(3, 15, 3, 3);
-            txtNewPassword.Multiline = true;
+            txtNewPassword.MaxLength = 100;
             txtNewPassword.Name = "txtNewPassword";
-            txtNewPassword.Size = new Size(261, 40);
+            txtNewPassword.Size = new Size(261, 37);
             txtNewPassword.TabIndex = 15;
             txtNewPassword.UseSystemPasswordChar = true;
             // 
             // txtConfirmNewPassword
             // 
+            txtConfirmNewPassword.Font = new Font("Segoe UI", 13.2000008F);
             txtConfirmNewPassword.Location = new Point(195, 156);
             txtConfirmNewPassword.Margin = new Padding(3, 15, 3, 3);
-            txtConfirmNewPassword.Multiline = true;
+            txtConfirmNewPassword.MaxLength = 100;
             txtConfirmNewPassword.Name = "txtConfirmNewPassword";
-            txtConfirmNewPassword.Size = new Size(261, 40);
+            txtConfirmNewPassword.Size = new Size(261, 37);
             txtConfirmNewPassword.TabIndex = 15;
             txtConfirmNewPassword.UseSystemPasswordChar = true;
             // 
             // ChangePasswordForm
             // 
+            AcceptButton = btnSaveNewPassword;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(10, 20, 38);
+            CancelButton = btnCancelChangePassword;
             ClientSize = new Size(482, 353);
             Controls.Add(pnlChangePasswordContent);
             Controls.Add(pnlChangePasswordActions);

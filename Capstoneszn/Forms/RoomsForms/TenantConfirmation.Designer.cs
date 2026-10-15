@@ -30,17 +30,17 @@
         {
             pnlTenantConfirmationContent = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
-            lblFName = new Label();
-            lblMName = new Label();
-            lblLName = new Label();
-            lblAddress = new Label();
-            lblContactNumber = new Label();
-            lblDate = new Label();
-            lblFNameValue = new Label();
-            lblMNameValue = new Label();
-            lblLNameValue = new Label();
-            lblAddressValue = new Label();
             lblContactNumberValue = new Label();
+            lblAddressValue = new Label();
+            lblLNameValue = new Label();
+            lblMNameValue = new Label();
+            lblFNameValue = new Label();
+            lblDate = new Label();
+            lblContactNumber = new Label();
+            lblAddress = new Label();
+            lblLName = new Label();
+            lblMName = new Label();
+            lblFName = new Label();
             dtpDateValue = new DateTimePicker();
             pnlTenantConfirmationContent.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -84,132 +84,21 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             tableLayoutPanel1.Size = new Size(580, 350);
             tableLayoutPanel1.TabIndex = 0;
+            tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
             // 
-            // lblFName
+            // lblContactNumberValue
             // 
-            lblFName.Dock = DockStyle.Left;
-            lblFName.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFName.ForeColor = Color.White;
-            lblFName.ImageAlign = ContentAlignment.MiddleRight;
-            lblFName.Location = new Point(0, 0);
-            lblFName.Margin = new Padding(0);
-            lblFName.Name = "lblFName";
-            lblFName.Size = new Size(200, 58);
-            lblFName.TabIndex = 32;
-            lblFName.Text = "First Name";
-            lblFName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblMName
-            // 
-            lblMName.Dock = DockStyle.Left;
-            lblMName.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblMName.ForeColor = Color.White;
-            lblMName.ImageAlign = ContentAlignment.MiddleRight;
-            lblMName.Location = new Point(0, 58);
-            lblMName.Margin = new Padding(0);
-            lblMName.Name = "lblMName";
-            lblMName.Size = new Size(200, 58);
-            lblMName.TabIndex = 34;
-            lblMName.Text = "Middle Name";
-            lblMName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblLName
-            // 
-            lblLName.Dock = DockStyle.Left;
-            lblLName.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblLName.ForeColor = Color.White;
-            lblLName.ImageAlign = ContentAlignment.MiddleRight;
-            lblLName.Location = new Point(0, 116);
-            lblLName.Margin = new Padding(0);
-            lblLName.Name = "lblLName";
-            lblLName.Size = new Size(200, 58);
-            lblLName.TabIndex = 36;
-            lblLName.Text = "Last Name";
-            lblLName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblAddress
-            // 
-            lblAddress.Dock = DockStyle.Left;
-            lblAddress.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAddress.ForeColor = Color.White;
-            lblAddress.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddress.Location = new Point(0, 174);
-            lblAddress.Margin = new Padding(0);
-            lblAddress.Name = "lblAddress";
-            lblAddress.Size = new Size(200, 58);
-            lblAddress.TabIndex = 38;
-            lblAddress.Text = "Address";
-            lblAddress.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblContactNumber
-            // 
-            lblContactNumber.Dock = DockStyle.Left;
-            lblContactNumber.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblContactNumber.ForeColor = Color.White;
-            lblContactNumber.ImageAlign = ContentAlignment.MiddleRight;
-            lblContactNumber.Location = new Point(0, 232);
-            lblContactNumber.Margin = new Padding(0);
-            lblContactNumber.Name = "lblContactNumber";
-            lblContactNumber.Size = new Size(200, 58);
-            lblContactNumber.TabIndex = 40;
-            lblContactNumber.Text = "Contact Number";
-            lblContactNumber.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblDate
-            // 
-            lblDate.Dock = DockStyle.Left;
-            lblDate.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDate.ForeColor = Color.White;
-            lblDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblDate.Location = new Point(0, 290);
-            lblDate.Margin = new Padding(0);
-            lblDate.Name = "lblDate";
-            lblDate.Size = new Size(200, 60);
-            lblDate.TabIndex = 42;
-            lblDate.Text = "Date";
-            lblDate.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblFNameValue
-            // 
-            lblFNameValue.Dock = DockStyle.Left;
-            lblFNameValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFNameValue.ForeColor = Color.White;
-            lblFNameValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblFNameValue.Location = new Point(290, 0);
-            lblFNameValue.Margin = new Padding(0);
-            lblFNameValue.Name = "lblFNameValue";
-            lblFNameValue.Size = new Size(270, 58);
-            lblFNameValue.TabIndex = 43;
-            lblFNameValue.Text = "-";
-            lblFNameValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblMNameValue
-            // 
-            lblMNameValue.Dock = DockStyle.Left;
-            lblMNameValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblMNameValue.ForeColor = Color.White;
-            lblMNameValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblMNameValue.Location = new Point(290, 58);
-            lblMNameValue.Margin = new Padding(0);
-            lblMNameValue.Name = "lblMNameValue";
-            lblMNameValue.Size = new Size(270, 58);
-            lblMNameValue.TabIndex = 44;
-            lblMNameValue.Text = "-";
-            lblMNameValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblLNameValue
-            // 
-            lblLNameValue.Dock = DockStyle.Left;
-            lblLNameValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblLNameValue.ForeColor = Color.White;
-            lblLNameValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblLNameValue.Location = new Point(290, 116);
-            lblLNameValue.Margin = new Padding(0);
-            lblLNameValue.Name = "lblLNameValue";
-            lblLNameValue.Size = new Size(270, 58);
-            lblLNameValue.TabIndex = 45;
-            lblLNameValue.Text = "-";
-            lblLNameValue.TextAlign = ContentAlignment.MiddleCenter;
+            lblContactNumberValue.Dock = DockStyle.Left;
+            lblContactNumberValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblContactNumberValue.ForeColor = Color.White;
+            lblContactNumberValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblContactNumberValue.Location = new Point(290, 232);
+            lblContactNumberValue.Margin = new Padding(0);
+            lblContactNumberValue.Name = "lblContactNumberValue";
+            lblContactNumberValue.Size = new Size(270, 58);
+            lblContactNumberValue.TabIndex = 47;
+            lblContactNumberValue.Text = "-";
+            lblContactNumberValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblAddressValue
             // 
@@ -225,19 +114,131 @@
             lblAddressValue.Text = "-";
             lblAddressValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblContactNumberValue
+            // lblLNameValue
             // 
-            lblContactNumberValue.Dock = DockStyle.Left;
-            lblContactNumberValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblContactNumberValue.ForeColor = Color.White;
-            lblContactNumberValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblContactNumberValue.Location = new Point(290, 232);
-            lblContactNumberValue.Margin = new Padding(0);
-            lblContactNumberValue.Name = "lblContactNumberValue";
-            lblContactNumberValue.Size = new Size(270, 58);
-            lblContactNumberValue.TabIndex = 47;
-            lblContactNumberValue.Text = "-";
-            lblContactNumberValue.TextAlign = ContentAlignment.MiddleCenter;
+            lblLNameValue.Dock = DockStyle.Left;
+            lblLNameValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblLNameValue.ForeColor = Color.White;
+            lblLNameValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblLNameValue.Location = new Point(290, 116);
+            lblLNameValue.Margin = new Padding(0);
+            lblLNameValue.Name = "lblLNameValue";
+            lblLNameValue.Size = new Size(270, 58);
+            lblLNameValue.TabIndex = 45;
+            lblLNameValue.Text = "-";
+            lblLNameValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblMNameValue
+            // 
+            lblMNameValue.Dock = DockStyle.Left;
+            lblMNameValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMNameValue.ForeColor = Color.White;
+            lblMNameValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblMNameValue.Location = new Point(290, 58);
+            lblMNameValue.Margin = new Padding(0);
+            lblMNameValue.Name = "lblMNameValue";
+            lblMNameValue.Size = new Size(270, 58);
+            lblMNameValue.TabIndex = 44;
+            lblMNameValue.Text = "-";
+            lblMNameValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblFNameValue
+            // 
+            lblFNameValue.Dock = DockStyle.Left;
+            lblFNameValue.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFNameValue.ForeColor = Color.White;
+            lblFNameValue.ImageAlign = ContentAlignment.MiddleRight;
+            lblFNameValue.Location = new Point(290, 0);
+            lblFNameValue.Margin = new Padding(0);
+            lblFNameValue.Name = "lblFNameValue";
+            lblFNameValue.Size = new Size(270, 58);
+            lblFNameValue.TabIndex = 43;
+            lblFNameValue.Text = "-";
+            lblFNameValue.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblDate
+            // 
+            lblDate.Dock = DockStyle.Left;
+            lblDate.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDate.ForeColor = Color.White;
+            lblDate.ImageAlign = ContentAlignment.MiddleRight;
+            lblDate.Location = new Point(0, 290);
+            lblDate.Margin = new Padding(0);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(200, 60);
+            lblDate.TabIndex = 42;
+            lblDate.Text = "Date";
+            lblDate.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblContactNumber
+            // 
+            lblContactNumber.Dock = DockStyle.Left;
+            lblContactNumber.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblContactNumber.ForeColor = Color.White;
+            lblContactNumber.ImageAlign = ContentAlignment.MiddleRight;
+            lblContactNumber.Location = new Point(0, 232);
+            lblContactNumber.Margin = new Padding(0);
+            lblContactNumber.Name = "lblContactNumber";
+            lblContactNumber.Size = new Size(200, 58);
+            lblContactNumber.TabIndex = 40;
+            lblContactNumber.Text = "Contact Number";
+            lblContactNumber.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblAddress
+            // 
+            lblAddress.Dock = DockStyle.Left;
+            lblAddress.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddress.ForeColor = Color.White;
+            lblAddress.ImageAlign = ContentAlignment.MiddleRight;
+            lblAddress.Location = new Point(0, 174);
+            lblAddress.Margin = new Padding(0);
+            lblAddress.Name = "lblAddress";
+            lblAddress.Size = new Size(200, 58);
+            lblAddress.TabIndex = 38;
+            lblAddress.Text = "Address";
+            lblAddress.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblLName
+            // 
+            lblLName.Dock = DockStyle.Left;
+            lblLName.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblLName.ForeColor = Color.White;
+            lblLName.ImageAlign = ContentAlignment.MiddleRight;
+            lblLName.Location = new Point(0, 116);
+            lblLName.Margin = new Padding(0);
+            lblLName.Name = "lblLName";
+            lblLName.Size = new Size(200, 58);
+            lblLName.TabIndex = 36;
+            lblLName.Text = "Last Name";
+            lblLName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblMName
+            // 
+            lblMName.Dock = DockStyle.Left;
+            lblMName.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMName.ForeColor = Color.White;
+            lblMName.ImageAlign = ContentAlignment.MiddleRight;
+            lblMName.Location = new Point(0, 58);
+            lblMName.Margin = new Padding(0);
+            lblMName.Name = "lblMName";
+            lblMName.Size = new Size(200, 58);
+            lblMName.TabIndex = 34;
+            lblMName.Text = "Middle Name";
+            lblMName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblFName
+            // 
+            lblFName.Dock = DockStyle.Left;
+            lblFName.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFName.ForeColor = Color.White;
+            lblFName.ImageAlign = ContentAlignment.MiddleRight;
+            lblFName.Location = new Point(0, 0);
+            lblFName.Margin = new Padding(0);
+            lblFName.Name = "lblFName";
+            lblFName.Size = new Size(200, 58);
+            lblFName.TabIndex = 32;
+            lblFName.Text = "First Name";
+            lblFName.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dtpDateValue
             // 

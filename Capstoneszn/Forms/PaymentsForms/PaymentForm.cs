@@ -32,10 +32,11 @@ namespace Capstoneszn.Forms
             cboPaymentCategory.SelectedIndex = 0;
             cboPaymentCategory.Enabled = false;
 
-            // Payment type: full only, per landlord policy
+            // Payment type: always Full. The amount is locked to the room price,
+            // which is exactly the first bill - paid equals owed.
             cboPaymentType.Items.Clear();
-            cboPaymentType.Items.AddRange(new object[] { "Full", "Partial", "Down" });
-            cboPaymentType.SelectedIndex = 0;          // "Full"
+            cboPaymentType.Items.Add("Full Payment");
+            cboPaymentType.SelectedIndex = 0;
             cboPaymentType.Enabled = false;
 
             // Amount is always visible
@@ -159,24 +160,33 @@ namespace Capstoneszn.Forms
                 {
                     try
                     {
-                        // 1. Re-check capacity - the form may have sat open a while
+                        // 1. Re-check capacity - the form may have sat open a while.
+                        //    Occupancy comes from Tenancies now; Tenants holds only
+                        //    the person.
                         string capSql = @"
-                            SELECT r.Capacity,
-                                   (SELECT COUNT(*) FROM Tenants t
-                                    WHERE t.RoomId = r.RoomId
-                                      AND t.Status = 'Active' AND t.IsArchived = 0)
-                            FROM Rooms r WHERE r.RoomId = @rid;";
+                    SELECT r.Capacity,
+                           (SELECT COUNT(*) FROM Tenancies tn
+                            WHERE tn.RoomId = r.RoomId AND tn.Status = 'Active')
+                    FROM Rooms r WHERE r.RoomId = @rid;";
 
                         int capacity, occupied;
                         using (var cmd = new SqlCommand(capSql, conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
+                            cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
                             using (var rd = cmd.ExecuteReader())
                             {
                                 rd.Read();
-                                capacity = rd.GetInt32(0);
+                                capacity = rd.IsDBNull(0) ? 0 : rd.GetInt32(0);
                                 occupied = rd.GetInt32(1);
                             }
+                        }
+
+                        if (capacity == 0)
+                        {
+                            tx.Rollback();
+                            MessageBox.Show("This room has no capacity set yet.",
+                                "Not Configured", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
                         }
 
                         if (occupied >= capacity)
@@ -187,156 +197,152 @@ namespace Capstoneszn.Forms
                             return;
                         }
 
-                        // 2. Insert the tenant
-                        string tenantSql = @"
-                            INSERT INTO Tenants
-                                (RoomId, FirstName, MiddleName, LastName, Address,
-                                 ContactNumber, DateOccupied, Status)
-                            VALUES (@rid, @fn, @mn, @ln, @addr, @contact, @date, 'Active');
-                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
+                        // 2. Insert the PERSON
                         int newTenantId;
+                        string tenantSql = @"
+                    INSERT INTO Tenants
+                        (FirstName, MiddleName, LastName, Address, ContactNumber)
+                    OUTPUT INSERTED.TenantId
+                    VALUES (@fn, @mn, @ln, @addr, @contact);";
+
                         using (var cmd = new SqlCommand(tenantSql, conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
-                            cmd.Parameters.AddWithValue("@fn", _data.FirstName);
-                            cmd.Parameters.AddWithValue("@mn",
+                            cmd.Parameters.Add("@fn", SqlDbType.NVarChar, 50).Value = _data.FirstName;
+                            cmd.Parameters.Add("@mn", SqlDbType.NVarChar, 50).Value =
                                 string.IsNullOrWhiteSpace(_data.MiddleName)
-                                    ? (object)DBNull.Value : _data.MiddleName);
-                            cmd.Parameters.AddWithValue("@ln", _data.LastName);
-                            cmd.Parameters.AddWithValue("@addr",
+                                    ? (object)DBNull.Value : _data.MiddleName;
+                            cmd.Parameters.Add("@ln", SqlDbType.NVarChar, 50).Value = _data.LastName;
+                            cmd.Parameters.Add("@addr", SqlDbType.NVarChar, 255).Value =
                                 string.IsNullOrWhiteSpace(_data.Address)
-                                    ? (object)DBNull.Value : _data.Address);
-                            cmd.Parameters.AddWithValue("@contact", _data.ContactNumber);
-                            cmd.Parameters.AddWithValue("@date", _data.DateOccupied);
+                                    ? (object)DBNull.Value : _data.Address;
+                            cmd.Parameters.Add("@contact", SqlDbType.NVarChar, 20).Value = _data.ContactNumber;
+
                             newTenantId = (int)cmd.ExecuteScalar();
                         }
 
-                        // 2b. Anchor the billing cycle and create the first bill
+                        // 2a. Insert the STAY
+                        using (var cmd = new SqlCommand(@"
+                    INSERT INTO Tenancies (TenantId, RoomId, MoveInDate, Status)
+                    VALUES (@tid, @rid, @date, 'Active');", conn, tx))
+                        {
+                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = newTenantId;
+                            cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
+                            cmd.Parameters.Add("@date", SqlDbType.Date).Value = _data.DateOccupied;
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // 2b. Anchor the billing cycle. If this tenant is alone in the room,
+                        //     the cycle starts on their move-in day. If others already live
+                        //     here, the room keeps its existing anchor.
                         DateTime start = _data.DateOccupied;
 
                         using (var cmd = new SqlCommand(
                             @"UPDATE Rooms SET BillingAnchorDate = @start
-                              WHERE RoomId = @rid AND BillingAnchorDate IS NULL;", conn, tx))
+                          WHERE RoomId = @rid
+                            AND NOT EXISTS (SELECT 1 FROM Tenancies tn
+                            WHERE tn.RoomId = @rid AND tn.Status = 'Active'
+                            AND tn.TenantId <> @tid);", conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
-                            cmd.Parameters.AddWithValue("@start", start);
+                            cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
+                            cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = newTenantId;
                             cmd.ExecuteNonQuery();
                         }
 
+                        // 2c. The first bill. Period runs anchor to anchor, matching
+                        //     what the generator will produce for every later period.
                         int billId;
                         using (var cmd = new SqlCommand(
                             @"INSERT INTO Bills
-                                  (RoomId, BillCategory, BillingPeriodStart,
-                                   BillingPeriodEnd, DueDate, Amount)
-                              VALUES (@rid, 'Rent', @start,
-                                      DATEADD(DAY, -1, DATEADD(MONTH, 1, @start)),
-                                      @start, @amt);
-                              SELECT CAST(SCOPE_IDENTITY() AS INT);", conn, tx))
+                          (RoomId, BillCategory, BillingPeriodStart,
+                           BillingPeriodEnd, DueDate, Amount)
+                      OUTPUT INSERTED.BillId
+                      VALUES (@rid, 'Rent', @start,
+                              DATEADD(MONTH, 1, @start), @start, @amt);", conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
-                            cmd.Parameters.AddWithValue("@start", start);
-                            cmd.Parameters.AddWithValue("@amt", amount);
+                            cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
+                            cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+                            cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
+                            cmd.Parameters["@amt"].Precision = 18;
+                            cmd.Parameters["@amt"].Scale = 2;
                             billId = (int)cmd.ExecuteScalar();
                         }
 
-                        // 2c. This tenant's share. They are alone in the room,
-                        //     so the share is the whole bill.
+                        // 2d. This tenant's share. They are alone in the room, so the
+                        //     share is the whole bill. Frozen here, never recomputed.
                         using (var cmd = new SqlCommand(
                             @"INSERT INTO BillTenants (BillId, TenantId, Share)
-                              VALUES (@bid, @tid, @share);", conn, tx))
+                      VALUES (@bid, @tid, @share);", conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@bid", billId);
-                            cmd.Parameters.AddWithValue("@tid", newTenantId);
-                            cmd.Parameters.AddWithValue("@share", amount);
+                            cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
+                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = newTenantId;
+                            cmd.Parameters.Add("@share", SqlDbType.Decimal).Value = amount;
+                            cmd.Parameters["@share"].Precision = 18;
+                            cmd.Parameters["@share"].Scale = 2;
                             cmd.ExecuteNonQuery();
                         }
 
-                        // 3. Record the money received
-                        string paySql = @"
-                            INSERT INTO Payments
-                                (TenantId, RoomId, BillId, ReceiptNo, PaymentCategory,
-                                 PaymentType, Amount, PaymentMethod, ReferenceNo,
-                                 PaymentDate, CoversRoom, RecordedBy)
-                            VALUES (@tid, @rid, @bill, @rcpt, @cat,
-                                    @type, @amt, @method, @ref,
-                                    @pdate, 0, @by);
-                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
+                        // 3. Record the money received. Payments no longer carries a
+                        //    BillId - PaymentAllocations says which share it settled.
                         int paymentId;
+                        string paySql = @"
+                    INSERT INTO Payments
+                        (TenantId, RoomId, ReceiptNo, PaymentCategory,
+                         PaymentType, Amount, PaymentMethod, ReferenceNo,
+                         PaymentDate, CoversRoom, RecordedBy)
+                    OUTPUT INSERTED.PaymentId
+                    VALUES (@tid, @rid, @rcpt, @cat,
+                            @type, @amt, @method, @ref,
+                            @pdate, 0, @by);";
+
                         using (var cmd = new SqlCommand(paySql, conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@tid", newTenantId);
-                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
-                            cmd.Parameters.AddWithValue("@bill", billId);
-                            cmd.Parameters.AddWithValue("@rcpt", receiptNo);
-                            cmd.Parameters.AddWithValue("@cat", cboPaymentCategory.Text);
-                            cmd.Parameters.AddWithValue("@type", cboPaymentType.Text);
-                            cmd.Parameters.AddWithValue("@amt", amount);
-                            cmd.Parameters.AddWithValue("@method", method);
-                            cmd.Parameters.AddWithValue("@ref",
-                                string.IsNullOrWhiteSpace(refNo)
-                                    ? (object)DBNull.Value : refNo);
-                            cmd.Parameters.AddWithValue("@pdate", dtpPaymentDate.Value.Date);
+                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = newTenantId;
+                            cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
+                            cmd.Parameters.Add("@rcpt", SqlDbType.NVarChar, 50).Value = receiptNo;
+                            cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = cboPaymentCategory.Text;
+                            cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = "Full";
+                            cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
+                            cmd.Parameters["@amt"].Precision = 18;
+                            cmd.Parameters["@amt"].Scale = 2;
+                            cmd.Parameters.Add("@method", SqlDbType.NVarChar, 20).Value = method;
+                            cmd.Parameters.Add("@ref", SqlDbType.NVarChar, 100).Value =
+                                string.IsNullOrWhiteSpace(refNo) ? (object)DBNull.Value : refNo;
+                            cmd.Parameters.Add("@pdate", SqlDbType.Date).Value = dtpPaymentDate.Value.Date;
                             cmd.Parameters.Add("@by", SqlDbType.Int).Value = Session.UserId;
+
                             paymentId = (int)cmd.ExecuteScalar();
                         }
 
-                        // 3b. Allocate that money to the share it settles
+                        // 3a. Allocate that money to the share it settles. Nothing
+                        //     stores "amount paid" - it is summed from here, so it
+                        //     cannot drift away from the payments behind it.
                         using (var cmd = new SqlCommand(
                             @"INSERT INTO PaymentAllocations
-                                  (PaymentId, BillId, TenantId, Amount)
-                              VALUES (@pid, @bid, @tid, @amt);", conn, tx))
+                          (PaymentId, BillId, TenantId, Amount)
+                      VALUES (@pid, @bid, @tid, @amt);", conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@pid", paymentId);
-                            cmd.Parameters.AddWithValue("@bid", billId);
-                            cmd.Parameters.AddWithValue("@tid", newTenantId);
-                            cmd.Parameters.AddWithValue("@amt", amount);
+                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                            cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
+                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = newTenantId;
+                            cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
+                            cmd.Parameters["@amt"].Precision = 18;
+                            cmd.Parameters["@amt"].Scale = 2;
                             cmd.ExecuteNonQuery();
                         }
 
-                        // 3c. Recompute the bill from its allocations
-                        using (var cmd = new SqlCommand(@"
-                            UPDATE Bills
-                            SET AmountPaid = ISNULL((SELECT SUM(a.Amount)
-                                                     FROM PaymentAllocations a
-                                                     WHERE a.BillId = Bills.BillId), 0),
-                                Status = CASE
-                                    WHEN ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
-                                                 WHERE a.BillId = Bills.BillId), 0) >= Amount
-                                         THEN 'Paid'
-                                    WHEN ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
-                                                 WHERE a.BillId = Bills.BillId), 0) > 0
-                                         THEN 'Partially Paid'
-                                    ELSE 'Unpaid' END
-                            WHERE BillId = @bid;", conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@bid", billId);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        // 4. Keep room status in step with the live tenant count
-                        using (var cmd = new SqlCommand(@"
-                            UPDATE Rooms
-                            SET Status = CASE
-                                    WHEN (SELECT COUNT(*) FROM Tenants t
-                                          WHERE t.RoomId = Rooms.RoomId
-                                            AND t.Status = 'Active'
-                                            AND t.IsArchived = 0) > 0
-                                    THEN 'Occupied' ELSE 'Available' END
-                            WHERE RoomId = @rid AND Status IN ('Available', 'Occupied');",
-                            conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@rid", _data.RoomId);
-                            cmd.ExecuteNonQuery();
-                        }
+                        // No bill recompute and no room status update: both are
+                        // derived now, from allocations and from vwRoomStatus.
 
                         tx.Commit();
                         saved = true;
                     }
                     catch (Exception ex)
                     {
-                        tx.Rollback();
+                        try { tx.Rollback(); }
+                        catch (Exception rollbackEx) { System.Diagnostics.Debug.WriteLine(rollbackEx); }
+
+                        System.Diagnostics.Debug.WriteLine(ex);
                         MessageBox.Show("Move-in failed, nothing was saved: " + ex.Message,
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }

@@ -72,39 +72,39 @@
             // 
             // lblQuestionOne
             // 
-            lblQuestionOne.AutoSize = true;
-            lblQuestionOne.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionOne.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblQuestionOne.ForeColor = Color.White;
-            lblQuestionOne.Location = new Point(111, 81);
+            lblQuestionOne.Location = new Point(66, 52);
             lblQuestionOne.Name = "lblQuestionOne";
-            lblQuestionOne.Size = new Size(124, 31);
+            lblQuestionOne.Size = new Size(500, 56);
             lblQuestionOne.TabIndex = 2;
             lblQuestionOne.Text = "Question 1";
-            lblQuestionOne.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionOne.TextAlign = ContentAlignment.MiddleLeft;
+            lblQuestionOne.UseMnemonic = false;
             // 
             // lblQuestionTwo
             // 
-            lblQuestionTwo.AutoSize = true;
-            lblQuestionTwo.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionTwo.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblQuestionTwo.ForeColor = Color.White;
-            lblQuestionTwo.Location = new Point(111, 189);
+            lblQuestionTwo.Location = new Point(66, 170);
             lblQuestionTwo.Name = "lblQuestionTwo";
-            lblQuestionTwo.Size = new Size(124, 31);
+            lblQuestionTwo.Size = new Size(500, 56);
             lblQuestionTwo.TabIndex = 3;
             lblQuestionTwo.Text = "Question 2";
-            lblQuestionTwo.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionTwo.TextAlign = ContentAlignment.MiddleLeft;
+            lblQuestionTwo.UseMnemonic = false;
             // 
             // lblQuestionThree
             // 
-            lblQuestionThree.AutoSize = true;
-            lblQuestionThree.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblQuestionThree.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblQuestionThree.ForeColor = Color.White;
-            lblQuestionThree.Location = new Point(111, 298);
+            lblQuestionThree.Location = new Point(66, 288);
             lblQuestionThree.Name = "lblQuestionThree";
-            lblQuestionThree.Size = new Size(124, 31);
+            lblQuestionThree.Size = new Size(500, 56);
             lblQuestionThree.TabIndex = 4;
             lblQuestionThree.Text = "Question 3";
-            lblQuestionThree.TextAlign = ContentAlignment.MiddleCenter;
+            lblQuestionThree.TextAlign = ContentAlignment.MiddleLeft;
+            lblQuestionThree.UseMnemonic = false;
             // 
             // btnVerify
             // 
@@ -120,26 +120,29 @@
             // 
             // txtQuestionOne
             // 
-            txtQuestionOne.Location = new Point(111, 119);
-            txtQuestionOne.Multiline = true;
+            txtQuestionOne.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtQuestionOne.Location = new Point(66, 112);
+            txtQuestionOne.MaxLength = 255;
             txtQuestionOne.Name = "txtQuestionOne";
-            txtQuestionOne.Size = new Size(350, 40);
+            txtQuestionOne.Size = new Size(500, 34);
             txtQuestionOne.TabIndex = 6;
             // 
             // txtQuestionTwo
             // 
-            txtQuestionTwo.Location = new Point(111, 227);
-            txtQuestionTwo.Multiline = true;
+            txtQuestionTwo.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtQuestionTwo.Location = new Point(66, 230);
+            txtQuestionTwo.MaxLength = 255;
             txtQuestionTwo.Name = "txtQuestionTwo";
-            txtQuestionTwo.Size = new Size(350, 40);
+            txtQuestionTwo.Size = new Size(500, 34);
             txtQuestionTwo.TabIndex = 7;
             // 
             // txtQuestionThree
             // 
-            txtQuestionThree.Location = new Point(111, 336);
-            txtQuestionThree.Multiline = true;
+            txtQuestionThree.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtQuestionThree.Location = new Point(66, 348);
+            txtQuestionThree.MaxLength = 255;
             txtQuestionThree.Name = "txtQuestionThree";
-            txtQuestionThree.Size = new Size(350, 40);
+            txtQuestionThree.Size = new Size(500, 34);
             txtQuestionThree.TabIndex = 8;
             // 
             // pnlSecurityVerificationHeader
@@ -207,7 +210,7 @@
             MinimizeBox = false;
             Name = "ForgetForm";
             ShowIcon = false;
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Security Verification";
             Load += ForgetForm_Load;
             pnlSecurityVerificationHeader.ResumeLayout(false);

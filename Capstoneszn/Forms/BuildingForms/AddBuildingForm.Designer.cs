@@ -46,10 +46,11 @@
             // 
             // txtBuildingName
             // 
+            txtBuildingName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtBuildingName.Location = new Point(101, 58);
             txtBuildingName.Name = "txtBuildingName";
             txtBuildingName.PlaceholderText = "Enter Building Name";
-            txtBuildingName.Size = new Size(400, 27);
+            txtBuildingName.Size = new Size(400, 34);
             txtBuildingName.TabIndex = 1;
             txtBuildingName.TextAlign = HorizontalAlignment.Center;
             // 
@@ -66,10 +67,12 @@
             // 
             // nudFloors
             // 
+            nudFloors.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             nudFloors.Location = new Point(241, 134);
+            nudFloors.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             nudFloors.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudFloors.Name = "nudFloors";
-            nudFloors.Size = new Size(125, 27);
+            nudFloors.Size = new Size(260, 34);
             nudFloors.TabIndex = 3;
             nudFloors.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 

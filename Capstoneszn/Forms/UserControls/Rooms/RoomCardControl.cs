@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace Capstoneszn.UserControls
 {
+
     public partial class RoomCardControl : UserControl
     {
 
@@ -28,7 +29,6 @@ namespace Capstoneszn.UserControls
             set { lblOccupancy.Text = value; }
         }
 
-        // Event for when the card is clicked (We will use this later for Room Information)
         public event EventHandler CardClicked;
 
 
@@ -39,6 +39,7 @@ namespace Capstoneszn.UserControls
             this.Click += OnCardClicked;
             lblRoomNumber.Click += OnCardClicked;
             lblOccupancy.Click += OnCardClicked;
+
         }
 
         public void SetStatusColor(string status)
