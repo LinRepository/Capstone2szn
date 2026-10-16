@@ -67,6 +67,7 @@
             tabElectricity = new TabPage();
             pnlElectricityContent = new Panel();
             dgvElectricityBillData = new DataGridView();
+            colSelect = new DataGridViewCheckBoxColumn();
             colElectricityRoom = new DataGridViewTextBoxColumn();
             colElectricityAccountName = new DataGridViewTextBoxColumn();
             colElectricityAccountNumber = new DataGridViewTextBoxColumn();
@@ -516,7 +517,7 @@
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
             dgvElectricityBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvElectricityBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvElectricityBillData.Columns.AddRange(new DataGridViewColumn[] { colElectricityRoom, colElectricityAccountName, colElectricityAccountNumber, colElectricityAmount, colElectricityStatus });
+            dgvElectricityBillData.Columns.AddRange(new DataGridViewColumn[] { colSelect, colElectricityRoom, colElectricityAccountName, colElectricityAccountNumber, colElectricityAmount, colElectricityStatus });
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = SystemColors.Window;
             dataGridViewCellStyle4.Font = new Font("Segoe UI", 14F);
@@ -535,6 +536,14 @@
             dgvElectricityBillData.Size = new Size(1286, 405);
             dgvElectricityBillData.TabIndex = 13;
             dgvElectricityBillData.CellContentClick += dgvElectricityBillData_CellContentClick;
+            // 
+            // colSelect
+            // 
+            colSelect.FillWeight = 15F;
+            colSelect.HeaderText = "*";
+            colSelect.MinimumWidth = 6;
+            colSelect.Name = "colSelect";
+            colSelect.ReadOnly = true;
             // 
             // colElectricityRoom
             // 
@@ -652,6 +661,7 @@
             pnlElectricityButtons.Dock = DockStyle.Right;
             pnlElectricityButtons.Location = new Point(915, 60);
             pnlElectricityButtons.Name = "pnlElectricityButtons";
+            pnlElectricityButtons.Padding = new Padding(10);
             pnlElectricityButtons.Size = new Size(369, 88);
             pnlElectricityButtons.TabIndex = 2;
             // 
@@ -659,9 +669,9 @@
             // 
             btnEditElectricity.Dock = DockStyle.Right;
             btnEditElectricity.FlatStyle = FlatStyle.Flat;
-            btnEditElectricity.Location = new Point(41, 0);
+            btnEditElectricity.Location = new Point(31, 10);
             btnEditElectricity.Name = "btnEditElectricity";
-            btnEditElectricity.Size = new Size(144, 88);
+            btnEditElectricity.Size = new Size(144, 68);
             btnEditElectricity.TabIndex = 9;
             btnEditElectricity.Text = "Edit Bill";
             btnEditElectricity.UseVisualStyleBackColor = true;
@@ -670,18 +680,18 @@
             // pnlSpacers
             // 
             pnlSpacers.Dock = DockStyle.Right;
-            pnlSpacers.Location = new Point(185, 0);
+            pnlSpacers.Location = new Point(175, 10);
             pnlSpacers.Name = "pnlSpacers";
-            pnlSpacers.Size = new Size(40, 88);
+            pnlSpacers.Size = new Size(40, 68);
             pnlSpacers.TabIndex = 8;
             // 
             // btnAddElectricity
             // 
             btnAddElectricity.Dock = DockStyle.Right;
             btnAddElectricity.FlatStyle = FlatStyle.Flat;
-            btnAddElectricity.Location = new Point(225, 0);
+            btnAddElectricity.Location = new Point(215, 10);
             btnAddElectricity.Name = "btnAddElectricity";
-            btnAddElectricity.Size = new Size(144, 88);
+            btnAddElectricity.Size = new Size(144, 68);
             btnAddElectricity.TabIndex = 7;
             btnAddElectricity.Text = "Add Bill";
             btnAddElectricity.UseVisualStyleBackColor = true;
@@ -695,6 +705,7 @@
             pnlDate.Dock = DockStyle.Left;
             pnlDate.Location = new Point(0, 60);
             pnlDate.Name = "pnlDate";
+            pnlDate.Padding = new Padding(5);
             pnlDate.Size = new Size(250, 88);
             pnlDate.TabIndex = 1;
             // 
@@ -704,9 +715,9 @@
             dtpElectricityDate.Dock = DockStyle.Fill;
             dtpElectricityDate.Font = new Font("Segoe UI", 10F);
             dtpElectricityDate.Format = DateTimePickerFormat.Custom;
-            dtpElectricityDate.Location = new Point(0, 40);
+            dtpElectricityDate.Location = new Point(5, 42);
             dtpElectricityDate.Name = "dtpElectricityDate";
-            dtpElectricityDate.Size = new Size(248, 30);
+            dtpElectricityDate.Size = new Size(238, 30);
             dtpElectricityDate.TabIndex = 28;
             dtpElectricityDate.Value = new DateTime(2026, 10, 12, 0, 0, 0, 0);
             dtpElectricityDate.ValueChanged += dtpElectricityDate_ValueChanged;
@@ -715,9 +726,9 @@
             // 
             lblElectricityDate.Dock = DockStyle.Top;
             lblElectricityDate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblElectricityDate.Location = new Point(0, 0);
+            lblElectricityDate.Location = new Point(5, 5);
             lblElectricityDate.Name = "lblElectricityDate";
-            lblElectricityDate.Size = new Size(248, 40);
+            lblElectricityDate.Size = new Size(238, 37);
             lblElectricityDate.TabIndex = 27;
             lblElectricityDate.Text = "Date";
             lblElectricityDate.TextAlign = ContentAlignment.MiddleCenter;
@@ -856,6 +867,7 @@
         private Panel panel6;
         private Label label3;
         private Label label4;
+        private DataGridViewCheckBoxColumn colSelect;
         private DataGridViewTextBoxColumn colElectricityRoom;
         private DataGridViewTextBoxColumn colElectricityAccountName;
         private DataGridViewTextBoxColumn colElectricityAccountNumber;
