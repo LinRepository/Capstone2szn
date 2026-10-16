@@ -22,7 +22,9 @@ namespace Capstoneszn.UserControls
         private const string AdjustmentForfeit = "Forfeit";
         private const string ForfeitReasonValue = "Credit forfeited at move out (no refund)";
 
-        private static readonly bool TenantsHasIsArchivedColumn = false;
+        // No archive flag is written for the tenant. A tenant is archived
+        // exactly when they have no active stay in Tenancies - that is
+        // derived wherever it is needed, never stored a second time.
 
 
         private readonly int _roomId;
@@ -72,6 +74,7 @@ namespace Capstoneszn.UserControls
                 }
             }
         }
+
 
         private void btnCancelMoveOut_Click(object sender, EventArgs e)
         {
@@ -202,7 +205,7 @@ namespace Capstoneszn.UserControls
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                MessageBox.Show("Could not load this room's tenants.",
+                MessageBox.Show("Could not load this room's tenants: " + ex.Message,
                     "Move Out", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -226,18 +229,30 @@ namespace Capstoneszn.UserControls
             }
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            // The grid selects its first row by itself when it appears.
+            // Nobody should be pre-selected for a move out - the landlord
+            // must click the tenant on purpose.
+            dgvTenantsToMoveOut.ClearSelection();
+        }
+
 
         private void dgvTenantsToMoveOut_SelectionChanged(object sender, EventArgs e)
         {
-            if (dgvTenantsToMoveOut.CurrentRow == null ||
-                dgvTenantsToMoveOut.CurrentRow.Index < 0)
+            // SelectedRows, not CurrentRow: after ClearSelection() the grid
+            // still has a CurrentRow (the first one), so reading CurrentRow
+            // would quietly pick a tenant nobody clicked.
+            if (dgvTenantsToMoveOut.SelectedRows.Count == 0)
             {
                 _selected = null;
                 ClearSettlement();
                 return;
             }
 
-            DataGridViewRow row = dgvTenantsToMoveOut.CurrentRow;
+            DataGridViewRow row = dgvTenantsToMoveOut.SelectedRows[0];
 
             // Guards against the blank new-row and against a half-bound grid.
             if (row.Cells["TenantId"].Value == null ||
@@ -267,6 +282,7 @@ namespace Capstoneszn.UserControls
         /// future. Backdating changes no money - there is no proration -
         /// but the recorded date should still be the truth.
         /// </summary>
+
         private void ApplyDateBounds(DateTime moveInDate)
         {
             DateTime floor = moveInDate.Date;
@@ -296,6 +312,25 @@ namespace Capstoneszn.UserControls
             lblReasonCaption.ForeColor = Color.Gray;
         }
 
+        /// <summary>
+        /// Every category the ledger knows - the same list TenantsControl
+        /// uses, so money in any category is settled, not left behind.
+        /// </summary>
+        private static readonly string[] Categories =
+            { "Rent", "Maintenance", "Water", "Electricity", "Other" };
+
+        /// <summary>
+        /// What is left to settle, per category. Uses BillingHelper - the
+        /// same queries the payment form and the Tenants module read - so
+        /// the amount written off here is exactly the amount those screens
+        /// show as owed, and the forfeit is exactly the credit they show.
+        ///
+        ///   Outstanding = unpaid shares of the CURRENT stay only. Shares
+        ///                 from an earlier stay were already settled at that
+        ///                 move out, so they are never written off twice.
+        ///   Credit      = unclaimed advance, less anything already forfeited.
+        /// </summary>
+        /// 
 
         private void LoadSettlement(int tenantId)
         {
@@ -308,87 +343,18 @@ namespace Capstoneszn.UserControls
                 {
                     conn.Open();
 
-                    // 1. Charged less paid, per category.
-                    using (SqlCommand cmd = new SqlCommand(@"
-                        SELECT b.BillCategory,
-                               SUM(bt.Share)
-                             - SUM(ISNULL((SELECT SUM(a.Amount)
-                                           FROM   PaymentAllocations a
-                                           JOIN   Payments p ON p.PaymentId = a.PaymentId
-                                           WHERE  a.BillId   = bt.BillId
-                                             AND  a.TenantId = bt.TenantId
-                                             AND  a.IsVoided = 0
-                                             AND  p.IsVoided = 0), 0)) AS Unpaid
-                        FROM   BillTenants bt
-                        JOIN   Bills b ON b.BillId = bt.BillId
-                        WHERE  bt.TenantId = @tid
-                        GROUP BY b.BillCategory;", conn))
+                    foreach (string cat in Categories)
                     {
-                        cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
-
-                        using (SqlDataReader r = cmd.ExecuteReader())
-                            while (r.Read())
-                                outstanding[r.GetString(0)] = r.IsDBNull(1) ? 0m : r.GetDecimal(1);
-                    }
-
-                    // 2. Credit held, categorised by the payment it came
-                    //    from - a credit row has no bill to take one from.
-                    using (SqlCommand cmd = new SqlCommand(@"
-                        SELECT p.PaymentCategory, SUM(a.Amount)
-                        FROM   PaymentAllocations a
-                        JOIN   Payments p ON p.PaymentId = a.PaymentId
-                        WHERE  a.TenantId = @tid
-                          AND  a.BillId IS NULL
-                          AND  a.IsVoided = 0
-                          AND  p.IsVoided = 0
-                        GROUP BY p.PaymentCategory;", conn))
-                    {
-                        cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
-
-                        using (SqlDataReader r = cmd.ExecuteReader())
-                            while (r.Read())
-                                credit[r.GetString(0)] = r.IsDBNull(1) ? 0m : r.GetDecimal(1);
-                    }
-
-                    // 3. Adjustments already recorded, so a second move out
-                    //    after a reactivation cannot write off the same
-                    //    peso twice.
-                    using (SqlCommand cmd = new SqlCommand(@"
-                        SELECT BillCategory, AdjustmentType, SUM(Amount)
-                        FROM   TenantAdjustments
-                        WHERE  TenantId = @tid
-                        GROUP BY BillCategory, AdjustmentType;", conn))
-                    {
-                        cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
-
-                        using (SqlDataReader r = cmd.ExecuteReader())
-                        {
-                            while (r.Read())
-                            {
-                                string cat = r.GetString(0);
-                                string type = r.GetString(1);
-                                decimal amt = r.IsDBNull(2) ? 0m : r.GetDecimal(2);
-
-                                if (type == AdjustmentWriteOff)
-                                {
-                                    outstanding[cat] =
-                                        (outstanding.ContainsKey(cat) ? outstanding[cat] : 0m) - amt;
-                                }
-                                else
-                                {
-                                    credit[cat] =
-                                        (credit.ContainsKey(cat) ? credit[cat] : 0m) - amt;
-                                }
-                            }
-                        }
+                        outstanding[cat] = BillingHelper.GetTotalOutstanding(conn, tenantId, cat);
+                        credit[cat] = BillingHelper.GetAvailableCredit(conn, tenantId, cat);
                     }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                MessageBox.Show("Could not work out what is left to settle. " +
-                    "Nothing has been changed.",
+                MessageBox.Show("Could not work out what is left to settle: " + ex.Message +
+                    "\n\nNothing has been changed.",
                     "Move Out", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 ClearSettlement();
@@ -620,19 +586,14 @@ namespace Capstoneszn.UserControls
                         {
                             if (line.Outstanding > 0m)
                                 InsertAdjustment(conn, tx, tenant.TenantId, line.Category,
-    AdjustmentWriteOff, line.Outstanding, reason, moveOutDate);
+                        AdjustmentWriteOff, line.Outstanding, reason, moveOutDate);
 
                             if (line.Credit > 0m)
                                 InsertAdjustment(conn, tx, tenant.TenantId, line.Category,
-    AdjustmentForfeit, line.Credit, ForfeitReasonValue, moveOutDate);
+                        AdjustmentForfeit, line.Credit, ForfeitReasonValue, moveOutDate);
                         }
 
-                        // 3. Optional stored archive flag. Delete this call
-                        //    and ArchiveTenant() if archiving is derived.
-                        if (TenantsHasIsArchivedColumn)
-                            ArchiveTenant(conn, tx, tenant.TenantId);
-
-                        // 4. An empty room has no billing cycle. Without
+                        // 3. An empty room has no billing cycle. Without
                         //    this the generator back-bills the next tenant
                         //    from the previous occupant's anchor.
                         using (SqlCommand cmd = new SqlCommand(@"
@@ -656,7 +617,9 @@ namespace Capstoneszn.UserControls
                         catch (Exception rollbackEx) { Debug.WriteLine(rollbackEx); }
 
                         Debug.WriteLine(ex);
-                        MessageBox.Show("The move out failed and nothing was changed.",
+                        // Keep the real reason visible while the system is being
+                        // tested - "it failed" alone gives nothing to fix.
+                        MessageBox.Show("The move out failed and nothing was changed.\n\n" + ex.Message,
                             "Move Out Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
@@ -672,16 +635,18 @@ namespace Capstoneszn.UserControls
         /// If TenantAdjustments has further NOT NULL columns without
         /// defaults (a recorded-by or a timestamp), add them here.
         /// </summary>
+        /// 
+
         private static void InsertAdjustment(SqlConnection conn, SqlTransaction tx,
                                      int tenantId, string category,
                                      string adjustmentType, decimal amount,
                                      string reason, DateTime adjustmentDate)
         {
             using (SqlCommand cmd = new SqlCommand(@"
-        INSERT INTO TenantAdjustments
+            INSERT INTO TenantAdjustments
             (TenantId, BillCategory, AdjustmentType, Amount, Reason,
              AdjustmentDate, RecordedBy)
-        VALUES
+            VALUES
             (@tid, @cat, @type, @amt, @reason, @date, @by);", conn, tx))
             {
                 cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
@@ -699,20 +664,6 @@ namespace Capstoneszn.UserControls
             }
         }
 
-        /// <summary>
-        /// Only used when Tenants carries a stored IsArchived column.
-        /// Delete this together with its call if archiving is derived from
-        /// having no active tenancy.
-        /// </summary>
-        private static void ArchiveTenant(SqlConnection conn, SqlTransaction tx, int tenantId)
-        {
-            using (SqlCommand cmd = new SqlCommand(
-                "UPDATE Tenants SET IsArchived = 1 WHERE TenantId = @tid;", conn, tx))
-            {
-                cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
-                cmd.ExecuteNonQuery();
-            }
-        }
 
 
         /* =================================================================
@@ -731,13 +682,5 @@ namespace Capstoneszn.UserControls
             }
         }
 
-
-
-
-
-        private void lblMoveOutTitle_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -95,7 +95,6 @@
             lblMoveOutTitle.TabIndex = 0;
             lblMoveOutTitle.Text = "Move Out Tenant";
             lblMoveOutTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblMoveOutTitle.Click += lblMoveOutTitle_Click;
             // 
             // pnlTenantSelection
             // 
@@ -125,6 +124,7 @@
             dgvTenantsToMoveOut.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvTenantsToMoveOut.Size = new Size(696, 169);
             dgvTenantsToMoveOut.TabIndex = 1;
+            dgvTenantsToMoveOut.SelectionChanged += dgvTenantsToMoveOut_SelectionChanged;
             // 
             // pnlTenantSelectionCaption
             // 
@@ -291,7 +291,7 @@
             btnMoveOut.TabIndex = 1;
             btnMoveOut.Text = "Move Out";
             btnMoveOut.UseVisualStyleBackColor = true;
-            btnMoveOut.Click += btnCancelMoveOut_Click;
+            btnMoveOut.Click += btnMoveOut_Click;
             // 
             // btnCancelMoveOut
             // 

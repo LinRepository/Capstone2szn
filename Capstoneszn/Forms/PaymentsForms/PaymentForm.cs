@@ -110,6 +110,7 @@ namespace Capstoneszn.Forms
             }
 
             SaveMoveIn(amount, method, refNo);
+
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -150,6 +151,7 @@ namespace Capstoneszn.Forms
 
         private void SaveMoveIn(decimal amount, string method, string refNo)
         {
+
             string receiptNo = "R" + DateTime.Now.ToString("yyyyMMddHHmmss");
             bool saved = false;
 
@@ -197,27 +199,70 @@ namespace Capstoneszn.Forms
                             return;
                         }
 
-                        // 2. Insert the PERSON
+                        // 2. The PERSON. A returning tenant (reactivated from
+                        //    Settings > Archive) keeps their existing record;
+                        //    only a new person gets a new Tenants row.
                         int newTenantId;
-                        string tenantSql = @"
+
+                        if (_data.ExistingTenantId > 0)
+                        {
+                            using (var cmd = new SqlCommand(@"
+                        SELECT COUNT(*) FROM Tenancies
+                        WHERE TenantId = @tid AND Status = 'Active';", conn, tx))
+                            {
+                                cmd.Parameters.Add("@tid", SqlDbType.Int).Value = _data.ExistingTenantId;
+                                if ((int)cmd.ExecuteScalar() > 0)
+                                {
+                                    tx.Rollback();
+                                    MessageBox.Show("This tenant already has an active stay, so they cannot be reactivated again.",
+                                        "Already Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
+                            }
+
+                            // A new stay must begin after the last one ended. Out and
+                            // back in on the same day is a correction, not a new stay -
+                            // and it would make the old stay's bills look current again.
+                            using (var cmd = new SqlCommand(@"
+                        SELECT COUNT(*) FROM Tenancies
+                        WHERE TenantId = @tid AND MoveOutDate >= @date;", conn, tx))
+                            {
+                                cmd.Parameters.Add("@tid", SqlDbType.Int).Value = _data.ExistingTenantId;
+                                cmd.Parameters.Add("@date", SqlDbType.Date).Value = _data.DateOccupied;
+                                if ((int)cmd.ExecuteScalar() > 0)
+                                {
+                                    tx.Rollback();
+                                    MessageBox.Show("This tenant moved out on or after this date. A returning tenant " +
+                                                    "can be reactivated from the day after their move out.",
+                                        "Too Soon to Reactivate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
+                            }
+
+                            newTenantId = _data.ExistingTenantId;
+                        }
+                        else
+                        {
+                            string tenantSql = @"
                     INSERT INTO Tenants
                         (FirstName, MiddleName, LastName, Address, ContactNumber)
                     OUTPUT INSERTED.TenantId
                     VALUES (@fn, @mn, @ln, @addr, @contact);";
 
-                        using (var cmd = new SqlCommand(tenantSql, conn, tx))
-                        {
-                            cmd.Parameters.Add("@fn", SqlDbType.NVarChar, 50).Value = _data.FirstName;
-                            cmd.Parameters.Add("@mn", SqlDbType.NVarChar, 50).Value =
-                                string.IsNullOrWhiteSpace(_data.MiddleName)
-                                    ? (object)DBNull.Value : _data.MiddleName;
-                            cmd.Parameters.Add("@ln", SqlDbType.NVarChar, 50).Value = _data.LastName;
-                            cmd.Parameters.Add("@addr", SqlDbType.NVarChar, 255).Value =
-                                string.IsNullOrWhiteSpace(_data.Address)
-                                    ? (object)DBNull.Value : _data.Address;
-                            cmd.Parameters.Add("@contact", SqlDbType.NVarChar, 20).Value = _data.ContactNumber;
+                            using (var cmd = new SqlCommand(tenantSql, conn, tx))
+                            {
+                                cmd.Parameters.Add("@fn", SqlDbType.NVarChar, 50).Value = _data.FirstName;
+                                cmd.Parameters.Add("@mn", SqlDbType.NVarChar, 50).Value =
+                                    string.IsNullOrWhiteSpace(_data.MiddleName)
+                                        ? (object)DBNull.Value : _data.MiddleName;
+                                cmd.Parameters.Add("@ln", SqlDbType.NVarChar, 50).Value = _data.LastName;
+                                cmd.Parameters.Add("@addr", SqlDbType.NVarChar, 255).Value =
+                                    string.IsNullOrWhiteSpace(_data.Address)
+                                        ? (object)DBNull.Value : _data.Address;
+                                cmd.Parameters.Add("@contact", SqlDbType.NVarChar, 20).Value = _data.ContactNumber;
 
-                            newTenantId = (int)cmd.ExecuteScalar();
+                                newTenantId = (int)cmd.ExecuteScalar();
+                            }
                         }
 
                         // 2a. Insert the STAY
@@ -231,9 +276,9 @@ namespace Capstoneszn.Forms
                             cmd.ExecuteNonQuery();
                         }
 
-                        // 2b. Anchor the billing cycle. If this tenant is alone in the room,
-                        //     the cycle starts on their move-in day. If others already live
-                        //     here, the room keeps its existing anchor.
+                        // 2b. Anchor the billing cycle. If this tenant is alone in the
+                        //     room, the cycle starts on their move-in day. If others
+                        //     already live here, the room keeps its existing anchor.
                         DateTime start = _data.DateOccupied;
 
                         using (var cmd = new SqlCommand(
@@ -251,21 +296,57 @@ namespace Capstoneszn.Forms
 
                         // 2c. The first bill. Period runs anchor to anchor, matching
                         //     what the generator will produce for every later period.
-                        int billId;
-                        using (var cmd = new SqlCommand(
-                            @"INSERT INTO Bills
-                          (RoomId, BillCategory, BillingPeriodStart,
-                           BillingPeriodEnd, DueDate, Amount)
-                      OUTPUT INSERTED.BillId
-                      VALUES (@rid, 'Rent', @start,
-                              DATEADD(MONTH, 1, @start), @start, @amt);", conn, tx))
+                        //
+                        //     Re-let on the same day: if the previous occupants
+                        //     left on the very day their bill started, a Rent bill
+                        //     for this room already begins today. The room is then
+                        //     let twice in that period, so the newcomer joins THAT
+                        //     bill: their share is added and the bill's total rises
+                        //     by the same amount. Old shares, payments, write-offs
+                        //     and forfeits are not touched, and shares still add
+                        //     up to the bill.
+                        int billId = 0;
+                        using (var cmd = new SqlCommand(@"
+                    SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
+                    WHERE  RoomId = @rid AND BillCategory = 'Rent'
+                      AND  BillingPeriodStart = @start;", conn, tx))
                         {
                             cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
                             cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
-                            cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
-                            cmd.Parameters["@amt"].Precision = 18;
-                            cmd.Parameters["@amt"].Scale = 2;
-                            billId = (int)cmd.ExecuteScalar();
+                            object existing = cmd.ExecuteScalar();
+                            if (existing != null && existing != DBNull.Value)
+                                billId = Convert.ToInt32(existing);
+                        }
+
+                        if (billId > 0)
+                        {
+                            using (var cmd = new SqlCommand(@"
+                        UPDATE Bills SET Amount = Amount + @amt WHERE BillId = @bid;", conn, tx))
+                            {
+                                cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
+                                cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
+                                cmd.Parameters["@amt"].Precision = 18;
+                                cmd.Parameters["@amt"].Scale = 2;
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        else
+                        {
+                            using (var cmd = new SqlCommand(
+                                @"INSERT INTO Bills
+                              (RoomId, BillCategory, BillingPeriodStart,
+                               BillingPeriodEnd, DueDate, Amount)
+                          OUTPUT INSERTED.BillId
+                          VALUES (@rid, 'Rent', @start,
+                                  DATEADD(MONTH, 1, @start), @start, @amt);", conn, tx))
+                            {
+                                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
+                                cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+                                cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
+                                cmd.Parameters["@amt"].Precision = 18;
+                                cmd.Parameters["@amt"].Scale = 2;
+                                billId = (int)cmd.ExecuteScalar();
+                            }
                         }
 
                         // 2d. This tenant's share. They are alone in the room, so the
@@ -359,6 +440,7 @@ namespace Capstoneszn.Forms
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+
         }
 
         private void txtReferenceNumber_TextChanged(object sender, EventArgs e)

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             pnlMaterialsHeader = new Panel();
-            btnCloseMaterials = new Button();
             lblMaterialsContext = new Label();
             lblMaterialsTitle = new Label();
             pnlMaterialsActions = new Panel();
@@ -41,6 +40,7 @@
             colQuantity = new DataGridViewTextBoxColumn();
             colUnitPrice = new DataGridViewTextBoxColumn();
             colTotalCost = new DataGridViewTextBoxColumn();
+            btnRemoveMaterial = new Button();
             pnlMaterialsHeader.SuspendLayout();
             pnlMaterialsActions.SuspendLayout();
             pnlMaterialsContent.SuspendLayout();
@@ -49,7 +49,6 @@
             // 
             // pnlMaterialsHeader
             // 
-            pnlMaterialsHeader.Controls.Add(btnCloseMaterials);
             pnlMaterialsHeader.Controls.Add(lblMaterialsContext);
             pnlMaterialsHeader.Controls.Add(lblMaterialsTitle);
             pnlMaterialsHeader.Dock = DockStyle.Top;
@@ -57,19 +56,6 @@
             pnlMaterialsHeader.Name = "pnlMaterialsHeader";
             pnlMaterialsHeader.Size = new Size(582, 50);
             pnlMaterialsHeader.TabIndex = 0;
-            // 
-            // btnCloseMaterials
-            // 
-            btnCloseMaterials.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnCloseMaterials.FlatStyle = FlatStyle.Flat;
-            btnCloseMaterials.ForeColor = Color.White;
-            btnCloseMaterials.Location = new Point(540, 12);
-            btnCloseMaterials.Name = "btnCloseMaterials";
-            btnCloseMaterials.Size = new Size(30, 30);
-            btnCloseMaterials.TabIndex = 39;
-            btnCloseMaterials.TabStop = false;
-            btnCloseMaterials.Text = "X";
-            btnCloseMaterials.UseVisualStyleBackColor = true;
             // 
             // lblMaterialsContext
             // 
@@ -83,7 +69,6 @@
             lblMaterialsContext.TabIndex = 38;
             lblMaterialsContext.Text = "Room ###";
             lblMaterialsContext.TextAlign = ContentAlignment.MiddleCenter;
-            lblMaterialsContext.Visible = false;
             // 
             // lblMaterialsTitle
             // 
@@ -97,10 +82,10 @@
             lblMaterialsTitle.TabIndex = 37;
             lblMaterialsTitle.Text = "Materials";
             lblMaterialsTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblMaterialsTitle.Visible = false;
             // 
             // pnlMaterialsActions
             // 
+            pnlMaterialsActions.Controls.Add(btnRemoveMaterial);
             pnlMaterialsActions.Controls.Add(btnClose);
             pnlMaterialsActions.Controls.Add(btnAddMaterial);
             pnlMaterialsActions.Dock = DockStyle.Bottom;
@@ -183,6 +168,16 @@
             colTotalCost.Name = "colTotalCost";
             colTotalCost.ReadOnly = true;
             // 
+            // btnRemoveMaterial
+            // 
+            btnRemoveMaterial.Cursor = Cursors.Hand;
+            btnRemoveMaterial.Location = new Point(124, 9);
+            btnRemoveMaterial.Name = "btnRemoveMaterial";
+            btnRemoveMaterial.Size = new Size(140, 29);
+            btnRemoveMaterial.TabIndex = 2;
+            btnRemoveMaterial.Text = "Remove Material";
+            btnRemoveMaterial.UseVisualStyleBackColor = true;
+            // 
             // ViewMaterialsForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -214,12 +209,12 @@
         private Label lblMaterialsContext;
         private Label lblMaterialsTitle;
         private Button btnAddMaterial;
-        private Button btnCloseMaterials;
         private DataGridView dgvMaterials;
         private DataGridViewTextBoxColumn colMaterialName;
         private DataGridViewTextBoxColumn colQuantity;
         private DataGridViewTextBoxColumn colUnitPrice;
         private DataGridViewTextBoxColumn colTotalCost;
         private Button btnClose;
+        private Button btnRemoveMaterial;
     }
 }

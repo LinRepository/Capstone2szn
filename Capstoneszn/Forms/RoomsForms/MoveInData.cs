@@ -16,5 +16,13 @@ namespace Capstoneszn.Forms.RoomsForms
         public string ContactNumber { get; set; }
         public DateTime DateOccupied { get; set; }
 
+        /// <summary>
+        /// 0 = a new person (a Tenants row is inserted).
+        /// Above 0 = a RETURNING tenant being reactivated from Settings >
+        /// Archive: the existing Tenants row is reused and only a new stay
+        /// (Tenancies row) is added, so their whole history stays together.
+        /// </summary>
+        public int ExistingTenantId { get; set; }
+
     }
 }

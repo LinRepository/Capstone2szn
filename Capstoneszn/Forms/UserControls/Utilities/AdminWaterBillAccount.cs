@@ -25,89 +25,9 @@ namespace Capstoneszn.Forms.UserControls.Utilities
         }
         public void LoadAccount()
         {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    string sql = @"SELECT AccountID, AccountName
-                           FROM dbo.UtilityAccounts
-                           WHERE BuildingID  = @BuildingId
-                             AND UtilityType = 'Water'
-                             AND IsActive    = 1;";
-
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@BuildingId", Session.BuildingId);
-
-                        using (SqlDataReader dr = cmd.ExecuteReader())
-                        {
-                            if (dr.Read())
-                            {
-                                AccountId = Convert.ToInt32(dr["AccountID"]);
-                                lblAccountName.Text = dr["AccountName"].ToString();
-                            }
-                            else
-                            {
-                                AccountId = 0;
-                                lblAccountName.Text = "No water account set up";
-                            }
-                        }
-                    }
-
-                    LoadBillForMonth(conn);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading water account: " + ex.Message);
-                }
-            }
+            
         }
-        private void LoadBillForMonth(SqlConnection conn)
-        {
-            string sql = @"SELECT TOP 1
-                       wb.WaterBillID,
-                       wb.TotalAmount - ISNULL((SELECT SUM(c.Amount)
-                                                FROM dbo.TenantWaterCharges c
-                                                WHERE c.WaterBillID = wb.WaterBillID), 0) AS OwnerShare,
-                       ISNULL((SELECT SUM(e.Amount)
-                               FROM dbo.Expenses e
-                               WHERE e.RefTable = 'WaterBills'
-                                 AND e.RefID    = wb.WaterBillID), 0) AS PaidSoFar
-                   FROM dbo.WaterBills wb
-                   WHERE wb.BuildingID = @BuildingId
-                     AND YEAR(wb.BillingPeriodEnd)  = YEAR(@PickedDate)
-                     AND MONTH(wb.BillingPeriodEnd) = MONTH(@PickedDate)
-                   ORDER BY wb.BillingPeriodEnd DESC;";
-
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
-            {
-                cmd.Parameters.AddWithValue("@BuildingId", Session.BuildingId);
-                cmd.Parameters.AddWithValue("@PickedDate", SelectedDate.Date);
-
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    if (dr.Read())
-                    {
-                        WaterBillId = Convert.ToInt32(dr["WaterBillID"]);
-                        _ownerShare = Convert.ToDecimal(dr["OwnerShare"]);
-                        _paidSoFar = Convert.ToDecimal(dr["PaidSoFar"]);
-
-                        lblAmount.Text = _ownerShare.ToString("₱#,##0.00");
-                        lblStatus.Text = _paidSoFar > 0 ? "Paid" : "Unpaid";
-                    }
-                    else
-                    {
-                        WaterBillId = 0;
-                        _ownerShare = 0;
-                        _paidSoFar = 0;
-                        lblAmount.Text = "—";
-                        lblStatus.Text = "No bill";
-                    }
-                }
-            }
-        }
+        
 
         private void btnRecordWaterExpense_Click(object sender, EventArgs e)
         {

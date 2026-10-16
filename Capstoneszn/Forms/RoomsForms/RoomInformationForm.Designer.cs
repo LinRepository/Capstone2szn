@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             pnlRoomHeader = new Panel();
-            btnCloseRoomInfo = new Button();
             lblRoomTitle = new Label();
             btnMoveOut = new Button();
             btnMoveIn = new Button();
             pnlRoomStatus = new Panel();
+            btnTransfer = new Button();
             lblRoomStatus = new Label();
             lblCurrentStatus = new Label();
             panel8 = new Panel();
@@ -73,7 +73,6 @@
             TenantContactNumber = new DataGridViewTextBoxColumn();
             pnlCurrentTenantsHeader = new Panel();
             lblCurrentTenantsTitle = new Label();
-            btnTransfer = new Button();
             pnlRoomHeader.SuspendLayout();
             pnlRoomStatus.SuspendLayout();
             panel8.SuspendLayout();
@@ -99,27 +98,12 @@
             // pnlRoomHeader
             // 
             pnlRoomHeader.BorderStyle = BorderStyle.FixedSingle;
-            pnlRoomHeader.Controls.Add(btnCloseRoomInfo);
             pnlRoomHeader.Controls.Add(lblRoomTitle);
             pnlRoomHeader.Dock = DockStyle.Top;
             pnlRoomHeader.Location = new Point(0, 0);
             pnlRoomHeader.Name = "pnlRoomHeader";
             pnlRoomHeader.Size = new Size(1082, 50);
             pnlRoomHeader.TabIndex = 0;
-            // 
-            // btnCloseRoomInfo
-            // 
-            btnCloseRoomInfo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnCloseRoomInfo.FlatStyle = FlatStyle.Flat;
-            btnCloseRoomInfo.ForeColor = Color.White;
-            btnCloseRoomInfo.Location = new Point(1038, 9);
-            btnCloseRoomInfo.Name = "btnCloseRoomInfo";
-            btnCloseRoomInfo.Size = new Size(30, 30);
-            btnCloseRoomInfo.TabIndex = 21;
-            btnCloseRoomInfo.TabStop = false;
-            btnCloseRoomInfo.Text = "X";
-            btnCloseRoomInfo.UseVisualStyleBackColor = true;
-            btnCloseRoomInfo.Click += btnCloseRoomInfo_Click;
             // 
             // lblRoomTitle
             // 
@@ -173,6 +157,17 @@
             pnlRoomStatus.Name = "pnlRoomStatus";
             pnlRoomStatus.Size = new Size(1082, 80);
             pnlRoomStatus.TabIndex = 1;
+            // 
+            // btnTransfer
+            // 
+            btnTransfer.Cursor = Cursors.Hand;
+            btnTransfer.Location = new Point(739, 20);
+            btnTransfer.Name = "btnTransfer";
+            btnTransfer.Size = new Size(94, 40);
+            btnTransfer.TabIndex = 34;
+            btnTransfer.Text = "Transfer";
+            btnTransfer.UseVisualStyleBackColor = true;
+            btnTransfer.Click += btnTransfer_Click;
             // 
             // lblRoomStatus
             // 
@@ -630,17 +625,6 @@
             lblCurrentTenantsTitle.Text = "Current Tenants";
             lblCurrentTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // btnTransfer
-            // 
-            btnTransfer.Cursor = Cursors.Hand;
-            btnTransfer.Location = new Point(739, 20);
-            btnTransfer.Name = "btnTransfer";
-            btnTransfer.Size = new Size(94, 40);
-            btnTransfer.TabIndex = 34;
-            btnTransfer.Text = "Transfer";
-            btnTransfer.UseVisualStyleBackColor = true;
-            btnTransfer.Click += btnTransfer_Click;
-            // 
             // RoomInformationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -691,7 +675,6 @@
         private Button btnMoveIn;
         private Panel pnlRoomStatus;
         private Label lblRoomTitle;
-        private Button btnCloseRoomInfo;
         private Panel pnlRoomDetails;
         private TableLayoutPanel tblRoomDetails;
         private Panel pnlRoomInformation;

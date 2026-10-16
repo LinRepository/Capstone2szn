@@ -136,6 +136,7 @@
             btnArchiveRoom.TabIndex = 34;
             btnArchiveRoom.Text = "Archive Room";
             btnArchiveRoom.UseVisualStyleBackColor = true;
+            btnArchiveRoom.Click += btnArchiveRoom_Click;
             // 
             // panel3
             // 
