@@ -106,7 +106,6 @@
             lblEditIssueTitle.TabIndex = 40;
             lblEditIssueTitle.Text = "Edit Maintenance Issue";
             lblEditIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblEditIssueTitle.Visible = false;
             // 
             // pnlEditIssueActions
             // 
@@ -166,7 +165,7 @@
             cboIssueStatus.Dock = DockStyle.Fill;
             cboIssueStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             cboIssueStatus.FormattingEnabled = true;
-            cboIssueStatus.Items.AddRange(new object[] { "Pending", "Completed" });
+            cboIssueStatus.Items.AddRange(new object[] { "Pending", "Complete" });
             cboIssueStatus.Location = new Point(0, 40);
             cboIssueStatus.Name = "cboIssueStatus";
             cboIssueStatus.Size = new Size(431, 28);
@@ -184,7 +183,6 @@
             lblIssueStatus.TabIndex = 41;
             lblIssueStatus.Text = "Status";
             lblIssueStatus.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueStatus.Visible = false;
             // 
             // pnlIssueInformation
             // 
@@ -212,7 +210,6 @@
             lblIssueDate.TabIndex = 54;
             lblIssueDate.Text = "Date";
             lblIssueDate.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueDate.Visible = false;
             // 
             // dtpIssueDate
             // 
@@ -227,6 +224,7 @@
             // 
             txtDescription.Dock = DockStyle.Fill;
             txtDescription.Location = new Point(0, 114);
+            txtDescription.MaxLength = 1000;
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
             txtDescription.ScrollBars = ScrollBars.Vertical;
@@ -245,13 +243,13 @@
             lblDescription.TabIndex = 51;
             lblDescription.Text = "Description";
             lblDescription.TextAlign = ContentAlignment.MiddleCenter;
-            lblDescription.Visible = false;
             // 
             // txtIssue
             // 
             txtIssue.Dock = DockStyle.Top;
+            txtIssue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtIssue.Location = new Point(0, 40);
-            txtIssue.Multiline = true;
+            txtIssue.MaxLength = 500;
             txtIssue.Name = "txtIssue";
             txtIssue.Size = new Size(431, 34);
             txtIssue.TabIndex = 49;
@@ -268,7 +266,6 @@
             lblIssue.TabIndex = 48;
             lblIssue.Text = "Issue";
             lblIssue.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssue.Visible = false;
             // 
             // pnlResponsible
             // 
@@ -315,8 +312,8 @@
             // rdoResponsibleSpecify
             // 
             rdoResponsibleSpecify.AutoSize = true;
-            rdoResponsibleSpecify.ForeColor = Color.Transparent;
-            rdoResponsibleSpecify.Location = new Point(52, 10);
+            rdoResponsibleSpecify.ForeColor = Color.White;
+            rdoResponsibleSpecify.Location = new Point(32, 10);
             rdoResponsibleSpecify.Name = "rdoResponsibleSpecify";
             rdoResponsibleSpecify.Size = new Size(78, 24);
             rdoResponsibleSpecify.TabIndex = 3;
@@ -336,7 +333,7 @@
             // rdoResponsibleNone
             // 
             rdoResponsibleNone.AutoSize = true;
-            rdoResponsibleNone.ForeColor = Color.Transparent;
+            rdoResponsibleNone.ForeColor = Color.White;
             rdoResponsibleNone.Location = new Point(42, 10);
             rdoResponsibleNone.Name = "rdoResponsibleNone";
             rdoResponsibleNone.Size = new Size(66, 24);
@@ -357,7 +354,7 @@
             // rdoResponsibleAll
             // 
             rdoResponsibleAll.AutoSize = true;
-            rdoResponsibleAll.ForeColor = Color.Transparent;
+            rdoResponsibleAll.ForeColor = Color.White;
             rdoResponsibleAll.Location = new Point(51, 10);
             rdoResponsibleAll.Name = "rdoResponsibleAll";
             rdoResponsibleAll.Size = new Size(48, 24);
@@ -378,7 +375,6 @@
             lblResponsible.TabIndex = 47;
             lblResponsible.Text = "Responsible";
             lblResponsible.TextAlign = ContentAlignment.MiddleCenter;
-            lblResponsible.Visible = false;
             // 
             // pnlAffectedTenants
             // 
@@ -425,8 +421,8 @@
             // rdoTenantSpecify
             // 
             rdoTenantSpecify.AutoSize = true;
-            rdoTenantSpecify.ForeColor = Color.Transparent;
-            rdoTenantSpecify.Location = new Point(53, 10);
+            rdoTenantSpecify.ForeColor = Color.White;
+            rdoTenantSpecify.Location = new Point(32, 10);
             rdoTenantSpecify.Name = "rdoTenantSpecify";
             rdoTenantSpecify.Size = new Size(78, 24);
             rdoTenantSpecify.TabIndex = 1;
@@ -446,7 +442,7 @@
             // rdoTenantNone
             // 
             rdoTenantNone.AutoSize = true;
-            rdoTenantNone.ForeColor = Color.Transparent;
+            rdoTenantNone.ForeColor = Color.White;
             rdoTenantNone.Location = new Point(39, 10);
             rdoTenantNone.Name = "rdoTenantNone";
             rdoTenantNone.Size = new Size(66, 24);
@@ -467,7 +463,7 @@
             // rdoTenantAll
             // 
             rdoTenantAll.AutoSize = true;
-            rdoTenantAll.ForeColor = Color.Transparent;
+            rdoTenantAll.ForeColor = Color.White;
             rdoTenantAll.Location = new Point(46, 10);
             rdoTenantAll.Name = "rdoTenantAll";
             rdoTenantAll.Size = new Size(48, 24);
@@ -488,7 +484,6 @@
             lblAffectedTenants.TabIndex = 41;
             lblAffectedTenants.Text = "Affected Tenant(s)";
             lblAffectedTenants.TextAlign = ContentAlignment.MiddleCenter;
-            lblAffectedTenants.Visible = false;
             // 
             // pnlRoomSelection
             // 
@@ -512,7 +507,6 @@
             lblRoomValue.TabIndex = 42;
             lblRoomValue.Text = "Room ###";
             lblRoomValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblRoomValue.Visible = false;
             // 
             // lblRoom
             // 
@@ -526,7 +520,6 @@
             lblRoom.TabIndex = 41;
             lblRoom.Text = "Room";
             lblRoom.TextAlign = ContentAlignment.MiddleCenter;
-            lblRoom.Visible = false;
             // 
             // EditIssueForm
             // 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Capstoneszn.Forms;
+using Capstoneszn.Forms.RoomsForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.UserControls
@@ -22,7 +23,7 @@ namespace Capstoneszn.UserControls
 
             _buildingId = buildingId;
 
-            
+
 
             LoadRooms();
 
@@ -139,7 +140,7 @@ namespace Capstoneszn.UserControls
             }
         }
 
-        
+
 
         private void RoomsControl_Load(object sender, EventArgs e)
         {
@@ -159,6 +160,19 @@ namespace Capstoneszn.UserControls
         private void flpRoomsOverview_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        // Wired in the designer only - do not also wire it in the constructor,
+        // or the archive window opens twice.
+        private void btnArchiveRoom_Click(object sender, EventArgs e)
+        {
+            using (ArchiveRoomForm archiveForm = new ArchiveRoomForm(_buildingId))
+            {
+                if (archiveForm.ShowDialog(this.FindForm()) == DialogResult.OK)
+                {
+                    LoadRooms(); // the archived room leaves the floor map
+                }
+            }
         }
     }
 }

@@ -69,7 +69,6 @@
             lblAddMaterialTitle.TabIndex = 38;
             lblAddMaterialTitle.Text = "Add Material";
             lblAddMaterialTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddMaterialTitle.Visible = false;
             // 
             // pnlAddMaterialActions
             // 
@@ -140,6 +139,7 @@
             // 
             txtMaterialName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtMaterialName.Location = new Point(124, 58);
+            txtMaterialName.MaxLength = 150;
             txtMaterialName.Name = "txtMaterialName";
             txtMaterialName.Size = new Size(199, 34);
             txtMaterialName.TabIndex = 42;
@@ -156,7 +156,6 @@
             lblQuantity.TabIndex = 41;
             lblQuantity.Text = "Quantity";
             lblQuantity.TextAlign = ContentAlignment.MiddleCenter;
-            lblQuantity.Visible = false;
             // 
             // lblUnitPrice
             // 
@@ -170,7 +169,6 @@
             lblUnitPrice.TabIndex = 40;
             lblUnitPrice.Text = "Unit Price";
             lblUnitPrice.TextAlign = ContentAlignment.MiddleCenter;
-            lblUnitPrice.Visible = false;
             // 
             // lblAddMaterialDescription
             // 
@@ -184,7 +182,6 @@
             lblAddMaterialDescription.TabIndex = 39;
             lblAddMaterialDescription.Text = "Enter Material Details Below";
             lblAddMaterialDescription.TextAlign = ContentAlignment.MiddleCenter;
-            lblAddMaterialDescription.Visible = false;
             // 
             // lblMaterialName
             // 
@@ -198,7 +195,6 @@
             lblMaterialName.TabIndex = 38;
             lblMaterialName.Text = "Material Name";
             lblMaterialName.TextAlign = ContentAlignment.MiddleCenter;
-            lblMaterialName.Visible = false;
             // 
             // AddMaterialForm
             // 

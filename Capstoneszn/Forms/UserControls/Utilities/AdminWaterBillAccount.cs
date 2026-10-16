@@ -29,6 +29,7 @@ namespace Capstoneszn.Forms.UserControls.Utilities
         }
         public void LoadAccount()
         {
+<<<<<<< HEAD
             // Reset first, so a failed or empty load never shows last month's numbers
             lblAccountName.Text = AccountName;
             lblAmount.Text = "—";
@@ -70,6 +71,12 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+=======
+            
+        }
+        
+
+>>>>>>> 8fcbdca5eb4342bac55334ee6f33a508232cd966
         private void btnRecordWaterExpense_Click(object sender, EventArgs e)
         {
             if (WaterBillId == 0)

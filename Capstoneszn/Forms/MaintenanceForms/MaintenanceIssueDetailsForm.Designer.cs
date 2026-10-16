@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             pnlIssueDetailsHeader = new Panel();
-            btnCloseIssueDetails = new Button();
             lblIssueDetailsTitle = new Label();
             pnlIssueDetailsContent = new Panel();
             pnlDescription = new Panel();
@@ -70,27 +69,12 @@
             // 
             // pnlIssueDetailsHeader
             // 
-            pnlIssueDetailsHeader.Controls.Add(btnCloseIssueDetails);
             pnlIssueDetailsHeader.Controls.Add(lblIssueDetailsTitle);
             pnlIssueDetailsHeader.Dock = DockStyle.Top;
             pnlIssueDetailsHeader.Location = new Point(0, 0);
             pnlIssueDetailsHeader.Name = "pnlIssueDetailsHeader";
             pnlIssueDetailsHeader.Size = new Size(682, 65);
             pnlIssueDetailsHeader.TabIndex = 0;
-            // 
-            // btnCloseIssueDetails
-            // 
-            btnCloseIssueDetails.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnCloseIssueDetails.FlatStyle = FlatStyle.Flat;
-            btnCloseIssueDetails.ForeColor = Color.White;
-            btnCloseIssueDetails.Location = new Point(627, 17);
-            btnCloseIssueDetails.Name = "btnCloseIssueDetails";
-            btnCloseIssueDetails.Size = new Size(30, 30);
-            btnCloseIssueDetails.TabIndex = 37;
-            btnCloseIssueDetails.TabStop = false;
-            btnCloseIssueDetails.Text = "X";
-            btnCloseIssueDetails.UseVisualStyleBackColor = true;
-            btnCloseIssueDetails.Click += btnCloseIssueDetails_Click;
             // 
             // lblIssueDetailsTitle
             // 
@@ -104,7 +88,6 @@
             lblIssueDetailsTitle.TabIndex = 36;
             lblIssueDetailsTitle.Text = "Maintenance Issue Details";
             lblIssueDetailsTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueDetailsTitle.Visible = false;
             // 
             // pnlIssueDetailsContent
             // 
@@ -132,17 +115,16 @@
             // 
             // lblDescriptionValue
             // 
-            lblDescriptionValue.AutoSize = true;
+            lblDescriptionValue.Dock = DockStyle.Bottom;
             lblDescriptionValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDescriptionValue.ForeColor = Color.White;
             lblDescriptionValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblDescriptionValue.Location = new Point(314, 61);
+            lblDescriptionValue.Location = new Point(0, 38);
             lblDescriptionValue.Name = "lblDescriptionValue";
-            lblDescriptionValue.Size = new Size(52, 23);
+            lblDescriptionValue.Size = new Size(682, 160);
             lblDescriptionValue.TabIndex = 40;
             lblDescriptionValue.Text = "Value";
             lblDescriptionValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblDescriptionValue.Visible = false;
             // 
             // lblDescriptionTitle
             // 
@@ -156,7 +138,6 @@
             lblDescriptionTitle.TabIndex = 39;
             lblDescriptionTitle.Text = "Description";
             lblDescriptionTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblDescriptionTitle.Visible = false;
             // 
             // pnlIssueStatusRow
             // 
@@ -190,7 +171,6 @@
             lblStatusTitle.TabIndex = 39;
             lblStatusTitle.Text = "Status";
             lblStatusTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatusTitle.Visible = false;
             // 
             // lblStatusValue
             // 
@@ -204,7 +184,6 @@
             lblStatusValue.TabIndex = 40;
             lblStatusValue.Text = "###";
             lblStatusValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatusValue.Visible = false;
             // 
             // pnlIssue
             // 
@@ -228,7 +207,6 @@
             lblIssueTitle.TabIndex = 39;
             lblIssueTitle.Text = "Issue";
             lblIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueTitle.Visible = false;
             // 
             // lblIssueValue
             // 
@@ -242,7 +220,6 @@
             lblIssueValue.TabIndex = 40;
             lblIssueValue.Text = "###";
             lblIssueValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueValue.Visible = false;
             // 
             // pnlResponsible
             // 
@@ -266,7 +243,6 @@
             lblResponsibleValue.TabIndex = 40;
             lblResponsibleValue.Text = "Maintenance Issue Details";
             lblResponsibleValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblResponsibleValue.Visible = false;
             // 
             // lblResponsibleTitle
             // 
@@ -280,7 +256,6 @@
             lblResponsibleTitle.TabIndex = 39;
             lblResponsibleTitle.Text = "Responsible";
             lblResponsibleTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblResponsibleTitle.Visible = false;
             // 
             // pnlAffectedTenants
             // 
@@ -304,7 +279,6 @@
             lblAffectedTenantsValue.TabIndex = 40;
             lblAffectedTenantsValue.Text = "Maintenance Issue Details";
             lblAffectedTenantsValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblAffectedTenantsValue.Visible = false;
             // 
             // lblAffectedTenantsTitle
             // 
@@ -318,7 +292,6 @@
             lblAffectedTenantsTitle.TabIndex = 39;
             lblAffectedTenantsTitle.Text = "Affected Tenants";
             lblAffectedTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblAffectedTenantsTitle.Visible = false;
             // 
             // pnlUnitDateRow
             // 
@@ -352,7 +325,6 @@
             lblUnitTitle.TabIndex = 39;
             lblUnitTitle.Text = "Room";
             lblUnitTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblUnitTitle.Visible = false;
             // 
             // lblUnitValue
             // 
@@ -366,7 +338,6 @@
             lblUnitValue.TabIndex = 40;
             lblUnitValue.Text = "###";
             lblUnitValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblUnitValue.Visible = false;
             // 
             // pnlDate
             // 
@@ -390,7 +361,6 @@
             lblDateTitle.TabIndex = 39;
             lblDateTitle.Text = "Date";
             lblDateTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblDateTitle.Visible = false;
             // 
             // lblDateValue
             // 
@@ -404,7 +374,6 @@
             lblDateValue.TabIndex = 40;
             lblDateValue.Text = "###";
             lblDateValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblDateValue.Visible = false;
             // 
             // MaintenanceIssueDetailsForm
             // 
@@ -447,7 +416,6 @@
         private Panel pnlIssueDetailsHeader;
         private Panel pnlIssueDetailsContent;
         private Label lblIssueDetailsTitle;
-        private Button btnCloseIssueDetails;
         private Panel pnlIssueStatusRow;
         private Panel pnlResponsible;
         private Panel pnlAffectedTenants;

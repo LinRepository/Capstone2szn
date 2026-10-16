@@ -271,6 +271,7 @@
             // 
             txtDescription.Dock = DockStyle.Fill;
             txtDescription.Location = new Point(0, 114);
+            txtDescription.MaxLength = 1000;
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
             txtDescription.ScrollBars = ScrollBars.Vertical;
@@ -294,8 +295,9 @@
             // txtIssue
             // 
             txtIssue.Dock = DockStyle.Top;
+            txtIssue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtIssue.Location = new Point(0, 40);
-            txtIssue.Multiline = true;
+            txtIssue.MaxLength = 500;
             txtIssue.Name = "txtIssue";
             txtIssue.Size = new Size(431, 34);
             txtIssue.TabIndex = 49;
@@ -381,7 +383,7 @@
             // rdoResponsibleNone
             // 
             rdoResponsibleNone.AutoSize = true;
-            rdoResponsibleNone.ForeColor = Color.Transparent;
+            rdoResponsibleNone.ForeColor = Color.White;
             rdoResponsibleNone.Location = new Point(42, 10);
             rdoResponsibleNone.Name = "rdoResponsibleNone";
             rdoResponsibleNone.Size = new Size(66, 24);

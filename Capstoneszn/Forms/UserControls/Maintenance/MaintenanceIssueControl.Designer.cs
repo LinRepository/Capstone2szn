@@ -98,7 +98,6 @@
             lblStatusValue.TabIndex = 42;
             lblStatusValue.Text = "Pending/Completed";
             lblStatusValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatusValue.Visible = false;
             // 
             // lblStatusTitle
             // 
@@ -113,7 +112,6 @@
             lblStatusTitle.TabIndex = 41;
             lblStatusTitle.Text = "Status";
             lblStatusTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatusTitle.Visible = false;
             // 
             // pnlUnit
             // 
@@ -138,7 +136,6 @@
             lblUnitValue.TabIndex = 42;
             lblUnitValue.Text = "###";
             lblUnitValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblUnitValue.Visible = false;
             // 
             // lblUnitTitle
             // 
@@ -153,7 +150,6 @@
             lblUnitTitle.TabIndex = 41;
             lblUnitTitle.Text = "Room";
             lblUnitTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblUnitTitle.Visible = false;
             // 
             // pnlIssueFooter
             // 
@@ -227,7 +223,6 @@
             lblDateValue.TabIndex = 42;
             lblDateValue.Text = "MM/DD/YYYY";
             lblDateValue.TextAlign = ContentAlignment.MiddleCenter;
-            lblDateValue.Visible = false;
             // 
             // lblDateTitle
             // 
@@ -241,7 +236,6 @@
             lblDateTitle.TabIndex = 41;
             lblDateTitle.Text = "Date";
             lblDateTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblDateTitle.Visible = false;
             // 
             // pnlIssueContent
             // 
@@ -280,7 +274,6 @@
             lblDescriptionValue.TabIndex = 43;
             lblDescriptionValue.Text = "description details are displayed here";
             lblDescriptionValue.TextAlign = ContentAlignment.MiddleLeft;
-            lblDescriptionValue.Visible = false;
             // 
             // lblDescriptionTitle
             // 
@@ -296,7 +289,6 @@
             lblDescriptionTitle.TabIndex = 42;
             lblDescriptionTitle.Text = "Description";
             lblDescriptionTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblDescriptionTitle.Visible = false;
             // 
             // pnlResponsible
             // 
@@ -323,7 +315,6 @@
             lblResponsibleValue.TabIndex = 43;
             lblResponsibleValue.Text = "responsible person are displayed here";
             lblResponsibleValue.TextAlign = ContentAlignment.MiddleLeft;
-            lblResponsibleValue.Visible = false;
             // 
             // lblResponsibleTitle
             // 
@@ -339,7 +330,6 @@
             lblResponsibleTitle.TabIndex = 42;
             lblResponsibleTitle.Text = "Responsible";
             lblResponsibleTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblResponsibleTitle.Visible = false;
             // 
             // pnlIssue
             // 
@@ -366,7 +356,6 @@
             lblIssueValue.TabIndex = 43;
             lblIssueValue.Text = "issue details are displayed here";
             lblIssueValue.TextAlign = ContentAlignment.MiddleLeft;
-            lblIssueValue.Visible = false;
             // 
             // lblIssueTitle
             // 
@@ -382,7 +371,6 @@
             lblIssueTitle.TabIndex = 42;
             lblIssueTitle.Text = "Issue";
             lblIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblIssueTitle.Visible = false;
             // 
             // MaintenanceIssueControl
             // 
