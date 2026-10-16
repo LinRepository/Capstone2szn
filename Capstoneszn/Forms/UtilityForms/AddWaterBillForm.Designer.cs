@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             pnlAddBillHeader = new Panel();
             lblAddWaterBillTitle = new Label();
             pnlAddBillActionButtons = new Panel();
@@ -113,7 +113,7 @@
             btnCancel.TabIndex = 0;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancel_Click;
+            btnCancel.Click += btnCancel_Click_1;
             // 
             // btnAddBill
             // 
@@ -128,7 +128,7 @@
             btnAddBill.TabIndex = 0;
             btnAddBill.Text = "Add Bill";
             btnAddBill.UseVisualStyleBackColor = false;
-            btnAddBill.Click += btnConfirm_Click;
+            btnAddBill.Click += btnAddBill_Click;
             // 
             // pnlAddBillContent
             // 
@@ -156,14 +156,14 @@
             // 
             dgvWaterPreview.AllowUserToAddRows = false;
             dgvWaterPreview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = SystemColors.Control;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            dgvWaterPreview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvWaterPreview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvWaterPreview.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvWaterPreview.Columns.AddRange(new DataGridViewColumn[] { colPreviewRoom, colPreviewTenant, colPreviewAmount });
             dgvWaterPreview.Location = new Point(21, 270);

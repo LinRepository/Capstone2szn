@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.UserControls.Utilities
 {
@@ -29,7 +29,6 @@ namespace Capstoneszn.Forms.UserControls.Utilities
         }
         public void LoadAccount()
         {
-<<<<<<< HEAD
             // Reset first, so a failed or empty load never shows last month's numbers
             lblAccountName.Text = AccountName;
             lblAmount.Text = "—";
@@ -41,8 +40,9 @@ namespace Capstoneszn.Forms.UserControls.Utilities
 
             const string sql = @"
                 SELECT WaterBillId, AdminAmount, AdminStatus, AdminPaidDate
-                FROM   dbo.WaterBills
-                WHERE  BillingMonth = @MonthStart;";
+                FROM dbo.WaterBills
+                WHERE  BuildingId = @BuildingId
+                  AND  BillingMonth = @MonthStart; ";
 
             try
             {
@@ -50,6 +50,7 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                 conn.Open();
 
                 using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.Add("@BuildingId", SqlDbType.Int).Value = Session.BuildingId;
                 cmd.Parameters.Add("@MonthStart", SqlDbType.Date).Value = MonthStart;
 
                 using SqlDataReader dr = cmd.ExecuteReader();
@@ -71,14 +72,10 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-=======
-            
-        }
-        
-
->>>>>>> 8fcbdca5eb4342bac55334ee6f33a508232cd966
         private void btnRecordWaterExpense_Click(object sender, EventArgs e)
         {
+            LoadAccount();   // read the latest state before deciding
+
             if (WaterBillId == 0)
             {
                 MessageBox.Show($"There's no water bill for {MonthStart:MMMM yyyy} yet. Add one first.",
@@ -102,43 +99,9 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                 return;
             }
 
-            var confirm = MessageBox.Show(
-                $"Record the owner's water payment for {MonthStart:MMMM yyyy}?\n\n" +
-                $"Amount: ₱{_ownerShare:#,##0.00}  (exact amount only)\n\n" +
-                "Once recorded, this bill is LOCKED:\n" +
-                "  • the bill can no longer be edited\n" +
-                "  • the status can't be changed back to Unpaid",
-                "Confirm payment",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-
-            if (confirm != DialogResult.Yes) return;
-
-            const string sql = @"
-                UPDATE dbo.WaterBills
-                   SET AdminStatus = 'Paid', AdminPaidDate = @Today
-                 WHERE WaterBillId = @Id
-                   AND AdminStatus = 'Unpaid';";
-
-            try
-            {
-                using SqlConnection conn = DatabaseHelper.GetConnection();
-                conn.Open();
-
-                using var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = WaterBillId;
-                cmd.Parameters.Add("@Today", SqlDbType.Date).Value = DateTime.Today;
-
-                if (cmd.ExecuteNonQuery() == 0)
-                    MessageBox.Show("This bill was already marked paid.", "Already paid",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("Error recording payment: " + ex.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            LoadAccount();
+            using var rwef = new RecordWaterExpenseForm(WaterBillId, _ownerShare, MonthStart);
+            if (rwef.ShowDialog(this) == DialogResult.OK)
+                LoadAccount();
         }
     }
 }
