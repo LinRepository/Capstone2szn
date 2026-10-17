@@ -24,14 +24,18 @@ namespace Capstoneszn.Forms
 
         private void btnPrintReceipt_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Receipt printing isn't available yet.",
-                "Print Receipt", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            int? paymentId = PaymentHistoryService.GetPaymentIdByReceipt(lblTransactionIDValue.Text);
+            if (paymentId == null)
+            {
+                MessageBox.Show("Receipt not found.", "Print Receipt",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (var receipt = new Capstoneszn.Forms.PaymentReceiptForm(paymentId.Value))
+                receipt.ShowDialog(this);
         }
 
-        private void btnAnotherTransaction_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Another Transaction isn't available yet.", "Another Transaction", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
