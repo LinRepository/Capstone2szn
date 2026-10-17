@@ -125,6 +125,7 @@
             btnSaveIssueChanges.TabIndex = 1;
             btnSaveIssueChanges.Text = "Save";
             btnSaveIssueChanges.UseVisualStyleBackColor = true;
+            btnSaveIssueChanges.Click += btnSaveIssueChanges_Click;
             // 
             // btnCancelEditIssue
             // 
@@ -134,6 +135,7 @@
             btnCancelEditIssue.TabIndex = 0;
             btnCancelEditIssue.Text = "Cancel";
             btnCancelEditIssue.UseVisualStyleBackColor = true;
+            btnCancelEditIssue.Click += btnCancelEditIssue_Click;
             // 
             // pnlEditIssueContent
             // 
@@ -537,6 +539,7 @@
             Name = "EditIssueForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Edit Maintenance Issue";
+            Load += EditIssueForm_Load;
             pnlEditIssueHeader.ResumeLayout(false);
             pnlEditIssueHeader.PerformLayout();
             pnlEditIssueActions.ResumeLayout(false);

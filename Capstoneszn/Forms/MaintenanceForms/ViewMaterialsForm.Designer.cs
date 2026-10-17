@@ -32,6 +32,7 @@
             lblMaterialsContext = new Label();
             lblMaterialsTitle = new Label();
             pnlMaterialsActions = new Panel();
+            btnRemoveMaterial = new Button();
             btnClose = new Button();
             btnAddMaterial = new Button();
             pnlMaterialsContent = new Panel();
@@ -40,7 +41,6 @@
             colQuantity = new DataGridViewTextBoxColumn();
             colUnitPrice = new DataGridViewTextBoxColumn();
             colTotalCost = new DataGridViewTextBoxColumn();
-            btnRemoveMaterial = new Button();
             pnlMaterialsHeader.SuspendLayout();
             pnlMaterialsActions.SuspendLayout();
             pnlMaterialsContent.SuspendLayout();
@@ -94,6 +94,17 @@
             pnlMaterialsActions.Size = new Size(582, 50);
             pnlMaterialsActions.TabIndex = 1;
             // 
+            // btnRemoveMaterial
+            // 
+            btnRemoveMaterial.Cursor = Cursors.Hand;
+            btnRemoveMaterial.Location = new Point(124, 9);
+            btnRemoveMaterial.Name = "btnRemoveMaterial";
+            btnRemoveMaterial.Size = new Size(140, 29);
+            btnRemoveMaterial.TabIndex = 2;
+            btnRemoveMaterial.Text = "Remove Material";
+            btnRemoveMaterial.UseVisualStyleBackColor = true;
+            btnRemoveMaterial.Click += btnRemoveMaterial_Click;
+            // 
             // btnClose
             // 
             btnClose.Location = new Point(285, 9);
@@ -102,6 +113,7 @@
             btnClose.TabIndex = 1;
             btnClose.Text = "Close";
             btnClose.UseVisualStyleBackColor = true;
+            btnClose.Click += btnClose_Click;
             // 
             // btnAddMaterial
             // 
@@ -111,6 +123,7 @@
             btnAddMaterial.TabIndex = 0;
             btnAddMaterial.Text = "Add Material";
             btnAddMaterial.UseVisualStyleBackColor = true;
+            btnAddMaterial.Click += btnAddMaterial_Click;
             // 
             // pnlMaterialsContent
             // 
@@ -168,16 +181,6 @@
             colTotalCost.Name = "colTotalCost";
             colTotalCost.ReadOnly = true;
             // 
-            // btnRemoveMaterial
-            // 
-            btnRemoveMaterial.Cursor = Cursors.Hand;
-            btnRemoveMaterial.Location = new Point(124, 9);
-            btnRemoveMaterial.Name = "btnRemoveMaterial";
-            btnRemoveMaterial.Size = new Size(140, 29);
-            btnRemoveMaterial.TabIndex = 2;
-            btnRemoveMaterial.Text = "Remove Material";
-            btnRemoveMaterial.UseVisualStyleBackColor = true;
-            // 
             // ViewMaterialsForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -193,6 +196,7 @@
             Name = "ViewMaterialsForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "View Materials";
+            Load += ViewMaterialsForm_Load;
             pnlMaterialsHeader.ResumeLayout(false);
             pnlMaterialsHeader.PerformLayout();
             pnlMaterialsActions.ResumeLayout(false);

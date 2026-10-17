@@ -389,6 +389,7 @@
             Name = "MaintenanceIssueDetailsForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Maintenance Issue Details";
+            Load += MaintenanceIssueDetailsForm_Load;
             pnlIssueDetailsHeader.ResumeLayout(false);
             pnlIssueDetailsHeader.PerformLayout();
             pnlIssueDetailsContent.ResumeLayout(false);

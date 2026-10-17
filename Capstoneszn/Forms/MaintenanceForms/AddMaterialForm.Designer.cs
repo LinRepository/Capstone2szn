@@ -88,6 +88,7 @@
             btnAddMaterial.TabIndex = 1;
             btnAddMaterial.Text = "Add Material";
             btnAddMaterial.UseVisualStyleBackColor = true;
+            btnAddMaterial.Click += btnAddMaterial_Click;
             // 
             // btnCancelMaterial
             // 
@@ -97,6 +98,7 @@
             btnCancelMaterial.TabIndex = 0;
             btnCancelMaterial.Text = "Cancel";
             btnCancelMaterial.UseVisualStyleBackColor = true;
+            btnCancelMaterial.Click += btnCancelMaterial_Click;
             // 
             // pnlAddMaterialContent
             // 
@@ -211,6 +213,7 @@
             Name = "AddMaterialForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Add Material";
+            Load += AddMaterialForm_Load;
             pnlAddMaterialHeader.ResumeLayout(false);
             pnlAddMaterialHeader.PerformLayout();
             pnlAddMaterialActions.ResumeLayout(false);

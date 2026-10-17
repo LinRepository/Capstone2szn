@@ -185,7 +185,7 @@
             // rdoMaterialsNo
             // 
             rdoMaterialsNo.AutoSize = true;
-            rdoMaterialsNo.ForeColor = Color.Transparent;
+            rdoMaterialsNo.ForeColor = Color.White;
             rdoMaterialsNo.Location = new Point(91, 10);
             rdoMaterialsNo.Name = "rdoMaterialsNo";
             rdoMaterialsNo.Size = new Size(50, 24);
@@ -207,7 +207,7 @@
             // rdoMaterialsYes
             // 
             rdoMaterialsYes.AutoSize = true;
-            rdoMaterialsYes.ForeColor = Color.Transparent;
+            rdoMaterialsYes.ForeColor = Color.White;
             rdoMaterialsYes.Location = new Point(91, 10);
             rdoMaterialsYes.Name = "rdoMaterialsYes";
             rdoMaterialsYes.Size = new Size(51, 24);
@@ -271,7 +271,7 @@
             // 
             txtDescription.Dock = DockStyle.Fill;
             txtDescription.Location = new Point(0, 114);
-            txtDescription.MaxLength = 1000;
+            txtDescription.MaxLength = 500;
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
             txtDescription.ScrollBars = ScrollBars.Vertical;
@@ -297,7 +297,7 @@
             txtIssue.Dock = DockStyle.Top;
             txtIssue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtIssue.Location = new Point(0, 40);
-            txtIssue.MaxLength = 500;
+            txtIssue.MaxLength = 150;
             txtIssue.Name = "txtIssue";
             txtIssue.Size = new Size(431, 34);
             txtIssue.TabIndex = 49;
@@ -361,7 +361,7 @@
             // rdoResponsibleSpecify
             // 
             rdoResponsibleSpecify.AutoSize = true;
-            rdoResponsibleSpecify.ForeColor = Color.Transparent;
+            rdoResponsibleSpecify.ForeColor = Color.White;
             rdoResponsibleSpecify.Location = new Point(29, 10);
             rdoResponsibleSpecify.Name = "rdoResponsibleSpecify";
             rdoResponsibleSpecify.Size = new Size(78, 24);
@@ -405,7 +405,7 @@
             // rdoResponsibleAll
             // 
             rdoResponsibleAll.AutoSize = true;
-            rdoResponsibleAll.ForeColor = Color.Transparent;
+            rdoResponsibleAll.ForeColor = Color.White;
             rdoResponsibleAll.Location = new Point(51, 10);
             rdoResponsibleAll.Name = "rdoResponsibleAll";
             rdoResponsibleAll.Size = new Size(48, 24);
@@ -473,7 +473,7 @@
             // rdoTenantSpecify
             // 
             rdoTenantSpecify.AutoSize = true;
-            rdoTenantSpecify.ForeColor = Color.Transparent;
+            rdoTenantSpecify.ForeColor = Color.White;
             rdoTenantSpecify.Location = new Point(29, 10);
             rdoTenantSpecify.Name = "rdoTenantSpecify";
             rdoTenantSpecify.Size = new Size(78, 24);
@@ -495,7 +495,7 @@
             // rdoTenantNone
             // 
             rdoTenantNone.AutoSize = true;
-            rdoTenantNone.ForeColor = Color.Transparent;
+            rdoTenantNone.ForeColor = Color.White;
             rdoTenantNone.Location = new Point(39, 10);
             rdoTenantNone.Name = "rdoTenantNone";
             rdoTenantNone.Size = new Size(66, 24);
@@ -517,7 +517,7 @@
             // rdoTenantAll
             // 
             rdoTenantAll.AutoSize = true;
-            rdoTenantAll.ForeColor = Color.Transparent;
+            rdoTenantAll.ForeColor = Color.White;
             rdoTenantAll.Location = new Point(46, 10);
             rdoTenantAll.Name = "rdoTenantAll";
             rdoTenantAll.Size = new Size(48, 24);

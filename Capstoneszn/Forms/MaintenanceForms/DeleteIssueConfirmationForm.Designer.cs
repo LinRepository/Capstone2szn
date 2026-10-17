@@ -81,6 +81,7 @@
             btnConfirmDeleteIssue.TabIndex = 1;
             btnConfirmDeleteIssue.Text = "Confirm";
             btnConfirmDeleteIssue.UseVisualStyleBackColor = true;
+            btnConfirmDeleteIssue.Click += btnConfirmDeleteIssue_Click;
             // 
             // btnCancelDeleteIssue
             // 
@@ -90,6 +91,7 @@
             btnCancelDeleteIssue.TabIndex = 0;
             btnCancelDeleteIssue.Text = "Cancel";
             btnCancelDeleteIssue.UseVisualStyleBackColor = true;
+            btnCancelDeleteIssue.Click += btnCancelDeleteIssue_Click;
             // 
             // pnlDeleteIssueContent
             // 
@@ -143,6 +145,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Delete Maintenance Issue";
+            Load += DeleteIssueConfirmationForm_Load;
             pnlDeleteIssueHeader.ResumeLayout(false);
             pnlDeleteIssueActions.ResumeLayout(false);
             pnlDeleteIssueContent.ResumeLayout(false);
