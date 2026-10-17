@@ -40,7 +40,8 @@ namespace Capstoneszn.Forms.PaymentsForms
 
         private int _roomId;
         private int _tenantId;
-        private RentControlBilling _rent;
+        //ORIGINAL: private RentControlBilling _rent;
+        private ICategoryBilling _rent; //New
 
         public BillingPaymentForm(int roomId, int tenantId)
         {
@@ -55,8 +56,10 @@ namespace Capstoneszn.Forms.PaymentsForms
             cboCategoryType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCategoryType.Items.Clear();
             cboCategoryType.Items.Add("Rent");
+            cboCategoryType.Items.Add("Water"); //New
             cboCategoryType.SelectedIndex = 0;
-            cboCategoryType.Enabled = false;
+            cboCategoryType.Enabled = true; //Was false
+            cboCategoryType.SelectedIndexChanged += (s, e) => LoadContext();   //New
 
             // --- Payment type: display only. It follows the amount.
             cboPaymentType.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -90,10 +93,16 @@ namespace Capstoneszn.Forms.PaymentsForms
             flpPaymentDetails.WrapContents = false;
             flpPaymentDetails.AutoScroll = true;
 
-            _rent = new RentControlBilling(_roomId, _tenantId);
+            //ORIGINAL: _rent = new RentControlBilling(_roomId, _tenantId);
+            // NEW: pick the panel by category (Water or Rent)
+            _rent = cboCategoryType.Text == "Water"
+                ? (ICategoryBilling)new UtilitiesControlBilling(_roomId, _tenantId)
+                : new RentControlBilling(_roomId, _tenantId);
+
 
             // Dock = Fill does not fill inside a FlowLayoutPanel, so size it
-            _rent.Width = flpPaymentDetails.ClientSize.Width - 6;
+            //ORIGINAL: _rent.Width = flpPaymentDetails.ClientSize.Width - 6;
+            ((Control)_rent).Width = flpPaymentDetails.ClientSize.Width - 6;
 
             // Switching Individual / Whole Room changes what the payment is
             // measured against (this tenant's debt or the room's), so refill
@@ -106,7 +115,8 @@ namespace Capstoneszn.Forms.PaymentsForms
                 UpdatePaymentType();
             };
 
-            flpPaymentDetails.Controls.Add(_rent);
+            //ORIGINAL: flpPaymentDetails.Controls.Add(_rent);
+            flpPaymentDetails.Controls.Add((Control)_rent);
 
             bool owesNothing = _rent.Outstanding <= 0;
 

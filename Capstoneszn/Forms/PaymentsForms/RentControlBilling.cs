@@ -25,7 +25,7 @@ namespace Capstoneszn.Forms.PaymentsForms
     /// can then never disagree.
     /// </summary>
     /// 
-    public partial class RentControlBilling : UserControl
+    public partial class RentControlBilling : UserControl, ICategoryBilling
     {
         private const string RentCategory = "Rent";
 
