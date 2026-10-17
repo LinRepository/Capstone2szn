@@ -226,7 +226,7 @@
             // 
             txtDescription.Dock = DockStyle.Fill;
             txtDescription.Location = new Point(0, 114);
-            txtDescription.MaxLength = 1000;
+            txtDescription.MaxLength = 500;
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
             txtDescription.ScrollBars = ScrollBars.Vertical;
@@ -251,7 +251,7 @@
             txtIssue.Dock = DockStyle.Top;
             txtIssue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtIssue.Location = new Point(0, 40);
-            txtIssue.MaxLength = 500;
+            txtIssue.MaxLength = 150;
             txtIssue.Name = "txtIssue";
             txtIssue.Size = new Size(431, 34);
             txtIssue.TabIndex = 49;

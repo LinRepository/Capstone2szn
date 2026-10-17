@@ -38,6 +38,13 @@ namespace Capstoneszn.Forms.PaymentsForms
         private const string PartialPayment = "Partial Payment";
         private const string AdvancePayment = "Advance Payment";
 
+        private const string RentCategory = "Rent";
+        private const string WaterCategory = "Water";
+        private const string MaintenanceCategory = BillingHelper.MaintenanceCategory;
+
+        /// <summary>Maintenance is Full only, so the amount is fixed.</summary>
+        private bool IsMaintenance => cboCategoryType.Text == MaintenanceCategory;
+
         private int _roomId;
         private int _tenantId;
         //ORIGINAL: private RentControlBilling _rent;
@@ -51,12 +58,13 @@ namespace Capstoneszn.Forms.PaymentsForms
             _roomId = roomId;
             _tenantId = tenantId;
 
-            // --- Category: Rent only for now. Maintenance and Utilities
-            //     have no tables yet, so offering them would be a dead end.
+            // --- Category: Rent, Water, Maintenance. Each has its own
+            //     context panel (see LoadContext).
             cboCategoryType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCategoryType.Items.Clear();
-            cboCategoryType.Items.Add("Rent");
-            cboCategoryType.Items.Add("Water"); //New
+            cboCategoryType.Items.Add(RentCategory);
+            cboCategoryType.Items.Add(WaterCategory);
+            cboCategoryType.Items.Add(MaintenanceCategory);
             cboCategoryType.SelectedIndex = 0;
             cboCategoryType.Enabled = true; //Was false
             cboCategoryType.SelectedIndexChanged += (s, e) => LoadContext();   //New
@@ -89,15 +97,28 @@ namespace Capstoneszn.Forms.PaymentsForms
 
         private void LoadContext()
         {
+            // Dispose the previous category's panel, then remove it.
+            // (Controls.Clear alone does not dispose, so switching categories
+            // back and forth would pile up panels in memory.)
+            foreach (Control old in flpPaymentDetails.Controls.Cast<Control>().ToList())
+                old.Dispose();
             flpPaymentDetails.Controls.Clear();
             flpPaymentDetails.WrapContents = false;
             flpPaymentDetails.AutoScroll = true;
 
-            //ORIGINAL: _rent = new RentControlBilling(_roomId, _tenantId);
-            // NEW: pick the panel by category (Water or Rent)
-            _rent = cboCategoryType.Text == "Water"
-                ? (ICategoryBilling)new UtilitiesControlBilling(_roomId, _tenantId)
-                : new RentControlBilling(_roomId, _tenantId);
+            // Pick the panel by category.
+            switch (cboCategoryType.Text)
+            {
+                case WaterCategory:
+                    _rent = new UtilitiesControlBilling(_roomId, _tenantId);
+                    break;
+                case MaintenanceCategory:
+                    _rent = new MaintenanceControlBilling(_roomId, _tenantId);
+                    break;
+                default:
+                    _rent = new RentControlBilling(_roomId, _tenantId);
+                    break;
+            }
 
 
             // Dock = Fill does not fill inside a FlowLayoutPanel, so size it
@@ -120,12 +141,21 @@ namespace Capstoneszn.Forms.PaymentsForms
 
             bool owesNothing = _rent.Outstanding <= 0;
 
-            lblMakePaymentTitle.Text =
-                (owesNothing ? "Pay in Advance - " : "Make Payment - ") + _rent.TenantName;
+            if (IsMaintenance)
+                lblMakePaymentTitle.Text = (owesNothing ? "No Maintenance Owed - " : "Pay Maintenance - ")
+                                         + _rent.TenantName;
+            else
+                lblMakePaymentTitle.Text =
+                    (owesNothing ? "Pay in Advance - " : "Make Payment - ") + _rent.TenantName;
 
-            // Start with the outstanding filled in; it is the common case
-            if (!owesNothing)
-                txtAmount.Text = _rent.Outstanding.ToString("N2");
+            // Maintenance is Full only: the amount is exactly what is owed
+            // and cannot be typed over.
+            txtAmount.ReadOnly = IsMaintenance;
+
+            // Start with the outstanding filled in; it is the common case.
+            // Cleared otherwise, so an amount from another category never
+            // carries over when the category is switched.
+            txtAmount.Text = owesNothing ? "" : _rent.Outstanding.ToString("N2");
 
             UpdatePreview();
             UpdatePaymentType();
@@ -332,12 +362,25 @@ namespace Capstoneszn.Forms.PaymentsForms
 
             if (_rent.BillId <= 0)
             {
-                MessageBox.Show("This room has no bill to pay yet.", "No Bill",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(IsMaintenance
+                        ? "This tenant has no unpaid maintenance."
+                        : "This room has no bill to pay yet.",
+                    "No Bill", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             decimal amount = ParsedAmount();
+
+            // Maintenance: Full only. The box is read-only, but the rule is
+            // checked again here (and once more in BillingHelper).
+            if (IsMaintenance && amount != _rent.Outstanding)
+            {
+                MessageBox.Show("Maintenance must be paid in full: PHP " +
+                    _rent.Outstanding.ToString("N2") + ".", "Full Payment Only",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtAmount.Text = _rent.Outstanding.ToString("N2");
+                return;
+            }
 
             if (amount <= 0)
             {
@@ -431,6 +474,16 @@ namespace Capstoneszn.Forms.PaymentsForms
 
                         tx.Commit();
                         saved = true;
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        // A business rule refused the payment (e.g. maintenance
+                        // not paid in full). Show the rule, not "failed".
+                        try { tx.Rollback(); }
+                        catch (Exception rollbackEx) { System.Diagnostics.Debug.WriteLine(rollbackEx); }
+
+                        MessageBox.Show(ex.Message + "\n\nNothing was saved.", "Payment Not Saved",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     catch (Exception ex)
                     {

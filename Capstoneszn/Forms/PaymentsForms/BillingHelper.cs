@@ -46,18 +46,46 @@ namespace Capstoneszn
     public static class BillingHelper
     {
         private const string AdjustmentForfeit = "Forfeit";
+        public const string MaintenanceCategory = "Maintenance";
+        /// <summary>
+        /// A maintenance payment must be for this tenant only (no Whole Room),
+        /// typed Full, and exactly equal to everything the tenant owes for
+        /// maintenance - so it can never leave a partial balance or create
+        /// maintenance credit. Throws InvalidOperationException otherwise.
+        /// </summary>
+        /// 
+        private static void EnsureValidMaintenancePayment(
+            SqlConnection conn, SqlTransaction tx,
+            int tenantId, bool coversRoom, string paymentType, decimal amount)
+        {
+            if (coversRoom)
+                throw new InvalidOperationException(
+                    "Maintenance cannot be paid as Whole Room. Each affected tenant pays their own share.");
+
+            decimal owed = GetTotalOutstanding(conn, tenantId, MaintenanceCategory, tx);
+
+            if (owed <= 0m)
+                throw new InvalidOperationException(
+                    "This tenant has no unpaid maintenance.");
+
+            if (paymentType != "Full" || amount != owed)
+                throw new InvalidOperationException(
+                    "Maintenance must be paid in full: PHP " + owed.ToString("N2") +
+                    ". Partial and advance payments are not accepted.");
+        }
 
         /// <summary>
         /// Records a payment and allocates it. Returns the new PaymentId.
         /// Call inside an open transaction.
         /// </summary>
+        /// 
         public static int RecordPayment(
             SqlConnection conn,
             SqlTransaction tx,
             int roomId,
             int payingTenantId,
             bool coversRoom,
-            string category,        // "Rent" / "Maintenance" / "Utilities"
+            string category,        // "Rent" / "Water" / "Maintenance"
             string paymentType,     // database code: "Full" / "Partial" / "Advance"
             decimal amount,
             string method,          // "Cash" / "GCash"
@@ -66,6 +94,13 @@ namespace Capstoneszn
             int recordedBy,
             string receiptNo)
         {
+            // ---- 0. Maintenance rules (decided: Full only, never Whole Room,
+            //         and one payment clears everything the tenant owes) ----
+            //         Checked here, inside the transaction, so no screen can
+            //         save a maintenance payment that breaks them.
+            if (category == MaintenanceCategory)
+                EnsureValidMaintenancePayment(conn, tx, payingTenantId, coversRoom, paymentType, amount);
+
             // ---- 1. The money received -------------------------------------
             int paymentId;
 
@@ -226,6 +261,7 @@ namespace Capstoneszn
         /// The parts always add up to the amount exactly.
         /// </summary>
         /// 
+
         public static List<KeyValuePair<int, decimal>> SplitWholeRoom(
             IList<KeyValuePair<int, decimal>> owing, decimal amount)
         {
@@ -484,6 +520,8 @@ namespace Capstoneszn
                     ? 0m : Convert.ToDecimal(result);
             }
         }
+
+
     }
 
 

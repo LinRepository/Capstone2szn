@@ -22,6 +22,8 @@ namespace Capstoneszn.Forms
 
         public DeleteIssueConfirmationForm(int issueId)
         {
+            _issueId = issueId;
+
             InitializeComponent();
 
             // These were hidden in the designer by mistake (decision L).
