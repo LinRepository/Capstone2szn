@@ -306,6 +306,9 @@ namespace Capstoneszn.UserControls
                         cmd.ExecuteNonQuery();
                     }
 
+                    AuditLogger.Log(AuditLogger.ModuleRooms, "Edit Room",
+    "Room " + newRoomNum + " set to " + newType + ", capacity " + newCapacity + ", PHP " + newPrice.ToString("N2"));
+
                     // 3. Success! Reload data and return to Read-Only mode
                     MessageBox.Show("Room details updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadRoomData();

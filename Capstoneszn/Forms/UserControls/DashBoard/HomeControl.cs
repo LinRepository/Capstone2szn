@@ -33,6 +33,68 @@ namespace Capstoneszn.UserControls
             LoadCounts();
             LoadRoomOverview();
             LoadMaintenance();
+            LoadRecentActivities();
+        }
+
+        /* =================================================================
+           RECENT ACTIVITIES - the latest Audit Logs entries
+           ================================================================= */
+
+        private const int RecentActivityCount = 10;
+
+        /// <summary>
+        /// The newest audit log entries, so the landlord sees at a glance who
+        /// did what. "View All" opens the full Audit Logs module.
+        /// </summary>
+        private void LoadRecentActivities()
+        {
+            ListView lv = lvRecentActivities;
+
+            // The designer left the ListView in its default (icon) view,
+            // which shows no columns. Details view shows Time | Activity.
+            lv.View = View.Details;
+            lv.FullRowSelect = true;
+            lv.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lv.MultiSelect = false;
+            lv.ShowItemToolTips = true;
+
+            Time.Text = "Time";
+            Activity.Text = "Activity";
+            Time.Width = 170;
+            // Activity takes the rest of the width (minus room for a scrollbar).
+            Activity.Width = Math.Max(200, lv.ClientSize.Width - Time.Width - 25);
+
+            lv.BeginUpdate();
+            lv.Items.Clear();
+            try
+            {
+                foreach (AuditLogRow r in AuditLogService.GetRecent(Session.BuildingId, RecentActivityCount))
+                {
+                    string activity = r.UserName + " (" + r.Role + ") - " + r.Action + ": " + r.Description;
+
+                    var item = new ListViewItem(r.LoggedAt.ToString("MMM dd, hh:mm tt"));
+                    item.SubItems.Add(activity);
+                    item.ToolTipText = activity;   // full text on hover when it is cut off
+                    lv.Items.Add(item);
+                }
+
+                if (lv.Items.Count == 0)
+                {
+                    var empty = new ListViewItem("");
+                    empty.SubItems.Add("No activity recorded yet.");
+                    lv.Items.Add(empty);
+                }
+            }
+            catch (Exception ex)
+            {
+                // A summary panel; a failure leaves it empty rather than
+                // blocking the dashboard (same rule as the other panels).
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                lv.EndUpdate();
+            }
         }
 
         /* =================================================================

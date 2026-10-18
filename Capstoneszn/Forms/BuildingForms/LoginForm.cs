@@ -161,6 +161,7 @@ namespace Capstoneszn
                     }
                 }
             }
+            AuditLogger.Log(AuditLogger.ModuleLogin, "Login", "Signed in (" + Session.Role + ")");
             try
             {
                 int generated = BillGenerator.RunForAllBuildings();

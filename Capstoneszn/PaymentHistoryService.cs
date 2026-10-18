@@ -362,6 +362,23 @@ namespace Capstoneszn
                             cmd.ExecuteNonQuery();
                         }
 
+                        // Audit trail, inside the same transaction.
+                        string what = "Payment #" + paymentId;
+                        using (var cmd = new SqlCommand(@"
+                            SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
+                                   p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
+                                   ', Room ' + r.RoomNumber
+                            FROM   Payments p
+                            JOIN   Tenants t ON t.TenantId = p.TenantId
+                            JOIN   Rooms   r ON r.RoomId   = p.RoomId
+                            WHERE  p.PaymentId = @pid;", conn, tx))
+                        {
+                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                            what = cmd.ExecuteScalar()?.ToString() ?? what;
+                        }
+                        AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Void Payment",
+                                        what + ". Reason: " + reason);
+
                         tx.Commit();
                     }
                     catch

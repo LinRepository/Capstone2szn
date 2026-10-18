@@ -247,6 +247,10 @@ namespace Capstoneszn.UserControls
                             cmd.ExecuteNonQuery();
                         }
 
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleTenants, "Move In",
+    data.FirstName + " " + data.LastName + " joined Room " +
+    AuditLogger.RoomNumber(conn, tx, data.RoomId) + " on " + data.DateOccupied.ToString("MMM dd, yyyy") + " (no payment)");
+
                         // No bill, share or payment here: a tenant joining an
                         // occupied room is billed from the room's next cycle.
                         tx.Commit();

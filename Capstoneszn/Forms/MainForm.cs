@@ -205,7 +205,7 @@ namespace Capstoneszn
             {
                 if (confirmForm.ShowDialog(this) != DialogResult.Yes) return;
             }
-
+            AuditLogger.Log(AuditLogger.ModuleLogin, "Logout", "Signed out");
             Session.Clear();
             Session.LoggingOut = true;
             this.Close();

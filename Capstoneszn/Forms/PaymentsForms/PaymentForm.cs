@@ -412,6 +412,13 @@ namespace Capstoneszn.Forms
                             cmd.ExecuteNonQuery();
                         }
 
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleTenants, "Move In",
+    _data.FirstName + " " + _data.LastName + " moved into Room " +
+    AuditLogger.RoomNumber(conn, tx, _data.RoomId) + " on " + _data.DateOccupied.ToString("MMM dd, yyyy"));
+                        AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Record Payment",
+                            "Receipt " + receiptNo + ": PHP " + amount.ToString("N2") + " Rent (move-in, " + method +
+                            ") from " + _data.FirstName + " " + _data.LastName);
+
                         // No bill recompute and no room status update: both are
                         // derived now, from allocations and from vwRoomStatus.
 

@@ -608,6 +608,10 @@ namespace Capstoneszn.UserControls
                             cmd.ExecuteNonQuery();
                         }
 
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleTenants, "Move Out",
+    tenant.Name + " moved out of Room " + _roomNumber + " on " +
+    moveOutDate.ToString("MMM dd, yyyy") + " (" + reason + ")");
+
                         tx.Commit();
                         return true;
                     }

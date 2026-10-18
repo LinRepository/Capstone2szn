@@ -169,6 +169,9 @@ namespace Capstoneszn.Forms
                         cmd.ExecuteNonQuery();
                     }
 
+                    AuditLogger.Log(AuditLogger.ModuleRooms, "Add Room",
+    "Room " + roomNumber + " (" + roomType + ", PHP " + roomPrice.ToString("N2") + ")");
+
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }

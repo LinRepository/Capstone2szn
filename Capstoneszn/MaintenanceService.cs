@@ -444,6 +444,10 @@ namespace Capstoneszn
                             }
                         }
 
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Add Issue",
+                            "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle +
+                            " (" + affectedTenantIds.Count + " affected tenant(s))");
+
                         tx.Commit();
                         return issueId;
                     }
@@ -667,14 +671,40 @@ namespace Capstoneszn
                   AND  IsDeleted = 0;";
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
             {
-                cmd.Parameters.AddWithValue("@iid", issueId);
                 conn.Open();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        using (var cmd = new SqlCommand(sql, conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@iid", issueId);
+                            if (cmd.ExecuteNonQuery() != 1)
+                                throw new InvalidOperationException(
+                                    "This issue can't be deleted. It may already be complete or deleted.");
+                        }
 
-                if (cmd.ExecuteNonQuery() != 1)
-                    throw new InvalidOperationException(
-                        "This issue can't be deleted. It may already be complete or deleted.");
+                        // What was deleted, for the audit trail.
+                        string what = "Issue #" + issueId;
+                        using (var cmd = new SqlCommand(@"
+                            SELECT 'Room ' + r.RoomNumber + ' - ' + mi.IssueTitle
+                            FROM   MaintenanceIssues mi JOIN Rooms r ON r.RoomId = mi.RoomId
+                            WHERE  mi.IssueId = @iid;", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@iid", issueId);
+                            what = cmd.ExecuteScalar()?.ToString() ?? what;
+                        }
+
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Delete Issue", what);
+                        tx.Commit();
+                    }
+                    catch
+                    {
+                        try { tx.Rollback(); } catch { /* keep the original error */ }
+                        throw;
+                    }
+                }
             }
         }
 
@@ -979,6 +1009,14 @@ namespace Capstoneszn
                                 CreateMaintenanceExpense(conn, tx, issueId, roomId, issueTitle, total, today, userId);
                                 result.ExpenseRecorded = true;
                             }
+
+                            string outcome =
+                                total <= 0m ? "no materials, nothing charged"
+                                : result.TenantsCharged > 0 ? "PHP " + total.ToString("N2") + " charged to " + result.TenantsCharged + " tenant(s)"
+                                : "PHP " + total.ToString("N2") + " recorded as building expense";
+
+                            AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Complete Issue",
+                                "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle + ": " + outcome);
                         }
 
                         tx.Commit();

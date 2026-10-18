@@ -47,13 +47,13 @@ namespace Capstoneszn
     {
         private const string AdjustmentForfeit = "Forfeit";
         public const string MaintenanceCategory = "Maintenance";
+
         /// <summary>
         /// A maintenance payment must be for this tenant only (no Whole Room),
         /// typed Full, and exactly equal to everything the tenant owes for
         /// maintenance - so it can never leave a partial balance or create
         /// maintenance credit. Throws InvalidOperationException otherwise.
         /// </summary>
-        /// 
         private static void EnsureValidMaintenancePayment(
             SqlConnection conn, SqlTransaction tx,
             int tenantId, bool coversRoom, string paymentType, decimal amount)
@@ -78,7 +78,6 @@ namespace Capstoneszn
         /// Records a payment and allocates it. Returns the new PaymentId.
         /// Call inside an open transaction.
         /// </summary>
-        /// 
         public static int RecordPayment(
             SqlConnection conn,
             SqlTransaction tx,
@@ -158,6 +157,15 @@ namespace Capstoneszn
             // ---- 3. Allocate each credit -----------------------------------
             foreach (var credit in credits)
                 AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value, category);
+
+            // ---- 4. Audit trail - same transaction, so the log and the
+            //         payment are saved together or not at all. ------------
+            AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Record Payment",
+                "Receipt " + receiptNo + ": PHP " + amount.ToString("N2") + " " + category +
+                " (" + paymentType + ", " + method + ") from " +
+                AuditLogger.TenantName(conn, tx, payingTenantId) +
+                ", Room " + AuditLogger.RoomNumber(conn, tx, roomId) +
+                (coversRoom ? " - Whole Room" : ""));
 
             return paymentId;
         }
@@ -261,7 +269,6 @@ namespace Capstoneszn
         /// The parts always add up to the amount exactly.
         /// </summary>
         /// 
-
         public static List<KeyValuePair<int, decimal>> SplitWholeRoom(
             IList<KeyValuePair<int, decimal>> owing, decimal amount)
         {
@@ -520,8 +527,6 @@ namespace Capstoneszn
                     ? 0m : Convert.ToDecimal(result);
             }
         }
-
-
     }
 
 
