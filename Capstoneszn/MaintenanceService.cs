@@ -759,9 +759,11 @@ namespace Capstoneszn
 
             string sql = @"
                 SELECT t.TenantId, t.FirstName + N' ' + t.LastName,
+                       -- Current = still an active tenant ANYWHERE. A tenant who
+                       -- transferred to another room is still charged (the cost
+                       -- follows them); only someone who moved out is not.
                        CAST(CASE WHEN EXISTS (SELECT 1 FROM Tenancies tn
                                               WHERE tn.TenantId = t.TenantId
-                                                AND tn.RoomId   = @rid
                                                 AND tn.Status   = 'Active')
                                  THEN 1 ELSE 0 END AS bit) AS IsCurrent,
                        CAST(CASE WHEN EXISTS (SELECT 1 FROM MaintenanceAffectedTenants mat
@@ -926,9 +928,20 @@ namespace Capstoneszn
                         }
 
                         // ---- 3. Affected tenants: replace the set ----------
-                        // Same rule as Add: only a CURRENT tenant of the room
-                        // can be charged. A moved-out tenant left on the list
-                        // stops the whole save (decision 4).
+                        // A tenant can be charged if they are an active tenant
+                        // of this room, OR were already on the issue and have
+                        // since transferred (still active, in another room -
+                        // the charge follows them). A moved-out tenant left on
+                        // the list stops the whole save (decision 4).
+                        var previouslyAffected = new HashSet<int>();
+                        using (var cmd = new SqlCommand(
+                            "SELECT TenantId FROM MaintenanceAffectedTenants WHERE IssueId = @iid;", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@iid", issueId);
+                            using (var rd = cmd.ExecuteReader())
+                                while (rd.Read()) previouslyAffected.Add(rd.GetInt32(0));
+                        }
+
                         Exec(conn, tx, "DELETE FROM MaintenanceAffectedTenants WHERE IssueId = @iid;",
                              "@iid", issueId);
 
@@ -938,15 +951,18 @@ namespace Capstoneszn
                                 INSERT INTO MaintenanceAffectedTenants (IssueId, TenantId)
                                 SELECT @iid, tn.TenantId
                                 FROM   Tenancies tn
-                                WHERE  tn.TenantId = @tid AND tn.RoomId = @rid AND tn.Status = 'Active';",
+                                WHERE  tn.TenantId = @tid AND tn.Status = 'Active'
+                                  AND (tn.RoomId = @rid OR @wasAffected = 1);",
                                 conn, tx))
                             {
                                 cmd.Parameters.AddWithValue("@iid", issueId);
                                 cmd.Parameters.AddWithValue("@tid", tenantId);
                                 cmd.Parameters.AddWithValue("@rid", roomId);
+                                cmd.Parameters.AddWithValue("@wasAffected",
+                                    previouslyAffected.Contains(tenantId) ? 1 : 0);
                                 if (cmd.ExecuteNonQuery() != 1)
                                     throw new InvalidOperationException(
-                                        "An affected tenant is no longer in this room. " +
+                                        "An affected tenant has moved out. " +
                                         "Remove them from Affected Tenants first.");
                             }
                         }
@@ -1066,8 +1082,7 @@ namespace Capstoneszn
                 SELECT mat.TenantId
                 FROM   MaintenanceAffectedTenants mat
                 JOIN   Tenancies tn ON tn.TenantId = mat.TenantId
-                                   AND tn.RoomId   = @rid
-                                   AND tn.Status   = 'Active'
+                                   AND tn.Status   = 'Active'      -- in any room: a transferred tenant is still charged
                 WHERE  mat.IssueId = @iid
                 ORDER BY tn.MoveInDate, tn.TenantId;", conn, tx))
             {

@@ -21,6 +21,13 @@ namespace Capstoneszn.Forms.RoomsForms
         private int _sourceActiveCount;
 
         /// <summary>
+        /// The source room's billing anchor. The transferring tenants have
+        /// already been billed (and have paid) the source room's current
+        /// period, so their cycle continues from it.
+        /// </summary>
+        private DateTime? _sourceAnchor;
+
+        /// <summary>
         /// Tenants with a Pending maintenance issue charged to them in the
         /// source room. The charge follows the tenant, so this is a warning,
         /// not a block.
@@ -89,7 +96,8 @@ namespace Capstoneszn.Forms.RoomsForms
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 using (SqlCommand cmd = new SqlCommand(@"
-                    SELECT v.RoomNumber, ISNULL(v.RoomPrice, 0), ISNULL(v.ActiveTenants, 0)
+                    SELECT v.RoomNumber, ISNULL(v.RoomPrice, 0), ISNULL(v.ActiveTenants, 0),
+                           v.BillingAnchorDate
                     FROM   vwRoomStatus v
                     WHERE  v.RoomId = @rid;", conn))
                 {
@@ -103,6 +111,7 @@ namespace Capstoneszn.Forms.RoomsForms
                         _sourceRoomNumber = r.GetString(0);
                         _sourceRoomPrice = r.GetDecimal(1);
                         _sourceActiveCount = r.GetInt32(2);
+                        _sourceAnchor = r.IsDBNull(3) ? (DateTime?)null : r.GetDateTime(3);
                     }
                 }
 
@@ -280,9 +289,11 @@ namespace Capstoneszn.Forms.RoomsForms
             else
             {
                 DateTime? nextDue = NextDueDate(dest.AnchorDate);
+                DateTime? ownNextDue = NextDueDate(_sourceAnchor);
 
                 lblDestinationInfo.Text = dest.ActiveTenants == 0
-                    ? $"{dest.FreeSlots} free slot(s). The room is empty, so its billing cycle starts on the transfer date."
+                    ? $"{dest.FreeSlots} free slot(s). The room is empty, so it keeps the tenants' current cycle: " +
+                      $"first bill at this room's price on {ownNextDue:MMM d, yyyy}."
                     : $"{dest.FreeSlots} free slot(s). Next bill due {nextDue:MMM d, yyyy}.";
             }
 
@@ -438,6 +449,7 @@ namespace Capstoneszn.Forms.RoomsForms
 
         private bool ExecuteTransfer(List<TenantItem> selected, RoomItem dest)
         {
+
             DateTime today = DateTime.Today;
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())
@@ -516,16 +528,36 @@ namespace Capstoneszn.Forms.RoomsForms
                             }
                         }
 
-                        // An empty room has no billing cycle. Starting one here
-                        // stops the generator back-billing from a stale anchor
-                        // left by whoever lived there last.
+                        // An empty destination gets a billing cycle here.
+                        //
+                        // It must NOT start today: BillGenerator bills every
+                        // period from the anchor up to today, so an anchor of
+                        // today would charge the destination price at once -
+                        // while the tenants have already paid the source room's
+                        // current period (settled rule: no payment at transfer,
+                        // destination price from the NEXT cycle).
+                        //
+                        // So the anchor is the tenants' next due date on their
+                        // current cycle. The first destination bill falls exactly
+                        // where their next source bill would have.
                         if (destOccupied == 0)
                         {
+                            DateTime? sourceAnchor;
+                            using (SqlCommand cmd = new SqlCommand(
+                                "SELECT BillingAnchorDate FROM Rooms WHERE RoomId = @rid;", conn, tx))
+                            {
+                                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _sourceRoomId;
+                                object o = cmd.ExecuteScalar();
+                                sourceAnchor = (o == null || o == DBNull.Value) ? (DateTime?)null : (DateTime)o;
+                            }
+
+                            DateTime newAnchor = NextDueDate(sourceAnchor) ?? today;
+
                             using (SqlCommand cmd = new SqlCommand(
                                 "UPDATE Rooms SET BillingAnchorDate = @date WHERE RoomId = @rid;",
                                 conn, tx))
                             {
-                                cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+                                cmd.Parameters.Add("@date", SqlDbType.Date).Value = newAnchor;
                                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = dest.RoomId;
                                 cmd.ExecuteNonQuery();
                             }
@@ -545,6 +577,11 @@ namespace Capstoneszn.Forms.RoomsForms
                             cmd.ExecuteNonQuery();
                         }
 
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleTenants, "Transfer",
+                            string.Join(", ", selected.Select(t => t.Name)) +
+                            " transferred from Room " + _sourceRoomNumber + " to Room " + dest.RoomNumber +
+                            " on " + today.ToString("MMM dd, yyyy"));
+
                         tx.Commit();
                         return true;
                     }
@@ -560,6 +597,7 @@ namespace Capstoneszn.Forms.RoomsForms
                     }
                 }
             }
+
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

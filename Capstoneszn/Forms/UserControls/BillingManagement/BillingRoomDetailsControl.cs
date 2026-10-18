@@ -30,9 +30,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
     {
 
         /// <summary>
-        /// The "This Period" figures follow the room's rent bill. Other
-        /// categories (utilities, maintenance) are deferred; when they
-        /// arrive they still count in Outstanding, which is category-blind.
+        /// The "This Period" figures follow the room's rent bill. Every
+        /// other category (water, maintenance) still counts in Total
+        /// Outstanding, which is category-blind; maintenance also gets its
+        /// own column because it is paid separately (Full only).
         /// </summary>
         private const string RentCategory = "Rent";
 
@@ -53,7 +54,7 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             // its own from the query (TenantId, Overdue stay hidden that way).
             dgvTenantPayments.AutoGenerateColumns = false;
 
-            foreach (DataGridViewColumn col in new[] { colShare, colPaid, colOutstanding, colAdvance })
+            foreach (DataGridViewColumn col in new[] { colShare, colPaid, colMaintenance, colOutstanding, colAdvance })
             {
                 col.DefaultCellStyle.Format = "N2";
                 col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
@@ -163,9 +164,14 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         ///       means they joined after the bill was generated and have no
         ///       share in it; they are billed from the next period.
         ///   Outstanding / Overdue - every unpaid share from their CURRENT
-        ///       stay in this room, any category. Bills from before a
-        ///       reactivation are excluded: those were settled by write-off
-        ///       or forfeit at that earlier move out.
+        ///       stay, any category, any room. Same rule as BillingHelper's
+        ///       allocation engine, so this screen shows exactly what the
+        ///       payment form can collect. No room filter on purpose: a
+        ///       maintenance bill for the room they transferred out of
+        ///       follows the tenant. Bills from before a reactivation are
+        ///       excluded: those were settled by write-off or forfeit at
+        ///       that earlier move out.
+        ///   MaintenanceOwed - the Maintenance part of Outstanding.
         ///   Advance - credit paid ahead that no bill has claimed yet, less
         ///       anything forfeited.
         ///
@@ -183,6 +189,7 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                        cur.Paid                        AS PeriodPaid,
                        ISNULL(debt.Outstanding, 0)     AS Outstanding,
                        ISNULL(debt.Overdue, 0)         AS Overdue,
+                       ISNULL(debt.MaintOwed, 0)       AS MaintenanceOwed,
                        ISNULL(cred.Held, 0)
                      - ISNULL(forf.Forfeited, 0)       AS Advance
                 FROM   Tenancies tn
@@ -205,9 +212,11 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 OUTER APPLY (
                     SELECT SUM(x.Unpaid) AS Outstanding,
                            SUM(CASE WHEN x.DueDate < CAST(GETDATE() AS DATE)
-                                    THEN x.Unpaid ELSE 0 END) AS Overdue
+                                    THEN x.Unpaid ELSE 0 END) AS Overdue,
+                           SUM(CASE WHEN x.BillCategory = 'Maintenance'
+                                    THEN x.Unpaid ELSE 0 END) AS MaintOwed
                     FROM (
-                        SELECT b.DueDate,
+                        SELECT b.DueDate, b.BillCategory,
                                bt.Share
                              - ISNULL((SELECT SUM(a.Amount)
                                        FROM   PaymentAllocations a
@@ -219,7 +228,6 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                         FROM   BillTenants bt
                         JOIN   Bills b ON b.BillId = bt.BillId
                         WHERE  bt.TenantId = t.TenantId
-                          AND  b.RoomId    = @rid
                           AND  b.BillingPeriodStart >= tn.MoveInDate
                     ) x
                     WHERE x.Unpaid > 0
@@ -284,6 +292,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 e.CellStyle.ForeColor = late > 0m ? Color.Crimson
                                       : owed > 0m ? Color.DarkOrange
                                       : Color.Black;
+            }
+            else if (e.ColumnIndex == colMaintenance.Index)
+            {
+                e.CellStyle.ForeColor = ToDec(row["MaintenanceOwed"]) > 0m ? Color.DarkOrange : Color.Black;
             }
             else if (e.ColumnIndex == colAdvance.Index)
             {

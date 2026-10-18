@@ -52,6 +52,7 @@
             colTenantName = new DataGridViewTextBoxColumn();
             colShare = new DataGridViewTextBoxColumn();
             colPaid = new DataGridViewTextBoxColumn();
+            colMaintenance = new DataGridViewTextBoxColumn();
             colOutstanding = new DataGridViewTextBoxColumn();
             colAdvance = new DataGridViewTextBoxColumn();
             colPayment = new DataGridViewButtonColumn();
@@ -333,7 +334,7 @@
             dgvTenantPayments.AllowUserToResizeRows = false;
             dgvTenantPayments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTenantPayments.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTenantPayments.Columns.AddRange(new DataGridViewColumn[] { colTenantName, colShare, colPaid, colOutstanding, colAdvance, colPayment });
+            dgvTenantPayments.Columns.AddRange(new DataGridViewColumn[] { colTenantName, colShare, colPaid, colMaintenance, colOutstanding, colAdvance, colPayment });
             dgvTenantPayments.Dock = DockStyle.Fill;
             dgvTenantPayments.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             dgvTenantPayments.Location = new Point(12, 44);
@@ -378,11 +379,20 @@
             colPaid.Name = "colPaid";
             colPaid.ReadOnly = true;
             //
+            // colMaintenance
+            //
+            colMaintenance.DataPropertyName = "MaintenanceOwed";
+            colMaintenance.FillWeight = 90F;
+            colMaintenance.HeaderText = "Maintenance Owed";
+            colMaintenance.MinimumWidth = 6;
+            colMaintenance.Name = "colMaintenance";
+            colMaintenance.ReadOnly = true;
+            //
             // colOutstanding
             //
             colOutstanding.DataPropertyName = "Outstanding";
             colOutstanding.FillWeight = 90F;
-            colOutstanding.HeaderText = "Outstanding";
+            colOutstanding.HeaderText = "Total Outstanding";
             colOutstanding.MinimumWidth = 6;
             colOutstanding.Name = "colOutstanding";
             colOutstanding.ReadOnly = true;
@@ -477,6 +487,7 @@
         private DataGridViewTextBoxColumn colTenantName;
         private DataGridViewTextBoxColumn colShare;
         private DataGridViewTextBoxColumn colPaid;
+        private DataGridViewTextBoxColumn colMaintenance;
         private DataGridViewTextBoxColumn colOutstanding;
         private DataGridViewTextBoxColumn colAdvance;
         private DataGridViewButtonColumn colPayment;
