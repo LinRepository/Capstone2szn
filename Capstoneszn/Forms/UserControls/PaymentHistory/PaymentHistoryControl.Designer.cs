@@ -57,9 +57,9 @@
             tabUtilities.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvUtilities).BeginInit();
             SuspendLayout();
-            //
+            // 
             // pnlPaymentHistoryHeader
-            //
+            // 
             pnlPaymentHistoryHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlPaymentHistoryHeader.Controls.Add(lblPaymentHistoryTitle);
             pnlPaymentHistoryHeader.Dock = DockStyle.Top;
@@ -67,9 +67,9 @@
             pnlPaymentHistoryHeader.Name = "pnlPaymentHistoryHeader";
             pnlPaymentHistoryHeader.Size = new Size(1300, 80);
             pnlPaymentHistoryHeader.TabIndex = 0;
-            //
+            // 
             // lblPaymentHistoryTitle
-            //
+            // 
             lblPaymentHistoryTitle.BorderStyle = BorderStyle.FixedSingle;
             lblPaymentHistoryTitle.Dock = DockStyle.Fill;
             lblPaymentHistoryTitle.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -80,9 +80,9 @@
             lblPaymentHistoryTitle.TabIndex = 7;
             lblPaymentHistoryTitle.Text = "Payment History";
             lblPaymentHistoryTitle.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // pnlSearch
-            //
+            // 
             pnlSearch.BorderStyle = BorderStyle.FixedSingle;
             pnlSearch.Controls.Add(lblPaymentTotal);
             pnlSearch.Controls.Add(cboPaymentPeriod);
@@ -92,29 +92,9 @@
             pnlSearch.Name = "pnlSearch";
             pnlSearch.Size = new Size(1300, 60);
             pnlSearch.TabIndex = 1;
-            //
-            // txtSearch
-            //
-            txtSearch.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSearch.Location = new Point(10, 12);
-            txtSearch.MaxLength = 100;
-            txtSearch.Name = "txtSearch";
-            txtSearch.PlaceholderText = "Search tenant, room or receipt no.";
-            txtSearch.Size = new Size(380, 34);
-            txtSearch.TabIndex = 0;
-            //
-            // cboPaymentPeriod
-            //
-            cboPaymentPeriod.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboPaymentPeriod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cboPaymentPeriod.FormattingEnabled = true;
-            cboPaymentPeriod.Location = new Point(405, 12);
-            cboPaymentPeriod.Name = "cboPaymentPeriod";
-            cboPaymentPeriod.Size = new Size(200, 36);
-            cboPaymentPeriod.TabIndex = 1;
-            //
+            // 
             // lblPaymentTotal
-            //
+            // 
             lblPaymentTotal.AutoSize = true;
             lblPaymentTotal.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPaymentTotal.ForeColor = Color.White;
@@ -123,9 +103,29 @@
             lblPaymentTotal.Size = new Size(54, 28);
             lblPaymentTotal.TabIndex = 2;
             lblPaymentTotal.Text = "Total";
-            //
+            // 
+            // cboPaymentPeriod
+            // 
+            cboPaymentPeriod.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboPaymentPeriod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cboPaymentPeriod.FormattingEnabled = true;
+            cboPaymentPeriod.Location = new Point(405, 12);
+            cboPaymentPeriod.Name = "cboPaymentPeriod";
+            cboPaymentPeriod.Size = new Size(200, 36);
+            cboPaymentPeriod.TabIndex = 1;
+            // 
+            // txtSearch
+            // 
+            txtSearch.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSearch.Location = new Point(10, 12);
+            txtSearch.MaxLength = 100;
+            txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search tenant, room or receipt no.";
+            txtSearch.Size = new Size(380, 34);
+            txtSearch.TabIndex = 0;
+            // 
             // pnlPaymentHistoryContent
-            //
+            // 
             pnlPaymentHistoryContent.BorderStyle = BorderStyle.FixedSingle;
             pnlPaymentHistoryContent.Controls.Add(tabPaymentHistory);
             pnlPaymentHistoryContent.Dock = DockStyle.Fill;
@@ -133,9 +133,9 @@
             pnlPaymentHistoryContent.Name = "pnlPaymentHistoryContent";
             pnlPaymentHistoryContent.Size = new Size(1300, 610);
             pnlPaymentHistoryContent.TabIndex = 2;
-            //
+            // 
             // tabPaymentHistory
-            //
+            // 
             tabPaymentHistory.Controls.Add(tabAll);
             tabPaymentHistory.Controls.Add(tabRent);
             tabPaymentHistory.Controls.Add(tabMaintenance);
@@ -147,9 +147,9 @@
             tabPaymentHistory.SelectedIndex = 0;
             tabPaymentHistory.Size = new Size(1298, 608);
             tabPaymentHistory.TabIndex = 0;
-            //
+            // 
             // tabAll
-            //
+            // 
             tabAll.BackColor = Color.FromArgb(11, 20, 38);
             tabAll.Controls.Add(dgvAll);
             tabAll.Location = new Point(4, 37);
@@ -158,17 +158,19 @@
             tabAll.Size = new Size(1290, 567);
             tabAll.TabIndex = 0;
             tabAll.Text = "All";
-            //
+            // 
             // dgvAll
-            //
+            // 
+            dgvAll.ColumnHeadersHeight = 29;
             dgvAll.Dock = DockStyle.Fill;
             dgvAll.Location = new Point(3, 3);
             dgvAll.Name = "dgvAll";
+            dgvAll.RowHeadersWidth = 51;
             dgvAll.Size = new Size(1284, 561);
             dgvAll.TabIndex = 0;
-            //
+            // 
             // tabRent
-            //
+            // 
             tabRent.BackColor = Color.FromArgb(11, 20, 38);
             tabRent.Controls.Add(dgvRent);
             tabRent.Location = new Point(4, 37);
@@ -177,17 +179,19 @@
             tabRent.Size = new Size(1290, 567);
             tabRent.TabIndex = 1;
             tabRent.Text = "Rent";
-            //
+            // 
             // dgvRent
-            //
+            // 
+            dgvRent.ColumnHeadersHeight = 29;
             dgvRent.Dock = DockStyle.Fill;
             dgvRent.Location = new Point(3, 3);
             dgvRent.Name = "dgvRent";
+            dgvRent.RowHeadersWidth = 51;
             dgvRent.Size = new Size(1284, 561);
             dgvRent.TabIndex = 0;
-            //
+            // 
             // tabMaintenance
-            //
+            // 
             tabMaintenance.BackColor = Color.FromArgb(11, 20, 38);
             tabMaintenance.Controls.Add(dgvMaintenance);
             tabMaintenance.Location = new Point(4, 37);
@@ -196,17 +200,19 @@
             tabMaintenance.Size = new Size(1290, 567);
             tabMaintenance.TabIndex = 2;
             tabMaintenance.Text = "Maintenance";
-            //
+            // 
             // dgvMaintenance
-            //
+            // 
+            dgvMaintenance.ColumnHeadersHeight = 29;
             dgvMaintenance.Dock = DockStyle.Fill;
             dgvMaintenance.Location = new Point(3, 3);
             dgvMaintenance.Name = "dgvMaintenance";
+            dgvMaintenance.RowHeadersWidth = 51;
             dgvMaintenance.Size = new Size(1284, 561);
             dgvMaintenance.TabIndex = 0;
-            //
+            // 
             // tabUtilities
-            //
+            // 
             tabUtilities.BackColor = Color.FromArgb(11, 20, 38);
             tabUtilities.Controls.Add(dgvUtilities);
             tabUtilities.Location = new Point(4, 37);
@@ -215,18 +221,20 @@
             tabUtilities.Size = new Size(1290, 567);
             tabUtilities.TabIndex = 3;
             tabUtilities.Text = "Utilities";
-            //
+            // 
             // dgvUtilities
-            //
+            // 
+            dgvUtilities.ColumnHeadersHeight = 29;
             dgvUtilities.Dock = DockStyle.Fill;
             dgvUtilities.Location = new Point(3, 3);
             dgvUtilities.Name = "dgvUtilities";
+            dgvUtilities.RowHeadersWidth = 51;
             dgvUtilities.Size = new Size(1284, 561);
             dgvUtilities.TabIndex = 0;
-            //
+            // 
             // PaymentHistoryControl
-            //
-            BackColor = Color.FromArgb(11, 20, 38);
+            // 
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlPaymentHistoryContent);
             Controls.Add(pnlSearch);
             Controls.Add(pnlPaymentHistoryHeader);

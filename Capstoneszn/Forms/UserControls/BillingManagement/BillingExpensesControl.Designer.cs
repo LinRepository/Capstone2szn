@@ -49,9 +49,9 @@
             ((System.ComponentModel.ISupportInitialize)dgvAll).BeginInit();
             pnlExpensesFilter.SuspendLayout();
             SuspendLayout();
-            //
+            // 
             // pnlExpensesHeader
-            //
+            // 
             pnlExpensesHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlExpensesHeader.Controls.Add(lblExpensesTitle);
             pnlExpensesHeader.Controls.Add(btnBackExpenses);
@@ -60,9 +60,9 @@
             pnlExpensesHeader.Name = "pnlExpensesHeader";
             pnlExpensesHeader.Size = new Size(1300, 90);
             pnlExpensesHeader.TabIndex = 0;
-            //
+            // 
             // lblExpensesTitle
-            //
+            // 
             lblExpensesTitle.Dock = DockStyle.Fill;
             lblExpensesTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblExpensesTitle.ForeColor = Color.White;
@@ -73,9 +73,9 @@
             lblExpensesTitle.TabIndex = 7;
             lblExpensesTitle.Text = "Expenses";
             lblExpensesTitle.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // btnBackExpenses
-            //
+            // 
             btnBackExpenses.Dock = DockStyle.Left;
             btnBackExpenses.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnBackExpenses.Location = new Point(0, 0);
@@ -87,9 +87,9 @@
             btnBackExpenses.TextAlign = ContentAlignment.TopCenter;
             btnBackExpenses.UseVisualStyleBackColor = true;
             btnBackExpenses.Click += btnBackExpenses_Click;
-            //
+            // 
             // pnlExpensesContent
-            //
+            // 
             pnlExpensesContent.BorderStyle = BorderStyle.FixedSingle;
             pnlExpensesContent.Controls.Add(tabExpenses);
             pnlExpensesContent.Controls.Add(pnlExpensesFilter);
@@ -98,40 +98,9 @@
             pnlExpensesContent.Name = "pnlExpensesContent";
             pnlExpensesContent.Size = new Size(1300, 660);
             pnlExpensesContent.TabIndex = 2;
-            //
-            // pnlExpensesFilter
-            //
-            pnlExpensesFilter.Controls.Add(lblExpensesTotal);
-            pnlExpensesFilter.Controls.Add(cboExpensePeriod);
-            pnlExpensesFilter.Dock = DockStyle.Top;
-            pnlExpensesFilter.Location = new Point(0, 0);
-            pnlExpensesFilter.Name = "pnlExpensesFilter";
-            pnlExpensesFilter.Size = new Size(1298, 55);
-            pnlExpensesFilter.TabIndex = 0;
-            //
-            // cboExpensePeriod
-            //
-            cboExpensePeriod.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboExpensePeriod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cboExpensePeriod.FormattingEnabled = true;
-            cboExpensePeriod.Location = new Point(12, 10);
-            cboExpensePeriod.Name = "cboExpensePeriod";
-            cboExpensePeriod.Size = new Size(220, 36);
-            cboExpensePeriod.TabIndex = 0;
-            //
-            // lblExpensesTotal
-            //
-            lblExpensesTotal.AutoSize = true;
-            lblExpensesTotal.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblExpensesTotal.ForeColor = Color.White;
-            lblExpensesTotal.Location = new Point(255, 13);
-            lblExpensesTotal.Name = "lblExpensesTotal";
-            lblExpensesTotal.Size = new Size(54, 28);
-            lblExpensesTotal.TabIndex = 1;
-            lblExpensesTotal.Text = "Total";
-            //
+            // 
             // tabExpenses
-            //
+            // 
             tabExpenses.Controls.Add(tabAll);
             tabExpenses.Dock = DockStyle.Fill;
             tabExpenses.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -140,9 +109,9 @@
             tabExpenses.SelectedIndex = 0;
             tabExpenses.Size = new Size(1298, 603);
             tabExpenses.TabIndex = 1;
-            //
+            // 
             // tabAll
-            //
+            // 
             tabAll.Controls.Add(dgvAll);
             tabAll.Location = new Point(4, 37);
             tabAll.Name = "tabAll";
@@ -151,9 +120,9 @@
             tabAll.TabIndex = 0;
             tabAll.Text = "All";
             tabAll.UseVisualStyleBackColor = true;
-            //
+            // 
             // dgvAll
-            //
+            // 
             dgvAll.AllowUserToAddRows = false;
             dgvAll.AllowUserToDeleteRows = false;
             dgvAll.AllowUserToResizeRows = false;
@@ -171,44 +140,75 @@
             dgvAll.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAll.Size = new Size(1284, 556);
             dgvAll.TabIndex = 1;
-            //
+            // 
             // colAllDate
-            //
+            // 
             colAllDate.HeaderText = "Date";
             colAllDate.MinimumWidth = 6;
             colAllDate.Name = "colAllDate";
             colAllDate.ReadOnly = true;
-            //
+            // 
             // colAllDescription
-            //
+            // 
             colAllDescription.HeaderText = "Description";
             colAllDescription.MinimumWidth = 6;
             colAllDescription.Name = "colAllDescription";
             colAllDescription.ReadOnly = true;
-            //
+            // 
             // colAllAmount
-            //
+            // 
             colAllAmount.HeaderText = "Amount";
             colAllAmount.MinimumWidth = 6;
             colAllAmount.Name = "colAllAmount";
             colAllAmount.ReadOnly = true;
-            //
+            // 
+            // pnlExpensesFilter
+            // 
+            pnlExpensesFilter.Controls.Add(lblExpensesTotal);
+            pnlExpensesFilter.Controls.Add(cboExpensePeriod);
+            pnlExpensesFilter.Dock = DockStyle.Top;
+            pnlExpensesFilter.Location = new Point(0, 0);
+            pnlExpensesFilter.Name = "pnlExpensesFilter";
+            pnlExpensesFilter.Size = new Size(1298, 55);
+            pnlExpensesFilter.TabIndex = 0;
+            // 
+            // lblExpensesTotal
+            // 
+            lblExpensesTotal.AutoSize = true;
+            lblExpensesTotal.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblExpensesTotal.ForeColor = Color.White;
+            lblExpensesTotal.Location = new Point(255, 13);
+            lblExpensesTotal.Name = "lblExpensesTotal";
+            lblExpensesTotal.Size = new Size(54, 28);
+            lblExpensesTotal.TabIndex = 1;
+            lblExpensesTotal.Text = "Total";
+            // 
+            // cboExpensePeriod
+            // 
+            cboExpensePeriod.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboExpensePeriod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cboExpensePeriod.FormattingEnabled = true;
+            cboExpensePeriod.Location = new Point(12, 10);
+            cboExpensePeriod.Name = "cboExpensePeriod";
+            cboExpensePeriod.Size = new Size(220, 36);
+            cboExpensePeriod.TabIndex = 0;
+            // 
             // BillingExpensesControl
-            //
+            // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlExpensesContent);
             Controls.Add(pnlExpensesHeader);
             Name = "BillingExpensesControl";
             Size = new Size(1300, 750);
             pnlExpensesHeader.ResumeLayout(false);
             pnlExpensesContent.ResumeLayout(false);
-            pnlExpensesFilter.ResumeLayout(false);
-            pnlExpensesFilter.PerformLayout();
             tabExpenses.ResumeLayout(false);
             tabAll.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvAll).EndInit();
+            pnlExpensesFilter.ResumeLayout(false);
+            pnlExpensesFilter.PerformLayout();
             ResumeLayout(false);
         }
 

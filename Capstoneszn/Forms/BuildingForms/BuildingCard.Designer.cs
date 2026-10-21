@@ -62,7 +62,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.LightSlateGray;
+            BackColor = Color.FromArgb(25, 25, 100);
             Controls.Add(lblBuildingContent);
             Controls.Add(lblBuildingNameCard);
             Cursor = Cursors.Hand;

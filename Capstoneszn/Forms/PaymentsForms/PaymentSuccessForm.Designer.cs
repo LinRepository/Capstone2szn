@@ -246,7 +246,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(482, 403);
             Controls.Add(pnlPaymentSuccessContent);
             Controls.Add(pnlPaymentSuccessActions);

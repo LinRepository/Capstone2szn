@@ -47,7 +47,6 @@
             // 
             // pnlLoginHeader
             // 
-            pnlLoginHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlLoginHeader.Controls.Add(lblLoginFormTitle);
             pnlLoginHeader.Dock = DockStyle.Top;
             pnlLoginHeader.Location = new Point(0, 0);
@@ -57,19 +56,18 @@
             // 
             // lblLoginFormTitle
             // 
-            lblLoginFormTitle.Dock = DockStyle.Fill;
+            lblLoginFormTitle.Dock = DockStyle.Bottom;
             lblLoginFormTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblLoginFormTitle.ForeColor = Color.White;
-            lblLoginFormTitle.Location = new Point(0, 0);
+            lblLoginFormTitle.Location = new Point(0, 20);
             lblLoginFormTitle.Name = "lblLoginFormTitle";
-            lblLoginFormTitle.Size = new Size(680, 58);
+            lblLoginFormTitle.Size = new Size(682, 40);
             lblLoginFormTitle.TabIndex = 7;
-            lblLoginFormTitle.Text = "LOGIN";
+            lblLoginFormTitle.Text = "Billing Management System";
             lblLoginFormTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlLoginContent
             // 
-            pnlLoginContent.BorderStyle = BorderStyle.FixedSingle;
             pnlLoginContent.Controls.Add(txtLoginPassword);
             pnlLoginContent.Controls.Add(txtLoginUsername);
             pnlLoginContent.Controls.Add(btnLogin);
@@ -163,9 +161,9 @@
             chkShowPassword.ForeColor = Color.White;
             chkShowPassword.Location = new Point(164, 374);
             chkShowPassword.Name = "chkShowPassword";
-            chkShowPassword.Size = new Size(153, 29);
+            chkShowPassword.Size = new Size(158, 29);
             chkShowPassword.TabIndex = 17;
-            chkShowPassword.Text = "ShowPassword";
+            chkShowPassword.Text = "Show Password";
             chkShowPassword.UseVisualStyleBackColor = true;
             chkShowPassword.CheckedChanged += chkShowPassword_CheckedChanged;
             // 
@@ -184,7 +182,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(682, 653);
             Controls.Add(pnlLoginContent);
             Controls.Add(pnlLoginHeader);

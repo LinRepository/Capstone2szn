@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             panel2 = new Panel();
-            lblRoom = new Label();
             lblTenant = new Label();
-            lblRoomValue = new Label();
             lblTenantValue = new Label();
-            lblPeriod = new Label();
-            lblOutstanding = new Label();
-            lblPeriodValue = new Label();
             lblOutstandingValue = new Label();
+            lblPeriodValue = new Label();
+            lblRoomValue = new Label();
+            lblOutstanding = new Label();
+            lblPeriod = new Label();
+            lblRoom = new Label();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -56,17 +56,6 @@
             panel2.Size = new Size(825, 200);
             panel2.TabIndex = 1;
             // 
-            // lblRoom
-            // 
-            lblRoom.AutoSize = true;
-            lblRoom.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoom.ForeColor = Color.White;
-            lblRoom.Location = new Point(36, 37);
-            lblRoom.Name = "lblRoom";
-            lblRoom.Size = new Size(78, 31);
-            lblRoom.TabIndex = 0;
-            lblRoom.Text = "Room:";
-            // 
             // lblTenant
             // 
             lblTenant.AutoSize = true;
@@ -77,17 +66,6 @@
             lblTenant.Size = new Size(87, 31);
             lblTenant.TabIndex = 0;
             lblTenant.Text = "Tenant:";
-            // 
-            // lblRoomValue
-            // 
-            lblRoomValue.AutoSize = true;
-            lblRoomValue.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoomValue.ForeColor = Color.White;
-            lblRoomValue.Location = new Point(147, 37);
-            lblRoomValue.Name = "lblRoomValue";
-            lblRoomValue.Size = new Size(94, 31);
-            lblRoomValue.TabIndex = 0;
-            lblRoomValue.Text = "number";
             // 
             // lblTenantValue
             // 
@@ -100,27 +78,16 @@
             lblTenantValue.TabIndex = 0;
             lblTenantValue.Text = "name";
             // 
-            // lblPeriod
+            // lblOutstandingValue
             // 
-            lblPeriod.AutoSize = true;
-            lblPeriod.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPeriod.ForeColor = Color.White;
-            lblPeriod.Location = new Point(415, 37);
-            lblPeriod.Name = "lblPeriod";
-            lblPeriod.Size = new Size(153, 31);
-            lblPeriod.TabIndex = 0;
-            lblPeriod.Text = "Water Month:";
-            // 
-            // lblOutstanding
-            // 
-            lblOutstanding.AutoSize = true;
-            lblOutstanding.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblOutstanding.ForeColor = Color.White;
-            lblOutstanding.Location = new Point(415, 105);
-            lblOutstanding.Name = "lblOutstanding";
-            lblOutstanding.Size = new Size(134, 31);
-            lblOutstanding.TabIndex = 0;
-            lblOutstanding.Text = "Total Owed:";
+            lblOutstandingValue.AutoSize = true;
+            lblOutstandingValue.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOutstandingValue.ForeColor = Color.White;
+            lblOutstandingValue.Location = new Point(574, 105);
+            lblOutstandingValue.Name = "lblOutstandingValue";
+            lblOutstandingValue.Size = new Size(94, 31);
+            lblOutstandingValue.TabIndex = 0;
+            lblOutstandingValue.Text = "number";
             // 
             // lblPeriodValue
             // 
@@ -133,22 +100,55 @@
             lblPeriodValue.TabIndex = 0;
             lblPeriodValue.Text = "date";
             // 
-            // lblOutstandingValue
+            // lblRoomValue
             // 
-            lblOutstandingValue.AutoSize = true;
-            lblOutstandingValue.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblOutstandingValue.ForeColor = Color.White;
-            lblOutstandingValue.Location = new Point(574, 105);
-            lblOutstandingValue.Name = "lblOutstandingValue";
-            lblOutstandingValue.Size = new Size(94, 31);
-            lblOutstandingValue.TabIndex = 0;
-            lblOutstandingValue.Text = "number";
+            lblRoomValue.AutoSize = true;
+            lblRoomValue.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoomValue.ForeColor = Color.White;
+            lblRoomValue.Location = new Point(147, 37);
+            lblRoomValue.Name = "lblRoomValue";
+            lblRoomValue.Size = new Size(94, 31);
+            lblRoomValue.TabIndex = 0;
+            lblRoomValue.Text = "number";
+            // 
+            // lblOutstanding
+            // 
+            lblOutstanding.AutoSize = true;
+            lblOutstanding.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOutstanding.ForeColor = Color.White;
+            lblOutstanding.Location = new Point(415, 105);
+            lblOutstanding.Name = "lblOutstanding";
+            lblOutstanding.Size = new Size(134, 31);
+            lblOutstanding.TabIndex = 0;
+            lblOutstanding.Text = "Total Owed:";
+            // 
+            // lblPeriod
+            // 
+            lblPeriod.AutoSize = true;
+            lblPeriod.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblPeriod.ForeColor = Color.White;
+            lblPeriod.Location = new Point(415, 37);
+            lblPeriod.Name = "lblPeriod";
+            lblPeriod.Size = new Size(153, 31);
+            lblPeriod.TabIndex = 0;
+            lblPeriod.Text = "Water Month:";
+            // 
+            // lblRoom
+            // 
+            lblRoom.AutoSize = true;
+            lblRoom.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoom.ForeColor = Color.White;
+            lblRoom.Location = new Point(36, 37);
+            lblRoom.Name = "lblRoom";
+            lblRoom.Size = new Size(78, 31);
+            lblRoom.TabIndex = 0;
+            lblRoom.Text = "Room:";
             // 
             // UtilitiesControlBilling
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(panel2);
             Name = "UtilitiesControlBilling";
             Size = new Size(825, 200);

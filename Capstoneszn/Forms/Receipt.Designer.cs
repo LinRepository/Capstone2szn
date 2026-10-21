@@ -518,7 +518,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(765, 731);
             Controls.Add(panel1);
             Name = "Receipt";

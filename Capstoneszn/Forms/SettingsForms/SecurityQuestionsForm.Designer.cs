@@ -380,7 +380,7 @@
             AcceptButton = btnSaveSecurityQuestions;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(10, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             CancelButton = btnCancelSecurityQuestions;
             ClientSize = new Size(700, 650);
             Controls.Add(pnlSecurityQuestionsContent);

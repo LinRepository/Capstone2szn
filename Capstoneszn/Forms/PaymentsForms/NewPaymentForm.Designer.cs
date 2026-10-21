@@ -36,6 +36,7 @@
             btnCancelPayment = new Button();
             btnContinuePayment = new Button();
             panel3 = new Panel();
+            lblPeso = new Label();
             RadioBtnGCash = new RadioButton();
             RadioBtnCash = new RadioButton();
             dtpPaymentDate = new DateTimePicker();
@@ -53,7 +54,6 @@
             RadioBtnRoom = new RadioButton();
             RadioBtnTenant = new RadioButton();
             lblReferenceNumber = new Label();
-            lblPeso = new Label();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -161,6 +161,17 @@
             panel3.Padding = new Padding(10);
             panel3.Size = new Size(845, 465);
             panel3.TabIndex = 2;
+            // 
+            // lblPeso
+            // 
+            lblPeso.AutoSize = true;
+            lblPeso.BackColor = Color.White;
+            lblPeso.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblPeso.Location = new Point(35, 51);
+            lblPeso.Name = "lblPeso";
+            lblPeso.Size = new Size(47, 54);
+            lblPeso.TabIndex = 7;
+            lblPeso.Text = "₱";
             // 
             // RadioBtnGCash
             // 
@@ -365,22 +376,11 @@
             lblReferenceNumber.TabIndex = 1;
             lblReferenceNumber.Text = "Reference Gcash No.";
             // 
-            // lblPeso
-            // 
-            lblPeso.AutoSize = true;
-            lblPeso.BackColor = Color.White;
-            lblPeso.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPeso.Location = new Point(35, 51);
-            lblPeso.Name = "lblPeso";
-            lblPeso.Size = new Size(47, 54);
-            lblPeso.TabIndex = 7;
-            lblPeso.Text = "₱";
-            // 
             // New_Make_Payment
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(845, 541);
             Controls.Add(panel4);
             Controls.Add(panel2);

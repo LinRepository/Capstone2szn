@@ -51,9 +51,9 @@
             pnlWarnings.SuspendLayout();
             pnlActions.SuspendLayout();
             SuspendLayout();
-            //
+            // 
             // pnlHeader
-            //
+            // 
             pnlHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlHeader.Controls.Add(lblSourceRoom);
             pnlHeader.Controls.Add(lblTitle);
@@ -62,9 +62,9 @@
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Size = new Size(720, 85);
             pnlHeader.TabIndex = 0;
-            //
+            // 
             // lblSourceRoom
-            //
+            // 
             lblSourceRoom.Dock = DockStyle.Fill;
             lblSourceRoom.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblSourceRoom.ForeColor = Color.White;
@@ -74,9 +74,9 @@
             lblSourceRoom.TabIndex = 1;
             lblSourceRoom.Text = "-";
             lblSourceRoom.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblTitle
-            //
+            // 
             lblTitle.Dock = DockStyle.Top;
             lblTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTitle.ForeColor = Color.White;
@@ -86,9 +86,9 @@
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Transfer Tenants";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // pnlDestination
-            //
+            // 
             pnlDestination.BorderStyle = BorderStyle.FixedSingle;
             pnlDestination.Controls.Add(lblDestinationInfo);
             pnlDestination.Controls.Add(cboDestination);
@@ -99,21 +99,21 @@
             pnlDestination.Padding = new Padding(15, 10, 15, 10);
             pnlDestination.Size = new Size(720, 110);
             pnlDestination.TabIndex = 1;
-            //
+            // 
             // lblDestinationInfo
-            //
+            // 
             lblDestinationInfo.Dock = DockStyle.Bottom;
             lblDestinationInfo.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDestinationInfo.ForeColor = Color.Gainsboro;
-            lblDestinationInfo.Location = new Point(15, 68);
+            lblDestinationInfo.Location = new Point(195, 68);
             lblDestinationInfo.Name = "lblDestinationInfo";
-            lblDestinationInfo.Size = new Size(688, 30);
+            lblDestinationInfo.Size = new Size(508, 30);
             lblDestinationInfo.TabIndex = 2;
             lblDestinationInfo.Text = "-";
             lblDestinationInfo.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // cboDestination
-            //
+            // 
             cboDestination.DropDownStyle = ComboBoxStyle.DropDownList;
             cboDestination.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cboDestination.FormattingEnabled = true;
@@ -122,9 +122,9 @@
             cboDestination.Size = new Size(480, 33);
             cboDestination.TabIndex = 1;
             cboDestination.SelectedIndexChanged += cboDestination_SelectedIndexChanged;
-            //
+            // 
             // lblDestinationCaption
-            //
+            // 
             lblDestinationCaption.Dock = DockStyle.Left;
             lblDestinationCaption.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDestinationCaption.ForeColor = Color.White;
@@ -134,9 +134,9 @@
             lblDestinationCaption.TabIndex = 0;
             lblDestinationCaption.Text = "Transfer to room";
             lblDestinationCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // pnlTenants
-            //
+            // 
             pnlTenants.Controls.Add(clbTenants);
             pnlTenants.Controls.Add(pnlTenantsHeader);
             pnlTenants.Dock = DockStyle.Fill;
@@ -145,9 +145,9 @@
             pnlTenants.Padding = new Padding(15, 0, 15, 10);
             pnlTenants.Size = new Size(720, 215);
             pnlTenants.TabIndex = 2;
-            //
+            // 
             // clbTenants
-            //
+            // 
             clbTenants.CheckOnClick = true;
             clbTenants.Dock = DockStyle.Fill;
             clbTenants.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -158,18 +158,18 @@
             clbTenants.Size = new Size(690, 165);
             clbTenants.TabIndex = 1;
             clbTenants.ItemCheck += clbTenants_ItemCheck;
-            //
+            // 
             // pnlTenantsHeader
-            //
+            // 
             pnlTenantsHeader.Controls.Add(lblTenantsCaption);
             pnlTenantsHeader.Dock = DockStyle.Top;
             pnlTenantsHeader.Location = new Point(15, 0);
             pnlTenantsHeader.Name = "pnlTenantsHeader";
             pnlTenantsHeader.Size = new Size(690, 40);
             pnlTenantsHeader.TabIndex = 0;
-            //
+            // 
             // lblTenantsCaption
-            //
+            // 
             lblTenantsCaption.Dock = DockStyle.Fill;
             lblTenantsCaption.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTenantsCaption.ForeColor = Color.White;
@@ -179,9 +179,9 @@
             lblTenantsCaption.TabIndex = 0;
             lblTenantsCaption.Text = "Tenants to transfer";
             lblTenantsCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // pnlWarnings
-            //
+            // 
             pnlWarnings.BorderStyle = BorderStyle.FixedSingle;
             pnlWarnings.Controls.Add(lblWarnings);
             pnlWarnings.Dock = DockStyle.Bottom;
@@ -190,9 +190,9 @@
             pnlWarnings.Padding = new Padding(15, 8, 15, 8);
             pnlWarnings.Size = new Size(720, 130);
             pnlWarnings.TabIndex = 3;
-            //
+            // 
             // lblWarnings
-            //
+            // 
             lblWarnings.Dock = DockStyle.Fill;
             lblWarnings.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblWarnings.ForeColor = Color.Gold;
@@ -201,10 +201,9 @@
             lblWarnings.Size = new Size(688, 112);
             lblWarnings.TabIndex = 0;
             lblWarnings.Text = "-";
-            lblWarnings.TextAlign = ContentAlignment.TopLeft;
-            //
+            // 
             // pnlActions
-            //
+            // 
             pnlActions.Controls.Add(btnTransfer);
             pnlActions.Controls.Add(btnCancel);
             pnlActions.Dock = DockStyle.Bottom;
@@ -213,9 +212,9 @@
             pnlActions.Padding = new Padding(15, 10, 15, 10);
             pnlActions.Size = new Size(720, 60);
             pnlActions.TabIndex = 4;
-            //
+            // 
             // btnTransfer
-            //
+            // 
             btnTransfer.Cursor = Cursors.Hand;
             btnTransfer.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnTransfer.Location = new Point(555, 10);
@@ -225,9 +224,9 @@
             btnTransfer.Text = "Transfer";
             btnTransfer.UseVisualStyleBackColor = true;
             btnTransfer.Click += btnTransfer_Click;
-            //
+            // 
             // btnCancel
-            //
+            // 
             btnCancel.Cursor = Cursors.Hand;
             btnCancel.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnCancel.Location = new Point(395, 10);
@@ -237,13 +236,13 @@
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
-            //
+            // 
             // TransferForm
-            //
+            // 
             AcceptButton = btnTransfer;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             CancelButton = btnCancel;
             ClientSize = new Size(720, 600);
             Controls.Add(pnlTenants);

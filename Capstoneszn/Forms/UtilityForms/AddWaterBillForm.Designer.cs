@@ -199,7 +199,7 @@
             // 
             // pnlTenantAllocation
             // 
-            pnlTenantAllocation.BackColor = Color.FromArgb(11, 20, 50);
+            pnlTenantAllocation.BackColor = Color.FromArgb(25, 25, 80);
             pnlTenantAllocation.Controls.Add(lblActiveTenantCount);
             pnlTenantAllocation.Controls.Add(lblDivideCaption);
             pnlTenantAllocation.Controls.Add(label6);
@@ -245,7 +245,7 @@
             // 
             // pnlAdminContribution
             // 
-            pnlAdminContribution.BackColor = Color.FromArgb(11, 20, 50);
+            pnlAdminContribution.BackColor = Color.FromArgb(25, 25, 80);
             pnlAdminContribution.Controls.Add(lblSharePeso);
             pnlAdminContribution.Controls.Add(rdoCustomAmount);
             pnlAdminContribution.Controls.Add(rdoDefaultShare);
@@ -413,7 +413,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(796, 707);
             Controls.Add(pnlAddBillContent);
             Controls.Add(pnlAddBillActionButtons);

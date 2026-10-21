@@ -321,7 +321,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             AutoSize = true;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(482, 453);
             Controls.Add(pnlPaymentDetails);
             Controls.Add(panel2);

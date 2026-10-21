@@ -91,8 +91,7 @@
             // 
             // flpDashBoardCards
             // 
-            flpDashBoardCards.BackColor = Color.WhiteSmoke;
-            flpDashBoardCards.BorderStyle = BorderStyle.FixedSingle;
+            flpDashBoardCards.BackColor = Color.FromArgb(25, 25, 70);
             flpDashBoardCards.Controls.Add(panel1);
             flpDashBoardCards.Controls.Add(panel2);
             flpDashBoardCards.Controls.Add(panel3);
@@ -100,31 +99,33 @@
             flpDashBoardCards.Location = new Point(20, 20);
             flpDashBoardCards.Margin = new Padding(0);
             flpDashBoardCards.Name = "flpDashBoardCards";
+            flpDashBoardCards.Padding = new Padding(0, 10, 0, 10);
             flpDashBoardCards.Size = new Size(1261, 130);
             flpDashBoardCards.TabIndex = 0;
             flpDashBoardCards.WrapContents = false;
             // 
             // panel1
             // 
-            panel1.BackColor = Color.Black;
+            panel1.BackColor = Color.FromArgb(25, 25, 100);
+            panel1.BorderStyle = BorderStyle.FixedSingle;
             panel1.Controls.Add(lblAvailableCount);
             panel1.Controls.Add(lblAvailableTitle);
-            panel1.Location = new Point(45, 2);
-            panel1.Margin = new Padding(45, 2, 45, 2);
+            panel1.Location = new Point(20, 10);
+            panel1.Margin = new Padding(20, 0, 50, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(325, 125);
+            panel1.Size = new Size(325, 105);
             panel1.TabIndex = 0;
             // 
             // lblAvailableCount
             // 
             lblAvailableCount.AutoSize = true;
-            lblAvailableCount.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAvailableCount.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblAvailableCount.ForeColor = Color.White;
             lblAvailableCount.ImageAlign = ContentAlignment.MiddleRight;
-            lblAvailableCount.Location = new Point(240, 51);
+            lblAvailableCount.Location = new Point(240, 38);
             lblAvailableCount.Margin = new Padding(0);
             lblAvailableCount.Name = "lblAvailableCount";
-            lblAvailableCount.Size = new Size(28, 35);
+            lblAvailableCount.Size = new Size(29, 35);
             lblAvailableCount.TabIndex = 6;
             lblAvailableCount.Text = "0";
             lblAvailableCount.TextAlign = ContentAlignment.MiddleCenter;
@@ -132,38 +133,39 @@
             // lblAvailableTitle
             // 
             lblAvailableTitle.AutoSize = true;
-            lblAvailableTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAvailableTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblAvailableTitle.ForeColor = Color.White;
             lblAvailableTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblAvailableTitle.Location = new Point(30, 51);
+            lblAvailableTitle.Location = new Point(30, 38);
             lblAvailableTitle.Margin = new Padding(0);
             lblAvailableTitle.Name = "lblAvailableTitle";
-            lblAvailableTitle.Size = new Size(178, 35);
+            lblAvailableTitle.Size = new Size(198, 35);
             lblAvailableTitle.TabIndex = 3;
-            lblAvailableTitle.Text = "Available Units";
+            lblAvailableTitle.Text = "Available Units:";
             lblAvailableTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel2
             // 
-            panel2.BackColor = Color.Black;
+            panel2.BackColor = Color.FromArgb(25, 25, 100);
+            panel2.BorderStyle = BorderStyle.FixedSingle;
             panel2.Controls.Add(lblOccupancyRate);
             panel2.Controls.Add(lblOccupancyTitle);
-            panel2.Location = new Point(460, 2);
-            panel2.Margin = new Padding(45, 2, 45, 2);
+            panel2.Location = new Point(415, 12);
+            panel2.Margin = new Padding(20, 2, 50, 2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(325, 125);
+            panel2.Size = new Size(325, 105);
             panel2.TabIndex = 1;
             // 
             // lblOccupancyRate
             // 
             lblOccupancyRate.AutoSize = true;
-            lblOccupancyRate.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOccupancyRate.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
             lblOccupancyRate.ForeColor = Color.White;
             lblOccupancyRate.ImageAlign = ContentAlignment.MiddleRight;
-            lblOccupancyRate.Location = new Point(223, 51);
+            lblOccupancyRate.Location = new Point(219, 38);
             lblOccupancyRate.Margin = new Padding(0);
             lblOccupancyRate.Name = "lblOccupancyRate";
-            lblOccupancyRate.Size = new Size(28, 35);
+            lblOccupancyRate.Size = new Size(29, 35);
             lblOccupancyRate.TabIndex = 6;
             lblOccupancyRate.Text = "0";
             lblOccupancyRate.TextAlign = ContentAlignment.MiddleCenter;
@@ -171,38 +173,39 @@
             // lblOccupancyTitle
             // 
             lblOccupancyTitle.AutoSize = true;
-            lblOccupancyTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblOccupancyTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblOccupancyTitle.ForeColor = Color.White;
             lblOccupancyTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblOccupancyTitle.Location = new Point(52, 51);
+            lblOccupancyTitle.Location = new Point(49, 38);
             lblOccupancyTitle.Margin = new Padding(0);
             lblOccupancyTitle.Name = "lblOccupancyTitle";
-            lblOccupancyTitle.Size = new Size(138, 35);
+            lblOccupancyTitle.Size = new Size(149, 35);
             lblOccupancyTitle.TabIndex = 4;
-            lblOccupancyTitle.Text = "Occupancy";
+            lblOccupancyTitle.Text = "Occupancy:";
             lblOccupancyTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel3
             // 
-            panel3.BackColor = Color.Black;
+            panel3.BackColor = Color.FromArgb(25, 25, 100);
+            panel3.BorderStyle = BorderStyle.FixedSingle;
             panel3.Controls.Add(lblTotalCount);
             panel3.Controls.Add(lblTotalTitle);
-            panel3.Location = new Point(875, 2);
-            panel3.Margin = new Padding(45, 2, 45, 2);
+            panel3.Location = new Point(810, 12);
+            panel3.Margin = new Padding(20, 2, 45, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(325, 125);
+            panel3.Size = new Size(325, 105);
             panel3.TabIndex = 2;
             // 
             // lblTotalCount
             // 
             lblTotalCount.AutoSize = true;
-            lblTotalCount.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalCount.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
             lblTotalCount.ForeColor = Color.White;
             lblTotalCount.ImageAlign = ContentAlignment.MiddleRight;
-            lblTotalCount.Location = new Point(225, 51);
+            lblTotalCount.Location = new Point(225, 38);
             lblTotalCount.Margin = new Padding(0);
             lblTotalCount.Name = "lblTotalCount";
-            lblTotalCount.Size = new Size(28, 35);
+            lblTotalCount.Size = new Size(29, 35);
             lblTotalCount.TabIndex = 6;
             lblTotalCount.Text = "0";
             lblTotalCount.TextAlign = ContentAlignment.MiddleCenter;
@@ -210,20 +213,19 @@
             // lblTotalTitle
             // 
             lblTotalTitle.AutoSize = true;
-            lblTotalTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
             lblTotalTitle.ForeColor = Color.White;
             lblTotalTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblTotalTitle.Location = new Point(67, 51);
+            lblTotalTitle.Location = new Point(68, 38);
             lblTotalTitle.Margin = new Padding(0);
             lblTotalTitle.Name = "lblTotalTitle";
-            lblTotalTitle.Size = new Size(131, 35);
+            lblTotalTitle.Size = new Size(148, 35);
             lblTotalTitle.TabIndex = 5;
-            lblTotalTitle.Text = "Total Units";
+            lblTotalTitle.Text = "Total Units:";
             lblTotalTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlHomeContent
             // 
-            pnlHomeContent.BorderStyle = BorderStyle.FixedSingle;
             pnlHomeContent.Controls.Add(tblDashBoard);
             pnlHomeContent.Dock = DockStyle.Fill;
             pnlHomeContent.Location = new Point(20, 150);
@@ -248,7 +250,7 @@
             tblDashBoard.RowCount = 2;
             tblDashBoard.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tblDashBoard.RowStyles.Add(new RowStyle(SizeType.Percent, 66.6666641F));
-            tblDashBoard.Size = new Size(1259, 578);
+            tblDashBoard.Size = new Size(1261, 580);
             tblDashBoard.TabIndex = 2;
             // 
             // pnlRecentActivities
@@ -260,7 +262,7 @@
             pnlRecentActivities.Margin = new Padding(5);
             pnlRecentActivities.Name = "pnlRecentActivities";
             pnlRecentActivities.Padding = new Padding(10);
-            pnlRecentActivities.Size = new Size(871, 182);
+            pnlRecentActivities.Size = new Size(872, 183);
             pnlRecentActivities.TabIndex = 0;
             // 
             // lvRecentActivities
@@ -270,12 +272,13 @@
             lvRecentActivities.Dock = DockStyle.Fill;
             lvRecentActivities.Location = new Point(10, 55);
             lvRecentActivities.Name = "lvRecentActivities";
-            lvRecentActivities.Size = new Size(851, 117);
+            lvRecentActivities.Size = new Size(852, 118);
             lvRecentActivities.TabIndex = 13;
             lvRecentActivities.UseCompatibleStateImageBehavior = false;
             // 
             // pnlNestedHeaderRecentActivities
             // 
+            pnlNestedHeaderRecentActivities.BackColor = Color.FromArgb(25, 25, 60);
             pnlNestedHeaderRecentActivities.BorderStyle = BorderStyle.FixedSingle;
             pnlNestedHeaderRecentActivities.Controls.Add(btnViewAllActivities);
             pnlNestedHeaderRecentActivities.Controls.Add(lblRecentActivitiesTitle);
@@ -283,14 +286,14 @@
             pnlNestedHeaderRecentActivities.Location = new Point(10, 10);
             pnlNestedHeaderRecentActivities.Name = "pnlNestedHeaderRecentActivities";
             pnlNestedHeaderRecentActivities.Padding = new Padding(5);
-            pnlNestedHeaderRecentActivities.Size = new Size(851, 45);
+            pnlNestedHeaderRecentActivities.Size = new Size(852, 45);
             pnlNestedHeaderRecentActivities.TabIndex = 12;
             // 
             // btnViewAllActivities
             // 
             btnViewAllActivities.Cursor = Cursors.Hand;
             btnViewAllActivities.Dock = DockStyle.Right;
-            btnViewAllActivities.Location = new Point(739, 5);
+            btnViewAllActivities.Location = new Point(740, 5);
             btnViewAllActivities.Name = "btnViewAllActivities";
             btnViewAllActivities.Size = new Size(105, 33);
             btnViewAllActivities.TabIndex = 10;
@@ -317,11 +320,11 @@
             pnlNotificationView.Controls.Add(lvNotification);
             pnlNotificationView.Controls.Add(pnlNestedHeaderNotification);
             pnlNotificationView.Dock = DockStyle.Fill;
-            pnlNotificationView.Location = new Point(886, 5);
+            pnlNotificationView.Location = new Point(887, 5);
             pnlNotificationView.Margin = new Padding(5);
             pnlNotificationView.Name = "pnlNotificationView";
             pnlNotificationView.Padding = new Padding(10);
-            pnlNotificationView.Size = new Size(368, 182);
+            pnlNotificationView.Size = new Size(369, 183);
             pnlNotificationView.TabIndex = 1;
             // 
             // lvNotification
@@ -331,12 +334,13 @@
             lvNotification.Dock = DockStyle.Fill;
             lvNotification.Location = new Point(10, 55);
             lvNotification.Name = "lvNotification";
-            lvNotification.Size = new Size(348, 117);
+            lvNotification.Size = new Size(349, 118);
             lvNotification.TabIndex = 12;
             lvNotification.UseCompatibleStateImageBehavior = false;
             // 
             // pnlNestedHeaderNotification
             // 
+            pnlNestedHeaderNotification.BackColor = Color.FromArgb(25, 25, 60);
             pnlNestedHeaderNotification.BorderStyle = BorderStyle.FixedSingle;
             pnlNestedHeaderNotification.Controls.Add(btnViewAllNotifications);
             pnlNestedHeaderNotification.Controls.Add(lblNotificationTitle);
@@ -344,14 +348,14 @@
             pnlNestedHeaderNotification.Location = new Point(10, 10);
             pnlNestedHeaderNotification.Name = "pnlNestedHeaderNotification";
             pnlNestedHeaderNotification.Padding = new Padding(5);
-            pnlNestedHeaderNotification.Size = new Size(348, 45);
+            pnlNestedHeaderNotification.Size = new Size(349, 45);
             pnlNestedHeaderNotification.TabIndex = 10;
             // 
             // btnViewAllNotifications
             // 
             btnViewAllNotifications.Cursor = Cursors.Hand;
             btnViewAllNotifications.Dock = DockStyle.Right;
-            btnViewAllNotifications.Location = new Point(236, 5);
+            btnViewAllNotifications.Location = new Point(237, 5);
             btnViewAllNotifications.Name = "btnViewAllNotifications";
             btnViewAllNotifications.Size = new Size(105, 33);
             btnViewAllNotifications.TabIndex = 9;
@@ -375,15 +379,14 @@
             // 
             // pnlRoomOverview
             // 
-            pnlRoomOverview.BackColor = Color.FromArgb(11, 20, 38);
             pnlRoomOverview.Controls.Add(flpRoomOverview);
             pnlRoomOverview.Controls.Add(pnlNestedHeaderRoom);
             pnlRoomOverview.Dock = DockStyle.Fill;
-            pnlRoomOverview.Location = new Point(5, 197);
+            pnlRoomOverview.Location = new Point(5, 198);
             pnlRoomOverview.Margin = new Padding(5);
             pnlRoomOverview.Name = "pnlRoomOverview";
             pnlRoomOverview.Padding = new Padding(10);
-            pnlRoomOverview.Size = new Size(871, 376);
+            pnlRoomOverview.Size = new Size(872, 377);
             pnlRoomOverview.TabIndex = 2;
             // 
             // flpRoomOverview
@@ -395,12 +398,12 @@
             flpRoomOverview.Location = new Point(10, 56);
             flpRoomOverview.Name = "flpRoomOverview";
             flpRoomOverview.Padding = new Padding(5);
-            flpRoomOverview.Size = new Size(851, 310);
+            flpRoomOverview.Size = new Size(852, 311);
             flpRoomOverview.TabIndex = 12;
             // 
             // pnlNestedHeaderRoom
             // 
-            pnlNestedHeaderRoom.BackColor = Color.FromArgb(11, 20, 38);
+            pnlNestedHeaderRoom.BackColor = Color.FromArgb(25, 25, 60);
             pnlNestedHeaderRoom.BorderStyle = BorderStyle.FixedSingle;
             pnlNestedHeaderRoom.Controls.Add(lblMaintenance);
             pnlNestedHeaderRoom.Controls.Add(lblOccupied);
@@ -413,7 +416,7 @@
             pnlNestedHeaderRoom.Location = new Point(10, 10);
             pnlNestedHeaderRoom.Margin = new Padding(1);
             pnlNestedHeaderRoom.Name = "pnlNestedHeaderRoom";
-            pnlNestedHeaderRoom.Size = new Size(851, 46);
+            pnlNestedHeaderRoom.Size = new Size(852, 46);
             pnlNestedHeaderRoom.TabIndex = 11;
             // 
             // lblMaintenance
@@ -502,11 +505,11 @@
             pnlMaintenanceView.Controls.Add(dgvMaintenance);
             pnlMaintenanceView.Controls.Add(pnlNestedHeaderMaintenanceView);
             pnlMaintenanceView.Dock = DockStyle.Fill;
-            pnlMaintenanceView.Location = new Point(886, 197);
+            pnlMaintenanceView.Location = new Point(887, 198);
             pnlMaintenanceView.Margin = new Padding(5);
             pnlMaintenanceView.Name = "pnlMaintenanceView";
             pnlMaintenanceView.Padding = new Padding(10);
-            pnlMaintenanceView.Size = new Size(368, 376);
+            pnlMaintenanceView.Size = new Size(369, 377);
             pnlMaintenanceView.TabIndex = 3;
             // 
             // dgvMaintenance
@@ -525,7 +528,7 @@
             dgvMaintenance.RowHeadersVisible = false;
             dgvMaintenance.RowHeadersWidth = 51;
             dgvMaintenance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMaintenance.Size = new Size(348, 311);
+            dgvMaintenance.Size = new Size(349, 312);
             dgvMaintenance.TabIndex = 12;
             // 
             // Room
@@ -551,6 +554,7 @@
             // 
             // pnlNestedHeaderMaintenanceView
             // 
+            pnlNestedHeaderMaintenanceView.BackColor = Color.FromArgb(25, 25, 60);
             pnlNestedHeaderMaintenanceView.BorderStyle = BorderStyle.FixedSingle;
             pnlNestedHeaderMaintenanceView.Controls.Add(btnViewAllMaintenance);
             pnlNestedHeaderMaintenanceView.Controls.Add(lblMaintenanceTitle);
@@ -558,14 +562,14 @@
             pnlNestedHeaderMaintenanceView.Location = new Point(10, 10);
             pnlNestedHeaderMaintenanceView.Name = "pnlNestedHeaderMaintenanceView";
             pnlNestedHeaderMaintenanceView.Padding = new Padding(5);
-            pnlNestedHeaderMaintenanceView.Size = new Size(348, 45);
+            pnlNestedHeaderMaintenanceView.Size = new Size(349, 45);
             pnlNestedHeaderMaintenanceView.TabIndex = 11;
             // 
             // btnViewAllMaintenance
             // 
             btnViewAllMaintenance.Cursor = Cursors.Hand;
             btnViewAllMaintenance.Dock = DockStyle.Right;
-            btnViewAllMaintenance.Location = new Point(236, 5);
+            btnViewAllMaintenance.Location = new Point(237, 5);
             btnViewAllMaintenance.Name = "btnViewAllMaintenance";
             btnViewAllMaintenance.Size = new Size(105, 33);
             btnViewAllMaintenance.TabIndex = 10;
@@ -592,7 +596,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            BackColor = Color.FromArgb(11, 20, 50);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlHomeContent);
             Controls.Add(flpDashBoardCards);
             DoubleBuffered = true;

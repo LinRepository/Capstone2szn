@@ -133,7 +133,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 28, 30);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(432, 213);
             Controls.Add(pnlDeleteIssueContent);
             Controls.Add(pnlDeleteIssueActions);

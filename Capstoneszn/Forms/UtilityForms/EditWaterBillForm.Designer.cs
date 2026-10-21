@@ -28,12 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             pnlEditWaterBillContent = new Panel();
+            dgvWaterPreview = new DataGridView();
+            colPreviewRoom = new DataGridViewTextBoxColumn();
+            colPreviewTenant = new DataGridViewTextBoxColumn();
+            colPreviewAmount = new DataGridViewTextBoxColumn();
+            pnlTenantAllocation = new Panel();
+            lblActiveTenantCount = new Label();
+            lblDivideCaption = new Label();
+            label6 = new Label();
+            pnlAdminContribution = new Panel();
+            lblSharePeso = new Label();
+            rdoCustomAmount = new RadioButton();
+            rdoDefaultShare = new RadioButton();
+            lblShare = new Label();
+            label3 = new Label();
+            txtAdminShare = new TextBox();
             dtpDueDate = new DateTimePicker();
             dtpStartBillingPeriod = new DateTimePicker();
             label1 = new Label();
             lvlDueDate = new Label();
+            label4 = new Label();
             label2 = new Label();
             lblTotalBIll = new Label();
             txtTotalBill = new TextBox();
@@ -42,28 +58,12 @@
             btnUpdateBill = new Button();
             pnlEditWaterBillHeader = new Panel();
             lblEditWaterBillTitle = new Label();
-            pnlAdminContribution = new Panel();
-            lblSharePeso = new Label();
-            rdoCustomAmount = new RadioButton();
-            rdoDefaultShare = new RadioButton();
-            lblShare = new Label();
-            label3 = new Label();
-            txtAdminShare = new TextBox();
-            pnlTenantAllocation = new Panel();
-            lblActiveTenantCount = new Label();
-            lblDivideCaption = new Label();
-            label6 = new Label();
-            dgvWaterPreview = new DataGridView();
-            colPreviewRoom = new DataGridViewTextBoxColumn();
-            colPreviewTenant = new DataGridViewTextBoxColumn();
-            colPreviewAmount = new DataGridViewTextBoxColumn();
-            label4 = new Label();
             pnlEditWaterBillContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvWaterPreview).BeginInit();
+            pnlTenantAllocation.SuspendLayout();
+            pnlAdminContribution.SuspendLayout();
             pnlEditWaterBillActionButtons.SuspendLayout();
             pnlEditWaterBillHeader.SuspendLayout();
-            pnlAdminContribution.SuspendLayout();
-            pnlTenantAllocation.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvWaterPreview).BeginInit();
             SuspendLayout();
             // 
             // pnlEditWaterBillContent
@@ -85,6 +85,182 @@
             pnlEditWaterBillContent.Name = "pnlEditWaterBillContent";
             pnlEditWaterBillContent.Size = new Size(796, 591);
             pnlEditWaterBillContent.TabIndex = 5;
+            // 
+            // dgvWaterPreview
+            // 
+            dgvWaterPreview.AllowUserToAddRows = false;
+            dgvWaterPreview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvWaterPreview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvWaterPreview.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvWaterPreview.Columns.AddRange(new DataGridViewColumn[] { colPreviewRoom, colPreviewTenant, colPreviewAmount });
+            dgvWaterPreview.Location = new Point(21, 270);
+            dgvWaterPreview.Name = "dgvWaterPreview";
+            dgvWaterPreview.ReadOnly = true;
+            dgvWaterPreview.RowHeadersVisible = false;
+            dgvWaterPreview.RowHeadersWidth = 51;
+            dgvWaterPreview.Size = new Size(756, 306);
+            dgvWaterPreview.TabIndex = 9;
+            // 
+            // colPreviewRoom
+            // 
+            colPreviewRoom.FillWeight = 20F;
+            colPreviewRoom.HeaderText = "Room";
+            colPreviewRoom.MinimumWidth = 6;
+            colPreviewRoom.Name = "colPreviewRoom";
+            colPreviewRoom.ReadOnly = true;
+            // 
+            // colPreviewTenant
+            // 
+            colPreviewTenant.HeaderText = "Tenant";
+            colPreviewTenant.MinimumWidth = 6;
+            colPreviewTenant.Name = "colPreviewTenant";
+            colPreviewTenant.ReadOnly = true;
+            // 
+            // colPreviewAmount
+            // 
+            colPreviewAmount.FillWeight = 50F;
+            colPreviewAmount.HeaderText = "Amount";
+            colPreviewAmount.MinimumWidth = 6;
+            colPreviewAmount.Name = "colPreviewAmount";
+            colPreviewAmount.ReadOnly = true;
+            // 
+            // pnlTenantAllocation
+            // 
+            pnlTenantAllocation.BackColor = Color.FromArgb(25, 25, 80);
+            pnlTenantAllocation.Controls.Add(lblActiveTenantCount);
+            pnlTenantAllocation.Controls.Add(lblDivideCaption);
+            pnlTenantAllocation.Controls.Add(label6);
+            pnlTenantAllocation.Location = new Point(505, 108);
+            pnlTenantAllocation.Name = "pnlTenantAllocation";
+            pnlTenantAllocation.Padding = new Padding(5);
+            pnlTenantAllocation.Size = new Size(272, 121);
+            pnlTenantAllocation.TabIndex = 8;
+            // 
+            // lblActiveTenantCount
+            // 
+            lblActiveTenantCount.AutoSize = true;
+            lblActiveTenantCount.BorderStyle = BorderStyle.Fixed3D;
+            lblActiveTenantCount.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblActiveTenantCount.ForeColor = Color.Transparent;
+            lblActiveTenantCount.Location = new Point(208, 54);
+            lblActiveTenantCount.Name = "lblActiveTenantCount";
+            lblActiveTenantCount.Size = new Size(37, 48);
+            lblActiveTenantCount.TabIndex = 1;
+            lblActiveTenantCount.Text = "?";
+            // 
+            // lblDivideCaption
+            // 
+            lblDivideCaption.AutoSize = true;
+            lblDivideCaption.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDivideCaption.ForeColor = Color.Transparent;
+            lblDivideCaption.Location = new Point(8, 67);
+            lblDivideCaption.Name = "lblDivideCaption";
+            lblDivideCaption.Size = new Size(194, 20);
+            lblDivideCaption.TabIndex = 1;
+            lblDivideCaption.Text = "Divide by all activie tenants:";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.ForeColor = Color.Transparent;
+            label6.Location = new Point(8, 8);
+            label6.Name = "label6";
+            label6.Size = new Size(147, 25);
+            label6.TabIndex = 1;
+            label6.Text = "Tenant Allocation";
+            // 
+            // pnlAdminContribution
+            // 
+            pnlAdminContribution.BackColor = Color.FromArgb(25, 25, 80);
+            pnlAdminContribution.Controls.Add(lblSharePeso);
+            pnlAdminContribution.Controls.Add(rdoCustomAmount);
+            pnlAdminContribution.Controls.Add(rdoDefaultShare);
+            pnlAdminContribution.Controls.Add(lblShare);
+            pnlAdminContribution.Controls.Add(label3);
+            pnlAdminContribution.Controls.Add(txtAdminShare);
+            pnlAdminContribution.Location = new Point(21, 108);
+            pnlAdminContribution.Name = "pnlAdminContribution";
+            pnlAdminContribution.Padding = new Padding(5);
+            pnlAdminContribution.Size = new Size(462, 121);
+            pnlAdminContribution.TabIndex = 6;
+            // 
+            // lblSharePeso
+            // 
+            lblSharePeso.AutoSize = true;
+            lblSharePeso.BackColor = Color.White;
+            lblSharePeso.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSharePeso.Location = new Point(89, 72);
+            lblSharePeso.Name = "lblSharePeso";
+            lblSharePeso.Size = new Size(28, 31);
+            lblSharePeso.TabIndex = 2;
+            lblSharePeso.Text = "₱";
+            // 
+            // rdoCustomAmount
+            // 
+            rdoCustomAmount.Appearance = Appearance.Button;
+            rdoCustomAmount.AutoSize = true;
+            rdoCustomAmount.BackColor = Color.White;
+            rdoCustomAmount.FlatStyle = FlatStyle.Flat;
+            rdoCustomAmount.Location = new Point(326, 8);
+            rdoCustomAmount.Name = "rdoCustomAmount";
+            rdoCustomAmount.Size = new Size(128, 32);
+            rdoCustomAmount.TabIndex = 2;
+            rdoCustomAmount.TabStop = true;
+            rdoCustomAmount.Text = "Custom Amount";
+            rdoCustomAmount.UseVisualStyleBackColor = false;
+            // 
+            // rdoDefaultShare
+            // 
+            rdoDefaultShare.Appearance = Appearance.Button;
+            rdoDefaultShare.AutoSize = true;
+            rdoDefaultShare.BackColor = Color.White;
+            rdoDefaultShare.FlatStyle = FlatStyle.Flat;
+            rdoDefaultShare.Location = new Point(211, 8);
+            rdoDefaultShare.Name = "rdoDefaultShare";
+            rdoDefaultShare.Size = new Size(109, 32);
+            rdoDefaultShare.TabIndex = 2;
+            rdoDefaultShare.TabStop = true;
+            rdoDefaultShare.Text = "Default share";
+            rdoDefaultShare.UseVisualStyleBackColor = false;
+            // 
+            // lblShare
+            // 
+            lblShare.AutoSize = true;
+            lblShare.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblShare.ForeColor = Color.Transparent;
+            lblShare.Location = new Point(8, 77);
+            lblShare.Name = "lblShare";
+            lblShare.Size = new Size(60, 25);
+            lblShare.TabIndex = 1;
+            lblShare.Text = "Share:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.Transparent;
+            label3.Location = new Point(8, 8);
+            label3.Name = "label3";
+            label3.Size = new Size(170, 25);
+            label3.TabIndex = 1;
+            label3.Text = "Admin Contribution";
+            // 
+            // txtAdminShare
+            // 
+            txtAdminShare.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAdminShare.Location = new Point(80, 71);
+            txtAdminShare.Name = "txtAdminShare";
+            txtAdminShare.Size = new Size(374, 34);
+            txtAdminShare.TabIndex = 0;
+            txtAdminShare.TextAlign = HorizontalAlignment.Right;
             // 
             // dtpDueDate
             // 
@@ -126,6 +302,17 @@
             lvlDueDate.Size = new Size(86, 25);
             lvlDueDate.TabIndex = 1;
             lvlDueDate.Text = "Due Date";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.Transparent;
+            label4.Location = new Point(21, 242);
+            label4.Name = "label4";
+            label4.Size = new Size(72, 25);
+            label4.TabIndex = 1;
+            label4.Text = "Preview";
             // 
             // label2
             // 
@@ -220,198 +407,11 @@
             lblEditWaterBillTitle.Text = "Edit Water Bill";
             lblEditWaterBillTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // pnlAdminContribution
-            // 
-            pnlAdminContribution.BackColor = Color.FromArgb(11, 20, 50);
-            pnlAdminContribution.Controls.Add(lblSharePeso);
-            pnlAdminContribution.Controls.Add(rdoCustomAmount);
-            pnlAdminContribution.Controls.Add(rdoDefaultShare);
-            pnlAdminContribution.Controls.Add(lblShare);
-            pnlAdminContribution.Controls.Add(label3);
-            pnlAdminContribution.Controls.Add(txtAdminShare);
-            pnlAdminContribution.Location = new Point(21, 108);
-            pnlAdminContribution.Name = "pnlAdminContribution";
-            pnlAdminContribution.Padding = new Padding(5);
-            pnlAdminContribution.Size = new Size(462, 121);
-            pnlAdminContribution.TabIndex = 6;
-            // 
-            // lblSharePeso
-            // 
-            lblSharePeso.AutoSize = true;
-            lblSharePeso.BackColor = Color.White;
-            lblSharePeso.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSharePeso.Location = new Point(89, 72);
-            lblSharePeso.Name = "lblSharePeso";
-            lblSharePeso.Size = new Size(28, 31);
-            lblSharePeso.TabIndex = 2;
-            lblSharePeso.Text = "₱";
-            // 
-            // rdoCustomAmount
-            // 
-            rdoCustomAmount.Appearance = Appearance.Button;
-            rdoCustomAmount.AutoSize = true;
-            rdoCustomAmount.BackColor = Color.White;
-            rdoCustomAmount.FlatStyle = FlatStyle.Flat;
-            rdoCustomAmount.Location = new Point(326, 8);
-            rdoCustomAmount.Name = "rdoCustomAmount";
-            rdoCustomAmount.Size = new Size(128, 32);
-            rdoCustomAmount.TabIndex = 2;
-            rdoCustomAmount.TabStop = true;
-            rdoCustomAmount.Text = "Custom Amount";
-            rdoCustomAmount.UseVisualStyleBackColor = false;
-            // 
-            // rdoDefaultShare
-            // 
-            rdoDefaultShare.Appearance = Appearance.Button;
-            rdoDefaultShare.AutoSize = true;
-            rdoDefaultShare.BackColor = Color.White;
-            rdoDefaultShare.FlatStyle = FlatStyle.Flat;
-            rdoDefaultShare.Location = new Point(211, 8);
-            rdoDefaultShare.Name = "rdoDefaultShare";
-            rdoDefaultShare.Size = new Size(109, 32);
-            rdoDefaultShare.TabIndex = 2;
-            rdoDefaultShare.TabStop = true;
-            rdoDefaultShare.Text = "Default share";
-            rdoDefaultShare.UseVisualStyleBackColor = false;
-            // 
-            // lblShare
-            // 
-            lblShare.AutoSize = true;
-            lblShare.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblShare.ForeColor = Color.Transparent;
-            lblShare.Location = new Point(8, 77);
-            lblShare.Name = "lblShare";
-            lblShare.Size = new Size(60, 25);
-            lblShare.TabIndex = 1;
-            lblShare.Text = "Share:";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.Transparent;
-            label3.Location = new Point(8, 8);
-            label3.Name = "label3";
-            label3.Size = new Size(170, 25);
-            label3.TabIndex = 1;
-            label3.Text = "Admin Contribution";
-            // 
-            // txtAdminShare
-            // 
-            txtAdminShare.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtAdminShare.Location = new Point(80, 71);
-            txtAdminShare.Name = "txtAdminShare";
-            txtAdminShare.Size = new Size(374, 34);
-            txtAdminShare.TabIndex = 0;
-            txtAdminShare.TextAlign = HorizontalAlignment.Right;
-            // 
-            // pnlTenantAllocation
-            // 
-            pnlTenantAllocation.BackColor = Color.FromArgb(11, 20, 50);
-            pnlTenantAllocation.Controls.Add(lblActiveTenantCount);
-            pnlTenantAllocation.Controls.Add(lblDivideCaption);
-            pnlTenantAllocation.Controls.Add(label6);
-            pnlTenantAllocation.Location = new Point(505, 108);
-            pnlTenantAllocation.Name = "pnlTenantAllocation";
-            pnlTenantAllocation.Padding = new Padding(5);
-            pnlTenantAllocation.Size = new Size(272, 121);
-            pnlTenantAllocation.TabIndex = 8;
-            // 
-            // lblActiveTenantCount
-            // 
-            lblActiveTenantCount.AutoSize = true;
-            lblActiveTenantCount.BorderStyle = BorderStyle.Fixed3D;
-            lblActiveTenantCount.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblActiveTenantCount.ForeColor = Color.Transparent;
-            lblActiveTenantCount.Location = new Point(208, 54);
-            lblActiveTenantCount.Name = "lblActiveTenantCount";
-            lblActiveTenantCount.Size = new Size(37, 48);
-            lblActiveTenantCount.TabIndex = 1;
-            lblActiveTenantCount.Text = "?";
-            // 
-            // lblDivideCaption
-            // 
-            lblDivideCaption.AutoSize = true;
-            lblDivideCaption.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDivideCaption.ForeColor = Color.Transparent;
-            lblDivideCaption.Location = new Point(8, 67);
-            lblDivideCaption.Name = "lblDivideCaption";
-            lblDivideCaption.Size = new Size(194, 20);
-            lblDivideCaption.TabIndex = 1;
-            lblDivideCaption.Text = "Divide by all activie tenants:";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.ForeColor = Color.Transparent;
-            label6.Location = new Point(8, 8);
-            label6.Name = "label6";
-            label6.Size = new Size(147, 25);
-            label6.TabIndex = 1;
-            label6.Text = "Tenant Allocation";
-            // 
-            // dgvWaterPreview
-            // 
-            dgvWaterPreview.AllowUserToAddRows = false;
-            dgvWaterPreview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvWaterPreview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dgvWaterPreview.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvWaterPreview.Columns.AddRange(new DataGridViewColumn[] { colPreviewRoom, colPreviewTenant, colPreviewAmount });
-            dgvWaterPreview.Location = new Point(21, 270);
-            dgvWaterPreview.Name = "dgvWaterPreview";
-            dgvWaterPreview.ReadOnly = true;
-            dgvWaterPreview.RowHeadersVisible = false;
-            dgvWaterPreview.RowHeadersWidth = 51;
-            dgvWaterPreview.Size = new Size(756, 306);
-            dgvWaterPreview.TabIndex = 9;
-            // 
-            // colPreviewRoom
-            // 
-            colPreviewRoom.FillWeight = 20F;
-            colPreviewRoom.HeaderText = "Room";
-            colPreviewRoom.MinimumWidth = 6;
-            colPreviewRoom.Name = "colPreviewRoom";
-            colPreviewRoom.ReadOnly = true;
-            // 
-            // colPreviewTenant
-            // 
-            colPreviewTenant.HeaderText = "Tenant";
-            colPreviewTenant.MinimumWidth = 6;
-            colPreviewTenant.Name = "colPreviewTenant";
-            colPreviewTenant.ReadOnly = true;
-            // 
-            // colPreviewAmount
-            // 
-            colPreviewAmount.FillWeight = 50F;
-            colPreviewAmount.HeaderText = "Amount";
-            colPreviewAmount.MinimumWidth = 6;
-            colPreviewAmount.Name = "colPreviewAmount";
-            colPreviewAmount.ReadOnly = true;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.ForeColor = Color.Transparent;
-            label4.Location = new Point(21, 242);
-            label4.Name = "label4";
-            label4.Size = new Size(72, 25);
-            label4.TabIndex = 1;
-            label4.Text = "Preview";
-            // 
             // EditWaterBillForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(796, 707);
             Controls.Add(pnlEditWaterBillContent);
             Controls.Add(pnlEditWaterBillActionButtons);
@@ -426,14 +426,14 @@
             Load += EditWaterBillForm_Load;
             pnlEditWaterBillContent.ResumeLayout(false);
             pnlEditWaterBillContent.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvWaterPreview).EndInit();
+            pnlTenantAllocation.ResumeLayout(false);
+            pnlTenantAllocation.PerformLayout();
+            pnlAdminContribution.ResumeLayout(false);
+            pnlAdminContribution.PerformLayout();
             pnlEditWaterBillActionButtons.ResumeLayout(false);
             pnlEditWaterBillActionButtons.PerformLayout();
             pnlEditWaterBillHeader.ResumeLayout(false);
-            pnlAdminContribution.ResumeLayout(false);
-            pnlAdminContribution.PerformLayout();
-            pnlTenantAllocation.ResumeLayout(false);
-            pnlTenantAllocation.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvWaterPreview).EndInit();
             ResumeLayout(false);
         }
 

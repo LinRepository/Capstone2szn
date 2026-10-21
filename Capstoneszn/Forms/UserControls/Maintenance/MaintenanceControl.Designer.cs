@@ -122,7 +122,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 50);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlMaintenanceContent);
             Controls.Add(pnlMaintenanceHeaderContent);
             Controls.Add(pnlMaintenanceHeader);

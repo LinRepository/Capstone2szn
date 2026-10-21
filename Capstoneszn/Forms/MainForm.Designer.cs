@@ -74,6 +74,7 @@
             // 
             // pnlSideBar
             // 
+            pnlSideBar.BackColor = Color.FromArgb(25, 25, 90);
             pnlSideBar.BorderStyle = BorderStyle.FixedSingle;
             pnlSideBar.Controls.Add(flpNavigation);
             pnlSideBar.Controls.Add(pnlSidebarBtn);
@@ -81,7 +82,7 @@
             pnlSideBar.Dock = DockStyle.Left;
             pnlSideBar.Location = new Point(0, 0);
             pnlSideBar.Name = "pnlSideBar";
-            pnlSideBar.Size = new Size(220, 758);
+            pnlSideBar.Size = new Size(220, 805);
             pnlSideBar.TabIndex = 0;
             // 
             // flpNavigation
@@ -100,10 +101,10 @@
             flpNavigation.Controls.Add(btnSettings);
             flpNavigation.Dock = DockStyle.Fill;
             flpNavigation.FlowDirection = FlowDirection.TopDown;
-            flpNavigation.Location = new Point(0, 80);
+            flpNavigation.Location = new Point(0, 68);
             flpNavigation.Name = "flpNavigation";
             flpNavigation.Padding = new Padding(0, 50, 0, 0);
-            flpNavigation.Size = new Size(218, 631);
+            flpNavigation.Size = new Size(218, 690);
             flpNavigation.TabIndex = 18;
             flpNavigation.WrapContents = false;
             // 
@@ -300,7 +301,7 @@
             pnlSidebarBtn.Dock = DockStyle.Top;
             pnlSidebarBtn.Location = new Point(0, 0);
             pnlSidebarBtn.Name = "pnlSidebarBtn";
-            pnlSidebarBtn.Size = new Size(218, 80);
+            pnlSidebarBtn.Size = new Size(218, 68);
             pnlSidebarBtn.TabIndex = 17;
             // 
             // btnHamburger
@@ -309,11 +310,11 @@
             btnHamburger.Cursor = Cursors.Hand;
             btnHamburger.Dock = DockStyle.Left;
             btnHamburger.FlatStyle = FlatStyle.Popup;
-            btnHamburger.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnHamburger.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnHamburger.ForeColor = Color.White;
             btnHamburger.Location = new Point(0, 0);
             btnHamburger.Name = "btnHamburger";
-            btnHamburger.Size = new Size(110, 80);
+            btnHamburger.Size = new Size(89, 68);
             btnHamburger.TabIndex = 16;
             btnHamburger.Text = "☰";
             btnHamburger.UseVisualStyleBackColor = false;
@@ -321,30 +322,31 @@
             // 
             // btnLogout
             // 
+            btnLogout.BackColor = Color.FromArgb(25, 25, 80);
             btnLogout.Cursor = Cursors.Hand;
             btnLogout.Dock = DockStyle.Bottom;
-            btnLogout.FlatAppearance.BorderSize = 0;
+            btnLogout.FlatAppearance.BorderColor = Color.White;
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.ForeColor = Color.White;
-            btnLogout.Location = new Point(0, 711);
+            btnLogout.Location = new Point(0, 758);
             btnLogout.Margin = new Padding(0, 0, 0, 5);
             btnLogout.Name = "btnLogout";
             btnLogout.Padding = new Padding(15, 0, 0, 0);
             btnLogout.Size = new Size(218, 45);
             btnLogout.TabIndex = 2;
             btnLogout.Text = "Logout";
-            btnLogout.TextAlign = ContentAlignment.MiddleLeft;
-            btnLogout.UseVisualStyleBackColor = true;
+            btnLogout.UseVisualStyleBackColor = false;
             btnLogout.Click += btnLogout_Click;
             // 
             // pnlHeader
             // 
+            pnlHeader.BackColor = Color.FromArgb(25, 25, 80);
             pnlHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlHeader.Controls.Add(tableLayoutPanel1);
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Location = new Point(220, 0);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(1167, 124);
+            pnlHeader.Size = new Size(1185, 124);
             pnlHeader.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -365,7 +367,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1165, 125);
+            tableLayoutPanel1.Size = new Size(1183, 125);
             tableLayoutPanel1.TabIndex = 1;
             // 
             // pnlUsers
@@ -373,10 +375,10 @@
             pnlUsers.Controls.Add(lblUserRole);
             pnlUsers.Controls.Add(lblCurrentUser);
             pnlUsers.Dock = DockStyle.Fill;
-            pnlUsers.Location = new Point(798, 3);
+            pnlUsers.Location = new Point(811, 3);
             pnlUsers.Name = "pnlUsers";
-            pnlUsers.Padding = new Padding(5);
-            pnlUsers.Size = new Size(239, 119);
+            pnlUsers.Padding = new Padding(10);
+            pnlUsers.Size = new Size(243, 119);
             pnlUsers.TabIndex = 10;
             // 
             // lblUserRole
@@ -386,9 +388,9 @@
             lblUserRole.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUserRole.ForeColor = Color.White;
             lblUserRole.ImageAlign = ContentAlignment.MiddleRight;
-            lblUserRole.Location = new Point(5, 59);
+            lblUserRole.Location = new Point(10, 65);
             lblUserRole.Name = "lblUserRole";
-            lblUserRole.Size = new Size(229, 55);
+            lblUserRole.Size = new Size(223, 44);
             lblUserRole.TabIndex = 7;
             lblUserRole.Text = "User Role";
             lblUserRole.TextAlign = ContentAlignment.MiddleCenter;
@@ -400,9 +402,9 @@
             lblCurrentUser.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblCurrentUser.ForeColor = Color.White;
             lblCurrentUser.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentUser.Location = new Point(5, 5);
+            lblCurrentUser.Location = new Point(10, 10);
             lblCurrentUser.Name = "lblCurrentUser";
-            lblCurrentUser.Size = new Size(229, 55);
+            lblCurrentUser.Size = new Size(223, 44);
             lblCurrentUser.TabIndex = 6;
             lblCurrentUser.Text = "User";
             lblCurrentUser.TextAlign = ContentAlignment.MiddleCenter;
@@ -411,22 +413,21 @@
             // 
             pnlDateTime.Controls.Add(lblDate);
             pnlDateTime.Dock = DockStyle.Fill;
-            pnlDateTime.Location = new Point(431, 3);
+            pnlDateTime.Location = new Point(438, 3);
             pnlDateTime.Name = "pnlDateTime";
-            pnlDateTime.Padding = new Padding(5);
-            pnlDateTime.Size = new Size(361, 119);
+            pnlDateTime.Padding = new Padding(10);
+            pnlDateTime.Size = new Size(367, 119);
             pnlDateTime.TabIndex = 9;
             // 
             // lblDate
             // 
-            lblDate.BorderStyle = BorderStyle.FixedSingle;
             lblDate.Dock = DockStyle.Right;
             lblDate.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDate.ForeColor = Color.White;
             lblDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblDate.Location = new Point(175, 5);
+            lblDate.Location = new Point(81, 10);
             lblDate.Name = "lblDate";
-            lblDate.Size = new Size(181, 109);
+            lblDate.Size = new Size(276, 99);
             lblDate.TabIndex = 3;
             lblDate.Text = "MM:DD:YYYY";
             lblDate.TextAlign = ContentAlignment.MiddleCenter;
@@ -435,22 +436,21 @@
             // 
             pnlSystemName.Controls.Add(lblSystemName);
             pnlSystemName.Dock = DockStyle.Fill;
-            pnlSystemName.Location = new Point(186, 3);
+            pnlSystemName.Location = new Point(189, 3);
             pnlSystemName.Name = "pnlSystemName";
             pnlSystemName.Padding = new Padding(5);
-            pnlSystemName.Size = new Size(239, 119);
+            pnlSystemName.Size = new Size(243, 119);
             pnlSystemName.TabIndex = 8;
             // 
             // lblSystemName
             // 
-            lblSystemName.BorderStyle = BorderStyle.FixedSingle;
             lblSystemName.Dock = DockStyle.Fill;
             lblSystemName.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblSystemName.ForeColor = Color.White;
             lblSystemName.ImageAlign = ContentAlignment.MiddleRight;
             lblSystemName.Location = new Point(5, 5);
             lblSystemName.Name = "lblSystemName";
-            lblSystemName.Size = new Size(229, 109);
+            lblSystemName.Size = new Size(233, 109);
             lblSystemName.TabIndex = 2;
             lblSystemName.Text = "Building Name";
             lblSystemName.TextAlign = ContentAlignment.MiddleCenter;
@@ -462,15 +462,15 @@
             pnlLogo.Location = new Point(3, 3);
             pnlLogo.Name = "pnlLogo";
             pnlLogo.Padding = new Padding(5);
-            pnlLogo.Size = new Size(177, 119);
+            pnlLogo.Size = new Size(180, 119);
             pnlLogo.TabIndex = 1;
             // 
             // Logo
             // 
             Logo.Anchor = AnchorStyles.None;
-            Logo.BackColor = Color.FromArgb(11, 20, 38);
+            Logo.BackColor = Color.FromArgb(25, 25, 80);
             Logo.Image = (Image)resources.GetObject("Logo.Image");
-            Logo.Location = new Point(33, 1);
+            Logo.Location = new Point(35, 1);
             Logo.Name = "Logo";
             Logo.Size = new Size(119, 119);
             Logo.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -481,7 +481,7 @@
             // 
             panel1.Controls.Add(btnNotification);
             panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(1043, 3);
+            panel1.Location = new Point(1061, 3);
             panel1.Name = "panel1";
             panel1.Padding = new Padding(5);
             panel1.Size = new Size(119, 119);
@@ -489,21 +489,25 @@
             // 
             // btnNotification
             // 
+            btnNotification.BackColor = Color.FromArgb(25, 25, 80);
             btnNotification.Cursor = Cursors.Hand;
+            btnNotification.FlatAppearance.BorderSize = 0;
+            btnNotification.ForeColor = Color.White;
             btnNotification.Location = new Point(32, 30);
             btnNotification.Name = "btnNotification";
             btnNotification.Size = new Size(60, 60);
             btnNotification.TabIndex = 12;
             btnNotification.Text = "🔔";
-            btnNotification.UseVisualStyleBackColor = true;
+            btnNotification.UseVisualStyleBackColor = false;
             btnNotification.Click += btnNotification_Click;
             // 
             // pnlContent
             // 
+            pnlContent.BackColor = Color.FromArgb(25, 25, 70);
             pnlContent.Dock = DockStyle.Fill;
             pnlContent.Location = new Point(220, 124);
             pnlContent.Name = "pnlContent";
-            pnlContent.Size = new Size(1167, 634);
+            pnlContent.Size = new Size(1185, 681);
             pnlContent.TabIndex = 2;
             pnlContent.Paint += pnlContent_Paint;
             // 
@@ -511,11 +515,12 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
-            ClientSize = new Size(1387, 758);
+            BackColor = Color.FromArgb(25, 25, 68);
+            ClientSize = new Size(1405, 805);
             Controls.Add(pnlContent);
             Controls.Add(pnlHeader);
             Controls.Add(pnlSideBar);
+            FormBorderStyle = FormBorderStyle.None;
             MinimumSize = new Size(1405, 805);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;

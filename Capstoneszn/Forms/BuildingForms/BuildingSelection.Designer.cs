@@ -67,6 +67,7 @@
             // 
             // lblPlusBuilding
             // 
+            lblPlusBuilding.BackColor = Color.FromArgb(25, 25, 120);
             lblPlusBuilding.Dock = DockStyle.Fill;
             lblPlusBuilding.Font = new Font("Segoe UI", 72F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPlusBuilding.ForeColor = Color.White;
@@ -80,6 +81,7 @@
             // 
             // lblAddBuilding
             // 
+            lblAddBuilding.BackColor = Color.FromArgb(25, 25, 120);
             lblAddBuilding.Dock = DockStyle.Bottom;
             lblAddBuilding.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAddBuilding.ForeColor = Color.White;
@@ -117,7 +119,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(1382, 698);
             Controls.Add(pnlBuildingHeader);
             Controls.Add(flpBuildings);

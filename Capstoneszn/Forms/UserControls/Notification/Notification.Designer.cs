@@ -153,7 +153,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             BorderStyle = BorderStyle.FixedSingle;
             Controls.Add(pnlNotificationContent);
             Controls.Add(pnlNotificationHeaderContent);

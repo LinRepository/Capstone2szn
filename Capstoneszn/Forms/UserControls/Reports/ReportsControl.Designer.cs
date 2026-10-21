@@ -59,9 +59,9 @@
             tabExpenses.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvExpenses).BeginInit();
             SuspendLayout();
-            //
+            // 
             // pnlReportsHeader
-            //
+            // 
             pnlReportsHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlReportsHeader.Controls.Add(lblReportsTitle);
             pnlReportsHeader.Dock = DockStyle.Top;
@@ -69,9 +69,9 @@
             pnlReportsHeader.Name = "pnlReportsHeader";
             pnlReportsHeader.Size = new Size(1280, 70);
             pnlReportsHeader.TabIndex = 0;
-            //
+            // 
             // lblReportsTitle
-            //
+            // 
             lblReportsTitle.Dock = DockStyle.Fill;
             lblReportsTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblReportsTitle.ForeColor = Color.White;
@@ -81,9 +81,9 @@
             lblReportsTitle.TabIndex = 0;
             lblReportsTitle.Text = "Reports";
             lblReportsTitle.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // pnlReportsFilter
-            //
+            // 
             pnlReportsFilter.BorderStyle = BorderStyle.FixedSingle;
             pnlReportsFilter.Controls.Add(btnPrintReport);
             pnlReportsFilter.Controls.Add(btnClearReport);
@@ -99,30 +99,70 @@
             pnlReportsFilter.Name = "pnlReportsFilter";
             pnlReportsFilter.Size = new Size(1280, 75);
             pnlReportsFilter.TabIndex = 1;
-            //
-            // lblReportFrom
-            //
-            lblReportFrom.AutoSize = true;
-            lblReportFrom.Font = new Font("Segoe UI", 10.2F);
-            lblReportFrom.ForeColor = Color.White;
-            lblReportFrom.Location = new Point(12, 6);
-            lblReportFrom.Name = "lblReportFrom";
-            lblReportFrom.Size = new Size(90, 23);
-            lblReportFrom.TabIndex = 0;
-            lblReportFrom.Text = "Date From";
-            //
-            // dtpReportFrom
-            //
-            dtpReportFrom.Font = new Font("Segoe UI", 10.2F);
-            dtpReportFrom.Format = DateTimePickerFormat.Custom;
-            dtpReportFrom.CustomFormat = "MMM dd, yyyy";
-            dtpReportFrom.Location = new Point(12, 32);
-            dtpReportFrom.Name = "dtpReportFrom";
-            dtpReportFrom.Size = new Size(180, 30);
-            dtpReportFrom.TabIndex = 1;
-            //
+            // 
+            // btnPrintReport
+            // 
+            btnPrintReport.Font = new Font("Segoe UI", 10.2F);
+            btnPrintReport.Location = new Point(910, 29);
+            btnPrintReport.Name = "btnPrintReport";
+            btnPrintReport.Size = new Size(120, 34);
+            btnPrintReport.TabIndex = 8;
+            btnPrintReport.Text = "Print / PDF";
+            btnPrintReport.UseVisualStyleBackColor = true;
+            // 
+            // btnClearReport
+            // 
+            btnClearReport.Font = new Font("Segoe UI", 10.2F);
+            btnClearReport.Location = new Point(800, 29);
+            btnClearReport.Name = "btnClearReport";
+            btnClearReport.Size = new Size(100, 34);
+            btnClearReport.TabIndex = 7;
+            btnClearReport.Text = "Clear";
+            btnClearReport.UseVisualStyleBackColor = true;
+            // 
+            // btnGenerateReport
+            // 
+            btnGenerateReport.Font = new Font("Segoe UI", 10.2F);
+            btnGenerateReport.Location = new Point(640, 29);
+            btnGenerateReport.Name = "btnGenerateReport";
+            btnGenerateReport.Size = new Size(150, 34);
+            btnGenerateReport.TabIndex = 6;
+            btnGenerateReport.Text = "Generate Report";
+            btnGenerateReport.UseVisualStyleBackColor = true;
+            // 
+            // cboReportRoom
+            // 
+            cboReportRoom.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboReportRoom.Font = new Font("Segoe UI", 10.2F);
+            cboReportRoom.FormattingEnabled = true;
+            cboReportRoom.Location = new Point(410, 31);
+            cboReportRoom.Name = "cboReportRoom";
+            cboReportRoom.Size = new Size(200, 31);
+            cboReportRoom.TabIndex = 5;
+            // 
+            // lblReportRoom
+            // 
+            lblReportRoom.AutoSize = true;
+            lblReportRoom.Font = new Font("Segoe UI", 10.2F);
+            lblReportRoom.ForeColor = Color.White;
+            lblReportRoom.Location = new Point(410, 6);
+            lblReportRoom.Name = "lblReportRoom";
+            lblReportRoom.Size = new Size(204, 23);
+            lblReportRoom.TabIndex = 4;
+            lblReportRoom.Text = "Room (Received tab only)";
+            // 
+            // dtpReportTo
+            // 
+            dtpReportTo.CustomFormat = "MMM dd, yyyy";
+            dtpReportTo.Font = new Font("Segoe UI", 10.2F);
+            dtpReportTo.Format = DateTimePickerFormat.Custom;
+            dtpReportTo.Location = new Point(210, 32);
+            dtpReportTo.Name = "dtpReportTo";
+            dtpReportTo.Size = new Size(180, 30);
+            dtpReportTo.TabIndex = 3;
+            // 
             // lblReportTo
-            //
+            // 
             lblReportTo.AutoSize = true;
             lblReportTo.Font = new Font("Segoe UI", 10.2F);
             lblReportTo.ForeColor = Color.White;
@@ -131,70 +171,30 @@
             lblReportTo.Size = new Size(68, 23);
             lblReportTo.TabIndex = 2;
             lblReportTo.Text = "Date To";
-            //
-            // dtpReportTo
-            //
-            dtpReportTo.Font = new Font("Segoe UI", 10.2F);
-            dtpReportTo.Format = DateTimePickerFormat.Custom;
-            dtpReportTo.CustomFormat = "MMM dd, yyyy";
-            dtpReportTo.Location = new Point(210, 32);
-            dtpReportTo.Name = "dtpReportTo";
-            dtpReportTo.Size = new Size(180, 30);
-            dtpReportTo.TabIndex = 3;
-            //
-            // lblReportRoom
-            //
-            lblReportRoom.AutoSize = true;
-            lblReportRoom.Font = new Font("Segoe UI", 10.2F);
-            lblReportRoom.ForeColor = Color.White;
-            lblReportRoom.Location = new Point(410, 6);
-            lblReportRoom.Name = "lblReportRoom";
-            lblReportRoom.Size = new Size(213, 23);
-            lblReportRoom.TabIndex = 4;
-            lblReportRoom.Text = "Room (Received tab only)";
-            //
-            // cboReportRoom
-            //
-            cboReportRoom.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboReportRoom.Font = new Font("Segoe UI", 10.2F);
-            cboReportRoom.FormattingEnabled = true;
-            cboReportRoom.Location = new Point(410, 31);
-            cboReportRoom.Name = "cboReportRoom";
-            cboReportRoom.Size = new Size(200, 31);
-            cboReportRoom.TabIndex = 5;
-            //
-            // btnGenerateReport
-            //
-            btnGenerateReport.Font = new Font("Segoe UI", 10.2F);
-            btnGenerateReport.Location = new Point(640, 29);
-            btnGenerateReport.Name = "btnGenerateReport";
-            btnGenerateReport.Size = new Size(150, 34);
-            btnGenerateReport.TabIndex = 6;
-            btnGenerateReport.Text = "Generate Report";
-            btnGenerateReport.UseVisualStyleBackColor = true;
-            //
-            // btnClearReport
-            //
-            btnClearReport.Font = new Font("Segoe UI", 10.2F);
-            btnClearReport.Location = new Point(800, 29);
-            btnClearReport.Name = "btnClearReport";
-            btnClearReport.Size = new Size(100, 34);
-            btnClearReport.TabIndex = 7;
-            btnClearReport.Text = "Clear";
-            btnClearReport.UseVisualStyleBackColor = true;
-            //
-            // btnPrintReport
-            //
-            btnPrintReport.Font = new Font("Segoe UI", 10.2F);
-            btnPrintReport.Location = new Point(910, 29);
-            btnPrintReport.Name = "btnPrintReport";
-            btnPrintReport.Size = new Size(120, 34);
-            btnPrintReport.TabIndex = 8;
-            btnPrintReport.Text = "Print / PDF";
-            btnPrintReport.UseVisualStyleBackColor = true;
-            //
+            // 
+            // dtpReportFrom
+            // 
+            dtpReportFrom.CustomFormat = "MMM dd, yyyy";
+            dtpReportFrom.Font = new Font("Segoe UI", 10.2F);
+            dtpReportFrom.Format = DateTimePickerFormat.Custom;
+            dtpReportFrom.Location = new Point(12, 32);
+            dtpReportFrom.Name = "dtpReportFrom";
+            dtpReportFrom.Size = new Size(180, 30);
+            dtpReportFrom.TabIndex = 1;
+            // 
+            // lblReportFrom
+            // 
+            lblReportFrom.AutoSize = true;
+            lblReportFrom.Font = new Font("Segoe UI", 10.2F);
+            lblReportFrom.ForeColor = Color.White;
+            lblReportFrom.Location = new Point(12, 6);
+            lblReportFrom.Name = "lblReportFrom";
+            lblReportFrom.Size = new Size(90, 23);
+            lblReportFrom.TabIndex = 0;
+            lblReportFrom.Text = "Date From";
+            // 
             // pnlReportsSummary
-            //
+            // 
             pnlReportsSummary.BorderStyle = BorderStyle.FixedSingle;
             pnlReportsSummary.Controls.Add(tlpSummary);
             pnlReportsSummary.Controls.Add(lblSummaryNote);
@@ -204,9 +204,9 @@
             pnlReportsSummary.Padding = new Padding(5);
             pnlReportsSummary.Size = new Size(1280, 120);
             pnlReportsSummary.TabIndex = 2;
-            //
+            // 
             // tlpSummary
-            //
+            // 
             tlpSummary.ColumnCount = 5;
             tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
@@ -220,9 +220,9 @@
             tlpSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tlpSummary.Size = new Size(1268, 82);
             tlpSummary.TabIndex = 0;
-            //
+            // 
             // lblSummaryNote
-            //
+            // 
             lblSummaryNote.Dock = DockStyle.Bottom;
             lblSummaryNote.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
             lblSummaryNote.ForeColor = Color.Silver;
@@ -232,9 +232,9 @@
             lblSummaryNote.TabIndex = 1;
             lblSummaryNote.Text = "Net Income = Rent Collected - Expenses. Water and maintenance collections reimburse costs paid for tenants, so they are not counted as income.";
             lblSummaryNote.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // pnlReportsContent
-            //
+            // 
             pnlReportsContent.BorderStyle = BorderStyle.FixedSingle;
             pnlReportsContent.Controls.Add(tabReports);
             pnlReportsContent.Dock = DockStyle.Fill;
@@ -242,9 +242,9 @@
             pnlReportsContent.Name = "pnlReportsContent";
             pnlReportsContent.Size = new Size(1280, 465);
             pnlReportsContent.TabIndex = 3;
-            //
+            // 
             // tabReports
-            //
+            // 
             tabReports.Controls.Add(tabReceived);
             tabReports.Controls.Add(tabExpenses);
             tabReports.Dock = DockStyle.Fill;
@@ -254,10 +254,9 @@
             tabReports.SelectedIndex = 0;
             tabReports.Size = new Size(1278, 463);
             tabReports.TabIndex = 0;
-            //
+            // 
             // tabReceived
-            //
-            tabReceived.BackColor = Color.FromArgb(11, 20, 38);
+            // 
             tabReceived.Controls.Add(dgvReceived);
             tabReceived.Location = new Point(4, 37);
             tabReceived.Name = "tabReceived";
@@ -265,18 +264,19 @@
             tabReceived.Size = new Size(1270, 422);
             tabReceived.TabIndex = 0;
             tabReceived.Text = "Received";
-            //
+            // 
             // dgvReceived
-            //
+            // 
+            dgvReceived.ColumnHeadersHeight = 29;
             dgvReceived.Dock = DockStyle.Fill;
             dgvReceived.Location = new Point(3, 3);
             dgvReceived.Name = "dgvReceived";
+            dgvReceived.RowHeadersWidth = 51;
             dgvReceived.Size = new Size(1264, 416);
             dgvReceived.TabIndex = 0;
-            //
+            // 
             // tabExpenses
-            //
-            tabExpenses.BackColor = Color.FromArgb(11, 20, 38);
+            // 
             tabExpenses.Controls.Add(dgvExpenses);
             tabExpenses.Location = new Point(4, 37);
             tabExpenses.Name = "tabExpenses";
@@ -284,20 +284,22 @@
             tabExpenses.Size = new Size(1270, 422);
             tabExpenses.TabIndex = 1;
             tabExpenses.Text = "Expenses";
-            //
+            // 
             // dgvExpenses
-            //
+            // 
+            dgvExpenses.ColumnHeadersHeight = 29;
             dgvExpenses.Dock = DockStyle.Fill;
             dgvExpenses.Location = new Point(3, 3);
             dgvExpenses.Name = "dgvExpenses";
+            dgvExpenses.RowHeadersWidth = 51;
             dgvExpenses.Size = new Size(1264, 416);
             dgvExpenses.TabIndex = 0;
-            //
+            // 
             // ReportsControl
-            //
+            // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 50);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlReportsContent);
             Controls.Add(pnlReportsSummary);
             Controls.Add(pnlReportsFilter);

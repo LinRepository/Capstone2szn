@@ -31,6 +31,7 @@
             pnlSettingsContent = new Panel();
             tblSettingsOptions = new TableLayoutPanel();
             pnlProfileManagement = new Panel();
+            lblProfileManagement = new Label();
             pnlBackupRestore = new Panel();
             lblBackupRestore = new Label();
             pnlElectricWaterAccount = new Panel();
@@ -41,7 +42,6 @@
             lblSalary = new Label();
             pnlSettingsHeader = new Panel();
             lblSettingsTitle = new Label();
-            lblProfileManagement = new Label();
             pnlSettingsContent.SuspendLayout();
             tblSettingsOptions.SuspendLayout();
             pnlProfileManagement.SuspendLayout();
@@ -94,6 +94,21 @@
             pnlProfileManagement.Name = "pnlProfileManagement";
             pnlProfileManagement.Size = new Size(1240, 105);
             pnlProfileManagement.TabIndex = 0;
+            // 
+            // lblProfileManagement
+            // 
+            lblProfileManagement.BorderStyle = BorderStyle.FixedSingle;
+            lblProfileManagement.Dock = DockStyle.Fill;
+            lblProfileManagement.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblProfileManagement.ForeColor = Color.White;
+            lblProfileManagement.ImageAlign = ContentAlignment.MiddleRight;
+            lblProfileManagement.Location = new Point(0, 0);
+            lblProfileManagement.Name = "lblProfileManagement";
+            lblProfileManagement.Size = new Size(1240, 105);
+            lblProfileManagement.TabIndex = 7;
+            lblProfileManagement.Text = "Profile Management";
+            lblProfileManagement.TextAlign = ContentAlignment.MiddleCenter;
+            lblProfileManagement.Click += lblProfileManagement_Click;
             // 
             // pnlBackupRestore
             // 
@@ -222,26 +237,11 @@
             lblSettingsTitle.Text = "Settings";
             lblSettingsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblProfileManagement
-            // 
-            lblProfileManagement.BorderStyle = BorderStyle.FixedSingle;
-            lblProfileManagement.Dock = DockStyle.Fill;
-            lblProfileManagement.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblProfileManagement.ForeColor = Color.White;
-            lblProfileManagement.ImageAlign = ContentAlignment.MiddleRight;
-            lblProfileManagement.Location = new Point(0, 0);
-            lblProfileManagement.Name = "lblProfileManagement";
-            lblProfileManagement.Size = new Size(1240, 105);
-            lblProfileManagement.TabIndex = 7;
-            lblProfileManagement.Text = "Profile Management";
-            lblProfileManagement.TextAlign = ContentAlignment.MiddleCenter;
-            lblProfileManagement.Click += lblProfileManagement_Click;
-            // 
             // SettingsControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 50);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlSettingsContent);
             Controls.Add(pnlSettingsHeader);
             Name = "SettingsControl";

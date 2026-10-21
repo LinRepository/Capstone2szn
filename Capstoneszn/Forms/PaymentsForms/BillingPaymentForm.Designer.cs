@@ -392,7 +392,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             CancelButton = btnCancel;
             ClientSize = new Size(832, 658);
             Controls.Add(pnlPaymentBottom);

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Capstoneszn.Forms;
 using Capstoneszn.UserControls;
 using Microsoft.Data.SqlClient;
+using Capstoneszn.Forms.BuildingForms; // for SystemClockForm
 
 namespace Capstoneszn
 {
@@ -40,6 +41,19 @@ namespace Capstoneszn
         //MAIN FORM 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            // SYSTEM CLOCK CHECK – must pass before the system load
+            using (var clockForm = new SystemClockForm())
+            {
+                if (clockForm.ShowDialog() != DialogResult.OK)
+                {
+                    // User went back or closed the window: treat it like a logout
+                    Session.Clear();
+                    Session.LoggingOut = true;
+                    BeginInvoke(new Action(Close)); // close MainForm safely after Load finishes
+                    return;
+                }
+            }
+
             LoadControl(new HomeControl());
 
             SaveButtonTexts();

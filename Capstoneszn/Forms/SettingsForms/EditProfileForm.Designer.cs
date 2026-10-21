@@ -205,7 +205,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(10, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(482, 353);
             Controls.Add(pnlEditProfileContent);
             Controls.Add(pnlEditProfileActions);

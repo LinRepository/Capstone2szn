@@ -38,7 +38,7 @@
             panel11 = new Panel();
             btnRecordExpenses = new Button();
             panel5 = new Panel();
-            lblAmount = new Label();
+            txtAmount = new TextBox();
             panel9 = new Panel();
             label3 = new Label();
             panel7 = new Panel();
@@ -85,7 +85,7 @@
             panel12.Dock = DockStyle.Fill;
             panel12.Location = new Point(1200, 0);
             panel12.Name = "panel12";
-            panel12.Size = new Size(85, 91);
+            panel12.Size = new Size(136, 91);
             panel12.TabIndex = 7;
             // 
             // panel10
@@ -144,20 +144,20 @@
             // 
             panel11.Controls.Add(btnRecordExpenses);
             panel11.Dock = DockStyle.Right;
-            panel11.Location = new Point(1285, 0);
+            panel11.Location = new Point(1336, 0);
             panel11.Name = "panel11";
             panel11.Padding = new Padding(10);
-            panel11.Size = new Size(250, 91);
+            panel11.Size = new Size(199, 91);
             panel11.TabIndex = 6;
             // 
             // btnRecordExpenses
             // 
             btnRecordExpenses.BackColor = Color.White;
-            btnRecordExpenses.Dock = DockStyle.Right;
+            btnRecordExpenses.Dock = DockStyle.Fill;
             btnRecordExpenses.FlatStyle = FlatStyle.Flat;
-            btnRecordExpenses.Location = new Point(13, 10);
+            btnRecordExpenses.Location = new Point(10, 10);
             btnRecordExpenses.Name = "btnRecordExpenses";
-            btnRecordExpenses.Size = new Size(227, 71);
+            btnRecordExpenses.Size = new Size(179, 71);
             btnRecordExpenses.TabIndex = 1;
             btnRecordExpenses.Text = "Record Expense";
             btnRecordExpenses.UseVisualStyleBackColor = false;
@@ -165,7 +165,7 @@
             // 
             // panel5
             // 
-            panel5.Controls.Add(lblAmount);
+            panel5.Controls.Add(txtAmount);
             panel5.Controls.Add(panel9);
             panel5.Dock = DockStyle.Left;
             panel5.Location = new Point(600, 0);
@@ -173,17 +173,19 @@
             panel5.Size = new Size(300, 91);
             panel5.TabIndex = 3;
             // 
-            // lblAmount
+            // txtAmount
             // 
-            lblAmount.AutoSize = true;
-            lblAmount.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAmount.ForeColor = Color.White;
-            lblAmount.Location = new Point(140, 57);
-            lblAmount.Name = "lblAmount";
-            lblAmount.Size = new Size(18, 23);
-            lblAmount.TabIndex = 1;
-            lblAmount.Text = "?";
-            lblAmount.TextAlign = ContentAlignment.MiddleCenter;
+            txtAmount.BackColor = Color.FromArgb(25, 25, 60);
+            txtAmount.BorderStyle = BorderStyle.None;
+            txtAmount.Dock = DockStyle.Fill;
+            txtAmount.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAmount.ForeColor = Color.White;
+            txtAmount.Location = new Point(0, 45);
+            txtAmount.Name = "txtAmount";
+            txtAmount.PlaceholderText = "₱***";
+            txtAmount.Size = new Size(300, 36);
+            txtAmount.TabIndex = 3;
+            txtAmount.TextAlign = HorizontalAlignment.Center;
             // 
             // panel9
             // 
@@ -312,7 +314,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 60);
             Controls.Add(panel1);
             Name = "AdminElectricityAccount";
             Size = new Size(1535, 91);
@@ -356,7 +358,6 @@
         private Button btnRecordExpenses;
         private Panel panel11;
         private Panel panel10;
-        private Label lblAmount;
         private Panel panel9;
         private Panel panel8;
         private Label lblAccountNumber;
@@ -366,5 +367,6 @@
         private Label lblStatus;
         private Panel panel13;
         private Label label7;
+        private TextBox txtAmount;
     }
 }

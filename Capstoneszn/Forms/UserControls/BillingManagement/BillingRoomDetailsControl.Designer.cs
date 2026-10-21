@@ -69,9 +69,9 @@
             ((System.ComponentModel.ISupportInitialize)dgvTenantPayments).BeginInit();
             pnlTenantsCaption.SuspendLayout();
             SuspendLayout();
-            //
+            // 
             // pnlRoomBillingHeader
-            //
+            // 
             pnlRoomBillingHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomBillingHeader.Controls.Add(lblBillStatusValue);
             pnlRoomBillingHeader.Controls.Add(lblPeriodValue);
@@ -82,9 +82,9 @@
             pnlRoomBillingHeader.Name = "pnlRoomBillingHeader";
             pnlRoomBillingHeader.Size = new Size(1300, 90);
             pnlRoomBillingHeader.TabIndex = 0;
-            //
+            // 
             // lblBillStatusValue
-            //
+            // 
             lblBillStatusValue.Dock = DockStyle.Fill;
             lblBillStatusValue.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblBillStatusValue.ForeColor = Color.White;
@@ -95,9 +95,9 @@
             lblBillStatusValue.TabIndex = 3;
             lblBillStatusValue.Text = "-";
             lblBillStatusValue.TextAlign = ContentAlignment.MiddleRight;
-            //
+            // 
             // lblPeriodValue
-            //
+            // 
             lblPeriodValue.Dock = DockStyle.Left;
             lblPeriodValue.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPeriodValue.ForeColor = Color.White;
@@ -107,9 +107,9 @@
             lblPeriodValue.TabIndex = 2;
             lblPeriodValue.Text = "-";
             lblPeriodValue.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblRoomNumber
-            //
+            // 
             lblRoomNumber.Dock = DockStyle.Left;
             lblRoomNumber.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoomNumber.ForeColor = Color.White;
@@ -119,9 +119,9 @@
             lblRoomNumber.TabIndex = 1;
             lblRoomNumber.Text = "Room -";
             lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // btnBackRoomBilling
-            //
+            // 
             btnBackRoomBilling.Cursor = Cursors.Hand;
             btnBackRoomBilling.Dock = DockStyle.Left;
             btnBackRoomBilling.Font = new Font("Segoe UI", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -134,9 +134,9 @@
             btnBackRoomBilling.TextAlign = ContentAlignment.TopCenter;
             btnBackRoomBilling.UseVisualStyleBackColor = true;
             btnBackRoomBilling.Click += btnBackRoomBilling_Click;
-            //
+            // 
             // pnlRoomBillingSummary
-            //
+            // 
             pnlRoomBillingSummary.Controls.Add(tblRoomBillingSummary);
             pnlRoomBillingSummary.Dock = DockStyle.Top;
             pnlRoomBillingSummary.Location = new Point(0, 90);
@@ -144,9 +144,9 @@
             pnlRoomBillingSummary.Padding = new Padding(6);
             pnlRoomBillingSummary.Size = new Size(1300, 130);
             pnlRoomBillingSummary.TabIndex = 1;
-            //
+            // 
             // tblRoomBillingSummary
-            //
+            // 
             tblRoomBillingSummary.ColumnCount = 4;
             tblRoomBillingSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tblRoomBillingSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
@@ -163,9 +163,9 @@
             tblRoomBillingSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tblRoomBillingSummary.Size = new Size(1288, 118);
             tblRoomBillingSummary.TabIndex = 0;
-            //
+            // 
             // pnlPeriodBill
-            //
+            // 
             pnlPeriodBill.BorderStyle = BorderStyle.FixedSingle;
             pnlPeriodBill.Controls.Add(lblPeriodBillValue);
             pnlPeriodBill.Controls.Add(lblPeriodBillTitle);
@@ -175,9 +175,9 @@
             pnlPeriodBill.Name = "pnlPeriodBill";
             pnlPeriodBill.Size = new Size(310, 106);
             pnlPeriodBill.TabIndex = 0;
-            //
+            // 
             // lblPeriodBillValue
-            //
+            // 
             lblPeriodBillValue.Dock = DockStyle.Fill;
             lblPeriodBillValue.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPeriodBillValue.ForeColor = Color.White;
@@ -188,9 +188,9 @@
             lblPeriodBillValue.TabIndex = 1;
             lblPeriodBillValue.Text = "0.00";
             lblPeriodBillValue.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblPeriodBillTitle
-            //
+            // 
             lblPeriodBillTitle.Dock = DockStyle.Top;
             lblPeriodBillTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPeriodBillTitle.ForeColor = Color.Gainsboro;
@@ -201,9 +201,9 @@
             lblPeriodBillTitle.TabIndex = 0;
             lblPeriodBillTitle.Text = "This Period";
             lblPeriodBillTitle.TextAlign = ContentAlignment.BottomCenter;
-            //
+            // 
             // pnlPeriodPaid
-            //
+            // 
             pnlPeriodPaid.BorderStyle = BorderStyle.FixedSingle;
             pnlPeriodPaid.Controls.Add(lblPeriodPaidValue);
             pnlPeriodPaid.Controls.Add(lblPeriodPaidTitle);
@@ -213,9 +213,9 @@
             pnlPeriodPaid.Name = "pnlPeriodPaid";
             pnlPeriodPaid.Size = new Size(310, 106);
             pnlPeriodPaid.TabIndex = 1;
-            //
+            // 
             // lblPeriodPaidValue
-            //
+            // 
             lblPeriodPaidValue.Dock = DockStyle.Fill;
             lblPeriodPaidValue.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPeriodPaidValue.ForeColor = Color.White;
@@ -226,9 +226,9 @@
             lblPeriodPaidValue.TabIndex = 1;
             lblPeriodPaidValue.Text = "0.00";
             lblPeriodPaidValue.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblPeriodPaidTitle
-            //
+            // 
             lblPeriodPaidTitle.Dock = DockStyle.Top;
             lblPeriodPaidTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPeriodPaidTitle.ForeColor = Color.Gainsboro;
@@ -239,9 +239,9 @@
             lblPeriodPaidTitle.TabIndex = 0;
             lblPeriodPaidTitle.Text = "Paid This Period";
             lblPeriodPaidTitle.TextAlign = ContentAlignment.BottomCenter;
-            //
+            // 
             // pnlOutstanding
-            //
+            // 
             pnlOutstanding.BorderStyle = BorderStyle.FixedSingle;
             pnlOutstanding.Controls.Add(lblOutstandingValue);
             pnlOutstanding.Controls.Add(lblOutstandingTitle);
@@ -251,9 +251,9 @@
             pnlOutstanding.Name = "pnlOutstanding";
             pnlOutstanding.Size = new Size(310, 106);
             pnlOutstanding.TabIndex = 2;
-            //
+            // 
             // lblOutstandingValue
-            //
+            // 
             lblOutstandingValue.Dock = DockStyle.Fill;
             lblOutstandingValue.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblOutstandingValue.ForeColor = Color.White;
@@ -264,9 +264,9 @@
             lblOutstandingValue.TabIndex = 1;
             lblOutstandingValue.Text = "0.00";
             lblOutstandingValue.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblOutstandingTitle
-            //
+            // 
             lblOutstandingTitle.Dock = DockStyle.Top;
             lblOutstandingTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblOutstandingTitle.ForeColor = Color.Gainsboro;
@@ -277,9 +277,9 @@
             lblOutstandingTitle.TabIndex = 0;
             lblOutstandingTitle.Text = "Outstanding (All Periods)";
             lblOutstandingTitle.TextAlign = ContentAlignment.BottomCenter;
-            //
+            // 
             // pnlOverdue
-            //
+            // 
             pnlOverdue.BorderStyle = BorderStyle.FixedSingle;
             pnlOverdue.Controls.Add(lblOverdueValue);
             pnlOverdue.Controls.Add(lblOverdueTitle);
@@ -289,9 +289,9 @@
             pnlOverdue.Name = "pnlOverdue";
             pnlOverdue.Size = new Size(310, 106);
             pnlOverdue.TabIndex = 3;
-            //
+            // 
             // lblOverdueValue
-            //
+            // 
             lblOverdueValue.Dock = DockStyle.Fill;
             lblOverdueValue.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblOverdueValue.ForeColor = Color.White;
@@ -302,9 +302,9 @@
             lblOverdueValue.TabIndex = 1;
             lblOverdueValue.Text = "0.00";
             lblOverdueValue.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblOverdueTitle
-            //
+            // 
             lblOverdueTitle.Dock = DockStyle.Top;
             lblOverdueTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblOverdueTitle.ForeColor = Color.Gainsboro;
@@ -315,9 +315,9 @@
             lblOverdueTitle.TabIndex = 0;
             lblOverdueTitle.Text = "Overdue";
             lblOverdueTitle.TextAlign = ContentAlignment.BottomCenter;
-            //
+            // 
             // pnlTenantPayments
-            //
+            // 
             pnlTenantPayments.Controls.Add(dgvTenantPayments);
             pnlTenantPayments.Controls.Add(pnlTenantsCaption);
             pnlTenantPayments.Dock = DockStyle.Fill;
@@ -326,9 +326,9 @@
             pnlTenantPayments.Padding = new Padding(12, 0, 12, 12);
             pnlTenantPayments.Size = new Size(1300, 530);
             pnlTenantPayments.TabIndex = 2;
-            //
+            // 
             // dgvTenantPayments
-            //
+            // 
             dgvTenantPayments.AllowUserToAddRows = false;
             dgvTenantPayments.AllowUserToDeleteRows = false;
             dgvTenantPayments.AllowUserToResizeRows = false;
@@ -351,80 +351,79 @@
             dgvTenantPayments.CellContentClick += dgvTenantPayments_CellContentClick;
             dgvTenantPayments.CellDoubleClick += dgvTenantPayments_CellDoubleClick;
             dgvTenantPayments.CellFormatting += dgvTenantPayments_CellFormatting;
-            //
+            // 
             // colTenantName
-            //
+            // 
             colTenantName.DataPropertyName = "TenantName";
             colTenantName.FillWeight = 170F;
             colTenantName.HeaderText = "Tenant";
             colTenantName.MinimumWidth = 6;
             colTenantName.Name = "colTenantName";
             colTenantName.ReadOnly = true;
-            //
+            // 
             // colShare
-            //
+            // 
             colShare.DataPropertyName = "PeriodShare";
             colShare.FillWeight = 90F;
             colShare.HeaderText = "This Period";
             colShare.MinimumWidth = 6;
             colShare.Name = "colShare";
             colShare.ReadOnly = true;
-            //
+            // 
             // colPaid
-            //
+            // 
             colPaid.DataPropertyName = "PeriodPaid";
             colPaid.FillWeight = 90F;
             colPaid.HeaderText = "Paid This Period";
             colPaid.MinimumWidth = 6;
             colPaid.Name = "colPaid";
             colPaid.ReadOnly = true;
-            //
+            // 
             // colMaintenance
-            //
+            // 
             colMaintenance.DataPropertyName = "MaintenanceOwed";
             colMaintenance.FillWeight = 90F;
             colMaintenance.HeaderText = "Maintenance Owed";
             colMaintenance.MinimumWidth = 6;
             colMaintenance.Name = "colMaintenance";
             colMaintenance.ReadOnly = true;
-            //
+            // 
             // colOutstanding
-            //
+            // 
             colOutstanding.DataPropertyName = "Outstanding";
             colOutstanding.FillWeight = 90F;
             colOutstanding.HeaderText = "Total Outstanding";
             colOutstanding.MinimumWidth = 6;
             colOutstanding.Name = "colOutstanding";
             colOutstanding.ReadOnly = true;
-            //
+            // 
             // colAdvance
-            //
+            // 
             colAdvance.DataPropertyName = "Advance";
             colAdvance.FillWeight = 90F;
             colAdvance.HeaderText = "Paid Ahead";
             colAdvance.MinimumWidth = 6;
             colAdvance.Name = "colAdvance";
             colAdvance.ReadOnly = true;
-            //
+            // 
             // colPayment
-            //
-            colPayment.FillWeight = 100F;
+            // 
             colPayment.HeaderText = "Action";
             colPayment.MinimumWidth = 6;
             colPayment.Name = "colPayment";
             colPayment.ReadOnly = true;
-            //
+            // 
             // pnlTenantsCaption
-            //
+            // 
             pnlTenantsCaption.Controls.Add(lblTenantsCaption);
             pnlTenantsCaption.Dock = DockStyle.Top;
             pnlTenantsCaption.Location = new Point(12, 0);
             pnlTenantsCaption.Name = "pnlTenantsCaption";
             pnlTenantsCaption.Size = new Size(1276, 44);
             pnlTenantsCaption.TabIndex = 0;
-            //
+            // 
             // lblTenantsCaption
-            //
+            // 
             lblTenantsCaption.Dock = DockStyle.Fill;
             lblTenantsCaption.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTenantsCaption.ForeColor = Color.White;
@@ -435,12 +434,12 @@
             lblTenantsCaption.TabIndex = 0;
             lblTenantsCaption.Text = "Current tenants";
             lblTenantsCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // BillingRoomDetailsControl
-            //
+            // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(pnlTenantPayments);
             Controls.Add(pnlRoomBillingSummary);
             Controls.Add(pnlRoomBillingHeader);
