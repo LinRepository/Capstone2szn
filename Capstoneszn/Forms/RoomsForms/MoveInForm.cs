@@ -325,5 +325,11 @@ namespace Capstoneszn.UserControls
                 return true;
             }
         }
+
+        private void btnAddToList_Click(object sender, EventArgs e) { }
+        private void rdoOccupantType_CheckedChanged(object sender, EventArgs e) { }
+        private void rdoPaymentMode_CheckedChanged(object sender, EventArgs e) { }
+        private void dgvMoveInList_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+
     }
 }

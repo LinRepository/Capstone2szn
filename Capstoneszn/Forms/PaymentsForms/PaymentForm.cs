@@ -464,5 +464,9 @@ namespace Capstoneszn.Forms
         {
 
         }
+
+        private void cboPaidBy_SelectedIndexChanged(object sender, EventArgs e) { }
+
+
     }
 }
