@@ -48,15 +48,6 @@ namespace Capstoneszn.UserControls
             archiveCtrl.BringToFront();
         }
 
-        private void lblSalary_Click(object sender, EventArgs e)
-        {
-            SalaryControl salaryCtrl = new SalaryControl();
-            salaryCtrl.Dock = DockStyle.Fill;
-
-            pnlSettingsContent.Controls.Add(salaryCtrl);
-            salaryCtrl.BringToFront();
-        }
-
         private void lblProfileManagement_Click(object sender, EventArgs e)
         {
             ProfileManagementControl profileCtrl = new ProfileManagementControl();

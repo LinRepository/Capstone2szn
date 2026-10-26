@@ -119,7 +119,7 @@
             // 
             // pnlUtilitiesContent
             // 
-            pnlUtilitiesContent.BackColor = Color.FromArgb(11, 20, 50);
+            pnlUtilitiesContent.BackColor = Color.FromArgb(25, 25, 70);
             pnlUtilitiesContent.Controls.Add(tabUtilities);
             pnlUtilitiesContent.Dock = DockStyle.Fill;
             pnlUtilitiesContent.Location = new Point(0, 0);

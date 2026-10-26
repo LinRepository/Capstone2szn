@@ -104,6 +104,7 @@
             // pnlProfileCenter
             // 
             pnlProfileCenter.Anchor = AnchorStyles.None;
+            pnlProfileCenter.BackColor = Color.FromArgb(25, 25, 80);
             pnlProfileCenter.BorderStyle = BorderStyle.FixedSingle;
             pnlProfileCenter.Controls.Add(tblProfileInformation);
             pnlProfileCenter.Controls.Add(pnlProfileActions);
@@ -131,7 +132,7 @@
             tblProfileInformation.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tblProfileInformation.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tblProfileInformation.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tblProfileInformation.Size = new Size(778, 338);
+            tblProfileInformation.Size = new Size(778, 344);
             tblProfileInformation.TabIndex = 2;
             // 
             // lblProfileUsernameValue
@@ -140,9 +141,9 @@
             lblProfileUsernameValue.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblProfileUsernameValue.ForeColor = Color.White;
             lblProfileUsernameValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblProfileUsernameValue.Location = new Point(236, 224);
+            lblProfileUsernameValue.Location = new Point(236, 228);
             lblProfileUsernameValue.Name = "lblProfileUsernameValue";
-            lblProfileUsernameValue.Size = new Size(539, 114);
+            lblProfileUsernameValue.Size = new Size(539, 116);
             lblProfileUsernameValue.TabIndex = 17;
             lblProfileUsernameValue.Text = "admin123";
             lblProfileUsernameValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -153,9 +154,9 @@
             lblProfileUsernameTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblProfileUsernameTitle.ForeColor = Color.White;
             lblProfileUsernameTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblProfileUsernameTitle.Location = new Point(3, 224);
+            lblProfileUsernameTitle.Location = new Point(3, 228);
             lblProfileUsernameTitle.Name = "lblProfileUsernameTitle";
-            lblProfileUsernameTitle.Size = new Size(227, 114);
+            lblProfileUsernameTitle.Size = new Size(227, 116);
             lblProfileUsernameTitle.TabIndex = 16;
             lblProfileUsernameTitle.Text = "Username:";
             lblProfileUsernameTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -166,9 +167,9 @@
             lblProfileRoleValue.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblProfileRoleValue.ForeColor = Color.White;
             lblProfileRoleValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblProfileRoleValue.Location = new Point(236, 112);
+            lblProfileRoleValue.Location = new Point(236, 114);
             lblProfileRoleValue.Name = "lblProfileRoleValue";
-            lblProfileRoleValue.Size = new Size(539, 112);
+            lblProfileRoleValue.Size = new Size(539, 114);
             lblProfileRoleValue.TabIndex = 15;
             lblProfileRoleValue.Text = "Administrator";
             lblProfileRoleValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -179,9 +180,9 @@
             lblProfileRoleTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblProfileRoleTitle.ForeColor = Color.White;
             lblProfileRoleTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblProfileRoleTitle.Location = new Point(3, 112);
+            lblProfileRoleTitle.Location = new Point(3, 114);
             lblProfileRoleTitle.Name = "lblProfileRoleTitle";
-            lblProfileRoleTitle.Size = new Size(227, 112);
+            lblProfileRoleTitle.Size = new Size(227, 114);
             lblProfileRoleTitle.TabIndex = 14;
             lblProfileRoleTitle.Text = "Role:";
             lblProfileRoleTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -194,7 +195,7 @@
             lblProfileNameValue.ImageAlign = ContentAlignment.MiddleRight;
             lblProfileNameValue.Location = new Point(236, 0);
             lblProfileNameValue.Name = "lblProfileNameValue";
-            lblProfileNameValue.Size = new Size(539, 112);
+            lblProfileNameValue.Size = new Size(539, 114);
             lblProfileNameValue.TabIndex = 13;
             lblProfileNameValue.Text = "Admin User";
             lblProfileNameValue.TextAlign = ContentAlignment.MiddleLeft;
@@ -207,7 +208,7 @@
             lbProfileNameTitle.ImageAlign = ContentAlignment.MiddleRight;
             lbProfileNameTitle.Location = new Point(3, 0);
             lbProfileNameTitle.Name = "lbProfileNameTitle";
-            lbProfileNameTitle.Size = new Size(227, 112);
+            lbProfileNameTitle.Size = new Size(227, 114);
             lbProfileNameTitle.TabIndex = 12;
             lbProfileNameTitle.Text = "Name:";
             lbProfileNameTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -218,16 +219,16 @@
             pnlProfileActions.Controls.Add(btnChangePassword);
             pnlProfileActions.Controls.Add(btnEditProfile);
             pnlProfileActions.Dock = DockStyle.Bottom;
-            pnlProfileActions.Location = new Point(10, 348);
+            pnlProfileActions.Location = new Point(10, 354);
             pnlProfileActions.Name = "pnlProfileActions";
-            pnlProfileActions.Size = new Size(778, 90);
+            pnlProfileActions.Size = new Size(778, 84);
             pnlProfileActions.TabIndex = 1;
             // 
             // btnManageSecurityQuestions
             // 
             btnManageSecurityQuestions.Anchor = AnchorStyles.None;
             btnManageSecurityQuestions.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnManageSecurityQuestions.Location = new Point(438, 21);
+            btnManageSecurityQuestions.Location = new Point(438, 18);
             btnManageSecurityQuestions.Name = "btnManageSecurityQuestions";
             btnManageSecurityQuestions.Size = new Size(330, 50);
             btnManageSecurityQuestions.TabIndex = 2;
@@ -239,7 +240,7 @@
             // 
             btnChangePassword.Anchor = AnchorStyles.None;
             btnChangePassword.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnChangePassword.Location = new Point(196, 21);
+            btnChangePassword.Location = new Point(196, 18);
             btnChangePassword.Name = "btnChangePassword";
             btnChangePassword.Size = new Size(230, 50);
             btnChangePassword.TabIndex = 1;
@@ -251,7 +252,7 @@
             // 
             btnEditProfile.Anchor = AnchorStyles.None;
             btnEditProfile.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnEditProfile.Location = new Point(14, 21);
+            btnEditProfile.Location = new Point(14, 18);
             btnEditProfile.Name = "btnEditProfile";
             btnEditProfile.Size = new Size(170, 50);
             btnEditProfile.TabIndex = 0;

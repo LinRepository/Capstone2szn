@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Capstoneszn.Forms.UserControls.Utilities;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -188,7 +189,17 @@ namespace Capstoneszn.Forms.UtilityForms
                         return false;
                     }
                 }
+                // NEW: re-check inside the transaction and get the account to link
+                WaterAccountInfo? waterAccount =
+                    WaterAccountHelper.GetActive(conn, tran, Session.BuildingId, lockRow: false);
+                if (waterAccount == null)
+                {
+                    Warn("This building has no water account yet. Set it up in Settings → Utilities Accounts first.");
+                    return false;
+                }
 
+                //Old insert water bill (10/26/12:11am)
+                /* 
                 using (var cmd = new SqlCommand(@"
                     INSERT INTO dbo.WaterBills
                         (BuildingId, BillingMonth, DueDate, TotalAmount, AdminShareMode, AdminAmount, AdminStatus, RecordedBy)
@@ -200,6 +211,25 @@ namespace Capstoneszn.Forms.UtilityForms
                     cmd.Parameters.Add("@Due", SqlDbType.Date).Value = dtpDueDate.Value.Date;
                     cmd.Parameters.Add("@Mode", SqlDbType.VarChar, 10).Value = rdoDefaultShare.Checked ? "Default" : "Custom";
                     cmd.Parameters.Add("@RecordedBy", SqlDbType.Int).Value = Session.UserId;
+                    WaterBillHelper.AddMoney(cmd, "@Total", _totalAmount);
+                    WaterBillHelper.AddMoney(cmd, "@AdminAmount", _adminAmount);
+                    cmd.ExecuteNonQuery();
+                }
+                */
+
+                // NEW: same insert + the water account the bill is recorded under
+                using (var cmd = new SqlCommand(@"
+                    INSERT INTO dbo.WaterBills
+                        (BuildingId, BillingMonth, DueDate, TotalAmount, AdminShareMode, AdminAmount, AdminStatus, RecordedBy, WaterAccountId)
+                    VALUES
+                        (@BuildingId, @Month, @Due, @Total, @Mode, @AdminAmount, 'Unpaid', @RecordedBy, @WaterAccountId);", conn, tran))
+                {
+                    cmd.Parameters.Add("@BuildingId", SqlDbType.Int).Value = Session.BuildingId;
+                    cmd.Parameters.Add("@Month", SqlDbType.Date).Value = _billingMonth;
+                    cmd.Parameters.Add("@Due", SqlDbType.Date).Value = dtpDueDate.Value.Date;
+                    cmd.Parameters.Add("@Mode", SqlDbType.VarChar, 10).Value = rdoDefaultShare.Checked ? "Default" : "Custom";
+                    cmd.Parameters.Add("@RecordedBy", SqlDbType.Int).Value = Session.UserId;
+                    cmd.Parameters.Add("@WaterAccountId", SqlDbType.Int).Value = waterAccount.WaterAccountId;
                     WaterBillHelper.AddMoney(cmd, "@Total", _totalAmount);
                     WaterBillHelper.AddMoney(cmd, "@AdminAmount", _adminAmount);
                     cmd.ExecuteNonQuery();

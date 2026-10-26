@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Capstoneszn.Forms.UserControls.Utilities;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.UtilityForms
 {
@@ -134,19 +135,26 @@ namespace Capstoneszn.Forms.UtilityForms
                 WaterBillHelper.DeleteTenantBills(conn, tran, _monthStart);
                 WaterBillHelper.InsertTenantBills(conn, tran, _monthStart, dtpDueDate.Value.Date, current);
 
-                // Update the header
+                // NEW: same update. The bill keeps the account it was recorded under;
+                // a legacy bill with no account is linked to the building's current one.
+                WaterAccountInfo? activeAccount =
+                    WaterAccountHelper.GetActive(conn, tran, Session.BuildingId, lockRow: false);
+
                 using (var cmd = new SqlCommand(@"
                     UPDATE dbo.WaterBills
                        SET DueDate        = @Due,
                            TotalAmount    = @Total,
                            AdminShareMode = @Mode,
-                           AdminAmount    = @Admin
+                           AdminAmount    = @Admin,
+                           WaterAccountId = COALESCE(WaterAccountId, @ActiveAccountId)
                      WHERE WaterBillId = @Id;", conn, tran))
                 {
                     cmd.Parameters.Add("@Due", SqlDbType.Date).Value = dtpDueDate.Value.Date;
                     WaterBillHelper.AddMoney(cmd, "@Total", total);
                     cmd.Parameters.Add("@Mode", SqlDbType.VarChar, 10).Value = isDefault ? "Default" : "Custom";
                     WaterBillHelper.AddMoney(cmd, "@Admin", _adminAmount);
+                    cmd.Parameters.Add("@ActiveAccountId", SqlDbType.Int).Value =
+                        (object?)activeAccount?.WaterAccountId ?? DBNull.Value;
                     cmd.Parameters.Add("@Id", SqlDbType.Int).Value = _waterBillId;
                     cmd.ExecuteNonQuery();
                 }

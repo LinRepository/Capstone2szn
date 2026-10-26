@@ -217,6 +217,26 @@ namespace Capstoneszn.UserControls
         }
         private void btnAddWaterBill_Click(object sender, EventArgs e)
         {
+            // NEW: a water bill needs the building's water account
+            WaterAccountInfo? waterAccount;
+            try
+            {
+                waterAccount = WaterAccountHelper.GetActive(Session.BuildingId);
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Unable to check the water account.\n\n" + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (waterAccount == null)
+            {
+                MessageBox.Show("This building has no water account yet.\n\n" +
+                    "Set it up in Settings → Utilities Accounts first.", "Add Bill",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (WaterMonthStart > DateTime.Today)
             {
                 MessageBox.Show("You can't add a bill for a future month.", "Add Bill",

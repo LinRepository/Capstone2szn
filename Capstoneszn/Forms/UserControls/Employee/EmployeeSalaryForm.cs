@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Capstoneszn.Forms.UtilityForms
+namespace Capstoneszn.Forms.UserControls.Employee
 {
-    public partial class AddOnForm : Form
+    public partial class EmployeeSalaryForm : Form
     {
-        public AddOnForm()
+        public EmployeeSalaryForm()
         {
             InitializeComponent();
         }

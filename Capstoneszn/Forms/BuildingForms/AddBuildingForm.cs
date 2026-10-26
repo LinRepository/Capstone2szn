@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Capstoneszn.Forms.UserControls.Utilities;
+using Capstoneszn.Forms.UtilityForms;   // NEW: WaterAccountHelper, ElectricityAccountHelper
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn
 {
@@ -20,6 +22,13 @@ namespace Capstoneszn
 
         private void AddBuildingForm_Load(object sender, EventArgs e)
         {
+            // NEW: same limits and key filter as Settings → Utilities Accounts
+            txtWaterAccountName.MaxLength = WaterAccountHelper.NameMaxLength;
+            txtWaterAccountNumber.MaxLength = WaterAccountHelper.NumberMaxLength;
+            txtElecAccountName.MaxLength = ElectricityAccountHelper.NameMaxLength;
+            txtElecAccountNumber.MaxLength = ElectricityAccountHelper.NumberMaxLength;
+            txtWaterAccountNumber.KeyPress += WaterAccountHelper.AccountNumberKeyPress;
+            txtElecAccountNumber.KeyPress += WaterAccountHelper.AccountNumberKeyPress;
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -33,6 +42,70 @@ namespace Capstoneszn
                 MessageBox.Show("Please enter a valid building name and at least 1 floor.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            //Utilities
+            // NEW ── 1b. Utility accounts (optional now; can be set up later in Settings) ──
+            string waterName = txtWaterAccountName.Text.Trim();
+            string waterNumber = txtWaterAccountNumber.Text.Trim();
+            string elecName = txtElecAccountName.Text.Trim();
+            string elecNumber = txtElecAccountNumber.Text.Trim();
+
+            bool waterGiven = waterName.Length > 0 || waterNumber.Length > 0;
+            bool elecGiven = elecName.Length > 0 || elecNumber.Length > 0;
+
+            // Started filling one in → it must be complete and valid (same rules as Settings)
+            if (waterGiven && !WaterAccountHelper.Validate(waterName, waterNumber, out string waterError))
+            {
+                MessageBox.Show("Water account: " + waterError, "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                (waterName.Length == 0 ? txtWaterAccountName : txtWaterAccountNumber).Focus();
+                return;
+            }
+            if (elecGiven && !ElectricityAccountHelper.Validate(elecName, elecNumber, out string elecError))
+            {
+                MessageBox.Show("Electricity account: " + elecError, "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                (elecName.Length == 0 ? txtElecAccountName : txtElecAccountNumber).Focus();
+                return;
+            }
+
+            // Water account numbers can't be shared between buildings
+            if (waterGiven)
+            {
+                bool inUse;
+                try
+                {
+                    inUse = WaterAccountHelper.IsActiveNumberInUse(waterNumber);
+                }
+                catch (SqlException checkEx)
+                {
+                    MessageBox.Show("Unable to check the water account number.\n\n" + checkEx.Message, "Database Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                if (inUse)
+                {
+                    MessageBox.Show($"Water account number {waterNumber} is already used by another building.", "Required",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtWaterAccountNumber.Focus();
+                    return;
+                }
+            }
+
+            // Skipped one or both → confirm "set up later"
+            if (!waterGiven || !elecGiven)
+            {
+                string skipped = !waterGiven && !elecGiven ? "water and electricity accounts"
+                               : !waterGiven ? "water account"
+                                             : "electricity account";
+
+                if (MessageBox.Show(
+                        $"The {skipped} will not be set up now.\n\n" +
+                        "You can set it up later in Settings → Utilities Accounts. " +
+                        "Water bills can't be added until the water account is set up.\n\n" +
+                        "Continue creating the building?",
+                        "Set up later", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+            }
+            // END of Utilities validation
 
             // 2. Database Transaction
             using (SqlConnection conn = DatabaseHelper.GetConnection())
@@ -73,6 +146,12 @@ namespace Capstoneszn
                             cmd.ExecuteNonQuery();
                         }
                     }
+
+                    // NEW Step C: utility accounts, saved with the building (all or nothing)
+                    if (waterGiven)
+                        WaterAccountHelper.Save(conn, transaction, newBuildingId, waterName, waterNumber);
+                    if (elecGiven)
+                        ElectricityAccountHelper.Save(conn, transaction, newBuildingId, elecName, elecNumber);
 
                     transaction.Commit();
 

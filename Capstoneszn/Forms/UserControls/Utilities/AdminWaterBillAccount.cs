@@ -13,7 +13,8 @@ namespace Capstoneszn.Forms.UserControls.Utilities
 {
     public partial class AdminWaterBillAccount : UserControl
     {
-        private const string AccountName = "Owner (Landlord)";   // static, not stored
+        //private const string AccountName = "Owner (Landlord)";   // static, not stored
+        private const string NotSetText = "Not set yet";           // NEW
 
         public int WaterBillId { get; private set; }
         public DateTime SelectedDate { get; set; } = DateTime.Today;
@@ -30,7 +31,7 @@ namespace Capstoneszn.Forms.UserControls.Utilities
         public void LoadAccount()
         {
             // Reset first, so a failed or empty load never shows last month's numbers
-            lblAccountName.Text = AccountName;
+            //lblAccountName.Text = AccountName;
             lblAmount.Text = "—";
             lblStatus.Text = "No bill yet";
             WaterBillId = 0;
@@ -38,14 +39,33 @@ namespace Capstoneszn.Forms.UserControls.Utilities
             _isPaid = false;
             _paidDate = null;
 
+            /*
             const string sql = @"
                 SELECT WaterBillId, AdminAmount, AdminStatus, AdminPaidDate
                 FROM dbo.WaterBills
                 WHERE  BuildingId = @BuildingId
                   AND  BillingMonth = @MonthStart; ";
+            */
+
+            // NEW: same columns as before, plus the account the bill was recorded under
+            const string sql = @"
+                SELECT wb.WaterBillId, wb.AdminAmount, wb.AdminStatus, wb.AdminPaidDate,
+                       wa.AccountName, wa.AccountNumber
+                FROM   dbo.WaterBills wb
+                LEFT JOIN dbo.WaterAccounts wa ON wa.WaterAccountId = wb.WaterAccountId
+                WHERE  wb.BuildingId   = @BuildingId
+                  AND  wb.BillingMonth = @MonthStart;";
 
             try
             {
+                // NEW: default to the building's current account
+                WaterAccountInfo? account = WaterAccountHelper.GetActive(Session.BuildingId);
+                if (account != null)
+                {
+                    lblAccountName.Text = account.AccountName;
+                    lblAccountNumber.Text = account.AccountNumber;
+                }
+
                 using SqlConnection conn = DatabaseHelper.GetConnection();
                 conn.Open();
 
@@ -60,6 +80,13 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                 _ownerShare = dr.GetDecimal(1);
                 _isPaid = dr.GetString(2) == "Paid";
                 _paidDate = dr.IsDBNull(3) ? null : dr.GetDateTime(3);
+
+                // NEW: a linked bill shows the account it was billed under (history)
+                if (!dr.IsDBNull(4))
+                {
+                    lblAccountName.Text = dr.GetString(4);
+                    lblAccountNumber.Text = dr.GetString(5);
+                }
 
                 lblAmount.Text = _ownerShare.ToString("₱#,##0.00");
                 lblStatus.Text = _isPaid ? $"Paid ({_paidDate:MMM d, yyyy})"

@@ -85,7 +85,7 @@
             panel12.Dock = DockStyle.Fill;
             panel12.Location = new Point(1200, 0);
             panel12.Name = "panel12";
-            panel12.Size = new Size(136, 91);
+            panel12.Size = new Size(85, 91);
             panel12.TabIndex = 7;
             // 
             // panel10
@@ -144,10 +144,10 @@
             // 
             panel11.Controls.Add(btnRecordExpenses);
             panel11.Dock = DockStyle.Right;
-            panel11.Location = new Point(1336, 0);
+            panel11.Location = new Point(1285, 0);
             panel11.Name = "panel11";
             panel11.Padding = new Padding(10);
-            panel11.Size = new Size(199, 91);
+            panel11.Size = new Size(250, 91);
             panel11.TabIndex = 6;
             // 
             // btnRecordExpenses
@@ -157,7 +157,7 @@
             btnRecordExpenses.FlatStyle = FlatStyle.Flat;
             btnRecordExpenses.Location = new Point(10, 10);
             btnRecordExpenses.Name = "btnRecordExpenses";
-            btnRecordExpenses.Size = new Size(179, 71);
+            btnRecordExpenses.Size = new Size(230, 71);
             btnRecordExpenses.TabIndex = 1;
             btnRecordExpenses.Text = "Record Expense";
             btnRecordExpenses.UseVisualStyleBackColor = false;
@@ -175,14 +175,14 @@
             // 
             // txtAmount
             // 
-            txtAmount.BackColor = Color.FromArgb(25, 25, 60);
+            txtAmount.BackColor = Color.FromArgb(25, 25, 70);
             txtAmount.BorderStyle = BorderStyle.None;
             txtAmount.Dock = DockStyle.Fill;
             txtAmount.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtAmount.ForeColor = Color.White;
             txtAmount.Location = new Point(0, 45);
             txtAmount.Name = "txtAmount";
-            txtAmount.PlaceholderText = "₱***";
+            txtAmount.PlaceholderText = "Enter amount";
             txtAmount.Size = new Size(300, 36);
             txtAmount.TabIndex = 3;
             txtAmount.TextAlign = HorizontalAlignment.Center;
@@ -314,7 +314,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(25, 25, 60);
+            BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(panel1);
             Name = "AdminElectricityAccount";
             Size = new Size(1535, 91);
