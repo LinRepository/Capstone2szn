@@ -29,507 +29,708 @@
         private void InitializeComponent()
         {
             pnlEditIssueHeader = new Panel();
+            pnlIssueTypeInfo = new Panel();
+            lblIssueTypeNote = new Label();
+            lblIssueTypeValue = new Label();
+            lblIssueType = new Label();
             lblEditIssueTitle = new Label();
             pnlEditIssueActions = new Panel();
             btnSaveIssueChanges = new Button();
             btnCancelEditIssue = new Button();
             pnlEditIssueContent = new Panel();
-            pnlIssueStatus = new Panel();
-            cboIssueStatus = new ComboBox();
-            lblIssueStatus = new Label();
+            tlpEditIssue = new TableLayoutPanel();
+            pnlIssueDetailsColumn = new Panel();
             pnlIssueInformation = new Panel();
+            txtDescription = new TextBox();
             lblIssueDate = new Label();
             dtpIssueDate = new DateTimePicker();
-            txtDescription = new TextBox();
             lblDescription = new Label();
             txtIssue = new TextBox();
             lblIssue = new Label();
-            pnlResponsible = new Panel();
-            clbResponsible = new CheckedListBox();
-            pnlResponsibleOptions = new Panel();
-            pnlResponsibleSpecify = new Panel();
-            rdoResponsibleSpecify = new RadioButton();
-            pnlResponsibleNone = new Panel();
-            rdoResponsibleNone = new RadioButton();
-            pnlResponsibleAll = new Panel();
-            rdoResponsibleAll = new RadioButton();
-            lblResponsible = new Label();
-            pnlAffectedTenants = new Panel();
-            clbAffectedTenants = new CheckedListBox();
-            pnlTenantOptions = new Panel();
-            pnlTenantSpecify = new Panel();
-            rdoTenantSpecify = new RadioButton();
-            pnlTenantNone = new Panel();
-            rdoTenantNone = new RadioButton();
-            pnlTenantAll = new Panel();
-            rdoTenantAll = new RadioButton();
-            lblAffectedTenants = new Label();
+            pnlIssueStatus = new Panel();
+            cboIssueStatus = new ComboBox();
+            lblIssueStatus = new Label();
             pnlRoomSelection = new Panel();
             lblRoomValue = new Label();
             lblRoom = new Label();
+            lblIssueDetailsHeading = new Label();
+            pnlPeopleColumn = new Panel();
+            pnlAffectedTenants = new Panel();
+            clbAffectedTenants = new CheckedListBox();
+            pnlTenantOptions = new Panel();
+            pnlTenantNone = new Panel();
+            rdoTenantNone = new RadioButton();
+            pnlTenantSpecify = new Panel();
+            rdoTenantSpecify = new RadioButton();
+            pnlTenantAll = new Panel();
+            rdoTenantAll = new RadioButton();
+            lblTenantHint = new Label();
+            lblAffectedTenants = new Label();
+            pnlMaterials = new Panel();
+            lblMaterialsCount = new Label();
+            btnViewMaterials = new Button();
+            lblMaterials = new Label();
+            pnlResponsible = new Panel();
+            clbResponsible = new CheckedListBox();
+            pnlResponsibleOptions = new Panel();
+            pnlResponsibleNone = new Panel();
+            rdoResponsibleNone = new RadioButton();
+            pnlResponsibleSpecify = new Panel();
+            rdoResponsibleSpecify = new RadioButton();
+            pnlResponsibleAll = new Panel();
+            rdoResponsibleAll = new RadioButton();
+            lblResponsible = new Label();
+            lblPeopleHeading = new Label();
             pnlEditIssueHeader.SuspendLayout();
+            pnlIssueTypeInfo.SuspendLayout();
             pnlEditIssueActions.SuspendLayout();
             pnlEditIssueContent.SuspendLayout();
-            pnlIssueStatus.SuspendLayout();
+            tlpEditIssue.SuspendLayout();
+            pnlIssueDetailsColumn.SuspendLayout();
             pnlIssueInformation.SuspendLayout();
-            pnlResponsible.SuspendLayout();
-            pnlResponsibleOptions.SuspendLayout();
-            pnlResponsibleSpecify.SuspendLayout();
-            pnlResponsibleNone.SuspendLayout();
-            pnlResponsibleAll.SuspendLayout();
+            pnlIssueStatus.SuspendLayout();
+            pnlRoomSelection.SuspendLayout();
+            pnlPeopleColumn.SuspendLayout();
             pnlAffectedTenants.SuspendLayout();
             pnlTenantOptions.SuspendLayout();
-            pnlTenantSpecify.SuspendLayout();
             pnlTenantNone.SuspendLayout();
+            pnlTenantSpecify.SuspendLayout();
             pnlTenantAll.SuspendLayout();
-            pnlRoomSelection.SuspendLayout();
+            pnlMaterials.SuspendLayout();
+            pnlResponsible.SuspendLayout();
+            pnlResponsibleOptions.SuspendLayout();
+            pnlResponsibleNone.SuspendLayout();
+            pnlResponsibleSpecify.SuspendLayout();
+            pnlResponsibleAll.SuspendLayout();
             SuspendLayout();
-            // 
+            //
             // pnlEditIssueHeader
-            // 
+            //
+            pnlEditIssueHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlEditIssueHeader.Controls.Add(pnlIssueTypeInfo);
             pnlEditIssueHeader.Controls.Add(lblEditIssueTitle);
             pnlEditIssueHeader.Dock = DockStyle.Top;
             pnlEditIssueHeader.Location = new Point(0, 0);
             pnlEditIssueHeader.Name = "pnlEditIssueHeader";
-            pnlEditIssueHeader.Size = new Size(482, 50);
+            pnlEditIssueHeader.Size = new Size(900, 60);
             pnlEditIssueHeader.TabIndex = 0;
-            // 
+            //
+            // pnlIssueTypeInfo
+            //
+            pnlIssueTypeInfo.Controls.Add(lblIssueTypeNote);
+            pnlIssueTypeInfo.Controls.Add(lblIssueTypeValue);
+            pnlIssueTypeInfo.Controls.Add(lblIssueType);
+            pnlIssueTypeInfo.Location = new Point(290, 9);
+            pnlIssueTypeInfo.Name = "pnlIssueTypeInfo";
+            pnlIssueTypeInfo.Size = new Size(380, 40);
+            pnlIssueTypeInfo.TabIndex = 0;
+            //
+            // lblIssueTypeNote
+            //
+            lblIssueTypeNote.AutoSize = true;
+            lblIssueTypeNote.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            lblIssueTypeNote.ForeColor = Color.FromArgb(170, 180, 215);
+            lblIssueTypeNote.Location = new Point(165, 11);
+            lblIssueTypeNote.Name = "lblIssueTypeNote";
+            lblIssueTypeNote.Size = new Size(124, 20);
+            lblIssueTypeNote.TabIndex = 2;
+            lblIssueTypeNote.Text = "(cannot be changed)";
+            //
+            // lblIssueTypeValue
+            //
+            lblIssueTypeValue.AutoSize = true;
+            lblIssueTypeValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblIssueTypeValue.ForeColor = Color.White;
+            lblIssueTypeValue.Location = new Point(70, 9);
+            lblIssueTypeValue.Name = "lblIssueTypeValue";
+            lblIssueTypeValue.Size = new Size(56, 23);
+            lblIssueTypeValue.TabIndex = 1;
+            lblIssueTypeValue.Text = "Room";
+            //
+            // lblIssueType
+            //
+            lblIssueType.AutoSize = true;
+            lblIssueType.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblIssueType.ForeColor = Color.FromArgb(170, 180, 215);
+            lblIssueType.Location = new Point(15, 9);
+            lblIssueType.Name = "lblIssueType";
+            lblIssueType.Size = new Size(49, 23);
+            lblIssueType.TabIndex = 0;
+            lblIssueType.Text = "Type:";
+            //
             // lblEditIssueTitle
-            // 
+            //
             lblEditIssueTitle.AutoSize = true;
-            lblEditIssueTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEditIssueTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblEditIssueTitle.ForeColor = Color.White;
-            lblEditIssueTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblEditIssueTitle.Location = new Point(135, 11);
+            lblEditIssueTitle.Location = new Point(20, 15);
             lblEditIssueTitle.Name = "lblEditIssueTitle";
-            lblEditIssueTitle.Size = new Size(210, 28);
+            lblEditIssueTitle.Size = new Size(226, 28);
             lblEditIssueTitle.TabIndex = 40;
             lblEditIssueTitle.Text = "Edit Maintenance Issue";
-            lblEditIssueTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            //
             // pnlEditIssueActions
-            // 
+            //
+            pnlEditIssueActions.BorderStyle = BorderStyle.FixedSingle;
             pnlEditIssueActions.Controls.Add(btnSaveIssueChanges);
             pnlEditIssueActions.Controls.Add(btnCancelEditIssue);
             pnlEditIssueActions.Dock = DockStyle.Bottom;
-            pnlEditIssueActions.Location = new Point(0, 503);
+            pnlEditIssueActions.Location = new Point(0, 556);
             pnlEditIssueActions.Name = "pnlEditIssueActions";
-            pnlEditIssueActions.Size = new Size(482, 50);
-            pnlEditIssueActions.TabIndex = 1;
-            // 
+            pnlEditIssueActions.Size = new Size(900, 64);
+            pnlEditIssueActions.TabIndex = 2;
+            //
             // btnSaveIssueChanges
-            // 
-            btnSaveIssueChanges.Location = new Point(367, 10);
+            //
+            btnSaveIssueChanges.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSaveIssueChanges.Cursor = Cursors.Hand;
+            btnSaveIssueChanges.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnSaveIssueChanges.Location = new Point(743, 14);
             btnSaveIssueChanges.Name = "btnSaveIssueChanges";
-            btnSaveIssueChanges.Size = new Size(94, 29);
+            btnSaveIssueChanges.Size = new Size(135, 34);
             btnSaveIssueChanges.TabIndex = 1;
-            btnSaveIssueChanges.Text = "Save";
+            btnSaveIssueChanges.Text = "Save Changes";
             btnSaveIssueChanges.UseVisualStyleBackColor = true;
             btnSaveIssueChanges.Click += btnSaveIssueChanges_Click;
-            // 
+            //
             // btnCancelEditIssue
-            // 
-            btnCancelEditIssue.Location = new Point(252, 10);
+            //
+            btnCancelEditIssue.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCancelEditIssue.Cursor = Cursors.Hand;
+            btnCancelEditIssue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnCancelEditIssue.Location = new Point(618, 14);
             btnCancelEditIssue.Name = "btnCancelEditIssue";
-            btnCancelEditIssue.Size = new Size(94, 29);
+            btnCancelEditIssue.Size = new Size(115, 34);
             btnCancelEditIssue.TabIndex = 0;
             btnCancelEditIssue.Text = "Cancel";
             btnCancelEditIssue.UseVisualStyleBackColor = true;
             btnCancelEditIssue.Click += btnCancelEditIssue_Click;
-            // 
+            //
             // pnlEditIssueContent
-            // 
+            //
             pnlEditIssueContent.AutoScroll = true;
-            pnlEditIssueContent.Controls.Add(pnlIssueStatus);
-            pnlEditIssueContent.Controls.Add(pnlIssueInformation);
-            pnlEditIssueContent.Controls.Add(pnlResponsible);
-            pnlEditIssueContent.Controls.Add(pnlAffectedTenants);
-            pnlEditIssueContent.Controls.Add(pnlRoomSelection);
+            pnlEditIssueContent.Controls.Add(tlpEditIssue);
             pnlEditIssueContent.Dock = DockStyle.Fill;
-            pnlEditIssueContent.Location = new Point(0, 50);
+            pnlEditIssueContent.Location = new Point(0, 60);
             pnlEditIssueContent.Name = "pnlEditIssueContent";
             pnlEditIssueContent.Padding = new Padding(15);
-            pnlEditIssueContent.Size = new Size(482, 453);
-            pnlEditIssueContent.TabIndex = 2;
-            // 
-            // pnlIssueStatus
-            // 
-            pnlIssueStatus.Controls.Add(cboIssueStatus);
-            pnlIssueStatus.Controls.Add(lblIssueStatus);
-            pnlIssueStatus.Dock = DockStyle.Top;
-            pnlIssueStatus.Location = new Point(15, 685);
-            pnlIssueStatus.Name = "pnlIssueStatus";
-            pnlIssueStatus.Size = new Size(431, 75);
-            pnlIssueStatus.TabIndex = 44;
-            // 
-            // cboIssueStatus
-            // 
-            cboIssueStatus.Dock = DockStyle.Fill;
-            cboIssueStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboIssueStatus.FormattingEnabled = true;
-            cboIssueStatus.Items.AddRange(new object[] { "Pending", "Complete" });
-            cboIssueStatus.Location = new Point(0, 40);
-            cboIssueStatus.Name = "cboIssueStatus";
-            cboIssueStatus.Size = new Size(431, 28);
-            cboIssueStatus.TabIndex = 42;
-            // 
-            // lblIssueStatus
-            // 
-            lblIssueStatus.Dock = DockStyle.Top;
-            lblIssueStatus.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblIssueStatus.ForeColor = Color.White;
-            lblIssueStatus.ImageAlign = ContentAlignment.MiddleRight;
-            lblIssueStatus.Location = new Point(0, 0);
-            lblIssueStatus.Name = "lblIssueStatus";
-            lblIssueStatus.Size = new Size(431, 40);
-            lblIssueStatus.TabIndex = 41;
-            lblIssueStatus.Text = "Status";
-            lblIssueStatus.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            pnlEditIssueContent.Size = new Size(900, 496);
+            pnlEditIssueContent.TabIndex = 1;
+            //
+            // tlpEditIssue
+            //
+            tlpEditIssue.ColumnCount = 2;
+            tlpEditIssue.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpEditIssue.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpEditIssue.Controls.Add(pnlIssueDetailsColumn, 0, 0);
+            tlpEditIssue.Controls.Add(pnlPeopleColumn, 1, 0);
+            tlpEditIssue.Dock = DockStyle.Fill;
+            tlpEditIssue.Location = new Point(15, 15);
+            tlpEditIssue.Name = "tlpEditIssue";
+            tlpEditIssue.RowCount = 1;
+            tlpEditIssue.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpEditIssue.Size = new Size(870, 466);
+            tlpEditIssue.TabIndex = 0;
+            //
+            // pnlIssueDetailsColumn
+            //
+            pnlIssueDetailsColumn.Controls.Add(pnlIssueInformation);
+            pnlIssueDetailsColumn.Controls.Add(pnlIssueStatus);
+            pnlIssueDetailsColumn.Controls.Add(pnlRoomSelection);
+            pnlIssueDetailsColumn.Controls.Add(lblIssueDetailsHeading);
+            pnlIssueDetailsColumn.Dock = DockStyle.Fill;
+            pnlIssueDetailsColumn.Location = new Point(0, 0);
+            pnlIssueDetailsColumn.Margin = new Padding(0);
+            pnlIssueDetailsColumn.Name = "pnlIssueDetailsColumn";
+            pnlIssueDetailsColumn.Padding = new Padding(0, 0, 15, 0);
+            pnlIssueDetailsColumn.Size = new Size(435, 466);
+            pnlIssueDetailsColumn.TabIndex = 0;
+            //
             // pnlIssueInformation
-            // 
+            //
+            pnlIssueInformation.Controls.Add(txtDescription);
             pnlIssueInformation.Controls.Add(lblIssueDate);
             pnlIssueInformation.Controls.Add(dtpIssueDate);
-            pnlIssueInformation.Controls.Add(txtDescription);
             pnlIssueInformation.Controls.Add(lblDescription);
             pnlIssueInformation.Controls.Add(txtIssue);
             pnlIssueInformation.Controls.Add(lblIssue);
-            pnlIssueInformation.Dock = DockStyle.Top;
-            pnlIssueInformation.Location = new Point(15, 415);
+            pnlIssueInformation.Dock = DockStyle.Fill;
+            pnlIssueInformation.Location = new Point(0, 96);
             pnlIssueInformation.Name = "pnlIssueInformation";
-            pnlIssueInformation.Size = new Size(431, 270);
-            pnlIssueInformation.TabIndex = 4;
-            // 
-            // lblIssueDate
-            // 
-            lblIssueDate.Dock = DockStyle.Bottom;
-            lblIssueDate.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblIssueDate.ForeColor = Color.White;
-            lblIssueDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblIssueDate.Location = new Point(0, 203);
-            lblIssueDate.Name = "lblIssueDate";
-            lblIssueDate.Size = new Size(431, 40);
-            lblIssueDate.TabIndex = 54;
-            lblIssueDate.Text = "Date";
-            lblIssueDate.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // dtpIssueDate
-            // 
-            dtpIssueDate.Dock = DockStyle.Bottom;
-            dtpIssueDate.Format = DateTimePickerFormat.Short;
-            dtpIssueDate.Location = new Point(0, 243);
-            dtpIssueDate.Name = "dtpIssueDate";
-            dtpIssueDate.Size = new Size(431, 27);
-            dtpIssueDate.TabIndex = 53;
-            // 
+            pnlIssueInformation.Size = new Size(420, 304);
+            pnlIssueInformation.TabIndex = 2;
+            //
             // txtDescription
-            // 
+            //
             txtDescription.Dock = DockStyle.Fill;
-            txtDescription.Location = new Point(0, 114);
+            txtDescription.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtDescription.Location = new Point(0, 91);
             txtDescription.MaxLength = 500;
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
             txtDescription.ScrollBars = ScrollBars.Vertical;
-            txtDescription.Size = new Size(431, 156);
-            txtDescription.TabIndex = 51;
-            // 
+            txtDescription.Size = new Size(420, 153);
+            txtDescription.TabIndex = 3;
+            //
+            // lblIssueDate
+            //
+            lblIssueDate.Dock = DockStyle.Bottom;
+            lblIssueDate.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblIssueDate.ForeColor = Color.White;
+            lblIssueDate.Location = new Point(0, 244);
+            lblIssueDate.Name = "lblIssueDate";
+            lblIssueDate.Size = new Size(420, 30);
+            lblIssueDate.TabIndex = 4;
+            lblIssueDate.Text = "Date Reported";
+            lblIssueDate.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // dtpIssueDate
+            //
+            dtpIssueDate.Dock = DockStyle.Bottom;
+            dtpIssueDate.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dtpIssueDate.Format = DateTimePickerFormat.Short;
+            dtpIssueDate.Location = new Point(0, 274);
+            dtpIssueDate.Name = "dtpIssueDate";
+            dtpIssueDate.Size = new Size(420, 30);
+            dtpIssueDate.TabIndex = 5;
+            //
             // lblDescription
-            // 
+            //
             lblDescription.Dock = DockStyle.Top;
-            lblDescription.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDescription.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDescription.ForeColor = Color.White;
-            lblDescription.ImageAlign = ContentAlignment.MiddleRight;
-            lblDescription.Location = new Point(0, 74);
+            lblDescription.Location = new Point(0, 61);
             lblDescription.Name = "lblDescription";
-            lblDescription.Size = new Size(431, 40);
-            lblDescription.TabIndex = 51;
+            lblDescription.Size = new Size(420, 30);
+            lblDescription.TabIndex = 2;
             lblDescription.Text = "Description";
-            lblDescription.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            lblDescription.TextAlign = ContentAlignment.BottomLeft;
+            //
             // txtIssue
-            // 
+            //
             txtIssue.Dock = DockStyle.Top;
-            txtIssue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtIssue.Location = new Point(0, 40);
+            txtIssue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtIssue.Location = new Point(0, 30);
             txtIssue.MaxLength = 150;
             txtIssue.Name = "txtIssue";
-            txtIssue.Size = new Size(431, 34);
-            txtIssue.TabIndex = 49;
-            // 
+            txtIssue.Size = new Size(420, 31);
+            txtIssue.TabIndex = 1;
+            //
             // lblIssue
-            // 
+            //
             lblIssue.Dock = DockStyle.Top;
-            lblIssue.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblIssue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblIssue.ForeColor = Color.White;
-            lblIssue.ImageAlign = ContentAlignment.MiddleRight;
             lblIssue.Location = new Point(0, 0);
             lblIssue.Name = "lblIssue";
-            lblIssue.Size = new Size(431, 40);
-            lblIssue.TabIndex = 48;
-            lblIssue.Text = "Issue";
-            lblIssue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // pnlResponsible
-            // 
-            pnlResponsible.Controls.Add(clbResponsible);
-            pnlResponsible.Controls.Add(pnlResponsibleOptions);
-            pnlResponsible.Controls.Add(lblResponsible);
-            pnlResponsible.Dock = DockStyle.Top;
-            pnlResponsible.Location = new Point(15, 245);
-            pnlResponsible.Name = "pnlResponsible";
-            pnlResponsible.Size = new Size(431, 170);
-            pnlResponsible.TabIndex = 3;
-            // 
-            // clbResponsible
-            // 
-            clbResponsible.CheckOnClick = true;
-            clbResponsible.Dock = DockStyle.Fill;
-            clbResponsible.FormattingEnabled = true;
-            clbResponsible.Location = new Point(0, 85);
-            clbResponsible.Name = "clbResponsible";
-            clbResponsible.Size = new Size(431, 85);
-            clbResponsible.TabIndex = 49;
-            clbResponsible.Visible = false;
-            // 
-            // pnlResponsibleOptions
-            // 
-            pnlResponsibleOptions.Controls.Add(pnlResponsibleSpecify);
-            pnlResponsibleOptions.Controls.Add(pnlResponsibleNone);
-            pnlResponsibleOptions.Controls.Add(pnlResponsibleAll);
-            pnlResponsibleOptions.Dock = DockStyle.Top;
-            pnlResponsibleOptions.Location = new Point(0, 40);
-            pnlResponsibleOptions.Name = "pnlResponsibleOptions";
-            pnlResponsibleOptions.Size = new Size(431, 45);
-            pnlResponsibleOptions.TabIndex = 48;
-            // 
-            // pnlResponsibleSpecify
-            // 
-            pnlResponsibleSpecify.Controls.Add(rdoResponsibleSpecify);
-            pnlResponsibleSpecify.Dock = DockStyle.Fill;
-            pnlResponsibleSpecify.Location = new Point(150, 0);
-            pnlResponsibleSpecify.Name = "pnlResponsibleSpecify";
-            pnlResponsibleSpecify.Size = new Size(131, 45);
-            pnlResponsibleSpecify.TabIndex = 2;
-            // 
-            // rdoResponsibleSpecify
-            // 
-            rdoResponsibleSpecify.AutoSize = true;
-            rdoResponsibleSpecify.ForeColor = Color.White;
-            rdoResponsibleSpecify.Location = new Point(32, 10);
-            rdoResponsibleSpecify.Name = "rdoResponsibleSpecify";
-            rdoResponsibleSpecify.Size = new Size(78, 24);
-            rdoResponsibleSpecify.TabIndex = 3;
-            rdoResponsibleSpecify.TabStop = true;
-            rdoResponsibleSpecify.Text = "Specify";
-            rdoResponsibleSpecify.UseVisualStyleBackColor = true;
-            // 
-            // pnlResponsibleNone
-            // 
-            pnlResponsibleNone.Controls.Add(rdoResponsibleNone);
-            pnlResponsibleNone.Dock = DockStyle.Right;
-            pnlResponsibleNone.Location = new Point(281, 0);
-            pnlResponsibleNone.Name = "pnlResponsibleNone";
-            pnlResponsibleNone.Size = new Size(150, 45);
-            pnlResponsibleNone.TabIndex = 1;
-            // 
-            // rdoResponsibleNone
-            // 
-            rdoResponsibleNone.AutoSize = true;
-            rdoResponsibleNone.ForeColor = Color.White;
-            rdoResponsibleNone.Location = new Point(42, 10);
-            rdoResponsibleNone.Name = "rdoResponsibleNone";
-            rdoResponsibleNone.Size = new Size(66, 24);
-            rdoResponsibleNone.TabIndex = 4;
-            rdoResponsibleNone.TabStop = true;
-            rdoResponsibleNone.Text = "None";
-            rdoResponsibleNone.UseVisualStyleBackColor = true;
-            // 
-            // pnlResponsibleAll
-            // 
-            pnlResponsibleAll.Controls.Add(rdoResponsibleAll);
-            pnlResponsibleAll.Dock = DockStyle.Left;
-            pnlResponsibleAll.Location = new Point(0, 0);
-            pnlResponsibleAll.Name = "pnlResponsibleAll";
-            pnlResponsibleAll.Size = new Size(150, 45);
-            pnlResponsibleAll.TabIndex = 0;
-            // 
-            // rdoResponsibleAll
-            // 
-            rdoResponsibleAll.AutoSize = true;
-            rdoResponsibleAll.ForeColor = Color.White;
-            rdoResponsibleAll.Location = new Point(51, 10);
-            rdoResponsibleAll.Name = "rdoResponsibleAll";
-            rdoResponsibleAll.Size = new Size(48, 24);
-            rdoResponsibleAll.TabIndex = 43;
-            rdoResponsibleAll.TabStop = true;
-            rdoResponsibleAll.Text = "All";
-            rdoResponsibleAll.UseVisualStyleBackColor = true;
-            // 
-            // lblResponsible
-            // 
-            lblResponsible.Dock = DockStyle.Top;
-            lblResponsible.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblResponsible.ForeColor = Color.White;
-            lblResponsible.ImageAlign = ContentAlignment.MiddleRight;
-            lblResponsible.Location = new Point(0, 0);
-            lblResponsible.Name = "lblResponsible";
-            lblResponsible.Size = new Size(431, 40);
-            lblResponsible.TabIndex = 47;
-            lblResponsible.Text = "Responsible";
-            lblResponsible.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            lblIssue.Size = new Size(420, 30);
+            lblIssue.TabIndex = 0;
+            lblIssue.Text = "Issue Title";
+            lblIssue.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // pnlIssueStatus
+            //
+            pnlIssueStatus.Controls.Add(cboIssueStatus);
+            pnlIssueStatus.Controls.Add(lblIssueStatus);
+            pnlIssueStatus.Dock = DockStyle.Bottom;
+            pnlIssueStatus.Location = new Point(0, 400);
+            pnlIssueStatus.Name = "pnlIssueStatus";
+            pnlIssueStatus.Size = new Size(420, 66);
+            pnlIssueStatus.TabIndex = 3;
+            //
+            // cboIssueStatus
+            //
+            cboIssueStatus.Cursor = Cursors.Hand;
+            cboIssueStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboIssueStatus.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cboIssueStatus.FormattingEnabled = true;
+            cboIssueStatus.Items.AddRange(new object[] { "Pending", "Complete" });
+            cboIssueStatus.Location = new Point(0, 31);
+            cboIssueStatus.Name = "cboIssueStatus";
+            cboIssueStatus.Size = new Size(200, 31);
+            cboIssueStatus.TabIndex = 1;
+            //
+            // lblIssueStatus
+            //
+            lblIssueStatus.Dock = DockStyle.Top;
+            lblIssueStatus.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblIssueStatus.ForeColor = Color.White;
+            lblIssueStatus.Location = new Point(0, 0);
+            lblIssueStatus.Name = "lblIssueStatus";
+            lblIssueStatus.Size = new Size(420, 28);
+            lblIssueStatus.TabIndex = 0;
+            lblIssueStatus.Text = "Status";
+            lblIssueStatus.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // pnlRoomSelection
+            //
+            pnlRoomSelection.Controls.Add(lblRoomValue);
+            pnlRoomSelection.Controls.Add(lblRoom);
+            pnlRoomSelection.Dock = DockStyle.Top;
+            pnlRoomSelection.Location = new Point(0, 30);
+            pnlRoomSelection.Name = "pnlRoomSelection";
+            pnlRoomSelection.Size = new Size(420, 66);
+            pnlRoomSelection.TabIndex = 1;
+            //
+            // lblRoomValue
+            //
+            lblRoomValue.BackColor = Color.FromArgb(45, 45, 100);
+            lblRoomValue.BorderStyle = BorderStyle.FixedSingle;
+            lblRoomValue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoomValue.ForeColor = Color.White;
+            lblRoomValue.Location = new Point(0, 31);
+            lblRoomValue.Name = "lblRoomValue";
+            lblRoomValue.Padding = new Padding(6, 0, 0, 0);
+            lblRoomValue.Size = new Size(200, 31);
+            lblRoomValue.TabIndex = 1;
+            lblRoomValue.Text = "Room ###";
+            lblRoomValue.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblRoom
+            //
+            lblRoom.Dock = DockStyle.Top;
+            lblRoom.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblRoom.ForeColor = Color.White;
+            lblRoom.Location = new Point(0, 0);
+            lblRoom.Name = "lblRoom";
+            lblRoom.Size = new Size(420, 28);
+            lblRoom.TabIndex = 0;
+            lblRoom.Text = "Room (cannot be changed)";
+            lblRoom.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // lblIssueDetailsHeading
+            //
+            lblIssueDetailsHeading.Dock = DockStyle.Top;
+            lblIssueDetailsHeading.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblIssueDetailsHeading.ForeColor = Color.FromArgb(170, 180, 215);
+            lblIssueDetailsHeading.Location = new Point(0, 0);
+            lblIssueDetailsHeading.Name = "lblIssueDetailsHeading";
+            lblIssueDetailsHeading.Size = new Size(420, 30);
+            lblIssueDetailsHeading.TabIndex = 0;
+            lblIssueDetailsHeading.Text = "ISSUE DETAILS";
+            lblIssueDetailsHeading.TextAlign = ContentAlignment.TopLeft;
+            //
+            // pnlPeopleColumn
+            //
+            pnlPeopleColumn.Controls.Add(pnlAffectedTenants);
+            pnlPeopleColumn.Controls.Add(pnlMaterials);
+            pnlPeopleColumn.Controls.Add(pnlResponsible);
+            pnlPeopleColumn.Controls.Add(lblPeopleHeading);
+            pnlPeopleColumn.Dock = DockStyle.Fill;
+            pnlPeopleColumn.Location = new Point(435, 0);
+            pnlPeopleColumn.Margin = new Padding(0);
+            pnlPeopleColumn.Name = "pnlPeopleColumn";
+            pnlPeopleColumn.Padding = new Padding(15, 0, 0, 0);
+            pnlPeopleColumn.Size = new Size(435, 466);
+            pnlPeopleColumn.TabIndex = 1;
+            //
             // pnlAffectedTenants
-            // 
+            //
             pnlAffectedTenants.Controls.Add(clbAffectedTenants);
             pnlAffectedTenants.Controls.Add(pnlTenantOptions);
+            pnlAffectedTenants.Controls.Add(lblTenantHint);
             pnlAffectedTenants.Controls.Add(lblAffectedTenants);
-            pnlAffectedTenants.Dock = DockStyle.Top;
-            pnlAffectedTenants.Location = new Point(15, 75);
+            pnlAffectedTenants.Dock = DockStyle.Fill;
+            pnlAffectedTenants.Location = new Point(15, 180);
             pnlAffectedTenants.Name = "pnlAffectedTenants";
-            pnlAffectedTenants.Size = new Size(431, 170);
-            pnlAffectedTenants.TabIndex = 1;
-            // 
+            pnlAffectedTenants.Size = new Size(420, 216);
+            pnlAffectedTenants.TabIndex = 2;
+            //
             // clbAffectedTenants
-            // 
+            //
             clbAffectedTenants.CheckOnClick = true;
             clbAffectedTenants.Dock = DockStyle.Fill;
+            clbAffectedTenants.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             clbAffectedTenants.FormattingEnabled = true;
-            clbAffectedTenants.Location = new Point(0, 73);
+            clbAffectedTenants.Location = new Point(0, 92);
             clbAffectedTenants.Name = "clbAffectedTenants";
-            clbAffectedTenants.Size = new Size(431, 97);
-            clbAffectedTenants.TabIndex = 47;
+            clbAffectedTenants.Size = new Size(420, 124);
+            clbAffectedTenants.TabIndex = 3;
             clbAffectedTenants.Visible = false;
-            // 
+            //
             // pnlTenantOptions
-            // 
-            pnlTenantOptions.Controls.Add(pnlTenantSpecify);
+            //
             pnlTenantOptions.Controls.Add(pnlTenantNone);
+            pnlTenantOptions.Controls.Add(pnlTenantSpecify);
             pnlTenantOptions.Controls.Add(pnlTenantAll);
             pnlTenantOptions.Dock = DockStyle.Top;
-            pnlTenantOptions.Location = new Point(0, 28);
+            pnlTenantOptions.Location = new Point(0, 52);
             pnlTenantOptions.Name = "pnlTenantOptions";
-            pnlTenantOptions.Size = new Size(431, 45);
-            pnlTenantOptions.TabIndex = 45;
-            // 
-            // pnlTenantSpecify
-            // 
-            pnlTenantSpecify.Controls.Add(rdoTenantSpecify);
-            pnlTenantSpecify.Dock = DockStyle.Fill;
-            pnlTenantSpecify.Location = new Point(150, 0);
-            pnlTenantSpecify.Name = "pnlTenantSpecify";
-            pnlTenantSpecify.Size = new Size(131, 45);
-            pnlTenantSpecify.TabIndex = 2;
-            // 
-            // rdoTenantSpecify
-            // 
-            rdoTenantSpecify.AutoSize = true;
-            rdoTenantSpecify.ForeColor = Color.White;
-            rdoTenantSpecify.Location = new Point(32, 10);
-            rdoTenantSpecify.Name = "rdoTenantSpecify";
-            rdoTenantSpecify.Size = new Size(78, 24);
-            rdoTenantSpecify.TabIndex = 1;
-            rdoTenantSpecify.TabStop = true;
-            rdoTenantSpecify.Text = "Specify";
-            rdoTenantSpecify.UseVisualStyleBackColor = true;
-            // 
+            pnlTenantOptions.Size = new Size(420, 40);
+            pnlTenantOptions.TabIndex = 2;
+            //
             // pnlTenantNone
-            // 
+            //
             pnlTenantNone.Controls.Add(rdoTenantNone);
-            pnlTenantNone.Dock = DockStyle.Right;
-            pnlTenantNone.Location = new Point(281, 0);
+            pnlTenantNone.Dock = DockStyle.Fill;
+            pnlTenantNone.Location = new Point(220, 0);
             pnlTenantNone.Name = "pnlTenantNone";
-            pnlTenantNone.Size = new Size(150, 45);
-            pnlTenantNone.TabIndex = 1;
-            // 
+            pnlTenantNone.Size = new Size(200, 40);
+            pnlTenantNone.TabIndex = 2;
+            //
             // rdoTenantNone
-            // 
+            //
             rdoTenantNone.AutoSize = true;
+            rdoTenantNone.Cursor = Cursors.Hand;
+            rdoTenantNone.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             rdoTenantNone.ForeColor = Color.White;
-            rdoTenantNone.Location = new Point(39, 10);
+            rdoTenantNone.Location = new Point(0, 7);
             rdoTenantNone.Name = "rdoTenantNone";
-            rdoTenantNone.Size = new Size(66, 24);
-            rdoTenantNone.TabIndex = 2;
+            rdoTenantNone.Size = new Size(72, 27);
+            rdoTenantNone.TabIndex = 0;
             rdoTenantNone.TabStop = true;
             rdoTenantNone.Text = "None";
             rdoTenantNone.UseVisualStyleBackColor = true;
-            // 
+            //
+            // pnlTenantSpecify
+            //
+            pnlTenantSpecify.Controls.Add(rdoTenantSpecify);
+            pnlTenantSpecify.Dock = DockStyle.Left;
+            pnlTenantSpecify.Location = new Point(100, 0);
+            pnlTenantSpecify.Name = "pnlTenantSpecify";
+            pnlTenantSpecify.Size = new Size(120, 40);
+            pnlTenantSpecify.TabIndex = 1;
+            //
+            // rdoTenantSpecify
+            //
+            rdoTenantSpecify.AutoSize = true;
+            rdoTenantSpecify.Cursor = Cursors.Hand;
+            rdoTenantSpecify.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdoTenantSpecify.ForeColor = Color.White;
+            rdoTenantSpecify.Location = new Point(0, 7);
+            rdoTenantSpecify.Name = "rdoTenantSpecify";
+            rdoTenantSpecify.Size = new Size(85, 27);
+            rdoTenantSpecify.TabIndex = 0;
+            rdoTenantSpecify.TabStop = true;
+            rdoTenantSpecify.Text = "Specify";
+            rdoTenantSpecify.UseVisualStyleBackColor = true;
+            //
             // pnlTenantAll
-            // 
+            //
             pnlTenantAll.Controls.Add(rdoTenantAll);
             pnlTenantAll.Dock = DockStyle.Left;
             pnlTenantAll.Location = new Point(0, 0);
             pnlTenantAll.Name = "pnlTenantAll";
-            pnlTenantAll.Size = new Size(150, 45);
+            pnlTenantAll.Size = new Size(100, 40);
             pnlTenantAll.TabIndex = 0;
-            // 
+            //
             // rdoTenantAll
-            // 
+            //
             rdoTenantAll.AutoSize = true;
+            rdoTenantAll.Cursor = Cursors.Hand;
+            rdoTenantAll.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             rdoTenantAll.ForeColor = Color.White;
-            rdoTenantAll.Location = new Point(46, 10);
+            rdoTenantAll.Location = new Point(0, 7);
             rdoTenantAll.Name = "rdoTenantAll";
-            rdoTenantAll.Size = new Size(48, 24);
-            rdoTenantAll.TabIndex = 41;
+            rdoTenantAll.Size = new Size(50, 27);
+            rdoTenantAll.TabIndex = 0;
             rdoTenantAll.TabStop = true;
             rdoTenantAll.Text = "All";
             rdoTenantAll.UseVisualStyleBackColor = true;
-            // 
+            //
+            // lblTenantHint
+            //
+            lblTenantHint.Dock = DockStyle.Top;
+            lblTenantHint.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTenantHint.ForeColor = Color.FromArgb(170, 180, 215);
+            lblTenantHint.Location = new Point(0, 30);
+            lblTenantHint.Name = "lblTenantHint";
+            lblTenantHint.Size = new Size(420, 22);
+            lblTenantHint.TabIndex = 1;
+            lblTenantHint.Text = "Optional. Tenants of this room who will pay.";
+            lblTenantHint.TextAlign = ContentAlignment.TopLeft;
+            //
             // lblAffectedTenants
-            // 
+            //
             lblAffectedTenants.Dock = DockStyle.Top;
-            lblAffectedTenants.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAffectedTenants.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAffectedTenants.ForeColor = Color.White;
-            lblAffectedTenants.ImageAlign = ContentAlignment.MiddleRight;
             lblAffectedTenants.Location = new Point(0, 0);
             lblAffectedTenants.Name = "lblAffectedTenants";
-            lblAffectedTenants.Size = new Size(431, 28);
-            lblAffectedTenants.TabIndex = 41;
+            lblAffectedTenants.Size = new Size(420, 30);
+            lblAffectedTenants.TabIndex = 0;
             lblAffectedTenants.Text = "Affected Tenant(s)";
-            lblAffectedTenants.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // pnlRoomSelection
-            // 
-            pnlRoomSelection.Controls.Add(lblRoomValue);
-            pnlRoomSelection.Controls.Add(lblRoom);
-            pnlRoomSelection.Dock = DockStyle.Top;
-            pnlRoomSelection.Location = new Point(15, 15);
-            pnlRoomSelection.Name = "pnlRoomSelection";
-            pnlRoomSelection.Size = new Size(431, 60);
-            pnlRoomSelection.TabIndex = 0;
-            // 
-            // lblRoomValue
-            // 
-            lblRoomValue.Dock = DockStyle.Fill;
-            lblRoomValue.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoomValue.ForeColor = Color.White;
-            lblRoomValue.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoomValue.Location = new Point(0, 28);
-            lblRoomValue.Name = "lblRoomValue";
-            lblRoomValue.Size = new Size(431, 32);
-            lblRoomValue.TabIndex = 42;
-            lblRoomValue.Text = "Room ###";
-            lblRoomValue.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblRoom
-            // 
-            lblRoom.Dock = DockStyle.Top;
-            lblRoom.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblRoom.ForeColor = Color.White;
-            lblRoom.ImageAlign = ContentAlignment.MiddleRight;
-            lblRoom.Location = new Point(0, 0);
-            lblRoom.Name = "lblRoom";
-            lblRoom.Size = new Size(431, 28);
-            lblRoom.TabIndex = 41;
-            lblRoom.Text = "Room";
-            lblRoom.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            lblAffectedTenants.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // pnlMaterials
+            //
+            pnlMaterials.Controls.Add(lblMaterialsCount);
+            pnlMaterials.Controls.Add(btnViewMaterials);
+            pnlMaterials.Controls.Add(lblMaterials);
+            pnlMaterials.Dock = DockStyle.Bottom;
+            pnlMaterials.Location = new Point(15, 396);
+            pnlMaterials.Name = "pnlMaterials";
+            pnlMaterials.Size = new Size(420, 70);
+            pnlMaterials.TabIndex = 3;
+            //
+            // lblMaterialsCount
+            //
+            lblMaterialsCount.AutoSize = true;
+            lblMaterialsCount.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMaterialsCount.ForeColor = Color.FromArgb(170, 180, 215);
+            lblMaterialsCount.Location = new Point(170, 39);
+            lblMaterialsCount.Name = "lblMaterialsCount";
+            lblMaterialsCount.Size = new Size(118, 20);
+            lblMaterialsCount.TabIndex = 2;
+            lblMaterialsCount.Text = "No materials yet";
+            //
+            // btnViewMaterials
+            //
+            btnViewMaterials.Cursor = Cursors.Hand;
+            btnViewMaterials.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnViewMaterials.Location = new Point(0, 32);
+            btnViewMaterials.Name = "btnViewMaterials";
+            btnViewMaterials.Size = new Size(155, 34);
+            btnViewMaterials.TabIndex = 1;
+            btnViewMaterials.Text = "View Materials";
+            btnViewMaterials.UseVisualStyleBackColor = true;
+            btnViewMaterials.Click += btnViewMaterials_Click;
+            //
+            // lblMaterials
+            //
+            lblMaterials.Dock = DockStyle.Top;
+            lblMaterials.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMaterials.ForeColor = Color.White;
+            lblMaterials.Location = new Point(0, 0);
+            lblMaterials.Name = "lblMaterials";
+            lblMaterials.Size = new Size(420, 28);
+            lblMaterials.TabIndex = 0;
+            lblMaterials.Text = "Materials";
+            lblMaterials.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // pnlResponsible
+            //
+            pnlResponsible.Controls.Add(clbResponsible);
+            pnlResponsible.Controls.Add(pnlResponsibleOptions);
+            pnlResponsible.Controls.Add(lblResponsible);
+            pnlResponsible.Dock = DockStyle.Top;
+            pnlResponsible.Location = new Point(15, 30);
+            pnlResponsible.Name = "pnlResponsible";
+            pnlResponsible.Size = new Size(420, 150);
+            pnlResponsible.TabIndex = 1;
+            //
+            // clbResponsible
+            //
+            clbResponsible.CheckOnClick = true;
+            clbResponsible.Dock = DockStyle.Fill;
+            clbResponsible.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            clbResponsible.FormattingEnabled = true;
+            clbResponsible.Location = new Point(0, 70);
+            clbResponsible.Name = "clbResponsible";
+            clbResponsible.Size = new Size(420, 80);
+            clbResponsible.TabIndex = 2;
+            clbResponsible.Visible = false;
+            //
+            // pnlResponsibleOptions
+            //
+            pnlResponsibleOptions.Controls.Add(pnlResponsibleNone);
+            pnlResponsibleOptions.Controls.Add(pnlResponsibleSpecify);
+            pnlResponsibleOptions.Controls.Add(pnlResponsibleAll);
+            pnlResponsibleOptions.Dock = DockStyle.Top;
+            pnlResponsibleOptions.Location = new Point(0, 30);
+            pnlResponsibleOptions.Name = "pnlResponsibleOptions";
+            pnlResponsibleOptions.Size = new Size(420, 40);
+            pnlResponsibleOptions.TabIndex = 1;
+            //
+            // pnlResponsibleNone
+            //
+            pnlResponsibleNone.Controls.Add(rdoResponsibleNone);
+            pnlResponsibleNone.Dock = DockStyle.Fill;
+            pnlResponsibleNone.Location = new Point(220, 0);
+            pnlResponsibleNone.Name = "pnlResponsibleNone";
+            pnlResponsibleNone.Size = new Size(200, 40);
+            pnlResponsibleNone.TabIndex = 2;
+            //
+            // rdoResponsibleNone
+            //
+            rdoResponsibleNone.AutoSize = true;
+            rdoResponsibleNone.Cursor = Cursors.Hand;
+            rdoResponsibleNone.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdoResponsibleNone.ForeColor = Color.White;
+            rdoResponsibleNone.Location = new Point(0, 7);
+            rdoResponsibleNone.Name = "rdoResponsibleNone";
+            rdoResponsibleNone.Size = new Size(72, 27);
+            rdoResponsibleNone.TabIndex = 0;
+            rdoResponsibleNone.TabStop = true;
+            rdoResponsibleNone.Text = "None";
+            rdoResponsibleNone.UseVisualStyleBackColor = true;
+            //
+            // pnlResponsibleSpecify
+            //
+            pnlResponsibleSpecify.Controls.Add(rdoResponsibleSpecify);
+            pnlResponsibleSpecify.Dock = DockStyle.Left;
+            pnlResponsibleSpecify.Location = new Point(100, 0);
+            pnlResponsibleSpecify.Name = "pnlResponsibleSpecify";
+            pnlResponsibleSpecify.Size = new Size(120, 40);
+            pnlResponsibleSpecify.TabIndex = 1;
+            //
+            // rdoResponsibleSpecify
+            //
+            rdoResponsibleSpecify.AutoSize = true;
+            rdoResponsibleSpecify.Cursor = Cursors.Hand;
+            rdoResponsibleSpecify.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdoResponsibleSpecify.ForeColor = Color.White;
+            rdoResponsibleSpecify.Location = new Point(0, 7);
+            rdoResponsibleSpecify.Name = "rdoResponsibleSpecify";
+            rdoResponsibleSpecify.Size = new Size(85, 27);
+            rdoResponsibleSpecify.TabIndex = 0;
+            rdoResponsibleSpecify.TabStop = true;
+            rdoResponsibleSpecify.Text = "Specify";
+            rdoResponsibleSpecify.UseVisualStyleBackColor = true;
+            //
+            // pnlResponsibleAll
+            //
+            pnlResponsibleAll.Controls.Add(rdoResponsibleAll);
+            pnlResponsibleAll.Dock = DockStyle.Left;
+            pnlResponsibleAll.Location = new Point(0, 0);
+            pnlResponsibleAll.Name = "pnlResponsibleAll";
+            pnlResponsibleAll.Size = new Size(100, 40);
+            pnlResponsibleAll.TabIndex = 0;
+            //
+            // rdoResponsibleAll
+            //
+            rdoResponsibleAll.AutoSize = true;
+            rdoResponsibleAll.Cursor = Cursors.Hand;
+            rdoResponsibleAll.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdoResponsibleAll.ForeColor = Color.White;
+            rdoResponsibleAll.Location = new Point(0, 7);
+            rdoResponsibleAll.Name = "rdoResponsibleAll";
+            rdoResponsibleAll.Size = new Size(50, 27);
+            rdoResponsibleAll.TabIndex = 0;
+            rdoResponsibleAll.TabStop = true;
+            rdoResponsibleAll.Text = "All";
+            rdoResponsibleAll.UseVisualStyleBackColor = true;
+            //
+            // lblResponsible
+            //
+            lblResponsible.Dock = DockStyle.Top;
+            lblResponsible.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblResponsible.ForeColor = Color.White;
+            lblResponsible.Location = new Point(0, 0);
+            lblResponsible.Name = "lblResponsible";
+            lblResponsible.Size = new Size(420, 30);
+            lblResponsible.TabIndex = 0;
+            lblResponsible.Text = "Responsible";
+            lblResponsible.TextAlign = ContentAlignment.BottomLeft;
+            //
+            // lblPeopleHeading
+            //
+            lblPeopleHeading.Dock = DockStyle.Top;
+            lblPeopleHeading.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPeopleHeading.ForeColor = Color.FromArgb(170, 180, 215);
+            lblPeopleHeading.Location = new Point(15, 0);
+            lblPeopleHeading.Name = "lblPeopleHeading";
+            lblPeopleHeading.Size = new Size(420, 30);
+            lblPeopleHeading.TabIndex = 0;
+            lblPeopleHeading.Text = "PEOPLE AND MATERIALS";
+            lblPeopleHeading.TextAlign = ContentAlignment.TopLeft;
+            //
             // EditIssueForm
-            // 
+            //
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoScroll = true;
             BackColor = Color.FromArgb(25, 25, 70);
-            ClientSize = new Size(482, 553);
+            ClientSize = new Size(900, 620);
             Controls.Add(pnlEditIssueContent);
             Controls.Add(pnlEditIssueActions);
             Controls.Add(pnlEditIssueHeader);
@@ -542,28 +743,35 @@
             Load += EditIssueForm_Load;
             pnlEditIssueHeader.ResumeLayout(false);
             pnlEditIssueHeader.PerformLayout();
+            pnlIssueTypeInfo.ResumeLayout(false);
+            pnlIssueTypeInfo.PerformLayout();
             pnlEditIssueActions.ResumeLayout(false);
             pnlEditIssueContent.ResumeLayout(false);
-            pnlIssueStatus.ResumeLayout(false);
+            tlpEditIssue.ResumeLayout(false);
+            pnlIssueDetailsColumn.ResumeLayout(false);
             pnlIssueInformation.ResumeLayout(false);
             pnlIssueInformation.PerformLayout();
-            pnlResponsible.ResumeLayout(false);
-            pnlResponsibleOptions.ResumeLayout(false);
-            pnlResponsibleSpecify.ResumeLayout(false);
-            pnlResponsibleSpecify.PerformLayout();
-            pnlResponsibleNone.ResumeLayout(false);
-            pnlResponsibleNone.PerformLayout();
-            pnlResponsibleAll.ResumeLayout(false);
-            pnlResponsibleAll.PerformLayout();
+            pnlIssueStatus.ResumeLayout(false);
+            pnlRoomSelection.ResumeLayout(false);
+            pnlPeopleColumn.ResumeLayout(false);
             pnlAffectedTenants.ResumeLayout(false);
             pnlTenantOptions.ResumeLayout(false);
-            pnlTenantSpecify.ResumeLayout(false);
-            pnlTenantSpecify.PerformLayout();
             pnlTenantNone.ResumeLayout(false);
             pnlTenantNone.PerformLayout();
+            pnlTenantSpecify.ResumeLayout(false);
+            pnlTenantSpecify.PerformLayout();
             pnlTenantAll.ResumeLayout(false);
             pnlTenantAll.PerformLayout();
-            pnlRoomSelection.ResumeLayout(false);
+            pnlMaterials.ResumeLayout(false);
+            pnlMaterials.PerformLayout();
+            pnlResponsible.ResumeLayout(false);
+            pnlResponsibleOptions.ResumeLayout(false);
+            pnlResponsibleNone.ResumeLayout(false);
+            pnlResponsibleNone.PerformLayout();
+            pnlResponsibleSpecify.ResumeLayout(false);
+            pnlResponsibleSpecify.PerformLayout();
+            pnlResponsibleAll.ResumeLayout(false);
+            pnlResponsibleAll.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -608,5 +816,19 @@
         private Panel pnlIssueStatus;
         private ComboBox cboIssueStatus;
         private Label lblIssueStatus;
+        private Panel pnlIssueTypeInfo;
+        private Label lblIssueType;
+        private Label lblIssueTypeValue;
+        private Label lblIssueTypeNote;
+        private TableLayoutPanel tlpEditIssue;
+        private Panel pnlIssueDetailsColumn;
+        private Label lblIssueDetailsHeading;
+        private Panel pnlPeopleColumn;
+        private Label lblPeopleHeading;
+        private Label lblTenantHint;
+        private Panel pnlMaterials;
+        private Label lblMaterials;
+        private Button btnViewMaterials;
+        private Label lblMaterialsCount;
     }
 }

@@ -67,6 +67,12 @@ namespace Capstoneszn.Forms
             // Not stored - only decides whether the materials form opens next.
             rdoMaterialsNo.Checked = true;
 
+            // Room is the default type. Building issues need the database
+            // change first (RoomId nullable + BuildingId), so the Building
+            // option stays disabled until that step is done.
+            rdoIssueTypeRoom.Checked = true;
+            rdoIssueTypeBuilding.Enabled = false;
+
             // No tenant group choice until a room is picked.
             SetTenantOptionsEnabled(false);
 

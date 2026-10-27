@@ -91,6 +91,10 @@ namespace Capstoneszn.Forms
             }
 
             lblRoomValue.Text = "Room " + _issue.RoomNumber;
+
+            // Every issue is a Room issue until the Building migration is done.
+            lblIssueTypeValue.Text = "Room";
+            UpdateMaterialsCount();
             txtIssue.Text = _issue.IssueTitle;
             txtDescription.Text = _issue.Description;
 
@@ -326,6 +330,36 @@ namespace Capstoneszn.Forms
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        /* ------------------------------------------------------------------
+           Materials - replaces the "Materials Needed? Yes/No" of the Add
+           form. Opens the existing ViewMaterialsForm, where materials can
+           be added or removed while the issue is Pending.
+           ------------------------------------------------------------------ */
+
+        private void btnViewMaterials_Click(object sender, EventArgs e)
+        {
+            using (var form = new ViewMaterialsForm(_issueId))
+                form.ShowDialog(this);
+
+            // Materials may have been added or removed.
+            UpdateMaterialsCount();
+        }
+
+        private void UpdateMaterialsCount()
+        {
+            try
+            {
+                int count = MaintenanceService.GetMaterials(_issueId).Count;
+                lblMaterialsCount.Text = count == 0 ? "No materials yet"
+                                       : count == 1 ? "1 item listed"
+                                       : count + " items listed";
+            }
+            catch (Exception)
+            {
+                lblMaterialsCount.Text = "";
+            }
         }
     }
 }

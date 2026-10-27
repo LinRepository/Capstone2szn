@@ -26,7 +26,11 @@ namespace Capstoneszn.Forms
 
             _issueId = issueId;
 
-            ArrangeLayout();
+            // The redesigned layout (two columns) docks every label in the
+            // designer, so the runtime re-arrangement is no longer needed.
+            // ArrangeLayout();
+
+            CancelButton = btnCloseDetails;
         }
 
         /// <summary>
@@ -39,7 +43,8 @@ namespace Capstoneszn.Forms
         {
             Arrange(lblUnitTitle, lblUnitValue, ContentAlignment.MiddleCenter);
             Arrange(lblDateTitle, lblDateValue, ContentAlignment.MiddleCenter);
-            Arrange(lblAffectedTenantsTitle, lblAffectedTenantsValue, ContentAlignment.MiddleCenter);
+            // lblAffectedTenantsValue was replaced by dgvAffectedTenants.
+            // Arrange(lblAffectedTenantsTitle, lblAffectedTenantsValue, ContentAlignment.MiddleCenter);
             Arrange(lblResponsibleTitle, lblResponsibleValue, ContentAlignment.MiddleCenter);
             Arrange(lblIssueTitle, lblIssueValue, ContentAlignment.MiddleCenter);
             Arrange(lblStatusTitle, lblStatusValue, ContentAlignment.MiddleCenter);
@@ -88,20 +93,69 @@ namespace Capstoneszn.Forms
             lblUnitValue.Text = "Room " + d.RoomNumber;
             lblDateValue.Text = d.DateReported.ToString("MMM dd, yyyy");
 
-            lblAffectedTenantsValue.Text = string.IsNullOrWhiteSpace(d.AffectedTenants)
-                ? "None (building expense)"
-                : d.AffectedTenants;
+            // Affected tenants are now a grid (Tenant | Room) instead of one label.
+            // lblAffectedTenantsValue.Text = string.IsNullOrWhiteSpace(d.AffectedTenants)
+            //     ? "None (building expense)"
+            //     : d.AffectedTenants;
 
             lblResponsibleValue.Text = d.Responsible;
             lblIssueValue.Text = d.IssueTitle;
 
-            lblStatusValue.Text = d.IsPending || !d.CompletedAt.HasValue
-                ? d.Status
-                : d.Status + " (" + d.CompletedAt.Value.ToString("MMM dd, yyyy") + ")";
+            // The completed date now has its own label, so Status shows the status only.
+            // lblStatusValue.Text = d.IsPending || !d.CompletedAt.HasValue
+            //     ? d.Status
+            //     : d.Status + " (" + d.CompletedAt.Value.ToString("MMM dd, yyyy") + ")";
+            lblStatusValue.Text = d.Status;
             lblStatusValue.ForeColor = d.IsPending ? Color.Orange : Color.LightGreen;
+
+            lblCompletedValue.Text = d.CompletedAt.HasValue
+                ? d.CompletedAt.Value.ToString("MMM dd, yyyy")
+                : "-";
 
             lblDescriptionValue.Text = string.IsNullOrWhiteSpace(d.Description)
                 ? "-" : d.Description;
+
+            LoadGrids();
         }
+
+        /// <summary>
+        /// Fills the Affected Tenants and Materials grids. Materials show the
+        /// name and quantity only - no money on this form (decision G).
+        /// </summary>
+        private void LoadGrids()
+        {
+            List<AffectedTenantRow> tenants;
+            List<MaintenanceMaterial> materials;
+            try
+            {
+                tenants = MaintenanceService.GetAffectedTenantsForDetails(_issueId);
+                materials = MaintenanceService.GetMaterials(_issueId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to load the tenants or materials.\n\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Only the columns defined in the designer; TotalCost/UnitPrice stay hidden.
+            dgvAffectedTenants.AutoGenerateColumns = false;
+            dgvAffectedTenants.DataSource = tenants;
+            lblAffectedTenantsTitle.Text = tenants.Count == 0
+                ? "Affected Tenants - none (building expense)"
+                : "Affected Tenants";
+
+            dgvMaterials.AutoGenerateColumns = false;
+            dgvMaterials.DataSource = materials;
+            lblMaterialsTitle.Text = materials.Count == 0
+                ? "Materials - none recorded"
+                : "Materials";
+        }
+
+        private void btnCloseDetails_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
     }
 }

@@ -173,6 +173,15 @@ namespace Capstoneszn
     }
 
     /// <summary>
+    /// One row of the Affected Tenants grid in MaintenanceIssueDetailsForm.
+    /// </summary>
+    public class AffectedTenantRow
+    {
+        public string Name { get; set; }
+        public string RoomNumber { get; set; }
+    }
+
+    /// <summary>
     /// Database access for the Maintenance module. The forms call these
     /// methods; no SQL lives in the forms themselves.
     ///
@@ -546,6 +555,53 @@ namespace Capstoneszn
                     };
                 }
             }
+        }
+
+        /// <summary>
+        /// The affected tenants of one issue, one row each, for the Details
+        /// form's grid. Room = the issue's room for a Room issue; for an issue
+        /// with no room (Building issue, after the migration) it is the room
+        /// the tenant currently lives in, or their last room if they moved out.
+        /// </summary>
+        public static List<AffectedTenantRow> GetAffectedTenantsForDetails(int issueId)
+        {
+            var list = new List<AffectedTenantRow>();
+
+            string sql = @"
+                SELECT t.FirstName + N' ' + t.LastName AS Name,
+                       COALESCE(ir.RoomNumber, cur.RoomNumber, N'-') AS RoomNumber
+                FROM   MaintenanceAffectedTenants mat
+                JOIN   MaintenanceIssues mi ON mi.IssueId = mat.IssueId
+                JOIN   Tenants t            ON t.TenantId = mat.TenantId
+                LEFT JOIN Rooms ir          ON ir.RoomId  = mi.RoomId
+                OUTER APPLY (SELECT TOP 1 r.RoomNumber
+                             FROM   Tenancies tn
+                             JOIN   Rooms r ON r.RoomId = tn.RoomId
+                             WHERE  tn.TenantId = t.TenantId
+                             ORDER BY CASE WHEN tn.Status = 'Active' THEN 0 ELSE 1 END,
+                                      tn.MoveInDate DESC) cur
+                WHERE  mat.IssueId = @iid
+                ORDER BY t.LastName, t.FirstName;";
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("@iid", issueId);
+                conn.Open();
+                using (var rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        list.Add(new AffectedTenantRow
+                        {
+                            Name = rd.GetString(0),
+                            RoomNumber = rd.GetString(1)
+                        });
+                    }
+                }
+            }
+
+            return list;
         }
 
         /* =================================================================
