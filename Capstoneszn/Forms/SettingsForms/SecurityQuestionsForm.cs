@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms.BuildingForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.SettingsForms
@@ -126,14 +127,33 @@ namespace Capstoneszn.Forms.SettingsForms
                         storedHash = (string)result;
                     }
 
+                    // LOGIN ATTEMPT LIMIT - a locked account cannot change its questions.
+                    int lockedSeconds = LoginLockout.GetSecondsRemaining(conn, _userId);
+                    if (lockedSeconds > 0)
+                    {
+                        CloseForLockout(lockedSeconds);
+                        return;
+                    }
+
                     if (!SecurityHelper.Verify(currentPassword, storedHash))
                     {
+                        // A wrong current password counts toward the same lockout as the login screen.
+                        int lockMinutes = LoginLockout.RecordFailure(conn, _userId);
+                        if (lockMinutes > 0)
+                        {
+                            CloseForLockout(lockMinutes * 60);
+                            return;
+                        }
+
                         MessageBox.Show("The current password is incorrect. Nothing was saved.",
                             "Security Questions", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtCurrentPassword.Clear();
                         txtCurrentPassword.Focus();
                         return;
                     }
+
+                    // Correct current password - clear the failed-attempt counters.
+                    LoginLockout.Reset(conn, _userId);
 
                     // Delete-then-insert rather than update: it handles a first-time
                     // setup (no rows), a later change (three rows) and a broken
@@ -222,6 +242,25 @@ namespace Capstoneszn.Forms.SettingsForms
                     "Something went wrong while saving your security questions. Nothing was saved.",
                     "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // Login attempt limit: the account is locked, so this form closes with
+        // DialogResult.Abort.
+        //  - Opened from Settings: ProfileManagementControl sees Abort and signs the user out.
+        //  - Forced first-login setup: LoginForm treats any result other than OK as
+        //    "setup not finished" and stays on the login screen.
+        private void CloseForLockout(int secondsRemaining)
+        {
+            MessageBox.Show(LoginLockout.LockedMessage(secondsRemaining) +
+                "\n\nYou will be returned to the login screen.", "Account Locked",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            // Skips the "setup not finished" prompt in FormClosing - the lockout,
+            // not the user, is ending the setup.
+            _abortSetup = true;
+
+            this.DialogResult = DialogResult.Abort;
+            this.Close();
         }
 
         private void btnCancelSecurityQuestions_Click(object sender, EventArgs e)

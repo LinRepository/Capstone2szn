@@ -19,6 +19,11 @@ namespace Capstoneszn.Forms.UserControls.Settings
         public ProfileManagementControl()
         {
             InitializeComponent();
+
+            // CurrentUserId defaulted to 1 and was never set, so every account edited
+            // UserId 1 (the landlord). Use the signed-in user instead.
+            if (Session.UserId > 0) CurrentUserId = Session.UserId;
+
             LoadUsername();
         }
 
@@ -75,7 +80,12 @@ namespace Capstoneszn.Forms.UserControls.Settings
             {
                 changeForm.StartPosition = FormStartPosition.CenterScreen;
                 changeForm.TopMost = true;
-                changeForm.ShowDialog();
+                // was: changeForm.ShowDialog();
+                if (changeForm.ShowDialog() == DialogResult.Abort)
+                {
+                    SignOutAfterLockout();
+                    return;
+                }
             }
         }
 
@@ -85,8 +95,28 @@ namespace Capstoneszn.Forms.UserControls.Settings
             {
                 questionsForm.StartPosition = FormStartPosition.CenterScreen;
                 questionsForm.TopMost = true;
-                questionsForm.ShowDialog();
+                // was: questionsForm.ShowDialog();
+                if (questionsForm.ShowDialog() == DialogResult.Abort)
+                {
+                    SignOutAfterLockout();
+                    return;
+                }
             }
         }
+
+        // Login attempt limit: Change Password or Security Questions closed with Abort,
+        // meaning the account is now locked. Same steps as MainForm's Logout button:
+        // closing MainForm with LoggingOut = true brings back the login screen.
+        private void SignOutAfterLockout()
+        {
+            AuditLogger.Log(AuditLogger.ModuleLogin, "Lockout",
+                "Account locked after repeated wrong current passwords; signed out");
+
+            Form? mainForm = this.FindForm();
+            Session.Clear();
+            Session.LoggingOut = true;
+            mainForm?.Close();
+        }
+
     }
 }

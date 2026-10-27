@@ -79,8 +79,14 @@ namespace Capstoneszn
                 string hashed = SecurityHelper.Hash(newPass);
 
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
+                // was: "UPDATE Users SET Password = @Password WHERE Username = @Username"
+                // Login attempt limit: a completed reset also unlocks the account and
+                // clears the counters, in the same statement as the password change.
                 using (SqlCommand cmd = new SqlCommand(
-                    "UPDATE Users SET Password = @Password WHERE Username = @Username", conn))
+                    @"UPDATE Users
+                      SET Password = @Password,
+                          FailedLoginCount = 0, LockoutCount = 0, LockoutUntilUtc = NULL
+                      WHERE Username = @Username", conn))
                 {
                     cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 255).Value = hashed;
                     cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = _username;

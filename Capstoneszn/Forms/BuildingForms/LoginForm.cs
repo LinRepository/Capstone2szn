@@ -43,7 +43,10 @@ namespace Capstoneszn
             string inputUsername = txtLoginUsername.Text.Trim();
             string inputPassword = txtLoginPassword.Text;   // never trim a password
 
-            if (string.IsNullOrEmpty(inputUsername) || string.IsNullOrEmpty(inputPassword))
+            // Blank or spaces-only entries never reach the database, so they don't
+            // count as failed attempts (login attempt limit rule).
+            // was: if (string.IsNullOrEmpty(inputUsername) || string.IsNullOrEmpty(inputPassword))
+            if (string.IsNullOrEmpty(inputUsername) || string.IsNullOrWhiteSpace(inputPassword))
             {
                 MessageBox.Show("Please enter both username and password.", "Required",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -94,13 +97,33 @@ namespace Capstoneszn
                         }
                     }
 
+                    // LOGIN ATTEMPT LIMIT - the lock is checked BEFORE the password,
+                    // so even the correct password is refused while the account is locked.
+                    int lockedSeconds = LoginLockout.GetSecondsRemaining(conn, userId);
+                    if (lockedSeconds > 0)
+                    {
+                        ShowLockedOut(lockedSeconds);
+                        return;
+                    }
+
                     // The password itself is never sent to SQL Server - we fetch the
                     // stored hash by username, then verify here in C#.
                     if (!SecurityHelper.Verify(inputPassword, storedHash))
                     {
+                        // Count the failure; the 3rd one in a row starts a lock.
+                        int lockMinutes = LoginLockout.RecordFailure(conn, userId);
+                        if (lockMinutes > 0)
+                        {
+                            ShowLockedOut(lockMinutes * 60);
+                            return;
+                        }
+
                         ShowInvalidCredentials();
                         return;
                     }
+
+                    // Correct password - clear the failed-attempt counters.
+                    LoginLockout.Reset(conn, userId);
 
                     // Caretaker logins are frozen when the employee is inactive or archived
                     if (userRole == "Caretaker" && (isArchived || empStatus != "Active"))
@@ -225,6 +248,17 @@ namespace Capstoneszn
             txtLoginPassword.Clear();
             txtLoginPassword.Focus();
         }
+
+        // Login attempt limit: shown when the account is locked, instead of
+        // "Invalid username or password". No "attempts remaining" counter is shown.
+        private void ShowLockedOut(int secondsRemaining)
+        {
+            MessageBox.Show(LoginLockout.LockedMessage(secondsRemaining), "Account Locked",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            txtLoginPassword.Clear();
+            txtLoginPassword.Focus();
+        }
+
         private void ClearLoginFields()
         {
             txtLoginUsername.Clear();

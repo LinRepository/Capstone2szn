@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms.BuildingForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.SettingsForms
@@ -90,15 +91,34 @@ namespace Capstoneszn.Forms.SettingsForms
                         storedHash = (string)result;
                     }
 
+                    // LOGIN ATTEMPT LIMIT - a locked account cannot change its password here.
+                    int lockedSeconds = LoginLockout.GetSecondsRemaining(conn, _userId);
+                    if (lockedSeconds > 0)
+                    {
+                        CloseForLockout(lockedSeconds);
+                        return;
+                    }
+
                     // 2. Verify the current password in C#
                     if (!SecurityHelper.Verify(currentPassword, storedHash))
                     {
+                        // A wrong current password counts toward the same lockout as the login screen.
+                        int lockMinutes = LoginLockout.RecordFailure(conn, _userId);
+                        if (lockMinutes > 0)
+                        {
+                            CloseForLockout(lockMinutes * 60);
+                            return;
+                        }
+
                         MessageBox.Show("Current password is incorrect.", "Change Password",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtCurrentPassword.Clear();
                         txtCurrentPassword.Focus();
                         return;
                     }
+
+                    // Correct current password - clear the failed-attempt counters.
+                    LoginLockout.Reset(conn, _userId);
 
                     // 3. Hash the new password before it reaches the database
                     using (SqlCommand cmd = new SqlCommand(
@@ -143,6 +163,18 @@ namespace Capstoneszn.Forms.SettingsForms
                 MessageBox.Show("Something went wrong. Your password was not changed.",
                     "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // Login attempt limit: the account is locked, so this form closes with
+        // DialogResult.Abort. ProfileManagementControl sees Abort and signs the user out.
+        private void CloseForLockout(int secondsRemaining)
+        {
+            MessageBox.Show(LoginLockout.LockedMessage(secondsRemaining) +
+                "\n\nYou will be returned to the login screen.", "Account Locked",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            this.DialogResult = DialogResult.Abort;
+            this.Close();
         }
 
         private void ChangePasswordForm_Load(object sender, EventArgs e)
