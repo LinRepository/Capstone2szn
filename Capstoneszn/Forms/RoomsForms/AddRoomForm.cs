@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;                           // REVISION: culture-safe price parsing
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,10 +15,41 @@ using Capstoneszn.Forms.UserControls.Utilities;       // NEW: ElectricityHelper
 
 namespace Capstoneszn.Forms
 {
+
+    /// <summary>
+    /// Add Room (Rooms module revision, Oct 2026).
+    ///
+    /// Settled rules:
+    ///   - Fields: floor, room number, room type, room price, capacity,
+    ///     electricity account name and number. Every room is complete on
+    ///     creation - there is no "Unconfigured" room any more.
+    ///   - Room number: whole number 1-9999, no leading zero, unique in the
+    ///     building INCLUDING archived rooms. An archived room's number comes
+    ///     back only by restoring that room (Settings > Archive).
+    ///   - Single room = capacity 1 (fixed). Shared room = capacity 2-10.
+    ///   - Price: greater than 0, at most 999,999.99, up to 2 decimals.
+    ///   - The room, its electricity account and the audit entry are saved
+    ///     in ONE transaction: all or nothing.
+    ///
+    /// The database enforces the same rules (CK_Rooms_*, UQ_Rooms_Bldg_Number,
+    /// UQ_ElecAcct_Number); the checks here exist to give a clear message.
+    /// </summary>
+    /// 
+
     public partial class AddRoomForm : Form
     {
 
         private int _buildingId;
+
+        // REVISION: limits shared with the database CHECK constraints
+        private const int MinRoomNumber = 1;
+        private const int MaxRoomNumber = 9999;
+        private const int MinSharedCapacity = 2;
+        private const int MaxSharedCapacity = 10;
+        private const decimal MaxRoomPrice = 999999.99m;
+
+        private const string SingleRoom = "Single Room";
+        private const string SharedRoom = "Shared Room";
 
         public AddRoomForm(int buildingId)
         {
@@ -28,7 +60,18 @@ namespace Capstoneszn.Forms
 
             // Wire up the KeyPress event to automatically block non-integer characters
             txtRoomNumber.KeyPress += NumericOnly_KeyPress;
-            txtRoomPrice.KeyPress += NumericOnly_KeyPress;
+            // txtRoomPrice.KeyPress += NumericOnly_KeyPress;   // OLD: blocked the decimal point
+            txtRoomPrice.KeyPress += Decimal_KeyPress;          // REVISION: price is a decimal
+
+            // REVISION: input lengths match the rules
+            txtRoomNumber.MaxLength = 4;        // 1-9999
+            txtRoomPrice.MaxLength = 9;         // 999999.99
+            txtSetCapacity.MaxLength = 2;       // 2-10
+            txtSetCapacity.KeyPress += NumericOnly_KeyPress;
+
+            // REVISION: capacity follows the room type (Single = 1, Shared = 2-10)
+            cboRoomType.SelectedIndexChanged += cboRoomType_SelectedIndexChanged;
+            ApplyRoomTypeRules();
 
             // NEW: electricity account fields (textBox1 = Account Name, textBox2 = Account Number)
             textBox1.MaxLength = 100;                 // matches ElectricityAccounts.AccountName
@@ -42,6 +85,41 @@ namespace Capstoneszn.Forms
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true; // Block the input
+            }
+        }
+        /// <summary>
+        /// REVISION: digits and ONE decimal point, at most 2 digits after it.
+        /// The final check still happens on save, because a pasted value
+        /// skips KeyPress.
+        /// </summary>
+        /// 
+
+        private void Decimal_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar)) return;
+
+            // Fully qualified: the "using static VisualStyleElement" above also
+            // brings in a nested type named TextBox.
+            System.Windows.Forms.TextBox box = (System.Windows.Forms.TextBox)sender;
+
+            if (e.KeyChar == '.')
+            {
+                if (box.Text.Contains('.')) e.Handled = true;
+                return;
+            }
+
+            if (!char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Block a third decimal digit (unless the user is typing over a selection)
+            int dot = box.Text.IndexOf('.');
+            if (dot >= 0 && box.SelectionLength == 0 && box.SelectionStart > dot
+                && box.Text.Length - dot - 1 >= 2)
+            {
+                e.Handled = true;
             }
         }
 
@@ -81,6 +159,33 @@ namespace Capstoneszn.Forms
             }
         }
 
+        /* =================================================================
+           REVISION: ROOM TYPE -> CAPACITY
+           ================================================================= */
+
+        private void cboRoomType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyRoomTypeRules();
+        }
+
+        /// <summary>
+        /// Single: capacity is fixed at 1 and shown read-only.
+        /// Shared: the landlord types 2-10.
+        /// </summary>
+        private void ApplyRoomTypeRules()
+        {
+            bool isSingle = cboRoomType.Text == SingleRoom;
+
+            txtSetCapacity.ReadOnly = isSingle;
+            txtSetCapacity.TabStop = !isSingle;
+            txtSetCapacity.BackColor = isSingle ? Color.Gainsboro : SystemColors.Window;
+            txtSetCapacity.PlaceholderText = isSingle ? "" : "2 - 10";
+
+            if (isSingle)
+                txtSetCapacity.Text = "1";
+            else if (txtSetCapacity.Text == "1")
+                txtSetCapacity.Text = "";       // force a real choice for a shared room
+        }
 
         private void AddRoomForm_Load(object sender, EventArgs e)
         {
@@ -93,31 +198,87 @@ namespace Capstoneszn.Forms
             this.Close();
         }
 
+        /* =================================================================
+           REVISION: SAVE
+           ================================================================= */
+
         private void btnAddRoom_Click(object sender, EventArgs e)
         {
-            if (cboFloor.SelectedValue == null) return;
+            // ---------- 1. Floor ----------
+            if (cboFloor.SelectedValue == null)
+            {
+                MessageBox.Show("Please select a floor.", "Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboFloor.Focus();
+                return;
+            }
+            int selectedFloorId = Convert.ToInt32(cboFloor.SelectedValue);
 
-            string roomNumber = txtRoomNumber.Text.Trim();
+            // ---------- 2. Room number: 1-9999, no leading zero ----------
+            string roomNumberText = txtRoomNumber.Text.Trim();
+
+            if (roomNumberText.Length == 0)
+            {
+                MessageBox.Show("Please enter the room number.", "Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtRoomNumber.Focus();
+                return;
+            }
+
+            if (!roomNumberText.All(char.IsDigit) || roomNumberText.StartsWith("0")
+                || !int.TryParse(roomNumberText, out int roomNumber)
+                || roomNumber < MinRoomNumber || roomNumber > MaxRoomNumber)
+            {
+                MessageBox.Show("Room Number must be a whole number from 1 to 9999, without a leading zero.",
+                    "Invalid Room Number", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtRoomNumber.Focus();
+                return;
+            }
+
+            // ---------- 3. Room type and capacity ----------
             string roomType = cboRoomType.Text;
+
+            if (roomType != SingleRoom && roomType != SharedRoom)
+            {
+                MessageBox.Show("Please select a room type.", "Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboRoomType.Focus();
+                return;
+            }
+
+            int capacity;
+            if (roomType == SingleRoom)
+            {
+                capacity = 1;
+            }
+            else if (!int.TryParse(txtSetCapacity.Text.Trim(), out capacity)
+                     || capacity < MinSharedCapacity || capacity > MaxSharedCapacity)
+            {
+                MessageBox.Show("A shared room needs a capacity from 2 to 10.", "Invalid Capacity",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSetCapacity.Focus();
+                return;
+            }
+
+            // ---------- 4. Price: > 0, <= 999,999.99, max 2 decimals ----------
             string priceText = txtRoomPrice.Text.Trim();
 
-            // 1. Basic Empty Validation
-            if (string.IsNullOrEmpty(roomNumber) || string.IsNullOrEmpty(priceText))
+            if (priceText.Length == 0)
             {
-                MessageBox.Show("Please fill in all fields.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter the room price.", "Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtRoomPrice.Focus();
                 return;
             }
 
-            // 2. Strict Integer Parsing Validation
-            if (!int.TryParse(roomNumber, out int parsedRoomNumber))
+            if (!decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint,
+                                  CultureInfo.InvariantCulture, out decimal roomPrice)
+                || roomPrice <= 0m || roomPrice > MaxRoomPrice
+                || decimal.Round(roomPrice, 2) != roomPrice)
             {
-                MessageBox.Show("Room Number must be a valid number.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!int.TryParse(priceText, out int roomPrice) || roomPrice <= 0)
-            {
-                MessageBox.Show("Room Price must be a valid number greater than 0.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Room Price must be greater than 0 and at most 999,999.99, with up to 2 decimal places.",
+                    "Invalid Room Price", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtRoomPrice.Focus();
                 return;
             }
 
@@ -146,100 +307,119 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            int selectedFloorId = (int)cboFloor.SelectedValue;
-
-
-
-                // Single rooms are complete on creation; shared rooms need a capacity first
-                bool isSingle = (roomType == "Single Room");
-            object capacity = isSingle ? (object)1 : DBNull.Value;
-
-            // 3. Database Check & Insertion
+            // ---------- 5. Save: room + electricity account + audit, all or nothing ----------
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             {
-                try
+                conn.Open();
+
+                using (SqlTransaction tx = conn.BeginTransaction())
                 {
-                    conn.Open();
-
-                    // --- DUPLICATE CHECK ---
-                    // Links Rooms to Floors to ensure the room number is completely unique across this specific building
-                    string checkDuplicateQuery = @"
-                        SELECT COUNT(*) 
-                        FROM Rooms r 
-                        INNER JOIN Floors f ON r.FloorId = f.FloorId 
-                        WHERE r.RoomNumber = @roomNum AND f.BuildingId = @bId";
-
-                    using (SqlCommand checkCmd = new SqlCommand(checkDuplicateQuery, conn))
+                    try
                     {
-                        checkCmd.Parameters.AddWithValue("@roomNum", roomNumber);
-                        checkCmd.Parameters.AddWithValue("@bId", _buildingId);
-
-                        int existingCount = (int)checkCmd.ExecuteScalar();
-                        if (existingCount > 0)
+                        // 5a. Room number already used in this building? Archived rooms
+                        //     count too - their number is never handed to a new room.
+                        using (SqlCommand cmd = new SqlCommand(@"
+                            SELECT TOP 1 IsArchived
+                            FROM   Rooms
+                            WHERE  BuildingId = @bId
+                              AND  RoomNumber = @num;", conn, tx))
                         {
-                            MessageBox.Show("This Room Number already exists in this building. Please enter a unique room number.", "Duplicate Room", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return; // Stop the save process
-                        }
-                    }
+                            cmd.Parameters.Add("@bId", SqlDbType.Int).Value = _buildingId;
+                            cmd.Parameters.Add("@num", SqlDbType.Int).Value = roomNumber;
 
-                    // NEW: --- DUPLICATE ELECTRICITY ACCOUNT CHECK ---
-                    // Each meter/account belongs to one room only; checked before the room is saved
-                    using (SqlCommand elecCheckCmd = new SqlCommand(
-                        "SELECT COUNT(*) FROM dbo.ElectricityAccounts WHERE AccountNumber = @accNum", conn))
-                    {
-                        elecCheckCmd.Parameters.Add("@accNum", SqlDbType.VarChar, 50).Value = elecAccountNumber;
-                        if ((int)elecCheckCmd.ExecuteScalar() > 0)
+                            object found = cmd.ExecuteScalar();
+                            if (found != null && found != DBNull.Value)
+                            {
+                                tx.Rollback();
+
+                                bool archived = Convert.ToBoolean(found);
+                                MessageBox.Show(archived
+                                        ? $"Room {roomNumber} is archived. Restore it from Settings > Archive instead of adding it again."
+                                        : $"Room {roomNumber} already exists in this building. Please enter a different room number.",
+                                    archived ? "Archived Room" : "Duplicate Room",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                txtRoomNumber.Focus();
+                                return;
+                            }
+                        }
+
+                        // NEW: --- DUPLICATE ELECTRICITY ACCOUNT CHECK ---
+                        // Each meter/account belongs to one room only; checked before the room is saved
+                        using (SqlCommand elecCheckCmd = new SqlCommand(
+                            "SELECT COUNT(*) FROM dbo.ElectricityAccounts WHERE AccountNumber = @accNum", conn, tx))
                         {
-                            MessageBox.Show("This Elec. Account Number is already used by another account. Please check the number.", "Duplicate Account", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            textBox2.Focus();
-                            return;
+                            elecCheckCmd.Parameters.Add("@accNum", SqlDbType.VarChar, 50).Value = elecAccountNumber;
+                            if ((int)elecCheckCmd.ExecuteScalar() > 0)
+                            {
+                                tx.Rollback();
+                                MessageBox.Show("This Elec. Account Number is already used by another account. Please check the number.", "Duplicate Account", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                textBox2.Focus();
+                                return;
+                            }
                         }
+
+                        // 5b. Insert the room and get its new ID directly
+                        //     (no second lookup by room number).
+                        int newRoomId;
+                        using (SqlCommand cmd = new SqlCommand(@"
+                            INSERT INTO Rooms (FloorId, BuildingId, RoomNumber, RoomType, Capacity, RoomPrice)
+                            OUTPUT INSERTED.RoomId
+                            VALUES (@floorId, @bId, @num, @type, @cap, @price);", conn, tx))
+                        {
+                            cmd.Parameters.Add("@floorId", SqlDbType.Int).Value = selectedFloorId;
+                            cmd.Parameters.Add("@bId", SqlDbType.Int).Value = _buildingId;
+                            cmd.Parameters.Add("@num", SqlDbType.Int).Value = roomNumber;
+                            cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = roomType;
+                            cmd.Parameters.Add("@cap", SqlDbType.Int).Value = capacity;
+
+                            SqlParameter p = cmd.Parameters.Add("@price", SqlDbType.Decimal);
+                            p.Precision = 18;
+                            p.Scale = 2;
+                            p.Value = roomPrice;
+
+                            newRoomId = (int)cmd.ExecuteScalar();
+                        }
+
+                        // 5c. The room's electricity account, in the SAME transaction.
+                        // ElectricityHelper.CreateRoomAccount(conn, null, newRoomId, elecAccountName, elecAccountNumber);   // OLD: outside any transaction
+                        ElectricityHelper.CreateRoomAccount(conn, tx, newRoomId, elecAccountName, elecAccountNumber);
+
+                        // 5d. Audit entry, in the SAME transaction.
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleRooms, "Add Room",
+                            $"Room {roomNumber} ({roomType}, capacity {capacity}, PHP {roomPrice:N2}), " +
+                            $"elec. account {elecAccountNumber}");
+
+                        tx.Commit();
                     }
-
-
-                    // BuildingId is stored on the room as well as the floor. It is what makes
-                    // room numbers unique per building rather than per floor, and a composite
-                    // FK keeps it in step with the floor's own building.
-                    string insertQuery = @"
-                        INSERT INTO Rooms (FloorId, BuildingId, RoomNumber, RoomType, RoomPrice, Capacity)
-                        VALUES (@floorId, @bId, @roomNum, @type, @price, @cap)";
-
-                    using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
+                    catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
                     {
-                        cmd.Parameters.Add("@floorId", SqlDbType.Int).Value = selectedFloorId;
-                        cmd.Parameters.Add("@bId", SqlDbType.Int).Value = _buildingId;
-                        cmd.Parameters.Add("@roomNum", SqlDbType.NVarChar, 50).Value = roomNumber;
-                        cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = roomType;
-                        cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = roomPrice;
-                        cmd.Parameters["@price"].Precision = 18;
-                        cmd.Parameters["@price"].Scale = 2;
-                        cmd.Parameters.Add("@cap", SqlDbType.Int).Value = capacity;
-                        cmd.ExecuteNonQuery();
+                        // A unique rule caught a duplicate that slipped in between the
+                        // check and the insert (another PC saving at the same moment).
+                        SafeRollback(tx);
+                        MessageBox.Show("This room number or electricity account number was just used. Nothing was saved - please check and try again.",
+                            "Duplicate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
                     }
-
-                    // NEW: create the room's electricity account so it shows in Utilities > Electricity.
-                    // The room number is unique per building (checked above), so this finds the new room.
-                    using (SqlCommand idCmd = new SqlCommand(
-                        "SELECT RoomId FROM Rooms WHERE RoomNumber = @roomNum AND BuildingId = @bId", conn))
+                    catch (Exception ex)
                     {
-                        idCmd.Parameters.Add("@roomNum", SqlDbType.NVarChar, 50).Value = roomNumber;
-                        idCmd.Parameters.Add("@bId", SqlDbType.Int).Value = _buildingId;
-                        int newRoomId = Convert.ToInt32(idCmd.ExecuteScalar());
-
-                        ElectricityHelper.CreateRoomAccount(conn, null, newRoomId, elecAccountName, elecAccountNumber);
+                        SafeRollback(tx);
+                        System.Diagnostics.Debug.WriteLine(ex);
+                        MessageBox.Show("The room was not saved: " + ex.Message, "Database Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
-
-                    AuditLogger.Log(AuditLogger.ModuleRooms, "Add Room",
-    "Room " + roomNumber + " (" + roomType + ", PHP " + roomPrice.ToString("N2") + ")");
-
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saving room: " + ex.Message);
                 }
             }
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
+
+        private static void SafeRollback(SqlTransaction tx)
+        {
+            try { tx.Rollback(); }
+            catch (Exception rollbackEx) { System.Diagnostics.Debug.WriteLine(rollbackEx); }
+        }
+
     }
 }

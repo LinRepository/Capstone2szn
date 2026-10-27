@@ -380,11 +380,20 @@ namespace Capstoneszn
                     {
                         // ---- 1. The issue ----------------------------------
                         int issueId;
+                        // Migration 2026-10-27: MaintenanceIssues.BuildingId is now
+                        // NOT NULL, so the building is copied from the room.
+                        // string issueSql = @"
+                        //     INSERT INTO MaintenanceIssues
+                        //         (RoomId, IssueTitle, Description, DateReported, Status, CreatedBy)
+                        //     OUTPUT INSERTED.IssueId
+                        //     VALUES (@rid, @title, @desc, @date, @status, @by);";
                         string issueSql = @"
                             INSERT INTO MaintenanceIssues
-                                (RoomId, IssueTitle, Description, DateReported, Status, CreatedBy)
+                                (RoomId, BuildingId, IssueTitle, Description, DateReported, Status, CreatedBy)
                             OUTPUT INSERTED.IssueId
-                            VALUES (@rid, @title, @desc, @date, @status, @by);";
+                            SELECT r.RoomId, r.BuildingId, @title, @desc, @date, @status, @by
+                            FROM   Rooms r
+                            WHERE  r.RoomId = @rid;";
 
                         using (var cmd = new SqlCommand(issueSql, conn, tx))
                         {
@@ -396,7 +405,12 @@ namespace Capstoneszn
                             cmd.Parameters.AddWithValue("@date", dateReported.Date);
                             cmd.Parameters.AddWithValue("@status", StatusPending);
                             cmd.Parameters.AddWithValue("@by", createdBy);
-                            issueId = (int)cmd.ExecuteScalar();
+                            // issueId = (int)cmd.ExecuteScalar();
+                            // INSERT ... SELECT inserts nothing if the room is gone.
+                            object newId = cmd.ExecuteScalar();
+                            if (newId == null)
+                                throw new InvalidOperationException("The selected room no longer exists.");
+                            issueId = (int)newId;
                         }
 
                         // ---- 2. Affected tenants ---------------------------

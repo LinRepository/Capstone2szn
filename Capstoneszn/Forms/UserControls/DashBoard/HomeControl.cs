@@ -176,7 +176,7 @@ namespace Capstoneszn.UserControls
                     {
                         while (r.Read())
                         {
-                            string number = r.GetString(0);
+                            string number = r.GetInt32(0).ToString();   // REVISION: INT column
                             string status = r.GetString(1);
                             int tenants = r.GetInt32(2);
                             int capacity = r.GetInt32(3);

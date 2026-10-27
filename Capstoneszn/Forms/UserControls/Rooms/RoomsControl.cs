@@ -25,6 +25,10 @@ namespace Capstoneszn.UserControls
 
 
 
+            // REVISION (Oct 27, 2026): archiving a room is landlord-only for now.
+            // panel4 holds only the Archive Room button, so the whole slot goes.
+            panel4.Visible = Session.IsLandlord;
+
             LoadRooms();
 
 
@@ -76,17 +80,24 @@ namespace Capstoneszn.UserControls
                         int maxWidth = flpRoomsOverview.Width - 30; // 30px buffer for scrollbars
                         flpFloorRooms.MaximumSize = new Size(maxWidth, 0);
 
-                        // 3. Get all active rooms for THIS specific floor (Includes the Length Sort fix!)
+                        // 3. Get all active rooms for THIS specific floor
+                        // OLD (RoomNumber was text, capacity could be NULL, tenants only):
+                        // SELECT v.RoomId, v.RoomNumber, v.Status, ISNULL(v.Capacity, 0) AS Capacity, v.ActiveTenants
+                        // FROM vwRoomStatus v WHERE v.FloorId = @fId AND v.IsArchived = 0
+                        // ORDER BY LEN(v.RoomNumber) ASC, v.RoomNumber ASC
+                        //
+                        // REVISION: RoomNumber is INT (a plain sort is numeric), Capacity
+                        // is never NULL, and occupancy counts dependents too (Occupants).
                         string roomQuery = @"
                         SELECT  v.RoomId,
-                        v.RoomNumber,
-                        v.Status,
-                        ISNULL(v.Capacity, 0) AS Capacity,
-                        v.ActiveTenants
+                                v.RoomNumber,
+                                v.Status,
+                                v.Capacity,
+                                v.Occupants
                         FROM    vwRoomStatus v
                         WHERE   v.FloorId = @fId
-                        AND   v.IsArchived = 0
-                        ORDER BY LEN(v.RoomNumber) ASC, v.RoomNumber ASC";
+                          AND   v.IsArchived = 0
+                        ORDER BY v.RoomNumber ASC";
                         using (SqlCommand cmdRoom = new SqlCommand(roomQuery, conn))
                         {
                             cmdRoom.Parameters.AddWithValue("@fId", floorId);
@@ -96,12 +107,14 @@ namespace Capstoneszn.UserControls
                                 {
                                     RoomCardControl card = new RoomCardControl();
                                     card.RoomId = reader.GetInt32(0);
-                                    card.RoomNumber = reader.GetString(1);
+                                    // card.RoomNumber = reader.GetString(1);          // OLD: text column
+                                    card.RoomNumber = reader.GetInt32(1).ToString();    // REVISION: INT column
                                     card.SetStatusColor(reader.GetString(2));
 
                                     int capacity = reader.GetInt32(3);
-                                    int tenantCount = reader.GetInt32(4);
-                                    card.Occupancy = tenantCount + "/" + capacity;
+                                    // int tenantCount = reader.GetInt32(4);            // OLD: paying tenants only
+                                    int occupants = reader.GetInt32(4);                 // REVISION: payers + dependents
+                                    card.Occupancy = occupants + "/" + capacity;
 
                                     card.CardClicked += RoomCard_Clicked;
 
@@ -166,6 +179,9 @@ namespace Capstoneszn.UserControls
         // or the archive window opens twice.
         private void btnArchiveRoom_Click(object sender, EventArgs e)
         {
+            // REVISION: landlord-only (the button is also hidden for caretakers)
+            if (!Session.IsLandlord) return;
+
             using (ArchiveRoomForm archiveForm = new ArchiveRoomForm(_buildingId))
             {
                 if (archiveForm.ShowDialog(this.FindForm()) == DialogResult.OK)
