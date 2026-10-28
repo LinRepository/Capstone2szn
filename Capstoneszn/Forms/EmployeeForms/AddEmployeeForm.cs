@@ -5,24 +5,56 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.EmployeeForms
 {
+    /// <summary>
+    /// STEP 3 — Add Employee. Collects and validates the input; saving is done
+    /// by EmployeeHelper.AddEmployee (employee + login, saved as Active).
+    /// </summary>
+    /// 
+
     public partial class AddEmployeeForm : Form
     {
         private readonly int _buildingId;
+
+        // ADDED: letters (incl. Ñ/ñ and accents), spaces, period, apostrophe, hyphen
+        // e.g. "Ma. Teresa Dela Cruz-Reyes Jr."
+        private static readonly Regex NamePattern = new Regex(@"^[\p{L}][\p{L} .'\-]*$");
+        // ADDED: letters, digits, _ . @ only
+        private static readonly Regex UsernamePattern = new Regex(@"^[A-Za-z0-9_.@]+$");
+
+        // ADDED
+        private const int MinPasswordLength = 8;
+
         public AddEmployeeForm(int buildingId)
         {
             InitializeComponent();
             _buildingId = buildingId;
 
+            // ADDED: a Multiline TextBox ignores the password mask, so the password
+            // was visible while typing. Single-line makes the dots work.
+            txtAddPassword.Multiline = false;
+
             txtAddPassword.UseSystemPasswordChar = true;
             txtAddUsername.PlaceholderText = "@Employee1";
             dtpDate.MaxDate = DateTime.Today;
             dtpDate.Value = DateTime.Today;
+
+            // ADDED: limits match the database (FullName 150, Address 255,
+            // Username 50) and the login form's password limit (72).
+            txtAddFullName.MaxLength = 150;
+            txtAddAddress.MaxLength = 255;
+            txtAddUsername.MaxLength = 50;
+            txtAddPassword.MaxLength = 72;
+
+            // ADDED: Enter = Add, Esc = Cancel
+            AcceptButton = btnAdd;
+            CancelButton = btnCancel;
         }
 
         private void AddEmployeeForm_Load(object sender, EventArgs e)
@@ -41,16 +73,30 @@ namespace Capstoneszn.Forms.EmployeeForms
             string address = txtAddAddress.Text.Trim();
             string username = txtAddUsername.Text.Trim();
             string password = txtAddPassword.Text;
-            DateTime dateHired = dtpDate.Value.Date;
+            // OLD: DateTime dateHired = dtpDate.Value.Date;
+            DateTime dateHired = DateTime.Today;   // ADDED: always today (the picker is disabled)
 
             if (!ValidateInput(fullName, address, username, password)) return;
 
             btnAdd.Enabled = false;
+            Cursor = Cursors.WaitCursor;
             try
             {
-                InsertEmployee(fullName, address, dateHired, username, password);
+                // OLD: saved Role 'Employee' (rejected by CK_Users_Role) and a
+                // plain-text password. Kept below, commented out.
+                // InsertEmployee(fullName, address, dateHired, username, password);
 
-                MessageBox.Show($"Employee \"{fullName}\" added successfully.",
+                // ADDED: Caretaker role, BCrypt hash, Active, 3-per-building + salary checks
+                EmployeeHelper.AddEmployee(_buildingId, fullName, address, dateHired, username, password);
+
+                // OLD message:
+                // MessageBox.Show($"Employee \"{fullName}\" added successfully.",
+                //     "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // ADDED message:
+                MessageBox.Show(
+                    $"Employee \"{fullName}\" added successfully.\n\n" +
+                    $"They can now log in as \"{username}\". Salary counts from today.",
                     "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.DialogResult = DialogResult.OK;
@@ -63,6 +109,11 @@ namespace Capstoneszn.Forms.EmployeeForms
                 txtAddUsername.Focus();
                 txtAddUsername.SelectAll();
             }
+            catch (InvalidOperationException ex)   // ADDED: 3-employee limit / no salary set
+            {
+                MessageBox.Show(ex.Message, "Cannot Add Employee",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("Could not add the employee.\n\n" + ex.Message,
@@ -70,6 +121,7 @@ namespace Capstoneszn.Forms.EmployeeForms
             }
             finally
             {
+                Cursor = Cursors.Default;
                 btnAdd.Enabled = true;
             }
         }
@@ -83,9 +135,25 @@ namespace Capstoneszn.Forms.EmployeeForms
                 txtAddFullName.Focus();
                 return false;
             }
+            // ADDED: letters-only names (panel revision); also rules out line breaks
+            if (!NamePattern.IsMatch(fullName))
+            {
+                MessageBox.Show("Full name may only contain letters, spaces, periods, apostrophes and hyphens.",
+                    "Invalid Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtAddFullName.Focus();
+                return false;
+            }
             if (address.Length == 0)
             {
                 MessageBox.Show("Address is required.", "Missing Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtAddAddress.Focus();
+                return false;
+            }
+            // ADDED: one line only (the textbox is Multiline, so a paste can add line breaks)
+            if (address.Contains('\r') || address.Contains('\n'))
+            {
+                MessageBox.Show("Address must be on one line.", "Invalid Address",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtAddAddress.Focus();
                 return false;
@@ -97,76 +165,33 @@ namespace Capstoneszn.Forms.EmployeeForms
                 txtAddUsername.Focus();
                 return false;
             }
-            if (password.Length < 6)
+            // ADDED: allowed characters only (also rules out line breaks)
+            if (!UsernamePattern.IsMatch(username))
             {
-                MessageBox.Show("Password must be at least 6 characters.", "Weak Password",
+                MessageBox.Show("Username may only contain letters, numbers, _ . and @.",
+                    "Invalid Username", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtAddUsername.Focus();
+                return false;
+            }
+            // OLD: if (password.Length < 6)
+            if (password.Length < MinPasswordLength)   // ADDED: minimum 8
+            {
+                MessageBox.Show($"Password must be at least {MinPasswordLength} characters.", "Weak Password",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtAddPassword.Focus();
+                return false;
+            }
+            // ADDED: login never trims passwords, so spaces at the ends would lock them out
+            if (password.Contains('\r') || password.Contains('\n') || password.Trim() != password)
+            {
+                MessageBox.Show("Password cannot start or end with a space.",
+                    "Invalid Password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtAddPassword.Focus();
                 return false;
             }
             return true;
         }
 
-        private void InsertEmployee(string fullName, string address, DateTime dateHired,
-                                    string username, string password)
-        {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                conn.Open();
-                using (SqlTransaction tx = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        // 1. username must be free
-                        using (SqlCommand chk = new SqlCommand(
-                            "SELECT COUNT(*) FROM Users WHERE Username = @Username", conn, tx))
-                        {
-                            chk.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = username;
-                            if ((int)chk.ExecuteScalar() > 0)
-                                throw new DuplicateNameException();
-                        }
 
-                        // 2. Employees row — grab the new identity
-                        int employeeId;
-                        const string insertEmp = @"
-                            INSERT INTO Employees
-                                (BuildingID, FullName, Address, DateHired, EmploymentStatus, SalaryPerPeriod)
-                            VALUES
-                                (@BuildingID, @FullName, @Address, @DateHired, 'Active', 0);
-                            SELECT CAST(SCOPE_IDENTITY() AS int);";
-
-                        using (SqlCommand cmd = new SqlCommand(insertEmp, conn, tx))
-                        {
-                            cmd.Parameters.Add("@BuildingID", SqlDbType.Int).Value = _buildingId;
-                            cmd.Parameters.Add("@FullName", SqlDbType.NVarChar, 100).Value = fullName;
-                            cmd.Parameters.Add("@Address", SqlDbType.NVarChar, 200).Value = address;
-                            cmd.Parameters.Add("@DateHired", SqlDbType.Date).Value = dateHired;
-                            employeeId = (int)cmd.ExecuteScalar();
-                        }
-
-                        // 3. Users row linked to that employee
-                        const string insertUser = @"
-                            INSERT INTO Users (Username, Password, Role, Name, EmployeeID)
-                            VALUES (@Username, @Password, 'Employee', @Name, @EmployeeID);";
-
-                        using (SqlCommand cmd = new SqlCommand(insertUser, conn, tx))
-                        {
-                            cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = username;
-                            cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 100).Value = password;
-                            cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100).Value = fullName;
-                            cmd.Parameters.Add("@EmployeeID", SqlDbType.Int).Value = employeeId;
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        tx.Commit();
-                    }
-                    catch
-                    {
-                        tx.Rollback();
-                        throw;
-                    }
-                }
-            }
-        }
     }
 }

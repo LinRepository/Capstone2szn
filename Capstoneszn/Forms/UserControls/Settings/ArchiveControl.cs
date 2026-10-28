@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms.EmployeeForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.UserControls.Settings
@@ -20,8 +21,10 @@ namespace Capstoneszn.Forms.UserControls.Settings
     ///   Rooms    - archived rooms of the selected building. Restore.
     ///   Tenants  - moved-out tenants (no active stay). Reactivate = a new
     ///              stay under the same tenant record.
-    ///   Bill Accounts / Audits / Employee - their modules are not built
+    ///   Employee - archived employees. Restore = re-hire (ADDED Oct 28, 2026).
+    ///   Bill Accounts / Audits - their modules are not built
     ///              yet; the tabs say so instead of showing an empty grid.
+    ///   (OLD: "Bill Accounts / Audits / Employee - their modules are not built yet")
     ///
     /// Nothing here deletes anything. Archiving keeps the row; restoring or
     /// reactivating only brings it back into use.
@@ -33,6 +36,7 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
         private DataTable _rooms = new DataTable();
         private DataTable _tenants = new DataTable();
+
         public ArchiveControl()
         {
             InitializeComponent();
@@ -69,8 +73,25 @@ namespace Capstoneszn.Forms.UserControls.Settings
             colArchivedTenantReason.DefaultCellStyle.NullValue = "-";
             colTenantArchivedAt.DefaultCellStyle.NullValue = "-";
 
+            // ---- Employees grid (ADDED - STEP 9) ----
+            dgvArchivedEmployees.AutoGenerateColumns = false;
+            colEmployeeArchiveID.DataPropertyName = "EmployeeId";
+            colEmployeeArchivedAt.DataPropertyName = "ArchivedAt";
+            colArchivedEmployeeName.DataPropertyName = "FullName";
+            colArchivedEmployeeAddress.DataPropertyName = "Address";
+            colArchivedEmployeeDateHired.DataPropertyName = "DateHired";
+
+            colEmployeeArchivedAt.DefaultCellStyle.Format = "MMM d, yyyy  h:mm tt";
+            colArchivedEmployeeDateHired.DefaultCellStyle.Format = "MMM d, yyyy";
+            colArchivedEmployeeAddress.DefaultCellStyle.NullValue = "-";
+            colEmployeeArchiveAction.Text = "Restore";   // restore = re-hire
+
+            // The Designer has no click event for this grid, so it is wired here.
+            dgvArchivedEmployees.CellContentClick += dgvArchivedEmployees_CellContentClick;
+
             LoadArchivedRooms();
             LoadArchivedTenants();
+            LoadArchivedEmployees();   // ADDED
         }
 
         private void btnBackArchive_Click(object sender, EventArgs e)
@@ -366,8 +387,88 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
 
         /* =================================================================
-           HELPERS
+           EMPLOYEES (ADDED - STEP 9)
+           Restore = re-hire: the employee comes back Active with Date Hired
+           = today, so the salary counts from today. Landlord only. Blocked
+           when the building already has 3 employees.
            ================================================================= */
+
+        private DataTable _employees = new DataTable();
+
+        private void LoadArchivedEmployees()
+        {
+            try
+            {
+                _employees = EmployeeHelper.GetArchivedEmployees(Session.BuildingId);
+                dgvArchivedEmployees.DataSource = _employees;
+
+                int shown = _employees.Rows.Count;
+                dgvArchivedEmployees.Visible = shown > 0;
+                lblNoArchivedEmployees.Visible = shown == 0;
+                lblNoArchivedEmployees.Text = "No archived employees.";
+                dgvArchivedEmployees.ClearSelection();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Unable to load archived employees: " + ex.Message, "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dgvArchivedEmployees_CellContentClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != colEmployeeArchiveAction.Index) return;
+
+            if (!Session.IsLandlord)
+            {
+                MessageBox.Show("Only the landlord can restore employees.", "Not Allowed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            DataRowView? row = dgvArchivedEmployees.Rows[e.RowIndex].DataBoundItem as DataRowView;
+            if (row == null) return;
+
+            int employeeId = Convert.ToInt32(row["EmployeeId"]);
+            string name = Convert.ToString(row["FullName"]) ?? "";
+
+            if (MessageBox.Show(
+                    $"Restore {name}?\n\n" +
+                    "• They come back as Active and can log in again.\n" +
+                    $"• This counts as a re-hire: Date Hired becomes today ({DateTime.Today:MMM dd, yyyy}) " +
+                    "and the salary counts from today.\n" +
+                    "• Their username and password stay the same.",
+                    "Restore Employee", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                != DialogResult.Yes)
+                return;
+
+            try
+            {
+                EmployeeHelper.Restore(employeeId);
+                MessageBox.Show(name + " has been restored.", "Employee Restored",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (InvalidOperationException ex)   // 3-employee limit, no salary, clock
+            {
+                MessageBox.Show(ex.Message, "Not Restored",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Unable to restore the employee: " + ex.Message, "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            LoadArchivedEmployees();
+        }
+
+
+
+        /* =================================================================
+            HELPERS
+            ================================================================= */
 
         // RowFilter treats [ ] * % as pattern characters. Without escaping,
         // typing a single "[" throws a SyntaxErrorException.

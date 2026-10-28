@@ -24,8 +24,8 @@ namespace Capstoneszn
         private int checkbuildingId;
 
 
-        
-        private string currentBuildingName = ""; //Added ni Lin
+
+        private string currentBuildingName = "";
 
 
         // 1. The NEW Constructor used for db
@@ -35,7 +35,7 @@ namespace Capstoneszn
             pnlSideBar.Width = SidebarExpandedWidth;
 
             checkbuildingId = buildingId; //ROOMS MODULE
-            currentBuildingName = buildingName; //Lin
+            currentBuildingName = buildingName;
         }
 
         //MAIN FORM 
@@ -54,6 +54,22 @@ namespace Capstoneszn
                 }
             }
 
+            // ADDED (Employee module STEP 7): record the salary expense of every
+            // finished month not recorded yet. It runs HERE, after the clock check
+            // passed, so a wrong PC date can't record months early. Safe to run
+            // every time MainForm opens - a month is never recorded twice.
+            try
+            {
+                var salaries = SalaryHelper.RecordMonthEndSalaries(Session.UserId);
+                if (salaries.Count > 0)
+                    System.Diagnostics.Debug.WriteLine(
+                        $"Salary: {salaries.Count} expense(s) recorded, total {salaries.Total:N2}.");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+
             LoadControl(new HomeControl());
 
             SaveButtonTexts();
@@ -61,12 +77,15 @@ namespace Capstoneszn
             //time
             UpdateDateTime();
 
-            lblSystemName.Text = string.IsNullOrWhiteSpace(currentBuildingName)  ? "Building Name" : currentBuildingName;
+            lblSystemName.Text = string.IsNullOrWhiteSpace(currentBuildingName) ? "Building Name" : currentBuildingName;
 
 
-            //Para sa user
+            //for user
             lblCurrentUser.Text = Session.Name;
             lblUserRole.Text = Session.Role;
+
+            // ADDED (Employee module): caretakers must not see the Employee module
+            btnEmployee.Visible = Session.IsLandlord;
 
         }
 

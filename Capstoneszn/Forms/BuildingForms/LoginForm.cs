@@ -125,11 +125,28 @@ namespace Capstoneszn
                     // Correct password - clear the failed-attempt counters.
                     LoginLockout.Reset(conn, userId);
 
-                    // Caretaker logins are frozen when the employee is inactive or archived
-                    if (userRole == "Caretaker" && (isArchived || empStatus != "Active"))
+                    // OLD - one message for both cases:
+                    // // Caretaker logins are frozen when the employee is inactive or archived
+                    // if (userRole == "Caretaker" && (isArchived || empStatus != "Active"))
+                    // {
+                    //     MessageBox.Show("This account is no longer active. Contact the landlord.",
+                    //         "Account Disabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //     return;
+                    // }
+
+                    // ADDED (Employee module STEP 7): two messages
+                    // Archived = no longer employed.
+                    if (userRole == "Caretaker" && isArchived)
                     {
                         MessageBox.Show("This account is no longer active. Contact the landlord.",
                             "Account Disabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    // Inactive = on leave (still employed, can come back).
+                    if (userRole == "Caretaker" && empStatus != "Active")
+                    {
+                        MessageBox.Show("This account is currently inactive. Contact the landlord.",
+                            "Account Inactive", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -195,6 +212,10 @@ namespace Capstoneszn
             {
                 Debug.WriteLine(ex);
             }
+
+            // NOTE (Employee module STEP 7): month-end salary recording is NOT done here.
+            // It runs in MainForm_Load, right after the System Clock check passes,
+            // so a wrong PC date can never record salary months early.
 
             ClearLoginFields();
 
