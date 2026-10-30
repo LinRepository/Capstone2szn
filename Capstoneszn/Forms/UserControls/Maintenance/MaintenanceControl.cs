@@ -24,6 +24,7 @@ namespace Capstoneszn.UserControls
             cboMaintenanceStatus.Items.AddRange(new object[]
             {
                 MaintenanceService.StatusPending,
+                MaintenanceService.StatusForPayment,   // NEW (Maintenance v2)
                 MaintenanceService.StatusComplete,
                 FilterAll
             });

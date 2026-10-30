@@ -130,7 +130,8 @@ namespace Capstoneszn.Forms.UserControls.Settings
                             return false;
                         }
 
-                        string lastRoom = r.IsDBNull(6) ? "-" : r.GetString(6);
+                        // ORIGINAL: string lastRoom = r.IsDBNull(6) ? "-" : r.GetString(6);
+                        string lastRoom = r.IsDBNull(6) ? "-" : Convert.ToString(r.GetValue(6));   // NEW: RoomNumber is INT
                         string movedOut = r.IsDBNull(7) ? "-" : r.GetDateTime(7).ToString("MMM d, yyyy");
 
                         lblTenantSummary.Text = FullName() + "   |   " + _contact +

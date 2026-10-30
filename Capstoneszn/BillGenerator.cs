@@ -28,10 +28,20 @@ namespace Capstoneszn
     /// Only Rent is generated. Maintenance charges come from the maintenance
     /// flow when the material cost is recorded; Water and Electricity come
     /// from the Utilities module.
+    ///
+    /// NEW (Billing v2, step 5):
+    ///   - A bill is created 7 days BEFORE its due date (DaysBeforeDue), so
+    ///     tenants can see and pay it early. Due date is still the period start.
+    ///   - A scheduled price (Rooms.PendingRoomPrice from PendingPriceFrom) is
+    ///     used for every period that starts on or after PendingPriceFrom.
+    ///     Once that date has passed, it becomes the room's RoomPrice.
     /// </summary>
     public static class BillGenerator
     {
         private const string RentCategory = "Rent";
+
+        // NEW (step 5): how many days before the due date a bill is created.
+        private const int DaysBeforeDue = 7;
 
         /// <summary>
         /// A room that is occupied and has a billing anchor, with everything
@@ -43,6 +53,9 @@ namespace Capstoneszn
             public string RoomNumber = "";
             public DateTime AnchorDate;
             public decimal RoomPrice;
+            // NEW (step 5): a price change scheduled while the room is occupied.
+            public decimal? PendingPrice;
+            public DateTime? PendingFrom;
             // Every period already billed for this room, so the generator can fill
             // a gap rather than assuming bills were always created in order.
             public HashSet<DateTime> BilledPeriods = new HashSet<DateTime>();
@@ -110,7 +123,11 @@ namespace Capstoneszn
                         DateTime periodStart = room.AnchorDate.AddMonths(n);
 
                         // Not due yet - and no later period can be either.
-                        if (periodStart > today) break;
+                        // ORIGINAL: if (periodStart > today) break;
+                        // NEW (step 5): a period is billed once it is within
+                        // 7 days of its due date (the period start).
+                        //   due Nov 28 -> bill appears on Nov 21
+                        if (periodStart > today.AddDays(DaysBeforeDue)) break;
 
                         // Already billed. The unique constraint on
                         // (RoomId, BillCategory, BillingPeriodStart) would
@@ -125,6 +142,11 @@ namespace Capstoneszn
                             created++;
                     }
                 }
+                // NEW (step 5): scheduled prices whose date has arrived become
+                // the room's price. Done AFTER the bills above, so a catch-up
+                // bill for a period BEFORE the change date still gets the old
+                // price (PriceFor decides per period).
+                ApplyDuePendingPrices(conn, buildingId, today);
             }
 
             return created;
@@ -169,7 +191,8 @@ namespace Capstoneszn
             var list = new List<RoomToBill>();
 
             string sql = @"
-                SELECT r.RoomId, r.RoomNumber, r.BillingAnchorDate, r.RoomPrice
+                SELECT r.RoomId, r.RoomNumber, r.BillingAnchorDate, r.RoomPrice,
+                r.PendingRoomPrice, r.PendingPriceFrom          -- NEW (step 5)
                 FROM   Rooms r
                 WHERE  r.IsArchived = 0
                   AND  r.BillingAnchorDate IS NOT NULL
@@ -195,9 +218,14 @@ namespace Capstoneszn
                         list.Add(new RoomToBill
                         {
                             RoomId = r.GetInt32(0),
-                            RoomNumber = r.GetString(1),
+                            // ORIGINAL: RoomNumber = r.GetString(1),
+                            // ORIGINAL (Billing v2 first try): RoomNumber = r.GetInt32(1).ToString(),
+                            RoomNumber = Convert.ToString(r.GetValue(1)) ?? "",   // NEW: works for text or INT
                             AnchorDate = r.GetDateTime(2),
-                            RoomPrice = r.GetDecimal(3)
+                            RoomPrice = r.GetDecimal(3),
+                            // NEW (step 5)
+                            PendingPrice = r.IsDBNull(4) ? (decimal?)null : r.GetDecimal(4),
+                            PendingFrom = r.IsDBNull(5) ? (DateTime?)null : r.GetDateTime(5)
                         });
                     }
                 }
@@ -237,7 +265,8 @@ namespace Capstoneszn
 
             // The room price is read NOW, so a price change the landlord made
             // during the previous period takes effect here and not before.
-            decimal amount = room.RoomPrice;
+            // ORIGINAL: decimal amount = room.RoomPrice;
+            decimal amount = PriceFor(room, periodStart);   // NEW (step 5): the scheduled price from its start date
             decimal[] shares = SplitEqually(amount, tenants.Count);
 
             using (SqlTransaction tx = conn.BeginTransaction())
@@ -341,6 +370,96 @@ namespace Capstoneszn
             return list;
         }
 
+        /* =================================================================
+           NEW (step 5): SCHEDULED PRICE + EARLY BILLS
+           ================================================================= */
+
+        /// <summary>
+        /// NEW (step 5): the rent for one period.
+        /// A price changed while the room is occupied waits for the next cycle
+        /// (RoomInformationForm saves it as PendingRoomPrice / PendingPriceFrom).
+        ///
+        ///   price 6000, pending 6500 from Nov 28
+        ///     period Oct 28 -> 6000      period Nov 28 -> 6500
+        /// </summary>
+        private static decimal PriceFor(RoomToBill room, DateTime periodStart)
+        {
+            if (room.PendingPrice.HasValue && room.PendingFrom.HasValue &&
+                periodStart >= room.PendingFrom.Value)
+                return room.PendingPrice.Value;
+
+            return room.RoomPrice;
+        }
+
+        /// <summary>
+        /// NEW (step 5): a scheduled price whose start date has arrived becomes
+        /// the room's real price, and the schedule is cleared. From then on,
+        /// screens and move-ins that read Rooms.RoomPrice see the new price.
+        /// (The change itself was audited when the landlord scheduled it.)
+        /// </summary>
+        private static void ApplyDuePendingPrices(SqlConnection conn, int? buildingId, DateTime today)
+        {
+            string sql = @"
+                UPDATE Rooms
+                   SET RoomPrice        = PendingRoomPrice,
+                       PendingRoomPrice = NULL,
+                       PendingPriceFrom = NULL
+                 WHERE PendingRoomPrice IS NOT NULL
+                   AND PendingPriceFrom IS NOT NULL
+                   AND PendingPriceFrom <= @today";
+
+            if (buildingId.HasValue)
+                sql += " AND BuildingId = @bid";
+
+            using (SqlCommand cmd = new SqlCommand(sql + ";", conn))
+            {
+                cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
+                if (buildingId.HasValue)
+                    cmd.Parameters.Add("@bid", SqlDbType.Int).Value = buildingId.Value;
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// NEW (step 5): the first period after today that has NO rent bill yet.
+        ///
+        /// Because bills are created 7 days early, the bill for the next due
+        /// date may already exist. Anything new - a tenant joining, a price
+        /// change - can only start from the first period not billed yet.
+        ///
+        ///   anchor Oct 28, today Nov 23, Nov 28 bill already made on Nov 21
+        ///     -> Dec 28
+        ///
+        /// Not used yet: the joiner and price-change screens will call it once
+        /// that rule is approved. tx may be null when not inside a transaction.
+        /// </summary>
+        internal static DateTime NextUnbilledPeriod(
+            SqlConnection conn, SqlTransaction tx, int roomId, DateTime anchor, DateTime today)
+        {
+            int n = 0;
+            while (anchor.AddMonths(n) <= today) n++;   // first period start after today
+
+            while (true)
+            {
+                DateTime start = anchor.AddMonths(n);   // from the anchor, so month ends do not drift
+
+                using (SqlCommand cmd = new SqlCommand(@"
+                    SELECT COUNT(*) FROM Bills
+                    WHERE  RoomId = @rid AND BillCategory = @cat AND BillingPeriodStart = @start;", conn, tx))
+                {
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                    cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = RentCategory;
+                    cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+
+                    if ((int)cmd.ExecuteScalar() == 0) return start;
+                }
+
+                n++;
+            }
+        }
+
+
         /// <summary>
         /// Splits an amount into equal shares that add back to exactly the
         /// amount.
@@ -353,7 +472,9 @@ namespace Capstoneszn
         ///
         ///     5000 / 3  ->  1666.68, 1666.66, 1666.66   (sums to 5000.00)
         /// </summary>
-        private static decimal[] SplitEqually(decimal amount, int count)
+
+        // ORIGINAL: private static decimal[] SplitEqually(decimal amount, int count)
+        internal static decimal[] SplitEqually(decimal amount, int count) // NEW (move-in): MoveInService uses the same split
         {
             decimal baseShare = Math.Floor(amount / count * 100m) / 100m;
             decimal remainder = amount - (baseShare * count);
@@ -414,7 +535,8 @@ namespace Capstoneszn
                   AND  a.BillId IS NULL
                   AND  a.IsVoided = 0
                   AND  p.IsVoided = 0
-                  AND  p.PaymentCategory = @cat
+                  -- ORIGINAL: AND  p.PaymentCategory = @cat
+                  AND  a.Category = @cat
                 ORDER BY a.AllocationId ASC;", conn, tx))
             {
                 cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
@@ -482,9 +604,12 @@ namespace Capstoneszn
                     }
 
                     using (SqlCommand cmd = new SqlCommand(@"
-                        INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount)
-                        VALUES (@pid, @bid, @tid, @amt);", conn, tx))
+                        -- ORIGINAL: INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount)
+                        -- ORIGINAL: VALUES (@pid, @bid, @tid, @amt);
+                        INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount, Category, PaymentType)
+                        VALUES (@pid, @bid, @tid, @amt, @cat, N'Advance');", conn, tx))
                     {
+                        cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = RentCategory;   // NEW (Billing v2)
                         cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
                         cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
                         cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
@@ -499,5 +624,4 @@ namespace Capstoneszn
             }
         }
     }
-
 }

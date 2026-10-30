@@ -21,6 +21,8 @@ namespace Capstoneszn
         public DateTime DateReported { get; set; }
         public string Status { get; set; }
         public string Responsible { get; set; }
+        public string BuildingName { get; set; }                 // NEW (Maintenance v2)
+        public bool IsBuildingIssue => RoomId == 0;              // NEW: Building issue = no room
 
         public bool IsPending => Status == MaintenanceService.StatusPending;
     }
@@ -92,6 +94,8 @@ namespace Capstoneszn
         public DateTime? CompletedAt { get; set; }
         public string AffectedTenants { get; set; }
         public string Responsible { get; set; }
+
+
 
         public bool IsPending => Status == MaintenanceService.StatusPending;
     }
@@ -195,6 +199,9 @@ namespace Capstoneszn
     {
         public const string StatusPending = "Pending";
         public const string StatusComplete = "Complete";
+        // NEW (Maintenance v2): derived by vwMaintenanceIssueStatus, never stored.
+        // Repair done, but a tenant still owes the maintenance bill.
+        public const string StatusForPayment = "For Payment";
 
         /// <summary>
         /// Issues for one building. statusFilter = "Pending", "Complete",
@@ -207,6 +214,7 @@ namespace Capstoneszn
             // Responsible is built from MaintenanceResponsible:
             // the owner row (IsOwner = 1) shows as "Owner", employee rows show
             // the employee's name. No rows at all = "None".
+            /*
             string sql = @"
                 SELECT mi.IssueId, mi.RoomId, r.RoomNumber, mi.IssueTitle,
                        mi.Description, mi.DateReported, mi.Status,
@@ -224,6 +232,33 @@ namespace Capstoneszn
                   AND  (@status IS NULL OR mi.Status = @status)
                 ORDER BY CASE mi.Status WHEN 'Pending' THEN 0 ELSE 1 END,
                          mi.DateReported DESC, mi.IssueId DESC;";
+            */
+
+            // NEW (Maintenance v2): status comes from vwMaintenanceIssueStatus
+            // (Pending / For Payment / Complete), so the card and the filter
+            // follow payments and voids automatically.
+            // LEFT JOIN Rooms + mi.BuildingId: ready for Building issues (no room).
+            string sql = @"
+                SELECT mi.IssueId, mi.RoomId, r.RoomNumber, mi.IssueTitle,
+                       mi.Description, mi.DateReported, vs.DisplayStatus,
+                       ISNULL((SELECT STRING_AGG(CASE WHEN mr.IsOwner = 1
+                                                      THEN N'Owner'
+                                                      ELSE e.FullName END, N', ')
+                                      WITHIN GROUP (ORDER BY mr.IsOwner DESC, e.FullName)
+                               FROM   MaintenanceResponsible mr
+                               LEFT JOIN Employees e ON e.EmployeeId = mr.EmployeeId
+                               WHERE  mr.IssueId = mi.IssueId), N'None') AS Responsible,
+                       bd.BuildingName                                              -- NEW, column 8
+                FROM   MaintenanceIssues mi
+                JOIN   vwMaintenanceIssueStatus vs ON vs.IssueId = mi.IssueId
+                JOIN   Buildings bd ON bd.BuildingId = mi.BuildingId                -- NEW
+                LEFT JOIN Rooms r ON r.RoomId = mi.RoomId
+                WHERE  mi.BuildingId = @bid
+                  AND  mi.IsDeleted = 0
+                  AND  (@status IS NULL OR vs.DisplayStatus = @status)
+                ORDER BY CASE vs.DisplayStatus WHEN 'Pending' THEN 0
+                                               WHEN 'For Payment' THEN 1 ELSE 2 END,
+                         mi.DateReported DESC, mi.IssueId DESC;";
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             using (var cmd = new SqlCommand(sql, conn))
@@ -232,7 +267,7 @@ namespace Capstoneszn
                 cmd.Parameters.AddWithValue("@status",
                     string.IsNullOrEmpty(statusFilter) ? (object)DBNull.Value : statusFilter);
 
-                conn.Open();
+                conn.Open();   // restored - was lost while pasting the new query
                 using (var rd = cmd.ExecuteReader())
                 {
                     while (rd.Read())
@@ -240,20 +275,26 @@ namespace Capstoneszn
                         list.Add(new MaintenanceIssueSummary
                         {
                             IssueId = rd.GetInt32(0),
-                            RoomId = rd.GetInt32(1),
-                            RoomNumber = rd.GetString(2),
+                            // ORIGINAL: RoomId = rd.GetInt32(1),
+                            RoomId = rd.IsDBNull(1) ? 0 : rd.GetInt32(1),            // NEW: Building issue has no room
+                            // ORIGINAL: RoomNumber = rd.GetString(2),
+                            // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(2)) ?? "",
+                            RoomNumber = rd.IsDBNull(2) ? "Building" : Convert.ToString(rd.GetValue(2)) ?? "",   // NEW
                             IssueTitle = rd.GetString(3),
                             Description = rd.IsDBNull(4) ? "" : rd.GetString(4),
                             DateReported = rd.GetDateTime(5),
                             Status = rd.GetString(6),
-                            Responsible = rd.GetString(7)
+                            Responsible = rd.GetString(7),
+                            BuildingName = rd.GetString(8)        // NEW (Maintenance v2)
                         });
                     }
                 }
             }
 
             return list;
+            
         }
+           
 
         /* =================================================================
            ADD ISSUE
@@ -283,13 +324,13 @@ namespace Capstoneszn
                 using (var rd = cmd.ExecuteReader())
                 {
                     while (rd.Read())
-                        list.Add(new LookupItem(rd.GetInt32(0), "Room " + rd.GetString(1)));
+                        // ORIGINAL: list.Add(new LookupItem(rd.GetInt32(0), "Room " + rd.GetString(1)));
+                        list.Add(new LookupItem(rd.GetInt32(0), "Room " + Convert.ToString(rd.GetValue(1))));   // NEW: RoomNumber is INT
                 }
             }
 
             return list;
         }
-
         /// <summary>
         /// The room's current tenants (active tenancies), longest-tenured first.
         /// These are the only people who can be charged for the issue.
@@ -310,6 +351,42 @@ namespace Capstoneszn
             using (var cmd = new SqlCommand(sql, conn))
             {
                 cmd.Parameters.AddWithValue("@rid", roomId);
+                conn.Open();
+                using (var rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                        list.Add(new LookupItem(rd.GetInt32(0), rd.GetString(1)));
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// NEW (Maintenance v2): every active paying tenant of the building, for a
+        /// Building issue. Shown as "Name (Room 101)" so the landlord knows where
+        /// each one lives - their share is billed to that room.
+        /// </summary>
+        public static List<LookupItem> GetActiveTenantsInBuilding(int buildingId)
+        {
+            var list = new List<LookupItem>();
+
+            string sql = @"
+                SELECT t.TenantId,
+                       t.FirstName + N' ' + t.LastName
+                       + N' (Room ' + CAST(r.RoomNumber AS NVARCHAR(10)) + N')'
+                FROM   Tenancies tn
+                JOIN   Tenants t ON t.TenantId = tn.TenantId
+                JOIN   Rooms   r ON r.RoomId   = tn.RoomId
+                WHERE  r.BuildingId = @bid
+                  AND  r.IsArchived = 0
+                  AND  tn.Status = 'Active'
+                ORDER BY r.RoomNumber, tn.MoveInDate, t.TenantId;";
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("@bid", buildingId);
                 conn.Open();
                 using (var rd = cmd.ExecuteReader())
                 {
@@ -483,6 +560,112 @@ namespace Capstoneszn
             }
         }
 
+        /// <summary>
+        /// NEW (Maintenance v2): saves a BUILDING issue (no room) in one
+        /// transaction. Same as AddIssue, except:
+        ///   - RoomId is NULL, so no room turns grey (vwRoomStatus),
+        ///   - affected tenants can be any active tenant of the building.
+        /// Returns the new IssueId.
+        /// </summary>
+        public static int AddBuildingIssue(
+            int buildingId,
+            string issueTitle,
+            string description,
+            DateTime dateReported,
+            IList<int> affectedTenantIds,
+            bool ownerResponsible,
+            IList<int> responsibleEmployeeIds,
+            int createdBy)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // ---- 1. The issue (no room) -----------------------
+                        int issueId;
+                        using (var cmd = new SqlCommand(@"
+                            INSERT INTO MaintenanceIssues
+                                (RoomId, BuildingId, IssueTitle, Description, DateReported, Status, CreatedBy)
+                            OUTPUT INSERTED.IssueId
+                            VALUES (NULL, @bid, @title, @desc, @date, @status, @by);", conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@bid", buildingId);
+                            cmd.Parameters.AddWithValue("@title", issueTitle);
+                            cmd.Parameters.AddWithValue("@desc",
+                                string.IsNullOrWhiteSpace(description) ? (object)DBNull.Value : description);
+                            cmd.Parameters.AddWithValue("@date", dateReported.Date);
+                            cmd.Parameters.AddWithValue("@status", StatusPending);
+                            cmd.Parameters.AddWithValue("@by", createdBy);
+                            issueId = (int)cmd.ExecuteScalar();
+                        }
+
+                        // ---- 2. Affected tenants: still active in THIS building
+                        foreach (int tenantId in affectedTenantIds)
+                        {
+                            using (var cmd = new SqlCommand(@"
+                                INSERT INTO MaintenanceAffectedTenants (IssueId, TenantId)
+                                SELECT @iid, tn.TenantId
+                                FROM   Tenancies tn
+                                JOIN   Rooms r ON r.RoomId = tn.RoomId
+                                WHERE  tn.TenantId = @tid
+                                  AND  tn.Status   = 'Active'
+                                  AND  r.BuildingId = @bid;", conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@iid", issueId);
+                                cmd.Parameters.AddWithValue("@tid", tenantId);
+                                cmd.Parameters.AddWithValue("@bid", buildingId);
+
+                                if (cmd.ExecuteNonQuery() != 1)
+                                    throw new InvalidOperationException(
+                                        "A selected tenant no longer lives in this building. " +
+                                        "Reopen the form and choose again.");
+                            }
+                        }
+
+                        // ---- 3. Responsible (same as a Room issue) ---------
+                        string respSql = @"
+                            INSERT INTO MaintenanceResponsible (IssueId, EmployeeId, IsOwner)
+                            VALUES (@iid, @eid, @owner);";
+
+                        if (ownerResponsible)
+                        {
+                            using (var cmd = new SqlCommand(respSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@iid", issueId);
+                                cmd.Parameters.AddWithValue("@eid", DBNull.Value);
+                                cmd.Parameters.AddWithValue("@owner", 1);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        foreach (int employeeId in responsibleEmployeeIds)
+                        {
+                            using (var cmd = new SqlCommand(respSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@iid", issueId);
+                                cmd.Parameters.AddWithValue("@eid", employeeId);
+                                cmd.Parameters.AddWithValue("@owner", 0);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Add Issue",
+                            "Building - " + issueTitle + " (" + affectedTenantIds.Count + " affected tenant(s))");
+
+                        tx.Commit();
+                        return issueId;
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
         /* =================================================================
            ISSUE HEADER (shared by the materials, details and edit forms)
            ================================================================= */
@@ -496,7 +679,8 @@ namespace Capstoneszn
             string sql = @"
                 SELECT mi.IssueId, r.RoomNumber, mi.IssueTitle, mi.Status
                 FROM   MaintenanceIssues mi
-                JOIN   Rooms r ON r.RoomId = mi.RoomId
+                -- ORIGINAL: JOIN   Rooms r ON r.RoomId = mi.RoomId
+                LEFT JOIN Rooms r ON r.RoomId = mi.RoomId   -- NEW: Building issue has no room
                 WHERE  mi.IssueId = @iid
                   AND  mi.IsDeleted = 0;";
 
@@ -512,7 +696,9 @@ namespace Capstoneszn
                     return new MaintenanceIssueHeader
                     {
                         IssueId = rd.GetInt32(0),
-                        RoomNumber = rd.GetString(1),
+                        // ORIGINAL: RoomNumber = rd.GetString(1),
+                        // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(1)) ?? "",
+                        RoomNumber = rd.IsDBNull(1) ? "Building" : Convert.ToString(rd.GetValue(1)) ?? "",   // NEW
                         IssueTitle = rd.GetString(2),
                         Status = rd.GetString(3)
                     };
@@ -528,7 +714,11 @@ namespace Capstoneszn
         {
             string sql = @"
                 SELECT mi.IssueId, r.RoomNumber, mi.IssueTitle, mi.Description,
-                       mi.DateReported, mi.Status, mi.CompletedAt,
+                                              -- ORIGINAL: mi.DateReported, mi.Status, mi.CompletedAt,
+                       mi.DateReported,
+                       (SELECT vs.DisplayStatus FROM vwMaintenanceIssueStatus vs
+                        WHERE vs.IssueId = mi.IssueId) AS Status,   -- NEW (Maintenance v2)
+                       mi.CompletedAt,
                        ISNULL((SELECT STRING_AGG(t.FirstName + N' ' + t.LastName, N', ')
                                       WITHIN GROUP (ORDER BY t.LastName, t.FirstName)
                                FROM   MaintenanceAffectedTenants mat
@@ -541,8 +731,9 @@ namespace Capstoneszn
                                FROM   MaintenanceResponsible mr
                                LEFT JOIN Employees e ON e.EmployeeId = mr.EmployeeId
                                WHERE  mr.IssueId = mi.IssueId), N'None') AS Responsible
-                FROM   MaintenanceIssues mi
-                JOIN   Rooms r ON r.RoomId = mi.RoomId
+                                FROM   MaintenanceIssues mi
+                -- ORIGINAL: JOIN   Rooms r ON r.RoomId = mi.RoomId
+                LEFT JOIN Rooms r ON r.RoomId = mi.RoomId   -- NEW: Building issue has no room
                 WHERE  mi.IssueId = @iid
                   AND  mi.IsDeleted = 0;";
 
@@ -558,7 +749,9 @@ namespace Capstoneszn
                     return new MaintenanceIssueDetails
                     {
                         IssueId = rd.GetInt32(0),
-                        RoomNumber = rd.GetString(1),
+                        // ORIGINAL: RoomNumber = rd.GetString(1),
+                        // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(1)) ?? "",
+                        RoomNumber = rd.IsDBNull(1) ? "Building" : Convert.ToString(rd.GetValue(1)) ?? "",   // NEW
                         IssueTitle = rd.GetString(2),
                         Description = rd.IsDBNull(3) ? "" : rd.GetString(3),
                         DateReported = rd.GetDateTime(4),
@@ -583,7 +776,9 @@ namespace Capstoneszn
 
             string sql = @"
                 SELECT t.FirstName + N' ' + t.LastName AS Name,
-                       COALESCE(ir.RoomNumber, cur.RoomNumber, N'-') AS RoomNumber
+                       -- ORIGINAL: COALESCE(ir.RoomNumber, cur.RoomNumber, N'-') AS RoomNumber
+                       -- NEW: RoomNumber is INT; N'-' is text, so convert the numbers to text first
+                       COALESCE(CAST(ir.RoomNumber AS NVARCHAR(10)), CAST(cur.RoomNumber AS NVARCHAR(10)), N'-') AS RoomNumber
                 FROM   MaintenanceAffectedTenants mat
                 JOIN   MaintenanceIssues mi ON mi.IssueId = mat.IssueId
                 JOIN   Tenants t            ON t.TenantId = mat.TenantId
@@ -758,7 +953,8 @@ namespace Capstoneszn
                         // What was deleted, for the audit trail.
                         string what = "Issue #" + issueId;
                         using (var cmd = new SqlCommand(@"
-                            SELECT 'Room ' + r.RoomNumber + ' - ' + mi.IssueTitle
+                            -- ORIGINAL: SELECT 'Room ' + r.RoomNumber + ' - ' + mi.IssueTitle
+                            SELECT 'Room ' + CAST(r.RoomNumber AS NVARCHAR(10)) + ' - ' + mi.IssueTitle   -- NEW: INT -> text
                             FROM   MaintenanceIssues mi JOIN Rooms r ON r.RoomId = mi.RoomId
                             WHERE  mi.IssueId = @iid;", conn, tx))
                         {
@@ -789,9 +985,10 @@ namespace Capstoneszn
         {
             string sql = @"
                 SELECT mi.IssueId, mi.RoomId, r.RoomNumber, mi.IssueTitle,
-                       mi.Description, mi.DateReported, mi.Status
+                                              mi.Description, mi.DateReported, mi.Status
                 FROM   MaintenanceIssues mi
-                JOIN   Rooms r ON r.RoomId = mi.RoomId
+                -- ORIGINAL: JOIN   Rooms r ON r.RoomId = mi.RoomId
+                LEFT JOIN Rooms r ON r.RoomId = mi.RoomId   -- NEW: Building issue has no room
                 WHERE  mi.IssueId = @iid
                   AND  mi.IsDeleted = 0;";
 
@@ -807,8 +1004,10 @@ namespace Capstoneszn
                     return new MaintenanceIssueEdit
                     {
                         IssueId = rd.GetInt32(0),
-                        RoomId = rd.GetInt32(1),
-                        RoomNumber = rd.GetString(2),
+                        // ORIGINAL: RoomId = rd.GetInt32(1),
+                        RoomId = rd.IsDBNull(1) ? 0 : rd.GetInt32(1),                                        // NEW
+                        // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(2)) ?? "",
+                        RoomNumber = rd.IsDBNull(2) ? "Building" : Convert.ToString(rd.GetValue(2)) ?? "",   // NEW
                         IssueTitle = rd.GetString(3),
                         Description = rd.IsDBNull(4) ? "" : rd.GetString(4),
                         DateReported = rd.GetDateTime(5),
@@ -823,7 +1022,8 @@ namespace Capstoneszn
         /// has since moved out (so they can be seen and removed).
         /// Current tenants first.
         /// </summary>
-        public static List<TenantChoice> GetTenantChoicesForIssue(int issueId, int roomId)
+                // ORIGINAL: public static List<TenantChoice> GetTenantChoicesForIssue(int issueId, int roomId)
+        public static List<TenantChoice> GetTenantChoicesForIssue(int issueId, int roomId, int buildingId = 0)   // NEW
         {
             var list = new List<TenantChoice>();
 
@@ -841,8 +1041,14 @@ namespace Capstoneszn
                                                 AND mat.IssueId  = @iid)
                                  THEN 1 ELSE 0 END AS bit) AS IsAffected
                 FROM   Tenants t
-                WHERE  t.TenantId IN (SELECT TenantId FROM Tenancies
-                                      WHERE RoomId = @rid AND Status = 'Active')
+                -- ORIGINAL: WHERE  t.TenantId IN (SELECT TenantId FROM Tenancies
+                -- ORIGINAL:                       WHERE RoomId = @rid AND Status = 'Active')
+                -- NEW (Maintenance v2): Room issue -> that room's tenants; Building issue (@rid = 0) -> the building's
+                WHERE  t.TenantId IN (SELECT tn.TenantId FROM Tenancies tn
+                                      JOIN Rooms r ON r.RoomId = tn.RoomId
+                                      WHERE tn.Status = 'Active'
+                                        AND ((@rid > 0 AND tn.RoomId = @rid)
+                                          OR (@rid = 0 AND r.BuildingId = @bid)))
                    OR  t.TenantId IN (SELECT TenantId FROM MaintenanceAffectedTenants
                                       WHERE IssueId = @iid)
                 ORDER BY IsCurrent DESC, t.LastName, t.FirstName;";
@@ -852,6 +1058,7 @@ namespace Capstoneszn
             {
                 cmd.Parameters.AddWithValue("@iid", issueId);
                 cmd.Parameters.AddWithValue("@rid", roomId);
+                cmd.Parameters.AddWithValue("@bid", buildingId);   // NEW
                 conn.Open();
                 using (var rd = cmd.ExecuteReader())
                 {
@@ -967,19 +1174,23 @@ namespace Capstoneszn
                 {
                     try
                     {
-                        // ---- 1. Lock the row; it must still be Pending -----
-                        int roomId;
+
+                        // NEW (Maintenance v2): also reads BuildingId; RoomId NULL = Building issue (roomId 0).
+                        int roomId, buildingId;
                         using (var cmd = new SqlCommand(@"
-                            SELECT RoomId FROM MaintenanceIssues WITH (UPDLOCK, ROWLOCK)
+                            SELECT RoomId, BuildingId FROM MaintenanceIssues WITH (UPDLOCK, ROWLOCK)
                             WHERE  IssueId = @iid AND Status = 'Pending' AND IsDeleted = 0;",
                             conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@iid", issueId);
-                            object o = cmd.ExecuteScalar();
-                            if (o == null)
-                                throw new InvalidOperationException(
-                                    "This issue is no longer pending, so it can't be edited.");
-                            roomId = (int)o;
+                            using (var rd = cmd.ExecuteReader())
+                            {
+                                if (!rd.Read())
+                                    throw new InvalidOperationException(
+                                        "This issue is no longer pending, so it can't be edited.");
+                                roomId = rd.IsDBNull(0) ? 0 : rd.GetInt32(0);
+                                buildingId = rd.GetInt32(1);
+                            }
                         }
 
                         // ---- 2. The issue's own fields ---------------------
@@ -1022,12 +1233,17 @@ namespace Capstoneszn
                                 SELECT @iid, tn.TenantId
                                 FROM   Tenancies tn
                                 WHERE  tn.TenantId = @tid AND tn.Status = 'Active'
-                                  AND (tn.RoomId = @rid OR @wasAffected = 1);",
+                                -- ORIGINAL: AND (tn.RoomId = @rid OR @wasAffected = 1);
+                                AND (tn.RoomId = @rid OR @wasAffected = 1
+                                    OR (@rid = 0 AND EXISTS (SELECT 1 FROM Rooms r          -- NEW: Building issue
+                                                            WHERE r.RoomId = tn.RoomId
+                                                                AND r.BuildingId = @bid)));",
                                 conn, tx))
                             {
                                 cmd.Parameters.AddWithValue("@iid", issueId);
                                 cmd.Parameters.AddWithValue("@tid", tenantId);
                                 cmd.Parameters.AddWithValue("@rid", roomId);
+                                cmd.Parameters.AddWithValue("@bid", buildingId);   // NEW
                                 cmd.Parameters.AddWithValue("@wasAffected",
                                     previouslyAffected.Contains(tenantId) ? 1 : 0);
                                 if (cmd.ExecuteNonQuery() != 1)
@@ -1088,11 +1304,19 @@ namespace Capstoneszn
 
                             if (total > 0m && affectedTenantIds.Count > 0)
                             {
-                                CreateMaintenanceBill(conn, tx, issueId, roomId, issueTitle, total, today, result);
+                                // ORIGINAL: CreateMaintenanceBill(conn, tx, issueId, roomId, issueTitle, total, today, result);
+                                if (roomId == 0)
+                                    CreateBuildingMaintenanceBills(conn, tx, issueId, issueTitle, total, today, result);   // NEW
+                                else
+                                    CreateMaintenanceBill(conn, tx, issueId, roomId, issueTitle, total, today, result);
                             }
                             else if (total > 0m)
                             {
-                                CreateMaintenanceExpense(conn, tx, issueId, roomId, issueTitle, total, today, userId);
+                                // ORIGINAL: CreateMaintenanceExpense(conn, tx, issueId, roomId, issueTitle, total, today, userId);
+                                if (roomId == 0)
+                                    CreateBuildingMaintenanceExpense(conn, tx, issueId, issueTitle, total, today, userId);  // NEW
+                                else
+                                    CreateMaintenanceExpense(conn, tx, issueId, roomId, issueTitle, total, today, userId);
                                 result.ExpenseRecorded = true;
                             }
 
@@ -1102,7 +1326,9 @@ namespace Capstoneszn
                                 : "PHP " + total.ToString("N2") + " recorded as building expense";
 
                             AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Complete Issue",
-                                "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle + ": " + outcome);
+                                // ORIGINAL: "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle + ": " + outcome);
+                                (roomId == 0 ? "Building" : "Room " + GetRoomNumber(conn, tx, roomId))
+                                + " - " + issueTitle + ": " + outcome);   // NEW
                         }
 
                         tx.Commit();
@@ -1208,6 +1434,114 @@ namespace Capstoneszn
                 cmd.Parameters.AddWithValue("@iid", issueId);
                 cmd.Parameters.AddWithValue("@by", userId);
                 cmd.Parameters.AddWithValue("@rid", roomId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// NEW (Maintenance v2): bills a BUILDING issue.
+        ///   1. The total is split equally among ALL charged tenants
+        ///      (leftover centavo to the longest-tenured, same as rent).
+        ///   2. Each tenant's share is billed to the room they live in:
+        ///      one Maintenance bill per room (UX_Bills_MaintIssue_Room).
+        /// Example: PHP 900 gate repair, 3 tenants (2 in Room 101, 1 in Room 202)
+        ///   -> PHP 300 each -> Room 101 bill PHP 600 (2 shares), Room 202 bill PHP 300.
+        /// </summary>
+        private static void CreateBuildingMaintenanceBills(
+            SqlConnection conn, SqlTransaction tx,
+            int issueId, string issueTitle, decimal total,
+            DateTime today, IssueSaveResult result)
+        {
+            DateTime due = today.AddDays(MaintenanceDueDays);
+
+            // Charged tenants and the room each lives in now, longest-tenured first.
+            var tenants = new List<(int TenantId, int RoomId)>();
+            using (var cmd = new SqlCommand(@"
+                SELECT mat.TenantId, tn.RoomId
+                FROM   MaintenanceAffectedTenants mat
+                JOIN   Tenancies tn ON tn.TenantId = mat.TenantId AND tn.Status = 'Active'
+                WHERE  mat.IssueId = @iid
+                ORDER BY tn.MoveInDate, tn.TenantId;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@iid", issueId);
+                using (var rd = cmd.ExecuteReader())
+                    while (rd.Read()) tenants.Add((rd.GetInt32(0), rd.GetInt32(1)));
+            }
+            if (tenants.Count == 0) return;
+
+            // 1. Equal split in centavos across everyone.
+            long cents = (long)Math.Round(total * 100m);
+            long each = cents / tenants.Count;
+            long leftover = cents - each * tenants.Count;
+
+            var shareOf = new Dictionary<int, long>();
+            for (int i = 0; i < tenants.Count; i++)
+                shareOf[tenants[i].TenantId] = (i == 0) ? each + leftover : each;
+
+            // 2. One bill per room, holding that room's tenants' shares.
+            foreach (var room in tenants.GroupBy(t => t.RoomId))
+            {
+                long roomCents = room.Sum(t => shareOf[t.TenantId]);
+                if (roomCents <= 0) continue;   // CK: Amount > 0
+
+                int billId;
+                using (var cmd = new SqlCommand(@"
+                    INSERT INTO Bills (RoomId, BillCategory, BillingPeriodStart, BillingPeriodEnd,
+                                       DueDate, Amount, Remarks, MaintenanceIssueId)
+                    OUTPUT INSERTED.BillId
+                    VALUES (@rid, 'Maintenance', @today, @today, @due, @amt, @remarks, @iid);", conn, tx))
+                {
+                    cmd.Parameters.AddWithValue("@rid", room.Key);
+                    cmd.Parameters.AddWithValue("@today", today);
+                    cmd.Parameters.AddWithValue("@due", due);
+                    cmd.Parameters.AddWithValue("@amt", roomCents / 100m);
+                    cmd.Parameters.AddWithValue("@remarks", Trim255("Maintenance (Building): " + issueTitle));
+                    cmd.Parameters.AddWithValue("@iid", issueId);
+                    billId = (int)cmd.ExecuteScalar();
+                }
+
+                foreach (var t in room)
+                {
+                    long share = shareOf[t.TenantId];
+                    if (share <= 0) continue;   // CK_BillTenants_Share: Share > 0
+
+                    using (var cmd = new SqlCommand(@"
+                        INSERT INTO BillTenants (BillId, TenantId, Share)
+                        VALUES (@bid, @tid, @share);", conn, tx))
+                    {
+                        cmd.Parameters.AddWithValue("@bid", billId);
+                        cmd.Parameters.AddWithValue("@tid", t.TenantId);
+                        cmd.Parameters.AddWithValue("@share", share / 100m);
+                        cmd.ExecuteNonQuery();
+                    }
+                    result.TenantsCharged++;
+                }
+            }
+
+            result.DueDate = due;
+        }
+
+        /// <summary>
+        /// NEW (Maintenance v2): nobody charged on a BUILDING issue -> one
+        /// building expense, taken from the issue's own BuildingId.
+        /// </summary>
+        private static void CreateBuildingMaintenanceExpense(
+            SqlConnection conn, SqlTransaction tx,
+            int issueId, string issueTitle, decimal total,
+            DateTime today, int userId)
+        {
+            using (var cmd = new SqlCommand(@"
+                INSERT INTO Expenses (BuildingId, ExpenseCategory, Description, Amount,
+                                      ExpenseDate, MaintenanceIssueId, RecordedBy)
+                SELECT mi.BuildingId, 'Maintenance', @desc, @amt, @today, @iid, @by
+                FROM   MaintenanceIssues mi
+                WHERE  mi.IssueId = @iid;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@desc", Trim255("Building - " + issueTitle));
+                cmd.Parameters.AddWithValue("@amt", total);
+                cmd.Parameters.AddWithValue("@today", today);
+                cmd.Parameters.AddWithValue("@iid", issueId);
+                cmd.Parameters.AddWithValue("@by", userId);
                 cmd.ExecuteNonQuery();
             }
         }

@@ -85,7 +85,8 @@ namespace Capstoneszn.Forms.TenantForms
 
                         // No active tenancy means they have moved out. Their
                         // bill history stays readable either way.
-                        string room = r.IsDBNull(4) ? null : r.GetString(4);
+                        // ORIGINAL: string room = r.IsDBNull(4) ? null : r.GetString(4);
+                        string room = r.IsDBNull(4) ? null : Convert.ToString(r.GetValue(4));   // NEW: RoomNumber is INT
 
                         string name = string.IsNullOrWhiteSpace(middle)
                             ? $"{first} {last}"
@@ -165,6 +166,9 @@ namespace Capstoneszn.Forms.TenantForms
                         {
                             while (r.Read())
                             {
+                                // OLD: string cat = r.GetString(0);
+                                // NEW: BillCategory can be NULL on old rows - skip them instead of crashing
+                                if (r.IsDBNull(0)) continue;
                                 string cat = r.GetString(0);
                                 if (!totals.ContainsKey(cat)) totals[cat] = new CategoryTotals();
 
@@ -190,7 +194,9 @@ namespace Capstoneszn.Forms.TenantForms
                             while (r.Read())
                             {
                                 string cat = r.GetString(0);
-                                string type = r.GetString(1);
+                                // OLD: string type = r.GetString(1);
+                                // NEW: null-safe
+                                string type = r.IsDBNull(1) ? "" : r.GetString(1);
                                 decimal amt = r.IsDBNull(2) ? 0m : r.GetDecimal(2);
 
                                 if (!totals.ContainsKey(cat)) totals[cat] = new CategoryTotals();
@@ -232,13 +238,18 @@ namespace Capstoneszn.Forms.TenantForms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                MessageBox.Show("Could not load the billing totals.",
+                // OLD:
+                // MessageBox.Show("Could not load the billing totals.",
+                //     "Billing Summary", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // NEW: show the reason while testing, same as TenantsControl does
+                MessageBox.Show("Could not load the billing totals: " + ex.Message,
                     "Billing Summary", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            BindSummary(totals);
+            //BindSummary(totals);
         }
 
+        /*
         private void BindSummary(Dictionary<string, CategoryTotals> totals)
         {
             DataTable dt = new DataTable();
@@ -269,6 +280,7 @@ namespace Capstoneszn.Forms.TenantForms
                 ? $"Paid ahead: {advanceTotal:N2}"
                 : "No advance payment held";
         }
+        */
 
 
         /* =================================================================
@@ -469,7 +481,11 @@ namespace Capstoneszn.Forms.TenantForms
             cboCategory.SelectedIndex = 0;     // fires the filter; it guards on a null table
 
             LoadTenantHeader();
-            LoadSummary();
+            // OLD:
+            // LoadSummary();
+            // NEW: its totals are no longer displayed (BindSummary and the summary grid were
+            //      removed), so calling it only produced the "Could not load" popup.
+            //      The Billing Summary panel in TenantsControl already shows these totals.
             LoadBills();
         }
     }

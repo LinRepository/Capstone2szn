@@ -190,6 +190,7 @@
             btnEditIssue.TabIndex = 1;
             btnEditIssue.Text = "Edit";
             btnEditIssue.UseVisualStyleBackColor = true;
+            btnEditIssue.Click += btnEditIssue_Click;
             // 
             // btnViewMaterials
             // 

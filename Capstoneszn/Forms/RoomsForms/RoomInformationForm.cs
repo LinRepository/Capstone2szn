@@ -268,10 +268,22 @@ namespace Capstoneszn.UserControls
                     txtSetElecName.Text = _elecName;
                     txtSetElecNumber.Text = _elecNumber;
 
-                    lblPriceNotice.Text = nextDue.HasValue
-                        ? $"Room is occupied — a new price starts on {nextDue.Value:MMM d, yyyy}. " +
-                          $"This period stays at ₱{_roomPrice:N2}."
-                        : "Room is occupied — a new price starts on the next due date.";
+                    // ORIGINAL:
+                    // lblPriceNotice.Text = nextDue.HasValue
+                    //     ? $"Room is occupied — a new price starts on {nextDue.Value:MMM d, yyyy}. " +
+                    //       $"This period stays at ₱{_roomPrice:N2}."
+                    //     : "Room is occupied — a new price starts on the next due date.";
+
+                    // NEW (option 1): a new price starts on the first bill NOT
+                    // created yet (bills are made 7 days early and never change).
+                    DateTime? priceStart = (IsOccupied && _anchorDate.HasValue)
+                        ? BillGenerator.NextUnbilledPeriod(conn, null, _roomId, _anchorDate.Value, DateTime.Today)
+                        : (DateTime?)null;
+
+                    lblPriceNotice.Text = priceStart.HasValue
+                        ? $"Room is occupied — a new price starts on {priceStart.Value:MMM d, yyyy}. " +
+                          $"Bills before that stay at ₱{_roomPrice:N2}."
+                        : "Room is occupied — a new price starts on the next bill.";
 
                     // 4. Occupants grid
                     LoadOccupants(conn);
@@ -411,6 +423,22 @@ namespace Capstoneszn.UserControls
                 case "Occupied": return Color.FromArgb(255, 107, 107);
                 case "Maintenance": return Color.LightSlateGray;
                 default: return Color.White;
+            }
+        }
+
+        /// <summary>
+        /// NEW (option 1): the first rent bill of this room NOT created yet.
+        /// Bills are made 7 days early, so on Nov 23 the Nov 28 bill may already
+        /// exist; a price change then starts Dec 28. Null when the room is empty.
+        /// </summary>
+        private DateTime? NextPriceStart()
+        {
+            if (!IsOccupied || !_anchorDate.HasValue) return null;
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                return BillGenerator.NextUnbilledPeriod(conn, null, _roomId, _anchorDate.Value, DateTime.Today);
             }
         }
 
@@ -618,6 +646,22 @@ namespace Capstoneszn.UserControls
             //                   Typing the current price again cancels a
             //                   scheduled change.
             DateTime? nextDue = NextDueDate(_anchorDate);
+
+            // NEW (option 1): the first bill not created yet. A new price (and
+            // a new share split) can only start there - an issued bill never changes.
+            DateTime? priceStart;
+            try
+            {
+                priceStart = NextPriceStart();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                MessageBox.Show("Could not read the room's bills: " + ex.Message, "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             decimal newRoomPrice;
             decimal? newPending;
             DateTime? newPendingFrom;
@@ -638,7 +682,8 @@ namespace Capstoneszn.UserControls
             {
                 newRoomPrice = _roomPrice;
                 newPending = enteredPrice;
-                newPendingFrom = nextDue.Value;
+                // ORIGINAL: newPendingFrom = nextDue.Value;
+                newPendingFrom = priceStart ?? nextDue.Value;   // NEW (option 1)
             }
 
             // ---------- 3. Anything to save? ----------
@@ -677,11 +722,15 @@ namespace Capstoneszn.UserControls
                 if (typeOrCapacityChanged)
                     sb.AppendLine($"•  It becomes a {newType} (capacity {newCapacity}).");
                 if (priceScheduled)
+                    // ORIGINAL: ... $"This period stays at ₱{_roomPrice:N2}.");
                     sb.AppendLine($"•  New price ₱{newPending.Value:N2} starts {newPendingFrom.Value:MMM d, yyyy}. " +
-                                  $"This period stays at ₱{_roomPrice:N2}.");
+                                  $"Bills before that stay at ₱{_roomPrice:N2}.");   // NEW (option 1)
                 sb.AppendLine();
-                sb.Append(nextDue.HasValue
-                    ? $"Rent shares are recalculated from the next bill ({nextDue.Value:MMM d, yyyy})."
+                // ORIGINAL: sb.Append(nextDue.HasValue
+                //     ? $"Rent shares are recalculated from the next bill ({nextDue.Value:MMM d, yyyy})."
+                //     : "Rent shares are recalculated from the next bill.");
+                sb.Append(priceStart.HasValue   // NEW (option 1): the first bill not created yet
+                    ? $"Rent shares are recalculated from the next bill ({priceStart.Value:MMM d, yyyy})."
                     : "Rent shares are recalculated from the next bill.");
 
                 if (MessageBox.Show(sb.ToString(), "Confirm Room Change",

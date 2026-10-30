@@ -93,15 +93,29 @@ namespace Capstoneszn
             string sql = @"
                 SELECT p.PaymentId, p.PaymentDate, p.RecordedAt, p.ReceiptNo,
                        t.FirstName + ' ' + t.LastName AS TenantName,
-                       r.RoomNumber, p.PaymentCategory, p.PaymentType,
+                       -- ORIGINAL: r.RoomNumber, p.PaymentCategory, p.PaymentType,
+                       r.RoomNumber,
+                       COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+                       COALESCE(p.PaymentType,     cat.PaymentTypes) AS PaymentType,
                        p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
                        p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
                        tag.HasCredit, tag.LatestStart, tag.OldestDue,
                        iss.Issues
-                FROM   Payments p
+                                FROM   Payments p
                 JOIN   Tenants t  ON t.TenantId = p.TenantId
                 JOIN   Rooms   r  ON r.RoomId   = p.RoomId
                 LEFT JOIN Users vu ON vu.UserId = p.VoidedBy
+                OUTER APPLY (   -- NEW (Billing v2): what the payment's lines paid
+                    SELECT
+                        (SELECT STRING_AGG(c.Category, ', ')
+                         FROM (SELECT DISTINCT a.Category
+                               FROM PaymentAllocations a
+                               WHERE a.PaymentId = p.PaymentId) c) AS Categories,
+                        (SELECT CASE WHEN COUNT(DISTINCT a.PaymentType) = 1
+                                     THEN MAX(a.PaymentType) ELSE N'Mixed' END
+                         FROM PaymentAllocations a
+                         WHERE a.PaymentId = p.PaymentId) AS PaymentTypes
+                ) cat
                 OUTER APPLY (
                     SELECT MAX(CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END) AS HasCredit,
                            MAX(b.BillingPeriodStart) AS LatestStart,
@@ -154,9 +168,13 @@ namespace Capstoneszn
                 RecordedAt = rd.GetDateTime(2),
                 ReceiptNo = rd.GetString(3),
                 TenantName = rd.GetString(4),
-                RoomNumber = rd.GetString(5),
-                Category = rd.GetString(6),
-                PaymentType = rd.GetString(7),
+                // ORIGINAL: RoomNumber = rd.GetString(5),
+                // ORIGINAL (Billing v2 first try): RoomNumber = rd.GetInt32(5).ToString(),
+                RoomNumber = Convert.ToString(rd.GetValue(5)) ?? "",    // NEW: works for text or INT                 // NEW: RoomNumber is INT
+                // ORIGINAL: Category = rd.GetString(6),
+                Category = rd.IsDBNull(6) ? "" : rd.GetString(6),       // NEW (Billing v2)
+                // ORIGINAL: PaymentType = rd.GetString(7),
+                PaymentType = rd.IsDBNull(7) ? "" : rd.GetString(7),    // NEW (Billing v2)
                 Method = rd.GetString(8),
                 ReferenceNo = rd.IsDBNull(9) ? "" : rd.GetString(9),
                 Amount = rd.GetDecimal(10),
@@ -207,7 +225,10 @@ namespace Capstoneszn
                 string headSql = @"
                     SELECT p.PaymentId, p.PaymentDate, p.RecordedAt, p.ReceiptNo,
                            t.FirstName + ' ' + t.LastName AS TenantName,
-                           r.RoomNumber, p.PaymentCategory, p.PaymentType,
+                           -- ORIGINAL: r.RoomNumber, p.PaymentCategory, p.PaymentType,
+                           r.RoomNumber,
+                           COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+                           COALESCE(p.PaymentType,     cat.PaymentTypes) AS PaymentType,
                            p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
                            p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
                            tag.HasCredit, tag.LatestStart, tag.OldestDue,
@@ -218,6 +239,19 @@ namespace Capstoneszn
                     JOIN   Rooms   r   ON r.RoomId     = p.RoomId
                     JOIN   Buildings bl ON bl.BuildingId = r.BuildingId
                     LEFT JOIN Users vu ON vu.UserId = p.VoidedBy
+
+                OUTER APPLY (   -- NEW (Billing v2): what the payment's lines paid
+                    SELECT
+                        (SELECT STRING_AGG(c.Category, ', ')
+                         FROM (SELECT DISTINCT a.Category
+                               FROM PaymentAllocations a
+                               WHERE a.PaymentId = p.PaymentId) c) AS Categories,
+                        (SELECT CASE WHEN COUNT(DISTINCT a.PaymentType) = 1
+                                     THEN MAX(a.PaymentType) ELSE N'Mixed' END
+                         FROM PaymentAllocations a
+                         WHERE a.PaymentId = p.PaymentId) AS PaymentTypes
+                ) cat
+
                     LEFT JOIN Users ru ON ru.UserId = p.RecordedBy
                     OUTER APPLY (
                         SELECT MAX(CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END) AS HasCredit,
@@ -246,7 +280,8 @@ namespace Capstoneszn
                     SELECT t.FirstName + ' ' + t.LastName AS TenantName,
                            b.BillCategory, b.BillingPeriodStart, b.BillingPeriodEnd,
                            mi.IssueTitle, a.Amount,
-                           CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END AS IsCredit
+                           CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END AS IsCredit,
+                           a.Category                                   -- NEW (Billing v2), column 7
                     FROM   PaymentAllocations a
                     JOIN   Tenants t ON t.TenantId = a.TenantId
                     LEFT JOIN Bills b ON b.BillId = a.BillId
@@ -265,7 +300,8 @@ namespace Capstoneszn
                             string appliedTo;
 
                             if (isCredit)
-                                appliedTo = "Advance credit (for future bills)";
+                                // ORIGINAL: appliedTo = "Advance credit (for future bills)";
+                                appliedTo = rd.GetString(7) + " advance credit (for future bills)";   // NEW (Billing v2)
                             else if (!rd.IsDBNull(4))
                                 appliedTo = "Maintenance: " + rd.GetString(4);
                             else
@@ -365,9 +401,16 @@ namespace Capstoneszn
                         // Audit trail, inside the same transaction.
                         string what = "Payment #" + paymentId;
                         using (var cmd = new SqlCommand(@"
-                            SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
-                                   p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
-                                   ', Room ' + r.RoomNumber
+                                                        SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
+                                   -- ORIGINAL: p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
+                                   -- ORIGINAL: ', Room ' + r.RoomNumber
+                                   COALESCE(p.PaymentCategory,
+                                            (SELECT STRING_AGG(c.Category, ', ')
+                                             FROM (SELECT DISTINCT a.Category
+                                                   FROM PaymentAllocations a
+                                                   WHERE a.PaymentId = p.PaymentId) c))
+                                   + ' from ' + t.FirstName + ' ' + t.LastName +
+                                   ', Room ' + CAST(r.RoomNumber AS NVARCHAR(10))
                             FROM   Payments p
                             JOIN   Tenants t ON t.TenantId = p.TenantId
                             JOIN   Rooms   r ON r.RoomId   = p.RoomId

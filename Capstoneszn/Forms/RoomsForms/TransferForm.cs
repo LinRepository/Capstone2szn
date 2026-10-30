@@ -108,7 +108,8 @@ namespace Capstoneszn.Forms.RoomsForms
                     {
                         if (!r.Read()) return;
 
-                        _sourceRoomNumber = r.GetString(0);
+                        // ORIGINAL: _sourceRoomNumber = r.GetString(0);
+                        _sourceRoomNumber = Convert.ToString(r.GetValue(0)) ?? "";   // NEW: RoomNumber is INT
                         _sourceRoomPrice = r.GetDecimal(1);
                         _sourceActiveCount = r.GetInt32(2);
                         _sourceAnchor = r.IsDBNull(3) ? (DateTime?)null : r.GetDateTime(3);
@@ -238,7 +239,8 @@ namespace Capstoneszn.Forms.RoomsForms
                             cboDestination.Items.Add(new RoomItem
                             {
                                 RoomId = r.GetInt32(0),
-                                RoomNumber = r.GetString(1),
+                                // ORIGINAL: RoomNumber = r.GetString(1),
+                                RoomNumber = Convert.ToString(r.GetValue(1)) ?? "",   // NEW: RoomNumber is INT
                                 Capacity = r.GetInt32(2),
                                 ActiveTenants = r.GetInt32(3),
                                 RoomPrice = r.GetDecimal(4),

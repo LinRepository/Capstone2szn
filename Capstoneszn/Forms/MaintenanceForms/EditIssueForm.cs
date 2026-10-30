@@ -31,6 +31,10 @@ namespace Capstoneszn.Forms
         private List<TenantChoice> _tenantChoices = new List<TenantChoice>();
         private List<ResponsibleChoice> _responsibleChoices = new List<ResponsibleChoice>();
 
+        // NEW (Maintenance v2): true only while the Repair Done button is saving.
+        // Replaces the old "Status: Complete" dropdown.
+        private bool _repairDone;
+
         public EditIssueForm(int issueId)
         {
             InitializeComponent();
@@ -49,6 +53,16 @@ namespace Capstoneszn.Forms
             rdoResponsibleSpecify.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
             rdoResponsibleNone.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
 
+            // NEW (Maintenance v2): Repair Done saves the edits AND marks the
+            // repair done, through the same save code as Save Changes.
+            // Wired here only - the designer has no handler on this button.
+            btnRepairDone.Click += (s, e) =>
+            {
+                _repairDone = true;
+                try { btnSaveIssueChanges_Click(s, e); }
+                finally { _repairDone = false; }
+            };
+
         }
 
         /* ------------------------------------------------------------------
@@ -62,7 +76,8 @@ namespace Capstoneszn.Forms
                 _issue = MaintenanceService.GetIssueForEdit(_issueId);
                 if (_issue != null)
                 {
-                    _tenantChoices = MaintenanceService.GetTenantChoicesForIssue(_issueId, _issue.RoomId);
+                    // ORIGINAL: _tenantChoices = MaintenanceService.GetTenantChoicesForIssue(_issueId, _issue.RoomId);
+                    _tenantChoices = MaintenanceService.GetTenantChoicesForIssue(_issueId, _issue.RoomId, Session.BuildingId);   // NEW
                     _responsibleChoices = MaintenanceService.GetResponsibleChoicesForIssue(_issueId, Session.BuildingId);
                 }
             }
@@ -90,10 +105,15 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            lblRoomValue.Text = "Room " + _issue.RoomNumber;
+            // ORIGINAL: lblRoomValue.Text = "Room " + _issue.RoomNumber;
+            // ORIGINAL: lblIssueTypeValue.Text = "Room";
+            // NEW (Maintenance v2): RoomId 0 = Building issue (type cannot be changed)
+            bool buildingIssue = _issue.RoomId == 0;
+            lblRoomValue.Text = buildingIssue ? "Whole building" : "Room " + _issue.RoomNumber;
+            lblIssueTypeValue.Text = buildingIssue ? "Building" : "Room";
+            if (buildingIssue)
+                lblTenantHint.Text = "Optional. Building tenants who will pay (billed to their own room).";
 
-            // Every issue is a Room issue until the Building migration is done.
-            lblIssueTypeValue.Text = "Room";
             UpdateMaterialsCount();
             txtIssue.Text = _issue.IssueTitle;
             txtDescription.Text = _issue.Description;
@@ -102,6 +122,9 @@ namespace Capstoneszn.Forms
             dtpIssueDate.Value = _issue.DateReported > DateTime.Today ? DateTime.Today : _issue.DateReported;
 
             cboIssueStatus.SelectedItem = MaintenanceService.StatusPending;
+            // NEW (Maintenance v2): status is no longer picked by hand.
+            // Repair Done replaces "Complete"; Complete is reached when tenants pay.
+            pnlIssueStatus.Visible = false;
 
             LoadTenantSection();
             LoadResponsibleSection();
@@ -229,7 +252,8 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            bool markComplete = (cboIssueStatus.SelectedItem as string) == MaintenanceService.StatusComplete;
+            // ORIGINAL: bool markComplete = (cboIssueStatus.SelectedItem as string) == MaintenanceService.StatusComplete;
+            bool markComplete = _repairDone;   // NEW (Maintenance v2): only the Repair Done button completes the repair
 
             // ---- Completing is final: show exactly what will happen -------
             if (markComplete && !ConfirmComplete(tenants.Count))
@@ -263,7 +287,8 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            MessageBox.Show(SavedMessage(result), result.Completed ? "Issue Completed" : "Issue Saved",
+            // ORIGINAL: MessageBox.Show(SavedMessage(result), result.Completed ? "Issue Completed" : "Issue Saved",
+            MessageBox.Show(SavedMessage(result), result.Completed ? "Repair Done" : "Issue Saved",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             DialogResult = DialogResult.OK;
@@ -292,15 +317,19 @@ namespace Capstoneszn.Forms
             if (total <= 0m)
                 outcome = "No materials were recorded, so nobody will be charged and no expense will be recorded.";
             else if (tenantCount > 0)
-                outcome = tenantCount + " tenant(s) will be charged a total of " + Peso(total)
+                // NEW (Maintenance v2): the issue waits For Payment until the tenants pay.
+                outcome = tenantCount + " tenant(s) will be billed a total of " + Peso(total)
                         + " (about " + Peso(Math.Round(total / tenantCount, 2)) + " each), due "
-                        + DateTime.Today.AddDays(MaintenanceService.MaintenanceDueDays).ToString("MMM dd, yyyy") + ".";
+                        + DateTime.Today.AddDays(MaintenanceService.MaintenanceDueDays).ToString("MMM dd, yyyy")
+                        + ".\nThey pay it in Bill Management. The issue becomes Complete once all have paid.";
             else
                 outcome = Peso(total) + " will be recorded as a building expense.";
 
             return MessageBox.Show(
-                       outcome + "\n\nOnce completed, this issue can no longer be edited or deleted. Continue?",
-                       "Complete Issue", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                       // ORIGINAL: outcome + "\n\nOnce completed, this issue can no longer be edited or deleted. Continue?",
+                       // ORIGINAL: "Complete Issue", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                       outcome + "\n\nAfter Repair Done, this issue can no longer be edited or deleted. Continue?",
+                       "Repair Done", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                    == DialogResult.Yes;
         }
 
@@ -309,9 +338,10 @@ namespace Capstoneszn.Forms
             if (!r.Completed)
                 return "Changes saved.";
             if (r.TenantsCharged > 0)
-                return "Issue completed. " + r.TenantsCharged + " tenant(s) charged "
+                // NEW (Maintenance v2)
+                return "Repair done. " + r.TenantsCharged + " tenant(s) billed "
                      + Peso(r.MaterialsTotal) + " in total, due "
-                     + r.DueDate.Value.ToString("MMM dd, yyyy") + ".";
+                     + r.DueDate.Value.ToString("MMM dd, yyyy") + ".\nStatus: For Payment.";
             if (r.ExpenseRecorded)
                 return "Issue completed. " + Peso(r.MaterialsTotal) + " recorded as a building expense.";
             return "Issue completed. No charge and no expense (no materials).";

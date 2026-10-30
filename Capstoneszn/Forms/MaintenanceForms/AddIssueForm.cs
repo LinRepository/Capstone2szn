@@ -42,6 +42,9 @@ namespace Capstoneszn.Forms
             RadioGroupHelper.Link(rdoMaterialsYes, rdoMaterialsNo);
             // Wired here only - the designer has no handlers on these.
             cboRoom.SelectedIndexChanged += cboRoom_SelectedIndexChanged;
+            // NEW (Maintenance v2): Room <-> Building switches the form.
+            // Both radios sit in pnlIssueType, so WinForms already groups them.
+            rdoIssueTypeBuilding.CheckedChanged += IssueType_CheckedChanged;
 
             rdoTenantAll.CheckedChanged += TenantOption_CheckedChanged;
             rdoTenantSpecify.CheckedChanged += TenantOption_CheckedChanged;
@@ -71,7 +74,8 @@ namespace Capstoneszn.Forms
             // change first (RoomId nullable + BuildingId), so the Building
             // option stays disabled until that step is done.
             rdoIssueTypeRoom.Checked = true;
-            rdoIssueTypeBuilding.Enabled = false;
+            // ORIGINAL: rdoIssueTypeBuilding.Enabled = false;
+            rdoIssueTypeBuilding.Enabled = true;   // NEW (Maintenance v2): database is ready for Building issues
 
             // No tenant group choice until a room is picked.
             SetTenantOptionsEnabled(false);
@@ -151,6 +155,62 @@ namespace Capstoneszn.Forms
             rdoTenantNone.Enabled = enabled;
         }
 
+        /// <summary>
+        /// NEW (Maintenance v2). Building issue: no room field; affected tenants
+        /// come from the whole building. Room issue: back to the room's tenants.
+        /// </summary>
+        private void IssueType_CheckedChanged(object sender, EventArgs e)
+        {
+            bool building = rdoIssueTypeBuilding.Checked;
+
+            pnlRoomSelection.Visible = !building;
+            lblTenantHint.Text = building
+                ? "Optional. Building tenants who will pay (billed to their own room)."
+                : "Optional. Tenants of the selected room who will pay.";
+
+            if (building)
+                LoadBuildingTenants();
+            else
+                cboRoom_SelectedIndexChanged(cboRoom, EventArgs.Empty);   // reload the chosen room's tenants
+        }
+
+        /// <summary>NEW (Maintenance v2): fills the tenant list with every payer in the building.</summary>
+        private void LoadBuildingTenants()
+        {
+            clbAffectedTenants.Items.Clear();
+            rdoTenantAll.Checked = false;
+            rdoTenantSpecify.Checked = false;
+            rdoTenantNone.Checked = false;
+
+            List<LookupItem> tenants;
+            try
+            {
+                tenants = MaintenanceService.GetActiveTenantsInBuilding(Session.BuildingId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to load the building's tenants.\n\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SetTenantOptionsEnabled(false);
+                return;
+            }
+
+            foreach (LookupItem tenant in tenants)
+                clbAffectedTenants.Items.Add(tenant);
+
+            if (tenants.Count == 0)
+            {
+                // Nobody to charge: the cost will be a building expense.
+                SetTenantOptionsEnabled(false);
+                rdoTenantNone.Enabled = true;
+                rdoTenantNone.Checked = true;
+            }
+            else
+            {
+                SetTenantOptionsEnabled(true);
+            }
+        }
+
         /* ------------------------------------------------------------------
            Radio groups -> show the checked list only for "Specify"
            ------------------------------------------------------------------ */
@@ -174,7 +234,11 @@ namespace Capstoneszn.Forms
 
         private void btnAddIssue_Click(object sender, EventArgs e)
         {
-            if (!(cboRoom.SelectedItem is LookupItem room))
+            // ORIGINAL: if (!(cboRoom.SelectedItem is LookupItem room)) { Warn("Please select a room.", cboRoom); return; }
+            // NEW (Maintenance v2): a Building issue has no room.
+            bool buildingIssue = rdoIssueTypeBuilding.Checked;
+            LookupItem room = cboRoom.SelectedItem as LookupItem;
+            if (!buildingIssue && room == null)
             {
                 Warn("Please select a room.", cboRoom);
                 return;
@@ -251,15 +315,27 @@ namespace Capstoneszn.Forms
 
             try
             {
-                NewIssueId = MaintenanceService.AddIssue(
-                    room.Id,
-                    title,
-                    txtDescription.Text.Trim(),
-                    dtpIssueDate.Value.Date,
-                    tenantIds,
-                    ownerResponsible,
-                    employeeIds,
-                    Session.UserId);
+                // NEW (Maintenance v2): Building issue -> AddBuildingIssue; Room issue -> AddIssue (unchanged)
+                if (buildingIssue)
+                    NewIssueId = MaintenanceService.AddBuildingIssue(
+                        Session.BuildingId,
+                        title,
+                        txtDescription.Text.Trim(),
+                        dtpIssueDate.Value.Date,
+                        tenantIds,
+                        ownerResponsible,
+                        employeeIds,
+                        Session.UserId);
+                else
+                    NewIssueId = MaintenanceService.AddIssue(
+                        room.Id,
+                        title,
+                        txtDescription.Text.Trim(),
+                        dtpIssueDate.Value.Date,
+                        tenantIds,
+                        ownerResponsible,
+                        employeeIds,
+                        Session.UserId);
             }
             catch (InvalidOperationException ex)
             {
@@ -277,7 +353,10 @@ namespace Capstoneszn.Forms
 
             MaterialsNeeded = rdoMaterialsYes.Checked;
 
-            MessageBox.Show("Maintenance issue added. The room is now under maintenance.",
+            // ORIGINAL: MessageBox.Show("Maintenance issue added. The room is now under maintenance.",
+            MessageBox.Show(buildingIssue
+                    ? "Building maintenance issue added."
+                    : "Maintenance issue added. The room is now under maintenance.",
                 "Issue Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             DialogResult = DialogResult.OK;

@@ -42,6 +42,14 @@ namespace Capstoneszn.UserControls
 
             lblConfirmation.Text = summaryText;
 
+            // NEW (group move-out): a longer list makes the dialog taller,
+            // up to 85% of the screen; beyond that the text area scrolls.
+            Size needed = TextRenderer.MeasureText(summaryText ?? "", lblConfirmation.Font,
+                new Size(lblConfirmation.Width, int.MaxValue), TextFormatFlags.WordBreak);
+            int extra = needed.Height - lblConfirmation.Height + 12;
+            if (extra > 0)
+                Height = Math.Min(Height + extra, (int)(Screen.PrimaryScreen.WorkingArea.Height * 0.85));
+
             if (destroysMoney)
             {
                 lblIrreversible.Text =

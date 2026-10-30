@@ -42,7 +42,25 @@ namespace Capstoneszn
     ///     applied to debt that was already cancelled.
     ///   - Forfeited credit is not available credit.
     /// </summary>
-    /// 
+    ///
+
+    /// <summary>
+    /// NEW (Billing v2): one line of a receipt - what category is paid,
+    /// how much, and its type (Full / Partial / Advance).
+    /// </summary>
+    public sealed class PaymentLine
+    {
+        public string Category { get; }
+        public decimal Amount { get; }
+        public string PaymentType { get; }
+
+        public PaymentLine(string category, decimal amount, string paymentType)
+        {
+            Category = category;
+            Amount = amount;
+            PaymentType = paymentType;
+        }
+    }
     public static class BillingHelper
     {
         private const string AdjustmentForfeit = "Forfeit";
@@ -156,7 +174,8 @@ namespace Capstoneszn
 
             // ---- 3. Allocate each credit -----------------------------------
             foreach (var credit in credits)
-                AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value, category);
+                // ORIGINAL: AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value, category);
+                AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value, category, paymentType); // NEW (Billing v2)
 
             // ---- 4. Audit trail - same transaction, so the log and the
             //         payment are saved together or not at all. ------------
@@ -171,12 +190,172 @@ namespace Capstoneszn
         }
 
         /// <summary>
+        /// NEW (Billing v2): records ONE payment (one receipt) that covers
+        /// several categories. Returns the new PaymentId.
+        /// Call inside an open transaction.
+        ///
+        ///   Header  -> one Payments row (receipt no., payer, method, total)
+        ///   Lines   -> PaymentAllocations rows, each with its Category and type
+        ///
+        /// Rules checked here, inside the transaction:
+        ///   - Maintenance: Full only, exact amount, never Whole Room
+        ///   - Water: never more than owed; Whole Room = full room balance
+        ///   - Rent: any amount; more than owed becomes advance credit
+        /// </summary>
+        public static int RecordReceipt(
+            SqlConnection conn,
+            SqlTransaction tx,
+            int roomId,
+            int payingTenantId,
+            bool coversRoom,
+            IList<PaymentLine> lines,
+            string method,          // "Cash" / "GCash"
+            string referenceNo,     // null for cash
+            DateTime paymentDate,
+            int recordedBy,
+            // ORIGINAL: string receiptNo)
+            string receiptNo,
+            // NEW (credit choice): Whole Room only. Who gets the EXTRA rent
+            // (money left after the whole room is settled).
+            //   null      -> split equally (the old rule; other callers unchanged)
+            //   tenantId  -> all of the extra goes to that tenant
+            int? extraCreditTenantId = null)
+        {
+            if (lines == null || lines.Count == 0)
+                throw new InvalidOperationException("Choose at least one category to pay.");
+
+            if (lines.Select(l => l.Category).Distinct().Count() != lines.Count)
+                throw new InvalidOperationException("Each category can appear only once on a receipt.");
+
+            // ---- 0. Rules per line ------------------------------------------
+            foreach (PaymentLine line in lines)
+            {
+                if (line.Amount <= 0m)
+                    throw new InvalidOperationException(line.Category + " amount must be more than 0.");
+
+                if (line.Category == MaintenanceCategory)
+                {
+                    EnsureValidMaintenancePayment(conn, tx, payingTenantId, coversRoom,
+                                                  line.PaymentType, line.Amount);
+                }
+                else if (line.Category == "Water")
+                {
+                    decimal waterOwed = coversRoom
+                        ? GetRoomOwing(conn, roomId, "Water", tx).Sum(x => x.Value)
+                        : GetTotalOutstanding(conn, payingTenantId, "Water", tx);
+
+                    // ORIGINAL: if (line.Amount > waterOwed) throw ... "Water cannot be more than what is owed"
+                    // ORIGINAL: if (coversRoom && line.Amount != waterOwed) throw ... "must be the room's full water balance"
+
+                    // NEW: water is paid in full only - exactly what is owed, Individual or Whole Room.
+                    if (waterOwed <= 0m)
+                        throw new InvalidOperationException("There is no unpaid water to pay.");
+
+                    if (line.Amount != waterOwed || line.PaymentType != "Full")
+                        throw new InvalidOperationException(
+                            "Water must be paid in full: PHP " + waterOwed.ToString("N2") +
+                            ". Partial and advance payments are not accepted.");
+                }
+                else if (line.Category != "Rent")
+                {
+                    throw new InvalidOperationException("Unknown category: " + line.Category);
+                }
+            }
+
+            // NEW (credit choice): the chosen tenant must live in this room.
+            if (coversRoom && extraCreditTenantId.HasValue &&
+                !GetActiveTenants(conn, tx, roomId).Contains(extraCreditTenantId.Value))
+                throw new InvalidOperationException(
+                    "The tenant chosen for the extra credit does not live in this room.");
+
+            decimal total = lines.Sum(l => l.Amount);
+            bool singleLine = lines.Count == 1;
+
+            // ---- 1. Header: the money received (one receipt) -----------------
+            //  One category  -> also stored on the header (older screens show it)
+            //  Several       -> NULL on the header; the lines say what was paid
+            int paymentId;
+
+            string paySql = @"
+                INSERT INTO Payments
+                    (TenantId, RoomId, ReceiptNo, PaymentCategory, PaymentType,
+                     Amount, PaymentMethod, ReferenceNo, PaymentDate,
+                     CoversRoom, RecordedBy)
+                VALUES (@tid, @rid, @rcpt, @cat, @type,
+                        @amt, @method, @ref, @pdate,
+                        @covers, @by);
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            using (var cmd = new SqlCommand(paySql, conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@tid", payingTenantId);
+                cmd.Parameters.AddWithValue("@rid", roomId);
+                cmd.Parameters.AddWithValue("@rcpt", receiptNo);
+                cmd.Parameters.AddWithValue("@cat", singleLine ? (object)lines[0].Category : DBNull.Value);
+                cmd.Parameters.AddWithValue("@type", singleLine ? (object)lines[0].PaymentType : DBNull.Value);
+                cmd.Parameters.AddWithValue("@amt", total);
+                cmd.Parameters.AddWithValue("@method", method);
+                cmd.Parameters.AddWithValue("@ref",
+                    string.IsNullOrWhiteSpace(referenceNo) ? (object)DBNull.Value : referenceNo);
+                cmd.Parameters.AddWithValue("@pdate", paymentDate);
+                cmd.Parameters.AddWithValue("@covers", coversRoom ? 1 : 0);
+                cmd.Parameters.AddWithValue("@by", recordedBy);
+                paymentId = (int)cmd.ExecuteScalar();
+            }
+
+            // ---- 2. Lines: each category allocated separately ----------------
+            foreach (PaymentLine line in lines)
+            {
+                var credits = new List<KeyValuePair<int, decimal>>();
+
+                if (!coversRoom)
+                {
+                    credits.Add(new KeyValuePair<int, decimal>(payingTenantId, line.Amount));
+                }
+                else
+                {
+                    List<KeyValuePair<int, decimal>> owing = GetRoomOwing(conn, roomId, line.Category, tx);
+
+                    if (owing.Count == 0)
+                        throw new InvalidOperationException("Whole Room payment on a room with no active tenants.");
+
+                    // ORIGINAL: foreach (var part in SplitWholeRoom(owing, line.Amount))
+                    foreach (var part in SplitWholeRoom(owing, line.Amount, extraCreditTenantId))   // NEW (credit choice)
+                        if (part.Value > 0m)
+                            credits.Add(part);
+                }
+
+                foreach (var credit in credits)
+                    AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value,
+                                     line.Category, line.PaymentType);
+            }
+
+            // ---- 3. Audit trail, same transaction ----------------------------
+            string detail = string.Join(", ", lines.Select(l =>
+                l.Category + " PHP " + l.Amount.ToString("N2") + " (" + l.PaymentType + ")"));
+
+            AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Record Payment",
+                "Receipt " + receiptNo + ": PHP " + total.ToString("N2") + " [" + detail + "] via " + method +
+                " from " + AuditLogger.TenantName(conn, tx, payingTenantId) +
+                ", Room " + AuditLogger.RoomNumber(conn, tx, roomId) +
+                // ORIGINAL: (coversRoom ? " - Whole Room" : ""));
+                (coversRoom ? " - Whole Room" : "") +
+                // NEW (credit choice): say where any extra went
+                (coversRoom && extraCreditTenantId.HasValue
+                    ? "; extra credited to " + AuditLogger.TenantName(conn, tx, extraCreditTenantId.Value)
+                    : ""));
+
+            return paymentId;
+        }
+
+        /// <summary>
         /// Walks this tenant's unpaid shares oldest first, settling what it
         /// can. Anything left over becomes a credit row with no BillId.
         /// </summary>
         private static void AllocateToTenant(
-            SqlConnection conn, SqlTransaction tx,
-            int paymentId, int tenantId, decimal amount, string category)
+    SqlConnection conn, SqlTransaction tx,
+    // ORIGINAL: int paymentId, int tenantId, decimal amount, string category)
+    int paymentId, int tenantId, decimal amount, string category, string paymentType) // NEW (Billing v2)
         {
             decimal remaining = amount;
 
@@ -222,7 +401,8 @@ namespace Capstoneszn
                 if (remaining <= 0) break;
 
                 decimal take = Math.Min(remaining, bill.Value);
-                InsertAllocation(conn, tx, paymentId, bill.Key, tenantId, take);
+                // ORIGINAL: InsertAllocation(conn, tx, paymentId, bill.Key, tenantId, take);
+                InsertAllocation(conn, tx, paymentId, bill.Key, tenantId, take, category, paymentType); // NEW (Billing v2)
 
                 remaining -= take;
             }
@@ -230,16 +410,21 @@ namespace Capstoneszn
             // Nothing left to settle - hold it as credit for a future bill.
             // BillGenerator moves it onto the next bill when that is created.
             if (remaining > 0)
-                InsertAllocation(conn, tx, paymentId, null, tenantId, remaining);
+                // ORIGINAL: InsertAllocation(conn, tx, paymentId, null, tenantId, remaining);
+                InsertAllocation(conn, tx, paymentId, null, tenantId, remaining, category, "Advance"); // NEW (Billing v2): held credit is always an advance
         }
 
         private static void InsertAllocation(
             SqlConnection conn, SqlTransaction tx,
-            int paymentId, int? billId, int tenantId, decimal amount)
+            // ORIGINAL: int paymentId, int? billId, int tenantId, decimal amount)
+            int paymentId, int? billId, int tenantId, decimal amount,
+            string category, string paymentType)                          // NEW (Billing v2)
         {
             string sql = @"
-                INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount)
-                VALUES (@pid, @bid, @tid, @amt);";
+                -- ORIGINAL: INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount)
+                -- ORIGINAL: VALUES (@pid, @bid, @tid, @amt);
+                INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount, Category, PaymentType)
+                VALUES (@pid, @bid, @tid, @amt, @cat, @type);";
 
             using (var cmd = new SqlCommand(sql, conn, tx))
             {
@@ -248,6 +433,8 @@ namespace Capstoneszn
                     billId.HasValue ? (object)billId.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@tid", tenantId);
                 cmd.Parameters.AddWithValue("@amt", amount);
+                cmd.Parameters.AddWithValue("@cat", category);        // NEW (Billing v2)
+                cmd.Parameters.AddWithValue("@type", paymentType);    // NEW (Billing v2)
                 cmd.ExecuteNonQuery();
             }
         }
@@ -269,8 +456,12 @@ namespace Capstoneszn
         /// The parts always add up to the amount exactly.
         /// </summary>
         /// 
+        // ORIGINAL: public static List<KeyValuePair<int, decimal>> SplitWholeRoom(
+        // ORIGINAL:     IList<KeyValuePair<int, decimal>> owing, decimal amount)
+        // NEW (credit choice): extraCreditTenantId decides where step 2's extra goes.
+        //   null -> split equally (unchanged)   tenantId -> all to that tenant
         public static List<KeyValuePair<int, decimal>> SplitWholeRoom(
-            IList<KeyValuePair<int, decimal>> owing, decimal amount)
+            IList<KeyValuePair<int, decimal>> owing, decimal amount, int? extraCreditTenantId = null)
         {
             int n = owing.Count;
             var give = new decimal[n];
@@ -311,8 +502,19 @@ namespace Capstoneszn
                 }
             }
 
-            // ---- 2. Room settled, money left: advance, split equally ---------
-            if (remaining > 0m && n > 0)
+            // ---- 2. Room settled, money left: advance ------------------------
+            // NEW (credit choice): if the landlord chose one tenant, the whole
+            // extra is theirs (normally the payer - it is their money).
+            int target = -1;
+            if (extraCreditTenantId.HasValue)
+                for (int i = 0; i < n; i++)
+                    if (owing[i].Key == extraCreditTenantId.Value) { target = i; break; }
+
+            if (remaining > 0m && n > 0 && target >= 0)
+            {
+                give[target] += remaining;   // NEW: all of the extra to the chosen tenant
+            }
+            else if (remaining > 0m && n > 0)   // ORIGINAL: if (remaining > 0m && n > 0)  - split equally
             {
                 decimal each = Math.Floor(remaining / n * 100m) / 100m;
                 decimal leftover = remaining - (each * n);
@@ -429,7 +631,8 @@ namespace Capstoneszn
                                  AND  a.BillId IS NULL
                                  AND  a.IsVoided = 0
                                  AND  p.IsVoided = 0
-                                 AND  p.PaymentCategory = @cat), 0)
+                                 -- ORIGINAL: AND  p.PaymentCategory = @cat), 0)
+                                 AND  a.Category = @cat), 0)
                      - ISNULL((SELECT SUM(adj.Amount)
                                FROM   TenantAdjustments adj
                                WHERE  adj.TenantId = @tid

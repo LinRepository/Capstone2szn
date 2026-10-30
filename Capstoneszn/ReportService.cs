@@ -77,7 +77,8 @@ namespace Capstoneszn
                 using (var rd = cmd.ExecuteReader())
                 {
                     while (rd.Read())
-                        list.Add(new ReportRoom { RoomId = rd.GetInt32(0), RoomNumber = rd.GetString(1) });
+                        // ORIGINAL: list.Add(new ReportRoom { RoomId = rd.GetInt32(0), RoomNumber = rd.GetString(1) });
+                        list.Add(new ReportRoom { RoomId = rd.GetInt32(0), RoomNumber = Convert.ToString(rd.GetValue(1)) ?? "" });   // NEW: RoomNumber is INT
                 }
             }
 
@@ -94,10 +95,22 @@ namespace Capstoneszn
             var list = new List<ReportReceivedRow>();
 
             string sql = @"
+                -- ORIGINAL (before Billing v2): one row per payment, category from the header
+                --   SELECT p.PaymentDate, p.ReceiptNo, t.FirstName + ' ' + t.LastName AS TenantName,
+                --          r.RoomNumber, p.PaymentCategory, p.PaymentMethod, p.Amount
+                --   FROM Payments p JOIN Tenants t ... JOIN Rooms r ...
+                --   (same WHERE)  ORDER BY p.PaymentDate ASC, p.PaymentId ASC;
+                --
+                -- NEW (Billing v2): one row per receipt PER CATEGORY, read from the
+                -- lines. A receipt that paid Rent and Maintenance gives two rows,
+                -- so each total (Rent / Utilities / Maintenance) gets exactly its
+                -- own money. Advance credit lines count too (they are rent received).
                 SELECT p.PaymentDate, p.ReceiptNo,
                        t.FirstName + ' ' + t.LastName AS TenantName,
-                       r.RoomNumber, p.PaymentCategory, p.PaymentMethod, p.Amount
+                       r.RoomNumber, a.Category, p.PaymentMethod,
+                       SUM(a.Amount) AS Amount
                 FROM   Payments p
+                JOIN   PaymentAllocations a ON a.PaymentId = p.PaymentId
                 JOIN   Tenants t ON t.TenantId = p.TenantId
                 JOIN   Rooms   r ON r.RoomId   = p.RoomId
                 WHERE  r.BuildingId = @bid
@@ -105,7 +118,10 @@ namespace Capstoneszn
                   AND  p.PaymentDate >= @from
                   AND  p.PaymentDate <  @to
                   AND  (@rid IS NULL OR p.RoomId = @rid)
-                ORDER BY p.PaymentDate ASC, p.PaymentId ASC;";
+                GROUP BY p.PaymentId, p.PaymentDate, p.ReceiptNo,
+                         t.FirstName, t.LastName, r.RoomNumber,
+                         a.Category, p.PaymentMethod
+                ORDER BY p.PaymentDate ASC, p.PaymentId ASC, a.Category ASC;";
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             using (var cmd = new SqlCommand(sql, conn))
@@ -126,7 +142,8 @@ namespace Capstoneszn
                             PaymentDate = rd.GetDateTime(0),
                             ReceiptNo = rd.GetString(1),
                             TenantName = rd.GetString(2),
-                            RoomNumber = rd.GetString(3),
+                            // ORIGINAL: RoomNumber = rd.GetString(3),
+                            RoomNumber = Convert.ToString(rd.GetValue(3)) ?? "",   // NEW: RoomNumber is INT
                             Category = rd.GetString(4),
                             Method = rd.GetString(5),
                             Amount = rd.GetDecimal(6)

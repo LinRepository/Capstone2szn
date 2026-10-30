@@ -147,7 +147,9 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
             _rooms.DefaultView.RowFilter = term.Length == 0
                 ? ""
-                : $"RoomNumber LIKE '%{term}%' OR RoomType LIKE '%{term}%'";
+                // ORIGINAL: : $"RoomNumber LIKE '%{term}%' OR RoomType LIKE '%{term}%'";
+                // NEW: RoomNumber is INT - LIKE only works on text, so convert it first
+                : $"Convert(RoomNumber, 'System.String') LIKE '%{term}%' OR RoomType LIKE '%{term}%'";
 
             int shown = _rooms.DefaultView.Count;
             lblRoomsCount.Text = shown + " archived room(s)";
@@ -355,7 +357,8 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
             _tenants.DefaultView.RowFilter = term.Length == 0
                 ? ""
-                : $"FullName LIKE '%{term}%' OR ContactNumber LIKE '%{term}%' OR LastRoom LIKE '%{term}%'";
+                // ORIGINAL: : $"FullName LIKE '%{term}%' OR ContactNumber LIKE '%{term}%' OR LastRoom LIKE '%{term}%'";
+                : $"FullName LIKE '%{term}%' OR ContactNumber LIKE '%{term}%' OR Convert(LastRoom, 'System.String') LIKE '%{term}%'";   // NEW: INT
 
             int shown = _tenants.DefaultView.Count;
             lblTenantsCount.Text = shown + " moved-out tenant(s)";

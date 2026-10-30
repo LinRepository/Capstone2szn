@@ -157,7 +157,9 @@ namespace Capstoneszn.UserControls
             _tenants.DefaultView.RowFilter = term.Length == 0
                 ? ""
                 : $"FirstName LIKE '%{term}%' OR LastName LIKE '%{term}%' " +
-                  $"OR MiddleName LIKE '%{term}%' OR RoomNumber LIKE '%{term}%' " +
+                  // ORIGINAL: $"OR MiddleName LIKE '%{term}%' OR RoomNumber LIKE '%{term}%' " +
+                  // NEW: RoomNumber is INT - LIKE only works on text, so convert it first
+                  $"OR MiddleName LIKE '%{term}%' OR Convert(RoomNumber, 'System.String') LIKE '%{term}%' " +
                   $"OR ContactNumber LIKE '%{term}%'";
 
             pnlTenantDetails.Visible = false;   // old selection no longer valid
@@ -325,6 +327,15 @@ namespace Capstoneszn.UserControls
                 return;
             }
 
+            // NEW: validation - the preview needs at least one printer driver
+            // (e.g. Microsoft Print to PDF); without one it fails while drawing.
+            if (PrinterSettings.InstalledPrinters.Count == 0)
+            {
+                MessageBox.Show("No printer is installed. Enable \"Microsoft Print to PDF\" in Windows Features.",
+                    "Billing Statement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             int tenantId = _selectedTenantId;
             DateTime today = DateTime.Today;
 
@@ -332,6 +343,10 @@ namespace Capstoneszn.UserControls
             DateTime moveIn = today, periodStart = today, periodEnd = today, dueDate = today;
             bool isEstimate = false;
             decimal rentCredit = 0m;
+
+            // NEW: advance payment (credit) held per category, and this period's rent share
+            decimal waterCredit = 0m;
+            decimal rentShareThisPeriod = 0m;
 
             // Desc, Due, Share, Paid, IsEstimate
             var current = new List<(string Desc, DateTime Due, decimal Share, decimal Paid, bool Est)>();
@@ -424,15 +439,32 @@ namespace Capstoneszn.UserControls
 
                         if (rd["Share"] == DBNull.Value)
                             notes.Add("No rent share this period (joined after the bill was generated).");
+                        // OLD:
+                        // else
+                        //     current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy}", dueDate,
+                        //         Convert.ToDecimal(rd["Share"]), Convert.ToDecimal(rd["Paid"]), false));
+                        // NEW: same line, and also remember the share (used to show how many
+                        //      periods the remaining advance credit covers)
                         else
+                        {
+                            rentShareThisPeriod = Convert.ToDecimal(rd["Share"]);
                             current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy}", dueDate,
-                                Convert.ToDecimal(rd["Share"]), Convert.ToDecimal(rd["Paid"]), false));
+                                rentShareThisPeriod, Convert.ToDecimal(rd["Paid"]), false));
+                        }
                     }
                 }
 
                 // ---- 4. Rent: estimate if not generated yet ----
                 if (rentBillId == 0)
                 {
+                    // NEW: validation - no room price means no estimate can be made
+                    if (roomPrice <= 0m)
+                    {
+                        MessageBox.Show($"Room {roomNo} has no room price set, so the rent can't be estimated.",
+                            "Billing Statement", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
                     isEstimate = true;
                     var heads = new List<int>();   // longest-tenured first
                     using (var cmd = new SqlCommand(@"
@@ -452,8 +484,19 @@ namespace Capstoneszn.UserControls
                     current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy} (estimate)",
                         dueDate, share, 0m, true));
 
-                    rentCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Rent");
+                    // NEW: remember the share (used for the credit coverage line)
+                    rentShareThisPeriod = share;
+
+                    // OLD: credit was only read for estimates, so a tenant whose bill was
+                    //      already generated never saw their remaining advance payment.
+                    // rentCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Rent");
                 }
+
+                // NEW: advance payment (credit) is read for EVERY statement.
+                //      GetAvailableCredit = unclaimed credit, minus anything forfeited,
+                //      never below zero (same figure the Billing Summary uses).
+                rentCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Rent");
+                waterCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Water");
 
                 // ---- 5. Water for the period's month ----
                 DateTime waterMonth = new DateTime(periodStart.Year, periodStart.Month, 1);
@@ -548,6 +591,17 @@ namespace Capstoneszn.UserControls
             decimal creditApplied = isEstimate ? Math.Min(rentCredit, current.Where(l => l.Est).Sum(l => l.Share)) : 0m;
             decimal amountDue = Math.Max(0m, unpaidTotal + currentTotal - paidCurrent - creditApplied);
 
+            // NEW: advance payment left AFTER this statement.
+            //  - Estimate: part of the rent credit is shown as applied to this period
+            //    (the system applies it when the bill is generated).
+            //  - Real bill: the system already applied credit to it (it is inside "Paid"),
+            //    so what GetAvailableCredit returns is already the remainder.
+            decimal rentCreditLeft = Math.Max(0m, rentCredit - creditApplied);
+            decimal waterCreditLeft = waterCredit;
+            int periodsCovered = rentShareThisPeriod > 0m
+                ? (int)Math.Floor(rentCreditLeft / rentShareThisPeriod)
+                : 0;
+
             string statementNo = $"{(isEstimate ? "EST" : "SOA")}-{tenantId:D5}-{periodStart:yyyyMMdd}";
 
             string Status(decimal share, decimal paid, DateTime due, bool est) =>
@@ -620,6 +674,13 @@ namespace Capstoneszn.UserControls
                                          "₱" + Bal(l.Share, l.Paid).ToString("N2") }, fText);
                 }
 
+                // NEW: a grey explanation line under an amount
+                void Hint(string text)
+                {
+                    g.DrawString(text, fText, Brushes.DimGray, x + 12, y);
+                    y += lh;
+                }
+
                 /*
                 // Estimate watermark
                 if (isEstimate)
@@ -658,15 +719,54 @@ namespace Capstoneszn.UserControls
                 g.FillRectangle(Brushes.Gainsboro, x, y, w, fTotal.GetHeight(g) + 6);
                 y += 3;
                 Amount("TOTAL AMOUNT DUE", "₱" + amountDue.ToString("N2"), fTotal);
-                g.DrawString(amountDue > 0m ? $"Please pay on or before {dueDate:MMM d, yyyy}." : "No amount due.",
-                    fText, Brushes.Black, x, y);
+
+                // OLD:
+                // g.DrawString(amountDue > 0m ? $"Please pay on or before {dueDate:MMM d, yyyy}." : "No amount due.",
+                //     fText, Brushes.Black, x, y);
+                // NEW: say WHY nothing is due when an advance payment covers it
+                string dueText = amountDue > 0m ? $"Please pay on or before {dueDate:MMM d, yyyy}."
+                               : (rentCredit > 0m || waterCredit > 0m || paidCurrent > 0m)
+                                   ? "No amount due. This period is covered by your payment in advance."
+                                   : "No amount due.";
+                g.DrawString(dueText, fText, Brushes.Black, x, y);
                 y += lh;
+
+                // NEW: remaining credit shown right under the total (summary level)
+                if (rentCreditLeft > 0m || waterCreditLeft > 0m)
+                    Amount("Advance credit remaining", "₱" + (rentCreditLeft + waterCreditLeft).ToString("N2"), fBold);
 
                 // Lines
                 Section($"CURRENT CHARGES ({periodStart:MMM d} – {periodEnd:MMM d, yyyy})");
                 Table(current, "No current charges.");
                 Section("UNPAID PREVIOUS BILLS");
                 Table(unpaid, "No unpaid bills.");
+
+                // NEW: Advance payment (credit) section
+                Section("ADVANCE PAYMENT (CREDIT)");
+                if (rentCredit <= 0m && waterCredit <= 0m)
+                {
+                    g.DrawString("No advance payment on record.", fText, Brushes.DimGray, x, y);
+                    y += lh;
+                }
+                else
+                {
+                    if (rentCredit > 0m)
+                    {
+                        Amount("Rent credit available", "₱" + rentCredit.ToString("N2"), fText);
+                        if (creditApplied > 0m)
+                            Amount("Less: to be applied to this period's rent", "-₱" + creditApplied.ToString("N2"), fText);
+                        Amount("Rent credit remaining", "₱" + rentCreditLeft.ToString("N2"), fBold);
+                        if (periodsCovered > 0)
+                            Hint($"Covers about {periodsCovered} more rent period(s) at ₱{rentShareThisPeriod:N2} each.");
+                        else if (rentCreditLeft > 0m)
+                            Hint("Will be applied to your next rent bill.");
+                    }
+                    if (waterCredit > 0m)
+                    {
+                        Amount("Water credit remaining", "₱" + waterCreditLeft.ToString("N2"), fBold);
+                        Hint("Will be applied to your next water bill.");
+                    }
+                }
 
                 // Notes
                 Section("NOTES");
@@ -679,6 +779,12 @@ namespace Capstoneszn.UserControls
                 if (isEstimate)
                     allNotes.Add("ESTIMATE: rent for this period is not billed yet. It is based on the room price and " +
                                  "active tenants today and may change. This is not a demand for payment.");
+
+                // NEW: advance payment terms (credit is used automatically; unused credit is forfeited on move-out)
+                if (rentCredit > 0m || waterCredit > 0m)
+                    allNotes.Add("Advance payments are applied automatically to your next bills of the same category. " +
+                                 "Unused advance payment is not refunded upon move-out.");
+
                 foreach (string n in allNotes)
                 {
                     SizeF sz = g.MeasureString("• " + n, fText, (int)w);

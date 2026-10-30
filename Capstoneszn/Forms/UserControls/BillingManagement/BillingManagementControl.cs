@@ -58,5 +58,10 @@ namespace Capstoneszn.UserControls
             // 5. Hide this current Billing Management Control
             this.Hide();
         }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

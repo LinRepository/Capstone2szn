@@ -173,7 +173,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                     while (reader.Read())
                     {
                         int roomId = reader.GetInt32(0);
-                        string roomNumber = reader.GetString(1);
+                        // ORIGINAL: string roomNumber = reader.GetString(1);
+                        string roomNumber = Convert.ToString(reader.GetValue(1)) ?? "";   // NEW: RoomNumber is INT
                         int? capacity = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2);
                         int tenantCount = reader.GetInt32(3);
                         decimal outstanding = reader.GetDecimal(4);

@@ -31,11 +31,6 @@
             pnlHeader = new Panel();
             lblTenantInfo = new Label();
             lblTitle = new Label();
-            pnlSummary = new Panel();
-            dgvSummary = new DataGridView();
-            pnlSummaryHeader = new Panel();
-            lblCreditNote = new Label();
-            lblSummaryTitle = new Label();
             pnlFilter = new Panel();
             cboCategory = new ComboBox();
             lblFilter = new Label();
@@ -46,9 +41,6 @@
             pnlBillsHeader = new Panel();
             lblBillsTitle = new Label();
             pnlHeader.SuspendLayout();
-            pnlSummary.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvSummary).BeginInit();
-            pnlSummaryHeader.SuspendLayout();
             pnlFilter.SuspendLayout();
             pnlActions.SuspendLayout();
             pnlBills.SuspendLayout();
@@ -91,75 +83,12 @@
             lblTitle.Text = "Billing Summary";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // pnlSummary
-            // 
-            pnlSummary.Controls.Add(dgvSummary);
-            pnlSummary.Controls.Add(pnlSummaryHeader);
-            pnlSummary.Dock = DockStyle.Top;
-            pnlSummary.Location = new Point(0, 85);
-            pnlSummary.Name = "pnlSummary";
-            pnlSummary.Padding = new Padding(10, 0, 10, 10);
-            pnlSummary.Size = new Size(980, 240);
-            pnlSummary.TabIndex = 1;
-            // 
-            // dgvSummary
-            // 
-            dgvSummary.AllowUserToAddRows = false;
-            dgvSummary.AllowUserToDeleteRows = false;
-            dgvSummary.AllowUserToResizeRows = false;
-            dgvSummary.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvSummary.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvSummary.Dock = DockStyle.Fill;
-            dgvSummary.Location = new Point(10, 45);
-            dgvSummary.MultiSelect = false;
-            dgvSummary.Name = "dgvSummary";
-            dgvSummary.ReadOnly = true;
-            dgvSummary.RowHeadersVisible = false;
-            dgvSummary.RowHeadersWidth = 51;
-            dgvSummary.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvSummary.Size = new Size(960, 185);
-            dgvSummary.TabIndex = 1;
-            // 
-            // pnlSummaryHeader
-            // 
-            pnlSummaryHeader.Controls.Add(lblCreditNote);
-            pnlSummaryHeader.Controls.Add(lblSummaryTitle);
-            pnlSummaryHeader.Dock = DockStyle.Top;
-            pnlSummaryHeader.Location = new Point(10, 0);
-            pnlSummaryHeader.Name = "pnlSummaryHeader";
-            pnlSummaryHeader.Size = new Size(960, 45);
-            pnlSummaryHeader.TabIndex = 0;
-            // 
-            // lblCreditNote
-            // 
-            lblCreditNote.Dock = DockStyle.Right;
-            lblCreditNote.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCreditNote.ForeColor = Color.White;
-            lblCreditNote.Location = new Point(510, 0);
-            lblCreditNote.Name = "lblCreditNote";
-            lblCreditNote.Size = new Size(450, 45);
-            lblCreditNote.TabIndex = 1;
-            lblCreditNote.Text = "-";
-            lblCreditNote.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // lblSummaryTitle
-            // 
-            lblSummaryTitle.Dock = DockStyle.Left;
-            lblSummaryTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSummaryTitle.ForeColor = Color.White;
-            lblSummaryTitle.Location = new Point(0, 0);
-            lblSummaryTitle.Name = "lblSummaryTitle";
-            lblSummaryTitle.Size = new Size(300, 45);
-            lblSummaryTitle.TabIndex = 0;
-            lblSummaryTitle.Text = "Totals by Category";
-            lblSummaryTitle.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // pnlFilter
             // 
             pnlFilter.Controls.Add(cboCategory);
             pnlFilter.Controls.Add(lblFilter);
             pnlFilter.Dock = DockStyle.Top;
-            pnlFilter.Location = new Point(0, 325);
+            pnlFilter.Location = new Point(0, 85);
             pnlFilter.Name = "pnlFilter";
             pnlFilter.Padding = new Padding(10, 5, 10, 5);
             pnlFilter.Size = new Size(980, 55);
@@ -192,7 +121,7 @@
             // 
             pnlActions.Controls.Add(btnClose);
             pnlActions.Dock = DockStyle.Bottom;
-            pnlActions.Location = new Point(0, 660);
+            pnlActions.Location = new Point(0, 426);
             pnlActions.Name = "pnlActions";
             pnlActions.Padding = new Padding(10);
             pnlActions.Size = new Size(980, 60);
@@ -216,10 +145,10 @@
             pnlBills.Controls.Add(dgvBills);
             pnlBills.Controls.Add(pnlBillsHeader);
             pnlBills.Dock = DockStyle.Fill;
-            pnlBills.Location = new Point(0, 380);
+            pnlBills.Location = new Point(0, 140);
             pnlBills.Name = "pnlBills";
             pnlBills.Padding = new Padding(10, 0, 10, 0);
-            pnlBills.Size = new Size(980, 280);
+            pnlBills.Size = new Size(980, 286);
             pnlBills.TabIndex = 3;
             // 
             // dgvBills
@@ -237,7 +166,7 @@
             dgvBills.RowHeadersVisible = false;
             dgvBills.RowHeadersWidth = 51;
             dgvBills.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvBills.Size = new Size(960, 240);
+            dgvBills.Size = new Size(960, 246);
             dgvBills.TabIndex = 1;
             dgvBills.CellFormatting += dgvBills_CellFormatting;
             // 
@@ -269,11 +198,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(25, 25, 70);
             CancelButton = btnClose;
-            ClientSize = new Size(980, 720);
+            ClientSize = new Size(980, 486);
             Controls.Add(pnlBills);
             Controls.Add(pnlActions);
             Controls.Add(pnlFilter);
-            Controls.Add(pnlSummary);
             Controls.Add(pnlHeader);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -284,9 +212,6 @@
             Text = "Billing Summary";
             Load += TenantBillingForm_Load;
             pnlHeader.ResumeLayout(false);
-            pnlSummary.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvSummary).EndInit();
-            pnlSummaryHeader.ResumeLayout(false);
             pnlFilter.ResumeLayout(false);
             pnlActions.ResumeLayout(false);
             pnlBills.ResumeLayout(false);
@@ -300,11 +225,6 @@
         private Panel pnlHeader;
         private Label lblTitle;
         private Label lblTenantInfo;
-        private Panel pnlSummary;
-        private Panel pnlSummaryHeader;
-        private Label lblSummaryTitle;
-        private Label lblCreditNote;
-        private DataGridView dgvSummary;
         private Panel pnlFilter;
         private Label lblFilter;
         private ComboBox cboCategory;

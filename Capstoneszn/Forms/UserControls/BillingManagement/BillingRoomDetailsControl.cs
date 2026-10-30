@@ -36,14 +36,14 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         /// own column because it is paid separately (Full only).
         /// </summary>
         private const string RentCategory = "Rent";
-
         private readonly int _roomId;
 
         private int _currentBillId = -1;
         private DateTime? _currentDueDate;
         private DataTable _tenants;
 
-
+        // NEW (Billing v2): the drop-down list of periods for Generate statement
+        private readonly ContextMenuStrip _periodMenu = new ContextMenuStrip();
         public BillingRoomDetailsControl(int roomId)
         {
             InitializeComponent();
@@ -54,7 +54,14 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             // its own from the query (TenantId, Overdue stay hidden that way).
             dgvTenantPayments.AutoGenerateColumns = false;
 
-            foreach (DataGridViewColumn col in new[] { colShare, colPaid, colMaintenance, colOutstanding, colAdvance })
+            // ORIGINAL: foreach (DataGridViewColumn col in new[] { colShare, colPaid, colMaintenance, colOutstanding, colAdvance })
+
+            // NEW (Billing v2): each category column shows that category's unpaid balance
+            colRent.DataPropertyName = "RentOwed";
+            colWater.DataPropertyName = "WaterOwed";
+            colMaintenance.DataPropertyName = "MaintenanceOwed";
+
+            foreach (DataGridViewColumn col in new[] { colRent, colWater, colMaintenance, colOutstanding, colCredits })
             {
                 col.DefaultCellStyle.Format = "N2";
                 col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
@@ -190,6 +197,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                        ISNULL(debt.Outstanding, 0)     AS Outstanding,
                        ISNULL(debt.Overdue, 0)         AS Overdue,
                        ISNULL(debt.MaintOwed, 0)       AS MaintenanceOwed,
+                       ISNULL(debt.RentOwed, 0)        AS RentOwed,      -- NEW (Billing v2)
+                       ISNULL(debt.WaterOwed, 0)       AS WaterOwed,     -- NEW (Billing v2)
                        ISNULL(cred.Held, 0)
                      - ISNULL(forf.Forfeited, 0)       AS Advance
                 FROM   Tenancies tn
@@ -213,6 +222,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                     SELECT SUM(x.Unpaid) AS Outstanding,
                            SUM(CASE WHEN x.DueDate < CAST(GETDATE() AS DATE)
                                     THEN x.Unpaid ELSE 0 END) AS Overdue,
+                           SUM(CASE WHEN x.BillCategory = 'Rent'
+                                    THEN x.Unpaid ELSE 0 END) AS RentOwed,    -- NEW (Billing v2)
+                           SUM(CASE WHEN x.BillCategory = 'Water'
+                                    THEN x.Unpaid ELSE 0 END) AS WaterOwed,   -- NEW (Billing v2)
                            SUM(CASE WHEN x.BillCategory = 'Maintenance'
                                     THEN x.Unpaid ELSE 0 END) AS MaintOwed
                     FROM (
@@ -266,7 +279,71 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 dgvTenantPayments.DataSource = dt;
             }
         }
+        // NEW (Billing v2): colours per category, derived Status, button caption
+        private void dgvTenantPayments_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
 
+            DataRowView row = dgvTenantPayments.Rows[e.RowIndex].DataBoundItem as DataRowView;
+            if (row == null) return;
+
+            decimal owed = ToDec(row["Outstanding"]);
+            decimal overdue = ToDec(row["Overdue"]);
+            decimal credit = ToDec(row["Advance"]);
+
+            if (e.ColumnIndex == colRent.Index)
+            {
+                e.CellStyle.ForeColor = ToDec(row["RentOwed"]) > 0m ? Color.DarkOrange : Color.Black;
+            }
+            else if (e.ColumnIndex == colWater.Index)
+            {
+                e.CellStyle.ForeColor = ToDec(row["WaterOwed"]) > 0m ? Color.DarkOrange : Color.Black;
+            }
+            else if (e.ColumnIndex == colMaintenance.Index)
+            {
+                e.CellStyle.ForeColor = ToDec(row["MaintenanceOwed"]) > 0m ? Color.DarkOrange : Color.Black;
+            }
+            else if (e.ColumnIndex == colOutstanding.Index)
+            {
+                e.CellStyle.ForeColor = overdue > 0m ? Color.Crimson
+                                      : owed > 0m ? Color.DarkOrange
+                                      : Color.Black;
+            }
+            else if (e.ColumnIndex == colCredits.Index)
+            {
+                e.CellStyle.ForeColor = credit > 0m ? Color.SeaGreen : Color.Black;
+            }
+            else if (e.ColumnIndex == colStatus.Index)
+            {
+                // Not stored anywhere - worked out from the balances every time.
+                string status = TenantStatus(owed, overdue, credit);
+                e.Value = status;
+                e.CellStyle.ForeColor = status == "Overdue" ? Color.Crimson
+                                      : status == "Unpaid" ? Color.DarkOrange
+                                      : status == "Advance" ? Color.SeaGreen
+                                      : Color.Black;
+                e.FormattingApplied = true;
+            }
+            else if (e.ColumnIndex == colPayment.Index)
+            {
+                e.Value = owed > 0m ? "Make Payment" : "Pay Advance";
+            }
+        }
+
+        /// <summary>
+        /// NEW (Billing v2). Checked in this order:
+        /// owes past the due date -> Overdue; owes -> Unpaid;
+        /// owes nothing but has credit -> Advance; otherwise Paid.
+        /// </summary>
+        private static string TenantStatus(decimal owed, decimal overdue, decimal credit)
+        {
+            if (overdue > 0m) return "Overdue";
+            if (owed > 0m) return "Unpaid";
+            if (credit > 0m) return "Advance";
+            return "Paid";
+        }
+
+        /* ORIG
         // Per-row button caption and balance color
         private void dgvTenantPayments_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -350,12 +427,12 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             {
                 lblBillStatusValue.Text = "No current tenants";
                 lblBillStatusValue.ForeColor = Color.Gainsboro;
-                lblTenantsCaption.Text = "Nobody lives in this room right now.";
+                //ORIG lblTenantsCaption.Text = "Nobody lives in this room right now.";
                 return;
             }
 
-            lblTenantsCaption.Text =
-                "Current tenants  -  double-click a tenant to see their full bill history";
+            //ORIG lblTenantsCaption.Text =
+            //ORIG    "Current tenants  -  double-click a tenant to see their full bill history";
 
             if (_currentBillId <= 0 || !_currentDueDate.HasValue)
             {
@@ -417,7 +494,9 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             // The payment form takes room and tenant, not a bill: it applies
             // the money to the tenant's oldest unpaid share first and holds
             // any excess as credit for the next bill.
-            using (BillingPaymentForm pay = new BillingPaymentForm(_roomId, tenantId))
+
+            // ORIGINAL: using (BillingPaymentForm pay = new BillingPaymentForm(_roomId, tenantId))
+            using (RevisedBillingPaymentForm pay = new RevisedBillingPaymentForm(_roomId, tenantId))   // NEW (Billing v2)
             {
                 if (pay.ShowDialog(this.FindForm()) == DialogResult.OK)
                     LoadBilling();
@@ -472,6 +551,64 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         private static decimal ToDec(object value)
         {
             return (value == null || value == DBNull.Value) ? 0m : Convert.ToDecimal(value);
+        }
+
+        /// <summary>
+        /// NEW (Billing v2): lists the room's billing periods (newest first);
+        /// picking one opens that period's Statement of Account.
+        /// </summary>
+        private void btnGenerateStatment_Click(object sender, EventArgs e)
+        {
+            List<StatementPeriod> periods;
+            try
+            {
+                periods = RoomStatementService.GetPeriods(_roomId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not load this room's billing periods.", "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (periods.Count == 0)
+            {
+                MessageBox.Show("This room has no billing periods yet.", "Statement",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            _periodMenu.Items.Clear();
+            DateTime today = DateTime.Today;
+
+            foreach (StatementPeriod p in periods)
+            {
+                string label = $"{p.Start:MMM d, yyyy} - {p.LastDay:MMM d, yyyy}";
+                if (p.Start > today) label += "  (upcoming)";
+                else if (today < p.End) label += "  (current)";
+
+                ToolStripItem item = _periodMenu.Items.Add(label);
+                item.Click += (s, a) => ShowStatement(p);
+            }
+
+            // Opens just below the button.
+            _periodMenu.Show(btnGenerateStatment, new Point(0, btnGenerateStatment.Height));
+        }
+        /// <summary>NEW (Billing v2): builds the statement and opens the print preview.</summary>
+        private void ShowStatement(StatementPeriod period)
+        {
+            try
+            {
+                RoomStatement st = RoomStatementService.Load(_roomId, period);
+                RoomStatementPrinter.ShowPreview(this.FindForm(), st);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not generate the statement.\n\n" + ex.Message, "Statement",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

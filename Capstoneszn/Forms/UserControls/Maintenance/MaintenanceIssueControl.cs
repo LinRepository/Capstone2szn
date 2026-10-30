@@ -71,9 +71,16 @@ namespace Capstoneszn.Forms.UserControls
             IssueId = issue.IssueId;
             IsPending = issue.IsPending;
 
-            lblUnitValue.Text = issue.RoomNumber;
+            // ORIGINAL: lblUnitValue.Text = issue.RoomNumber;
+            // NEW (Maintenance v2): "Building | <building name>" for a Building issue
+            lblUnitTitle.Text = issue.IsBuildingIssue ? "Building" : "Room";
+            lblUnitValue.Text = issue.IsBuildingIssue ? issue.BuildingName : issue.RoomNumber;
             lblStatusValue.Text = issue.Status;
-            lblStatusValue.ForeColor = issue.IsPending ? Color.Orange : Color.LightGreen;
+            // ORIGINAL: lblStatusValue.ForeColor = issue.IsPending ? Color.Orange : Color.LightGreen;
+            // NEW (Maintenance v2): Pending = repair not done; For Payment = waiting for tenants; Complete = settled
+            lblStatusValue.ForeColor = issue.IsPending ? Color.Orange
+                                     : issue.Status == MaintenanceService.StatusForPayment ? Color.Gold
+                                     : Color.LightGreen;
             lblIssueValue.Text = issue.IssueTitle;
             lblDescriptionValue.Text = string.IsNullOrWhiteSpace(issue.Description)
                 ? "-" : issue.Description;
@@ -84,5 +91,9 @@ namespace Capstoneszn.Forms.UserControls
             btnDeleteIssue.Visible = issue.IsPending;
         }
 
+        private void btnEditIssue_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

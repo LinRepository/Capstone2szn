@@ -43,6 +43,9 @@
             pnlPaidBy = new Panel();
             cboPaidBy = new ComboBox();
             lblPaidBy = new Label();
+            pnlCreditTo = new Panel();          // NEW (credit choice)
+            cboCreditTo = new ComboBox();       // NEW (credit choice)
+            lblCreditTo = new Label();          // NEW (credit choice)
             pnlSummary = new Panel();
             lblStatus = new Label();
             lblReceiptsLine = new Label();
@@ -87,6 +90,7 @@
             pnlPaymentContent.SuspendLayout();
             pnlPayerArea.SuspendLayout();
             pnlPaidBy.SuspendLayout();
+            pnlCreditTo.SuspendLayout();        // NEW (credit choice)
             pnlSummary.SuspendLayout();
             tlpSummary.SuspendLayout();
             pnlLegacyFields.SuspendLayout();
@@ -101,9 +105,9 @@
             pnlPaymentMethodOptions.SuspendLayout();
             pnlPaymentDate.SuspendLayout();
             SuspendLayout();
-            //
+            // 
             // pnlPaymentHeader
-            //
+            // 
             pnlPaymentHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlPaymentHeader.Controls.Add(lblPaymentDescription);
             pnlPaymentHeader.Controls.Add(lblPaymentTitle);
@@ -113,9 +117,9 @@
             pnlPaymentHeader.Name = "pnlPaymentHeader";
             pnlPaymentHeader.Size = new Size(1000, 72);
             pnlPaymentHeader.TabIndex = 0;
-            //
+            // 
             // lblPaymentDescription
-            //
+            // 
             lblPaymentDescription.Dock = DockStyle.Fill;
             lblPaymentDescription.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPaymentDescription.ForeColor = Color.FromArgb(184, 198, 224);
@@ -125,9 +129,9 @@
             lblPaymentDescription.TabIndex = 1;
             lblPaymentDescription.Text = "Room ### · Rent · Today · Whole Room";
             lblPaymentDescription.TextAlign = ContentAlignment.MiddleCenter;
-            //
+            // 
             // lblPaymentTitle
-            //
+            // 
             lblPaymentTitle.Dock = DockStyle.Top;
             lblPaymentTitle.Font = new Font("Segoe UI", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblPaymentTitle.ForeColor = Color.White;
@@ -137,9 +141,9 @@
             lblPaymentTitle.TabIndex = 0;
             lblPaymentTitle.Text = "Move-In Payment";
             lblPaymentTitle.TextAlign = ContentAlignment.BottomCenter;
-            //
+            // 
             // pnlPaymentActions
-            //
+            // 
             pnlPaymentActions.BorderStyle = BorderStyle.FixedSingle;
             pnlPaymentActions.Controls.Add(btnClear);
             pnlPaymentActions.Controls.Add(btnContinuePayment);
@@ -150,11 +154,9 @@
             pnlPaymentActions.Name = "pnlPaymentActions";
             pnlPaymentActions.Size = new Size(1000, 56);
             pnlPaymentActions.TabIndex = 2;
-            //
+            // 
             // btnClear
-            // Kept for the existing btnClear_Click handler; hidden because each
-            // card already starts at the amount due.
-            //
+            // 
             btnClear.Cursor = Cursors.Hand;
             btnClear.Font = new Font("Segoe UI", 10.8F);
             btnClear.Location = new Point(150, 9);
@@ -165,9 +167,9 @@
             btnClear.UseVisualStyleBackColor = true;
             btnClear.Visible = false;
             btnClear.Click += btnClear_Click;
-            //
+            // 
             // btnContinuePayment
-            //
+            // 
             btnContinuePayment.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnContinuePayment.Cursor = Cursors.Hand;
             btnContinuePayment.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold);
@@ -178,11 +180,9 @@
             btnContinuePayment.Text = "Continue";
             btnContinuePayment.UseVisualStyleBackColor = true;
             btnContinuePayment.Click += btnContinuePayment_Click;
-            //
+            // 
             // btnCancelPayment
-            // Back to MoveInForm with the list unchanged. Cancelling the whole
-            // move-in is done with MoveInForm's own Cancel.
-            //
+            // 
             btnCancelPayment.Cursor = Cursors.Hand;
             btnCancelPayment.Font = new Font("Segoe UI", 10.8F);
             btnCancelPayment.Location = new Point(14, 9);
@@ -192,9 +192,9 @@
             btnCancelPayment.Text = "← Back";
             btnCancelPayment.UseVisualStyleBackColor = true;
             btnCancelPayment.Click += btnCancelPayment_Click;
-            //
+            // 
             // pnlPaymentContent
-            //
+            // 
             pnlPaymentContent.Controls.Add(pnlPayerArea);
             pnlPaymentContent.Controls.Add(pnlSummary);
             pnlPaymentContent.Controls.Add(pnlLegacyFields);
@@ -205,12 +205,13 @@
             pnlPaymentContent.Padding = new Padding(16, 14, 16, 14);
             pnlPaymentContent.Size = new Size(1000, 632);
             pnlPaymentContent.TabIndex = 1;
-            //
+            // 
             // pnlPayerArea
-            //
+            // 
             pnlPayerArea.Controls.Add(flpPayerCards);
             pnlPayerArea.Controls.Add(lblCreditedTo);
             pnlPayerArea.Controls.Add(lblDependents);
+            pnlPayerArea.Controls.Add(pnlCreditTo);   // NEW (credit choice): docks under "Paid by"
             pnlPayerArea.Controls.Add(pnlPaidBy);
             pnlPayerArea.Dock = DockStyle.Fill;
             pnlPayerArea.Location = new Point(16, 14);
@@ -218,11 +219,9 @@
             pnlPayerArea.Padding = new Padding(0, 0, 14, 0);
             pnlPayerArea.Size = new Size(668, 604);
             pnlPayerArea.TabIndex = 0;
-            //
+            // 
             // flpPayerCards
-            // One PayerCardControl per paying tenant is added here at runtime
-            // (one card for Whole Room).
-            //
+            // 
             flpPayerCards.AutoScroll = true;
             flpPayerCards.Dock = DockStyle.Fill;
             flpPayerCards.FlowDirection = FlowDirection.TopDown;
@@ -231,10 +230,9 @@
             flpPayerCards.Size = new Size(654, 444);
             flpPayerCards.TabIndex = 1;
             flpPayerCards.WrapContents = false;
-            //
+            // 
             // lblCreditedTo
-            // Whole Room only: who the single payment is credited to.
-            //
+            // 
             lblCreditedTo.BorderStyle = BorderStyle.FixedSingle;
             lblCreditedTo.Dock = DockStyle.Bottom;
             lblCreditedTo.Font = new Font("Segoe UI", 10.2F);
@@ -246,9 +244,9 @@
             lblCreditedTo.TabIndex = 2;
             lblCreditedTo.Text = "Credited to:";
             lblCreditedTo.Visible = false;
-            //
+            // 
             // lblDependents
-            //
+            // 
             lblDependents.Dock = DockStyle.Bottom;
             lblDependents.Font = new Font("Segoe UI", 10.2F);
             lblDependents.ForeColor = Color.FromArgb(184, 198, 224);
@@ -260,10 +258,46 @@
             lblDependents.Text = "Dependents (no billing): —";
             lblDependents.TextAlign = ContentAlignment.MiddleLeft;
             lblDependents.Visible = false;
-            //
+            // 
+            // pnlCreditTo  (NEW - credit choice: Whole Room, who gets the extra)
+            // 
+            pnlCreditTo.Controls.Add(cboCreditTo);
+            pnlCreditTo.Controls.Add(lblCreditTo);
+            pnlCreditTo.Dock = DockStyle.Top;
+            pnlCreditTo.Location = new Point(0, 52);
+            pnlCreditTo.Name = "pnlCreditTo";
+            pnlCreditTo.Padding = new Padding(0, 0, 0, 10);
+            pnlCreditTo.Size = new Size(654, 46);
+            pnlCreditTo.TabIndex = 1;
+            pnlCreditTo.Visible = false;
+            // 
+            // cboCreditTo
+            // 
+            cboCreditTo.Cursor = Cursors.Hand;
+            cboCreditTo.Dock = DockStyle.Left;
+            cboCreditTo.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboCreditTo.Font = new Font("Segoe UI", 12F);
+            cboCreditTo.FormattingEnabled = true;
+            cboCreditTo.Location = new Point(150, 0);
+            cboCreditTo.Name = "cboCreditTo";
+            cboCreditTo.Size = new Size(260, 36);
+            cboCreditTo.TabIndex = 1;
+            cboCreditTo.SelectedIndexChanged += cboCreditTo_SelectedIndexChanged;
+            // 
+            // lblCreditTo
+            // 
+            lblCreditTo.Dock = DockStyle.Left;
+            lblCreditTo.Font = new Font("Segoe UI", 12F);
+            lblCreditTo.ForeColor = Color.White;
+            lblCreditTo.Location = new Point(0, 0);
+            lblCreditTo.Name = "lblCreditTo";
+            lblCreditTo.Size = new Size(150, 36);
+            lblCreditTo.TabIndex = 0;
+            lblCreditTo.Text = "Extra credit to";
+            lblCreditTo.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // pnlPaidBy
-            // Whole Room only.
-            //
+            // 
             pnlPaidBy.Controls.Add(cboPaidBy);
             pnlPaidBy.Controls.Add(lblPaidBy);
             pnlPaidBy.Dock = DockStyle.Top;
@@ -272,9 +306,9 @@
             pnlPaidBy.Padding = new Padding(0, 6, 0, 10);
             pnlPaidBy.Size = new Size(654, 52);
             pnlPaidBy.TabIndex = 0;
-            //
+            // 
             // cboPaidBy
-            //
+            // 
             cboPaidBy.Cursor = Cursors.Hand;
             cboPaidBy.Dock = DockStyle.Left;
             cboPaidBy.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -285,9 +319,9 @@
             cboPaidBy.Size = new Size(320, 36);
             cboPaidBy.TabIndex = 1;
             cboPaidBy.SelectedIndexChanged += cboPaidBy_SelectedIndexChanged;
-            //
+            // 
             // lblPaidBy
-            //
+            // 
             lblPaidBy.Dock = DockStyle.Left;
             lblPaidBy.Font = new Font("Segoe UI", 12F);
             lblPaidBy.ForeColor = Color.White;
@@ -297,9 +331,9 @@
             lblPaidBy.TabIndex = 0;
             lblPaidBy.Text = "Paid by";
             lblPaidBy.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // pnlSummary
-            //
+            // 
             pnlSummary.BorderStyle = BorderStyle.FixedSingle;
             pnlSummary.Controls.Add(lblStatus);
             pnlSummary.Controls.Add(lblReceiptsLine);
@@ -313,9 +347,9 @@
             pnlSummary.Padding = new Padding(14, 10, 14, 10);
             pnlSummary.Size = new Size(300, 604);
             pnlSummary.TabIndex = 1;
-            //
+            // 
             // lblStatus
-            //
+            // 
             lblStatus.Dock = DockStyle.Bottom;
             lblStatus.Font = new Font("Segoe UI", 10.2F);
             lblStatus.ForeColor = Color.FromArgb(134, 239, 172);
@@ -325,9 +359,9 @@
             lblStatus.TabIndex = 5;
             lblStatus.Text = "Ready to continue.";
             lblStatus.TextAlign = ContentAlignment.BottomLeft;
-            //
+            // 
             // lblReceiptsLine
-            //
+            // 
             lblReceiptsLine.Dock = DockStyle.Top;
             lblReceiptsLine.Font = new Font("Segoe UI", 10.2F);
             lblReceiptsLine.ForeColor = Color.FromArgb(147, 197, 253);
@@ -336,9 +370,9 @@
             lblReceiptsLine.Size = new Size(270, 30);
             lblReceiptsLine.TabIndex = 4;
             lblReceiptsLine.Text = "1 payment · 1 receipt";
-            //
+            // 
             // lblTotalCollected
-            //
+            // 
             lblTotalCollected.Dock = DockStyle.Top;
             lblTotalCollected.Font = new Font("Segoe UI", 19.8F, FontStyle.Bold);
             lblTotalCollected.ForeColor = Color.White;
@@ -348,9 +382,9 @@
             lblTotalCollected.TabIndex = 3;
             lblTotalCollected.Text = "₱0.00";
             lblTotalCollected.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblTotalCaption
-            //
+            // 
             lblTotalCaption.Dock = DockStyle.Top;
             lblTotalCaption.Font = new Font("Segoe UI", 9.6F);
             lblTotalCaption.ForeColor = Color.FromArgb(184, 198, 224);
@@ -360,9 +394,9 @@
             lblTotalCaption.Size = new Size(270, 30);
             lblTotalCaption.TabIndex = 2;
             lblTotalCaption.Text = "Total collected today";
-            //
+            // 
             // tlpSummary
-            //
+            // 
             tlpSummary.ColumnCount = 2;
             tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -384,89 +418,105 @@
             tlpSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tlpSummary.Size = new Size(270, 140);
             tlpSummary.TabIndex = 1;
-            //
+            // 
             // lblRoomPriceCaption
-            //
+            // 
             lblRoomPriceCaption.Dock = DockStyle.Fill;
             lblRoomPriceCaption.Font = new Font("Segoe UI", 10.2F);
             lblRoomPriceCaption.ForeColor = Color.FromArgb(184, 198, 224);
+            lblRoomPriceCaption.Location = new Point(3, 0);
             lblRoomPriceCaption.Name = "lblRoomPriceCaption";
+            lblRoomPriceCaption.Size = new Size(129, 35);
             lblRoomPriceCaption.TabIndex = 0;
             lblRoomPriceCaption.Text = "Room price";
             lblRoomPriceCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblRoomPrice
-            //
+            // 
             lblRoomPrice.Dock = DockStyle.Fill;
             lblRoomPrice.Font = new Font("Segoe UI", 10.2F);
             lblRoomPrice.ForeColor = Color.White;
+            lblRoomPrice.Location = new Point(138, 0);
             lblRoomPrice.Name = "lblRoomPrice";
+            lblRoomPrice.Size = new Size(129, 35);
             lblRoomPrice.TabIndex = 1;
             lblRoomPrice.Text = "₱0.00";
             lblRoomPrice.TextAlign = ContentAlignment.MiddleRight;
-            //
+            // 
             // lblOccupantsCaption
-            //
+            // 
             lblOccupantsCaption.Dock = DockStyle.Fill;
             lblOccupantsCaption.Font = new Font("Segoe UI", 10.2F);
             lblOccupantsCaption.ForeColor = Color.FromArgb(184, 198, 224);
+            lblOccupantsCaption.Location = new Point(3, 35);
             lblOccupantsCaption.Name = "lblOccupantsCaption";
+            lblOccupantsCaption.Size = new Size(129, 35);
             lblOccupantsCaption.TabIndex = 2;
             lblOccupantsCaption.Text = "Occupants";
             lblOccupantsCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblOccupants
-            //
+            // 
             lblOccupants.Dock = DockStyle.Fill;
             lblOccupants.Font = new Font("Segoe UI", 10.2F);
             lblOccupants.ForeColor = Color.White;
+            lblOccupants.Location = new Point(138, 35);
             lblOccupants.Name = "lblOccupants";
+            lblOccupants.Size = new Size(129, 35);
             lblOccupants.TabIndex = 3;
             lblOccupants.Text = "0 (0 paying)";
             lblOccupants.TextAlign = ContentAlignment.MiddleRight;
-            //
+            // 
             // lblShareCaption
-            //
+            // 
             lblShareCaption.Dock = DockStyle.Fill;
             lblShareCaption.Font = new Font("Segoe UI", 10.2F);
             lblShareCaption.ForeColor = Color.FromArgb(184, 198, 224);
+            lblShareCaption.Location = new Point(3, 70);
             lblShareCaption.Name = "lblShareCaption";
+            lblShareCaption.Size = new Size(129, 35);
             lblShareCaption.TabIndex = 4;
             lblShareCaption.Text = "Share each";
             lblShareCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblShare
-            //
+            // 
             lblShare.Dock = DockStyle.Fill;
             lblShare.Font = new Font("Segoe UI", 10.2F);
             lblShare.ForeColor = Color.White;
+            lblShare.Location = new Point(138, 70);
             lblShare.Name = "lblShare";
+            lblShare.Size = new Size(129, 35);
             lblShare.TabIndex = 5;
             lblShare.Text = "₱0.00";
             lblShare.TextAlign = ContentAlignment.MiddleRight;
-            //
+            // 
             // lblCycleCaption
-            //
+            // 
             lblCycleCaption.Dock = DockStyle.Fill;
             lblCycleCaption.Font = new Font("Segoe UI", 10.2F);
             lblCycleCaption.ForeColor = Color.FromArgb(184, 198, 224);
+            lblCycleCaption.Location = new Point(3, 105);
             lblCycleCaption.Name = "lblCycleCaption";
+            lblCycleCaption.Size = new Size(129, 35);
             lblCycleCaption.TabIndex = 6;
             lblCycleCaption.Text = "Cycle starts";
             lblCycleCaption.TextAlign = ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCycleStart
-            //
+            // 
             lblCycleStart.Dock = DockStyle.Fill;
             lblCycleStart.Font = new Font("Segoe UI", 10.2F);
             lblCycleStart.ForeColor = Color.White;
+            lblCycleStart.Location = new Point(138, 105);
             lblCycleStart.Name = "lblCycleStart";
+            lblCycleStart.Size = new Size(129, 35);
             lblCycleStart.TabIndex = 7;
             lblCycleStart.Text = "—";
             lblCycleStart.TextAlign = ContentAlignment.MiddleRight;
-            //
+            // 
             // lblSummaryTitle
-            //
+            // 
             lblSummaryTitle.Dock = DockStyle.Top;
             lblSummaryTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblSummaryTitle.ForeColor = Color.FromArgb(184, 198, 224);
@@ -475,12 +525,9 @@
             lblSummaryTitle.Size = new Size(270, 30);
             lblSummaryTitle.TabIndex = 0;
             lblSummaryTitle.Text = "SUMMARY";
-            //
+            // 
             // pnlLegacyFields
-            // The old single-payer fields, kept (hidden) so the current
-            // PaymentForm.cs still compiles. The .cs rewrite moves to the
-            // payer cards; after that these can be commented out.
-            //
+            // 
             pnlLegacyFields.Controls.Add(pnlAmountReferenceNumber);
             pnlLegacyFields.Controls.Add(pnlCategoryPaymentType);
             pnlLegacyFields.Controls.Add(pnlDatePaymentMethod);
@@ -489,9 +536,9 @@
             pnlLegacyFields.Size = new Size(762, 282);
             pnlLegacyFields.TabIndex = 2;
             pnlLegacyFields.Visible = false;
-            //
+            // 
             // pnlAmountReferenceNumber
-            //
+            // 
             pnlAmountReferenceNumber.Controls.Add(pnlPaymentAmount);
             pnlAmountReferenceNumber.Controls.Add(pnlReferenceNumber);
             pnlAmountReferenceNumber.Dock = DockStyle.Fill;
@@ -499,9 +546,9 @@
             pnlAmountReferenceNumber.Name = "pnlAmountReferenceNumber";
             pnlAmountReferenceNumber.Size = new Size(762, 82);
             pnlAmountReferenceNumber.TabIndex = 3;
-            //
+            // 
             // pnlPaymentAmount
-            //
+            // 
             pnlPaymentAmount.Controls.Add(txtAmountValue);
             pnlPaymentAmount.Controls.Add(lblPaymentAmount);
             pnlPaymentAmount.Dock = DockStyle.Right;
@@ -509,9 +556,9 @@
             pnlPaymentAmount.Name = "pnlPaymentAmount";
             pnlPaymentAmount.Size = new Size(375, 82);
             pnlPaymentAmount.TabIndex = 1;
-            //
+            // 
             // txtAmountValue
-            //
+            // 
             txtAmountValue.BorderStyle = BorderStyle.FixedSingle;
             txtAmountValue.Location = new Point(3, 28);
             txtAmountValue.Name = "txtAmountValue";
@@ -519,9 +566,9 @@
             txtAmountValue.TabIndex = 10;
             txtAmountValue.Text = "₱****";
             txtAmountValue.TextAlign = HorizontalAlignment.Center;
-            //
+            // 
             // lblPaymentAmount
-            //
+            // 
             lblPaymentAmount.AutoSize = true;
             lblPaymentAmount.Dock = DockStyle.Top;
             lblPaymentAmount.Font = new Font("Segoe UI", 13.8F);
@@ -532,9 +579,9 @@
             lblPaymentAmount.Size = new Size(96, 31);
             lblPaymentAmount.TabIndex = 8;
             lblPaymentAmount.Text = "Amount";
-            //
+            // 
             // pnlReferenceNumber
-            //
+            // 
             pnlReferenceNumber.Controls.Add(txtReferenceNumber);
             pnlReferenceNumber.Controls.Add(lblReferenceNumber);
             pnlReferenceNumber.Dock = DockStyle.Left;
@@ -543,9 +590,9 @@
             pnlReferenceNumber.Size = new Size(375, 82);
             pnlReferenceNumber.TabIndex = 0;
             pnlReferenceNumber.Paint += pnlReferenceNumber_Paint;
-            //
+            // 
             // txtReferenceNumber
-            //
+            // 
             txtReferenceNumber.BorderStyle = BorderStyle.FixedSingle;
             txtReferenceNumber.Location = new Point(3, 28);
             txtReferenceNumber.Name = "txtReferenceNumber";
@@ -553,9 +600,9 @@
             txtReferenceNumber.TabIndex = 9;
             txtReferenceNumber.Visible = false;
             txtReferenceNumber.TextChanged += txtReferenceNumber_TextChanged;
-            //
+            // 
             // lblReferenceNumber
-            //
+            // 
             lblReferenceNumber.AutoSize = true;
             lblReferenceNumber.Dock = DockStyle.Top;
             lblReferenceNumber.Font = new Font("Segoe UI", 13.8F);
@@ -567,9 +614,9 @@
             lblReferenceNumber.TabIndex = 8;
             lblReferenceNumber.Text = "Reference Gcash Number";
             lblReferenceNumber.Visible = false;
-            //
+            // 
             // pnlCategoryPaymentType
-            //
+            // 
             pnlCategoryPaymentType.Controls.Add(pnlPaymentCategory);
             pnlCategoryPaymentType.Controls.Add(pnlPaymentType);
             pnlCategoryPaymentType.Dock = DockStyle.Top;
@@ -577,9 +624,9 @@
             pnlCategoryPaymentType.Name = "pnlCategoryPaymentType";
             pnlCategoryPaymentType.Size = new Size(762, 100);
             pnlCategoryPaymentType.TabIndex = 2;
-            //
+            // 
             // pnlPaymentCategory
-            //
+            // 
             pnlPaymentCategory.Controls.Add(cboPaymentCategory);
             pnlPaymentCategory.Controls.Add(lblPaymentCategory);
             pnlPaymentCategory.Dock = DockStyle.Left;
@@ -587,18 +634,18 @@
             pnlPaymentCategory.Name = "pnlPaymentCategory";
             pnlPaymentCategory.Size = new Size(375, 100);
             pnlPaymentCategory.TabIndex = 3;
-            //
+            // 
             // cboPaymentCategory
-            //
+            // 
             cboPaymentCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cboPaymentCategory.FormattingEnabled = true;
             cboPaymentCategory.Location = new Point(3, 34);
             cboPaymentCategory.Name = "cboPaymentCategory";
             cboPaymentCategory.Size = new Size(369, 28);
             cboPaymentCategory.TabIndex = 0;
-            //
+            // 
             // lblPaymentCategory
-            //
+            // 
             lblPaymentCategory.AutoSize = true;
             lblPaymentCategory.Dock = DockStyle.Top;
             lblPaymentCategory.Font = new Font("Segoe UI", 13.8F);
@@ -609,9 +656,9 @@
             lblPaymentCategory.Size = new Size(106, 31);
             lblPaymentCategory.TabIndex = 6;
             lblPaymentCategory.Text = "Category";
-            //
+            // 
             // pnlPaymentType
-            //
+            // 
             pnlPaymentType.Controls.Add(lblPaymentType);
             pnlPaymentType.Controls.Add(cboPaymentType);
             pnlPaymentType.Dock = DockStyle.Right;
@@ -619,9 +666,9 @@
             pnlPaymentType.Name = "pnlPaymentType";
             pnlPaymentType.Size = new Size(375, 100);
             pnlPaymentType.TabIndex = 0;
-            //
+            // 
             // lblPaymentType
-            //
+            // 
             lblPaymentType.AutoSize = true;
             lblPaymentType.Dock = DockStyle.Top;
             lblPaymentType.Font = new Font("Segoe UI", 13.8F);
@@ -632,18 +679,18 @@
             lblPaymentType.Size = new Size(156, 31);
             lblPaymentType.TabIndex = 8;
             lblPaymentType.Text = "Payment Type";
-            //
+            // 
             // cboPaymentType
-            //
+            // 
             cboPaymentType.DropDownStyle = ComboBoxStyle.DropDownList;
             cboPaymentType.FormattingEnabled = true;
             cboPaymentType.Location = new Point(0, 34);
             cboPaymentType.Name = "cboPaymentType";
             cboPaymentType.Size = new Size(372, 28);
             cboPaymentType.TabIndex = 7;
-            //
+            // 
             // pnlDatePaymentMethod
-            //
+            // 
             pnlDatePaymentMethod.Controls.Add(pnlPaymentMethod);
             pnlDatePaymentMethod.Controls.Add(pnlPaymentDate);
             pnlDatePaymentMethod.Dock = DockStyle.Top;
@@ -651,9 +698,9 @@
             pnlDatePaymentMethod.Name = "pnlDatePaymentMethod";
             pnlDatePaymentMethod.Size = new Size(762, 100);
             pnlDatePaymentMethod.TabIndex = 1;
-            //
+            // 
             // pnlPaymentMethod
-            //
+            // 
             pnlPaymentMethod.Controls.Add(pnlPaymentMethodOptions);
             pnlPaymentMethod.Controls.Add(lblPaymentMethod);
             pnlPaymentMethod.Dock = DockStyle.Right;
@@ -661,18 +708,18 @@
             pnlPaymentMethod.Name = "pnlPaymentMethod";
             pnlPaymentMethod.Size = new Size(375, 100);
             pnlPaymentMethod.TabIndex = 1;
-            //
+            // 
             // pnlPaymentMethodOptions
-            //
+            // 
             pnlPaymentMethodOptions.Controls.Add(RadioBtnGCash);
             pnlPaymentMethodOptions.Controls.Add(RadioBtnCash);
             pnlPaymentMethodOptions.Location = new Point(58, 34);
             pnlPaymentMethodOptions.Name = "pnlPaymentMethodOptions";
             pnlPaymentMethodOptions.Size = new Size(250, 50);
             pnlPaymentMethodOptions.TabIndex = 5;
-            //
+            // 
             // RadioBtnGCash
-            //
+            // 
             RadioBtnGCash.AutoSize = true;
             RadioBtnGCash.ForeColor = Color.White;
             RadioBtnGCash.Location = new Point(150, 13);
@@ -683,9 +730,9 @@
             RadioBtnGCash.Text = "Gcash";
             RadioBtnGCash.UseVisualStyleBackColor = true;
             RadioBtnGCash.CheckedChanged += RadioBtnGCash_CheckedChanged;
-            //
+            // 
             // RadioBtnCash
-            //
+            // 
             RadioBtnCash.AutoSize = true;
             RadioBtnCash.ForeColor = Color.White;
             RadioBtnCash.Location = new Point(41, 13);
@@ -695,9 +742,9 @@
             RadioBtnCash.TabStop = true;
             RadioBtnCash.Text = "Cash";
             RadioBtnCash.UseVisualStyleBackColor = true;
-            //
+            // 
             // lblPaymentMethod
-            //
+            // 
             lblPaymentMethod.AutoSize = true;
             lblPaymentMethod.Dock = DockStyle.Top;
             lblPaymentMethod.Font = new Font("Segoe UI", 13.8F);
@@ -708,9 +755,9 @@
             lblPaymentMethod.Size = new Size(189, 31);
             lblPaymentMethod.TabIndex = 4;
             lblPaymentMethod.Text = "Payment Method";
-            //
+            // 
             // pnlPaymentDate
-            //
+            // 
             pnlPaymentDate.Controls.Add(lblPaymentDate);
             pnlPaymentDate.Controls.Add(dtpPaymentDate);
             pnlPaymentDate.Dock = DockStyle.Left;
@@ -718,9 +765,9 @@
             pnlPaymentDate.Name = "pnlPaymentDate";
             pnlPaymentDate.Size = new Size(375, 100);
             pnlPaymentDate.TabIndex = 0;
-            //
+            // 
             // lblPaymentDate
-            //
+            // 
             lblPaymentDate.AutoSize = true;
             lblPaymentDate.Dock = DockStyle.Top;
             lblPaymentDate.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -731,16 +778,16 @@
             lblPaymentDate.Size = new Size(62, 31);
             lblPaymentDate.TabIndex = 3;
             lblPaymentDate.Text = "Date";
-            //
+            // 
             // dtpPaymentDate
-            //
+            // 
             dtpPaymentDate.Location = new Point(3, 34);
             dtpPaymentDate.Name = "dtpPaymentDate";
             dtpPaymentDate.Size = new Size(369, 27);
             dtpPaymentDate.TabIndex = 0;
-            //
+            // 
             // PaymentForm
-            //
+            // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(11, 20, 38);
@@ -760,6 +807,7 @@
             pnlPaymentContent.ResumeLayout(false);
             pnlPayerArea.ResumeLayout(false);
             pnlPaidBy.ResumeLayout(false);
+            pnlCreditTo.ResumeLayout(false);   // NEW (credit choice)
             pnlSummary.ResumeLayout(false);
             tlpSummary.ResumeLayout(false);
             pnlLegacyFields.ResumeLayout(false);
@@ -824,6 +872,9 @@
         private Panel pnlPaidBy;
         private Label lblPaidBy;
         private ComboBox cboPaidBy;
+        private Panel pnlCreditTo;      // NEW (credit choice)
+        private ComboBox cboCreditTo;   // NEW (credit choice)
+        private Label lblCreditTo;      // NEW (credit choice)
         private FlowLayoutPanel flpPayerCards;
         private Label lblCreditedTo;
         private Label lblDependents;

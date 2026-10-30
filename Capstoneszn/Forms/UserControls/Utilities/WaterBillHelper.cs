@@ -62,7 +62,9 @@ namespace Capstoneszn.Forms.UtilityForms
                 {
                     TenantID = rd.GetInt32(0),
                     RoomID = rd.GetInt32(1),
-                    RoomNumber = rd.GetString(2),
+                    // ORIGINAL: RoomNumber = rd.GetString(2),
+                    // ORIGINAL (Billing v2 first try): RoomNumber = rd.GetInt32(2).ToString(),
+                    RoomNumber = Convert.ToString(rd.GetValue(2)) ?? "",   // NEW: works for text or INT
                     TenantName = rd.GetString(3)
                 });
             }
@@ -162,7 +164,8 @@ namespace Capstoneszn.Forms.UtilityForms
                   AND  a.BillId IS NULL
                   AND  a.IsVoided = 0
                   AND  p.IsVoided = 0
-                  AND  p.PaymentCategory = @cat
+                  -- ORIGINAL: AND  p.PaymentCategory = @cat
+                  AND  a.Category = @cat
                 ORDER BY a.AllocationId ASC;", conn, tran))
             {
                 cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
@@ -212,9 +215,12 @@ namespace Capstoneszn.Forms.UtilityForms
                     }
 
                     using (var cmd = new SqlCommand(@"
-                        INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount)
-                        VALUES (@pid, @bid, @tid, @amt);", conn, tran))
+                        -- ORIGINAL: INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount)
+                        -- ORIGINAL: VALUES (@pid, @bid, @tid, @amt);
+                        INSERT INTO PaymentAllocations (PaymentId, BillId, TenantId, Amount, Category, PaymentType)
+                        VALUES (@pid, @bid, @tid, @amt, @cat, N'Advance');", conn, tran))
                     {
+                        cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = Category;   // NEW (Billing v2)
                         cmd.Parameters.Add("@pid", SqlDbType.Int).Value = credit.PaymentId;
                         cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
                         cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
