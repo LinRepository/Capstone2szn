@@ -35,6 +35,7 @@
             lblIssueType = new Label();
             lblEditIssueTitle = new Label();
             pnlEditIssueActions = new Panel();
+            btnRepairDone = new Button();
             btnSaveIssueChanges = new Button();
             btnCancelEditIssue = new Button();
             pnlEditIssueContent = new Panel();
@@ -81,7 +82,6 @@
             rdoResponsibleAll = new RadioButton();
             lblResponsible = new Label();
             lblPeopleHeading = new Label();
-            btnRepairDone = new Button();
             pnlEditIssueHeader.SuspendLayout();
             pnlIssueTypeInfo.SuspendLayout();
             pnlEditIssueActions.SuspendLayout();
@@ -181,6 +181,16 @@
             pnlEditIssueActions.Name = "pnlEditIssueActions";
             pnlEditIssueActions.Size = new Size(900, 64);
             pnlEditIssueActions.TabIndex = 2;
+            // 
+            // btnRepairDone
+            // 
+            btnRepairDone.Cursor = Cursors.Hand;
+            btnRepairDone.Location = new Point(20, 18);
+            btnRepairDone.Name = "btnRepairDone";
+            btnRepairDone.Size = new Size(120, 29);
+            btnRepairDone.TabIndex = 2;
+            btnRepairDone.Text = "Repair Done";
+            btnRepairDone.UseVisualStyleBackColor = true;
             // 
             // btnSaveIssueChanges
             // 
@@ -462,6 +472,7 @@
             // 
             // pnlTenantNone
             // 
+            pnlTenantNone.BorderStyle = BorderStyle.FixedSingle;
             pnlTenantNone.Controls.Add(rdoTenantNone);
             pnlTenantNone.Dock = DockStyle.Fill;
             pnlTenantNone.Location = new Point(220, 0);
@@ -485,6 +496,7 @@
             // 
             // pnlTenantSpecify
             // 
+            pnlTenantSpecify.BorderStyle = BorderStyle.FixedSingle;
             pnlTenantSpecify.Controls.Add(rdoTenantSpecify);
             pnlTenantSpecify.Dock = DockStyle.Left;
             pnlTenantSpecify.Location = new Point(100, 0);
@@ -508,6 +520,7 @@
             // 
             // pnlTenantAll
             // 
+            pnlTenantAll.BorderStyle = BorderStyle.FixedSingle;
             pnlTenantAll.Controls.Add(rdoTenantAll);
             pnlTenantAll.Dock = DockStyle.Left;
             pnlTenantAll.Location = new Point(0, 0);
@@ -634,6 +647,7 @@
             // 
             // pnlResponsibleNone
             // 
+            pnlResponsibleNone.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsibleNone.Controls.Add(rdoResponsibleNone);
             pnlResponsibleNone.Dock = DockStyle.Fill;
             pnlResponsibleNone.Location = new Point(220, 0);
@@ -657,6 +671,7 @@
             // 
             // pnlResponsibleSpecify
             // 
+            pnlResponsibleSpecify.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsibleSpecify.Controls.Add(rdoResponsibleSpecify);
             pnlResponsibleSpecify.Dock = DockStyle.Left;
             pnlResponsibleSpecify.Location = new Point(100, 0);
@@ -680,6 +695,7 @@
             // 
             // pnlResponsibleAll
             // 
+            pnlResponsibleAll.BorderStyle = BorderStyle.FixedSingle;
             pnlResponsibleAll.Controls.Add(rdoResponsibleAll);
             pnlResponsibleAll.Dock = DockStyle.Left;
             pnlResponsibleAll.Location = new Point(0, 0);
@@ -723,16 +739,6 @@
             lblPeopleHeading.Size = new Size(420, 30);
             lblPeopleHeading.TabIndex = 0;
             lblPeopleHeading.Text = "PEOPLE AND MATERIALS";
-            // 
-            // btnRepairDone
-            // 
-            btnRepairDone.Cursor = Cursors.Hand;
-            btnRepairDone.Location = new Point(20, 18);
-            btnRepairDone.Name = "btnRepairDone";
-            btnRepairDone.Size = new Size(120, 29);
-            btnRepairDone.TabIndex = 2;
-            btnRepairDone.Text = "Repair Done";
-            btnRepairDone.UseVisualStyleBackColor = true;
             // 
             // EditIssueForm
             // 

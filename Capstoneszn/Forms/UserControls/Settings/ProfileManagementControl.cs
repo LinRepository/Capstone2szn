@@ -36,19 +36,34 @@ namespace Capstoneszn.Forms.UserControls.Settings
         private void btnEditProfile_Click(object sender, EventArgs e)
         {
             using (EditProfileForm editForm = new EditProfileForm(
-            CurrentUserId,
-            lblProfileNameValue.Text,
-            lblProfileRoleValue.Text,
-            lblProfileUsernameValue.Text))
+                    CurrentUserId,
+                    lblProfileNameValue.Text,
+                    lblProfileRoleValue.Text,
+                    lblProfileUsernameValue.Text))
             {
                 editForm.StartPosition = FormStartPosition.CenterScreen;
                 editForm.TopMost = true;
                 editForm.WindowState = FormWindowState.Normal;
                 editForm.StartPosition = FormStartPosition.CenterParent;
 
-                if (editForm.ShowDialog(this) == DialogResult.OK)
+                // if (editForm.ShowDialog(this) == DialogResult.OK)
+                // {
+                //     LoadUsername();
+                // }
+
+                DialogResult result = editForm.ShowDialog(this);
+
+                if (result == DialogResult.OK)
                 {
                     LoadUsername();
+                }
+                else if (result == DialogResult.Abort)
+                {
+                    // account locked -> log out through the main form
+                    if (this.FindForm() is MainForm main)   // <-- your main form's class name
+                    {
+                        main.ForceLogout();
+                    }
                 }
             }
         }

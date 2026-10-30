@@ -21,6 +21,15 @@ namespace Capstoneszn.UserControls
             InitializeComponent();
             _buildingId = buildingId;
 
+            // ADDED (caretaker restrictions): Expenses is landlord-only.
+            // Hide its card and give its row no height, so Room Account
+            // fills the screen instead of leaving an empty half.
+            if (!Session.IsLandlord)
+            {
+                pnlExpenses.Visible = false;
+                tblBillingOptions.RowStyles[1] = new RowStyle(SizeType.Absolute, 0F);
+            }
+
         }
 
         private void lblRoomAccount_Click(object sender, EventArgs e)
@@ -43,6 +52,8 @@ namespace Capstoneszn.UserControls
 
         private void lblExpenses_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED (caretaker restrictions): landlord only
+
             // 1. Create the new Expenses control
             BillingExpensesControl expensesControl = new BillingExpensesControl();
 

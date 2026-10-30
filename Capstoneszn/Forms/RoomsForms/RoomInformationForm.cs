@@ -168,7 +168,8 @@ namespace Capstoneszn.UserControls
             btnEdit.Visible = !isEdit && Session.IsLandlord;   // REVISION: landlord only
             btnMoveIn.Visible = !isEdit;
             btnMoveOut.Visible = !isEdit;
-            btnTransfer.Visible = !isEdit;                     // REVISION: was left visible while editing
+            // OLD: btnTransfer.Visible = !isEdit;              // REVISION: was left visible while editing
+            btnTransfer.Visible = !isEdit && Session.IsLandlord;   // ADDED (caretaker restrictions): landlord only
             lblEditingNotice.Visible = isEdit;
 
             if (isEdit) flpRoomDetails.ScrollControlIntoView(pnlFloorData);
@@ -488,6 +489,8 @@ namespace Capstoneszn.UserControls
 
         private void btnTransfer_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED (caretaker restrictions): landlord only
+
             using (TransferForm transfer = new TransferForm(_roomId))
             {
                 if (transfer.ShowDialog() == DialogResult.OK)
@@ -901,221 +904,7 @@ namespace Capstoneszn.UserControls
             catch (Exception rollbackEx) { System.Diagnostics.Debug.WriteLine(rollbackEx); }
         }
 
-        /* =================================================================
-           OLD CODE (before the Oct 27, 2026 revision), kept as a comment per
-           the team rule. Replaced because RoomNumber is now INT, Unconfigured
-           rooms no longer exist, the form gained new fields, the type could
-           not change while occupied, prices were saved immediately, and the
-           save/audit were not one transaction.
-           =================================================================
+        
 
-        private void ToggleEditMode(bool isEdit)
-        {
-            pnlSetRoom.Visible = isEdit;
-            pnlRoomPricelbl.Visible = isEdit;
-            pnlRoomPrice.Visible = isEdit;
-
-            // Type can only change while nobody lives here
-            bool canChangeType = isEdit && _currentTenantCount == 0;
-            pnlRoomType.Visible = canChangeType;
-            pnlRoomTypescbo.Visible = canChangeType;
-
-            // Capacity is a shared-room concept
-            pnlSetCapacity.Visible = isEdit && cboRoomType.Text == "Shared Room";
-
-            pnlActionButtons.Visible = isEdit;
-
-            btnEdit.Visible = !isEdit;
-            btnMoveIn.Visible = !isEdit;
-            btnMoveOut.Visible = !isEdit;
-        }
-
-        private void LoadRoomData()
-        {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    string roomQuery = @"
-                        SELECT v.RoomNumber, v.Status, v.Capacity, v.RoomType, v.RoomPrice, v.FloorId
-                        FROM   vwRoomStatus v
-                        WHERE  v.RoomId = @rId";
-                    using (SqlCommand cmd = new SqlCommand(roomQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@rId", _roomId);
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                string rNum = reader.GetString(0);
-                                string rStatus = reader.GetString(1);
-                                _currentCapacity = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
-                                string rType = reader.IsDBNull(3) ? "" : reader.GetString(3);
-                                decimal rPrice = reader.IsDBNull(4) ? 0m : reader.GetDecimal(4);
-                                _floorId = reader.GetInt32(5);
-
-                                lblUnitNumberValue.Text = rNum;
-                                lblRoomStatus.Text = rStatus;
-
-                                txtSetRoom.Text = rNum;
-                                nudSetCapacity.Value = _currentCapacity > 0 ? _currentCapacity : 1;
-                                cboRoomType.Text = rType;
-                                txtRoomPrice.Text = (rPrice % 1 == 0) ? rPrice.ToString("0") : rPrice.ToString("0.00");
-                            }
-                        }
-                    }
-
-                    string tenantQuery = @"
-                            SELECT t.TenantId, t.FirstName, t.LastName, t.ContactNumber
-                            FROM   Tenancies tn
-                            JOIN   Tenants   t ON t.TenantId = tn.TenantId
-                            WHERE  tn.RoomId = @rId AND tn.Status = 'Active'
-                            ORDER BY t.LastName, t.FirstName";
-                    using (SqlCommand cmd = new SqlCommand(tenantQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@rId", _roomId);
-                        SqlDataAdapter da = new SqlDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-
-                        _currentTenantCount = dt.Rows.Count;
-
-                        dgvCurrentTenants.AutoGenerateColumns = false;
-                        if (dgvCurrentTenants.Columns["TenantID"] != null)
-                            dgvCurrentTenants.Columns["TenantID"].DataPropertyName = "TenantId";
-                        if (dgvCurrentTenants.Columns["TenantFName"] != null)
-                            dgvCurrentTenants.Columns["TenantFName"].DataPropertyName = "FirstName";
-                        if (dgvCurrentTenants.Columns["TenantLName"] != null)
-                            dgvCurrentTenants.Columns["TenantLName"].DataPropertyName = "LastName";
-                        if (dgvCurrentTenants.Columns["TenantContactNumber"] != null)
-                            dgvCurrentTenants.Columns["TenantContactNumber"].DataPropertyName = "ContactNumber";
-
-                        dgvCurrentTenants.DataSource = dt;
-                        dgvCurrentTenants.ReadOnly = true;
-                        dgvCurrentTenants.AllowUserToAddRows = false;
-                        dgvCurrentTenants.RowHeadersVisible = false;
-                        dgvCurrentTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    }
-
-                    lblCapacityValue.Text = _currentCapacity > 0 ? $"{_currentTenantCount}/{_currentCapacity}" : "Not Set";
-                    btnMoveIn.Enabled = (_currentTenantCount < _currentCapacity) && (_currentCapacity > 0);
-                    btnMoveOut.Enabled = (_currentTenantCount > 0);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading room data: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            string newRoomNum = txtSetRoom.Text.Trim();
-            string newType = cboRoomType.Text;
-            int newCapacity = (newType == "Single Room") ? 1 : (int)nudSetCapacity.Value;
-
-            if (newType == "Shared Room" && newCapacity < 1)
-            {
-                MessageBox.Show("Please set a capacity for this shared room.",
-                    "Capacity Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrEmpty(newRoomNum) || string.IsNullOrEmpty(txtRoomPrice.Text))
-            {
-                MessageBox.Show("Room Number and Price cannot be empty.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!decimal.TryParse(txtRoomPrice.Text, out decimal newPrice) || newPrice <= 0)
-            {
-                MessageBox.Show("Please enter a valid price greater than 0.", "Invalid Price", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (newCapacity < _currentTenantCount)
-            {
-                MessageBox.Show($"Cannot set capacity to {newCapacity} because there are already {_currentTenantCount} tenants living in this room.", "Invalid Capacity", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    if (newRoomNum != lblUnitNumberValue.Text)
-                    {
-                        string checkQuery = @"
-                            SELECT COUNT(*)
-                            FROM   Rooms r
-                            WHERE  r.RoomNumber = @rNum
-                              AND  r.BuildingId = (SELECT BuildingId FROM Rooms WHERE RoomId = @rId)
-                              AND  r.RoomId != @rId";
-                        using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
-                        {
-                            checkCmd.Parameters.AddWithValue("@rNum", newRoomNum);
-                            checkCmd.Parameters.AddWithValue("@fId", _floorId);
-                            checkCmd.Parameters.AddWithValue("@rId", _roomId);
-
-                            int count = (int)checkCmd.ExecuteScalar();
-                            if (count > 0)
-                            {
-                                MessageBox.Show("This Room Number already exists on this floor.", "Duplicate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                return;
-                            }
-                        }
-                    }
-
-                    string updateQuery = @"
-                        UPDATE Rooms
-                           SET RoomNumber = @num,
-                               Capacity   = @cap,
-                               RoomType   = @type,
-                               RoomPrice  = @price
-                         WHERE RoomId = @rId";
-                    using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@num", newRoomNum);
-                        cmd.Parameters.AddWithValue("@cap", newCapacity);
-                        cmd.Parameters.AddWithValue("@type", newType);
-                        cmd.Parameters.AddWithValue("@price", newPrice);
-                        cmd.Parameters.AddWithValue("@rId", _roomId);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    AuditLogger.Log(AuditLogger.ModuleRooms, "Edit Room",
-    "Room " + newRoomNum + " set to " + newType + ", capacity " + newCapacity + ", PHP " + newPrice.ToString("N2"));
-
-                    MessageBox.Show("Room details updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadRoomData();
-                    ToggleEditMode(false);
-
-                    this.DialogResult = DialogResult.OK;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saving changes: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void cboRoomType_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            bool isShared = cboRoomType.Text == "Shared Room";
-
-            if (pnlActionButtons.Visible)      // only while editing
-                pnlSetCapacity.Visible = isShared;
-
-            if (!isShared)
-                nudSetCapacity.Value = 1;
-        }
-
-        Old button handlers set this.DialogResult = DialogResult.OK after a
-        move in / move out / transfer, which closed this form at once.
-        ================================================================= */
     }
 }

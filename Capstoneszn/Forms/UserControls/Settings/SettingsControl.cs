@@ -16,12 +16,25 @@ namespace Capstoneszn.UserControls
         public SettingsControl()
         {
             InitializeComponent();
+
+            // ADDED (caretaker restrictions): Backup & Restore (row 1) and
+            // Archive (row 3) are landlord-only. Hide the cards and give their
+            // rows no height, so the remaining cards close the gaps.
+            if (!Session.IsLandlord)
+            {
+                pnlBackupRestore.Visible = false;
+                pnlArchive.Visible = false;
+                tblSettingsOptions.RowStyles[1] = new RowStyle(SizeType.Absolute, 0F);
+                tblSettingsOptions.RowStyles[3] = new RowStyle(SizeType.Absolute, 0F);
+            }
         }
 
 
 
         private void lblBackupRestore_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED (caretaker restrictions): landlord only
+
             BackupRestoreControl backupCtrl = new BackupRestoreControl();
             backupCtrl.Dock = DockStyle.Fill;
 
@@ -41,6 +54,8 @@ namespace Capstoneszn.UserControls
 
         private void lblArchive_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED (caretaker restrictions): landlord only
+
             ArchiveControl archiveCtrl = new ArchiveControl();
             archiveCtrl.Dock = DockStyle.Fill;
 

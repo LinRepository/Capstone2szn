@@ -36,12 +36,12 @@
             btnCancelAddRoom = new Button();
             pnlAddRoomContent = new Panel();
             pnlElectricityAddRoom = new Panel();
-            panel3 = new Panel();
-            textBox1 = new TextBox();
-            lblElectricityAccountName = new Label();
             panel4 = new Panel();
             textBox2 = new TextBox();
             lblElectricityAccountNumber = new Label();
+            panel3 = new Panel();
+            textBox1 = new TextBox();
+            lblElectricityAccountName = new Label();
             panel2 = new Panel();
             lblElectricity = new Label();
             panel1 = new Panel();
@@ -63,8 +63,8 @@
             pnlAddRoomActions.SuspendLayout();
             pnlAddRoomContent.SuspendLayout();
             pnlElectricityAddRoom.SuspendLayout();
-            panel3.SuspendLayout();
             panel4.SuspendLayout();
+            panel3.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             pnlRoomPrice.SuspendLayout();
@@ -89,7 +89,7 @@
             lblAddRoomDescription.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAddRoomDescription.ForeColor = Color.White;
             lblAddRoomDescription.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddRoomDescription.Location = new Point(75, 39);
+            lblAddRoomDescription.Location = new Point(94, 39);
             lblAddRoomDescription.Name = "lblAddRoomDescription";
             lblAddRoomDescription.Size = new Size(273, 23);
             lblAddRoomDescription.TabIndex = 25;
@@ -99,12 +99,12 @@
             // lblAddRoomTitle
             // 
             lblAddRoomTitle.AutoSize = true;
-            lblAddRoomTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAddRoomTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblAddRoomTitle.ForeColor = Color.White;
             lblAddRoomTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblAddRoomTitle.Location = new Point(153, 9);
+            lblAddRoomTitle.Location = new Point(159, 4);
             lblAddRoomTitle.Name = "lblAddRoomTitle";
-            lblAddRoomTitle.Size = new Size(106, 28);
+            lblAddRoomTitle.Size = new Size(134, 35);
             lblAddRoomTitle.TabIndex = 24;
             lblAddRoomTitle.Text = "Add Room";
             lblAddRoomTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -115,7 +115,7 @@
             pnlAddRoomActions.Controls.Add(btnAddRoom);
             pnlAddRoomActions.Controls.Add(btnCancelAddRoom);
             pnlAddRoomActions.Dock = DockStyle.Bottom;
-            pnlAddRoomActions.Location = new Point(0, 563);
+            pnlAddRoomActions.Location = new Point(0, 553);
             pnlAddRoomActions.Name = "pnlAddRoomActions";
             pnlAddRoomActions.Size = new Size(457, 50);
             pnlAddRoomActions.TabIndex = 1;
@@ -150,56 +150,21 @@
             pnlAddRoomContent.Dock = DockStyle.Fill;
             pnlAddRoomContent.Location = new Point(0, 65);
             pnlAddRoomContent.Name = "pnlAddRoomContent";
-            pnlAddRoomContent.Size = new Size(457, 498);
+            pnlAddRoomContent.Size = new Size(457, 488);
             pnlAddRoomContent.TabIndex = 2;
             // 
             // pnlElectricityAddRoom
             // 
             pnlElectricityAddRoom.BorderStyle = BorderStyle.FixedSingle;
-            pnlElectricityAddRoom.Controls.Add(panel3);
             pnlElectricityAddRoom.Controls.Add(panel4);
+            pnlElectricityAddRoom.Controls.Add(panel3);
             pnlElectricityAddRoom.Controls.Add(panel2);
             pnlElectricityAddRoom.Controls.Add(panel1);
             pnlElectricityAddRoom.Dock = DockStyle.Fill;
             pnlElectricityAddRoom.Location = new Point(0, 240);
             pnlElectricityAddRoom.Name = "pnlElectricityAddRoom";
-            pnlElectricityAddRoom.Size = new Size(457, 258);
+            pnlElectricityAddRoom.Size = new Size(457, 248);
             pnlElectricityAddRoom.TabIndex = 39;
-            // 
-            // panel3
-            // 
-            panel3.BorderStyle = BorderStyle.FixedSingle;
-            panel3.Controls.Add(textBox1);
-            panel3.Controls.Add(lblElectricityAccountName);
-            panel3.Dock = DockStyle.Top;
-            panel3.Location = new Point(0, 180);
-            panel3.Name = "panel3";
-            panel3.Padding = new Padding(10);
-            panel3.Size = new Size(455, 60);
-            panel3.TabIndex = 1;
-            // 
-            // textBox1
-            // 
-            textBox1.Dock = DockStyle.Left;
-            textBox1.Font = new Font("Segoe UI", 13.2000008F);
-            textBox1.Location = new Point(190, 10);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(254, 37);
-            textBox1.TabIndex = 29;
-            // 
-            // lblElectricityAccountName
-            // 
-            lblElectricityAccountName.Dock = DockStyle.Left;
-            lblElectricityAccountName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblElectricityAccountName.ForeColor = Color.White;
-            lblElectricityAccountName.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricityAccountName.Location = new Point(10, 10);
-            lblElectricityAccountName.Margin = new Padding(0);
-            lblElectricityAccountName.Name = "lblElectricityAccountName";
-            lblElectricityAccountName.Size = new Size(180, 38);
-            lblElectricityAccountName.TabIndex = 28;
-            lblElectricityAccountName.Text = "Elec. Account Name";
-            lblElectricityAccountName.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel4
             // 
@@ -207,7 +172,7 @@
             panel4.Controls.Add(textBox2);
             panel4.Controls.Add(lblElectricityAccountNumber);
             panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 120);
+            panel4.Location = new Point(0, 174);
             panel4.Name = "panel4";
             panel4.Padding = new Padding(10);
             panel4.Size = new Size(455, 60);
@@ -236,6 +201,41 @@
             lblElectricityAccountNumber.Text = "Elec. Account Number";
             lblElectricityAccountNumber.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // panel3
+            // 
+            panel3.BorderStyle = BorderStyle.FixedSingle;
+            panel3.Controls.Add(textBox1);
+            panel3.Controls.Add(lblElectricityAccountName);
+            panel3.Dock = DockStyle.Top;
+            panel3.Location = new Point(0, 114);
+            panel3.Name = "panel3";
+            panel3.Padding = new Padding(10);
+            panel3.Size = new Size(455, 60);
+            panel3.TabIndex = 1;
+            // 
+            // textBox1
+            // 
+            textBox1.Dock = DockStyle.Left;
+            textBox1.Font = new Font("Segoe UI", 13.2000008F);
+            textBox1.Location = new Point(190, 10);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(254, 37);
+            textBox1.TabIndex = 29;
+            // 
+            // lblElectricityAccountName
+            // 
+            lblElectricityAccountName.Dock = DockStyle.Left;
+            lblElectricityAccountName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblElectricityAccountName.ForeColor = Color.White;
+            lblElectricityAccountName.ImageAlign = ContentAlignment.MiddleRight;
+            lblElectricityAccountName.Location = new Point(10, 10);
+            lblElectricityAccountName.Margin = new Padding(0);
+            lblElectricityAccountName.Name = "lblElectricityAccountName";
+            lblElectricityAccountName.Size = new Size(180, 38);
+            lblElectricityAccountName.TabIndex = 28;
+            lblElectricityAccountName.Text = "Elec. Account Name";
+            lblElectricityAccountName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.FixedSingle;
@@ -244,18 +244,18 @@
             panel2.Location = new Point(0, 60);
             panel2.Name = "panel2";
             panel2.Padding = new Padding(10);
-            panel2.Size = new Size(455, 60);
+            panel2.Size = new Size(455, 54);
             panel2.TabIndex = 4;
             // 
             // lblElectricity
             // 
             lblElectricity.AutoSize = true;
-            lblElectricity.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblElectricity.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblElectricity.ForeColor = Color.White;
             lblElectricity.ImageAlign = ContentAlignment.MiddleRight;
-            lblElectricity.Location = new Point(133, 25);
+            lblElectricity.Location = new Point(94, 11);
             lblElectricity.Name = "lblElectricity";
-            lblElectricity.Size = new Size(186, 23);
+            lblElectricity.Size = new Size(271, 35);
             lblElectricity.TabIndex = 26;
             lblElectricity.Text = "Add Electricity Account";
             lblElectricity.TextAlign = ContentAlignment.MiddleCenter;
@@ -445,7 +445,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(25, 25, 70);
             CancelButton = btnCancelAddRoom;
-            ClientSize = new Size(457, 613);
+            ClientSize = new Size(457, 603);
             Controls.Add(pnlAddRoomContent);
             Controls.Add(pnlAddRoomActions);
             Controls.Add(pnlAddRoomHeader);
@@ -461,10 +461,10 @@
             pnlAddRoomActions.ResumeLayout(false);
             pnlAddRoomContent.ResumeLayout(false);
             pnlElectricityAddRoom.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel1.ResumeLayout(false);

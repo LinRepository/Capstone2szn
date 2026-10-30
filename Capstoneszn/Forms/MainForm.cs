@@ -87,6 +87,10 @@ namespace Capstoneszn
             // ADDED (Employee module): caretakers must not see the Employee module
             btnEmployee.Visible = Session.IsLandlord;
 
+            // ADDED (caretaker restrictions): Reports is landlord-only too.
+            // Hidden buttons leave no gap - the FlowLayoutPanel moves the rest up.
+            btnReports.Visible = Session.IsLandlord;
+
         }
 
 
@@ -173,6 +177,14 @@ namespace Capstoneszn
 
         }
 
+        public void ForceLogout()
+        {
+            AuditLogger.Log(AuditLogger.ModuleLogin, "Logout", "Signed out (account locked)");
+            Session.Clear();
+            Session.LoggingOut = true;
+            this.Close();
+        }
+
 
         //SIDE PANEL BUTTONS
         /* SIDE PANEL BUTTONS */
@@ -208,6 +220,7 @@ namespace Capstoneszn
 
         private void btnReports_Click_1(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED: landlord only (button is also hidden)
             LoadControl(new ReportsControl());
         }
 
@@ -218,6 +231,7 @@ namespace Capstoneszn
 
         private void btnEmployee_Click_1(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED: landlord only (button is also hidden)
             LoadControl(new EmployeeControl());
         }
 

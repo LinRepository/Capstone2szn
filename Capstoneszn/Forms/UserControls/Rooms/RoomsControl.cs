@@ -29,6 +29,10 @@ namespace Capstoneszn.UserControls
             // panel4 holds only the Archive Room button, so the whole slot goes.
             panel4.Visible = Session.IsLandlord;
 
+            // ADDED (caretaker restrictions): adding a room is landlord-only too.
+            // panel5 holds only the Add Room button, so the whole slot goes.
+            panel5.Visible = Session.IsLandlord;
+
             LoadRooms();
 
 
@@ -161,6 +165,8 @@ namespace Capstoneszn.UserControls
 
         private void btnAddRoom_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED: landlord only (the button is also hidden)
+
             using (AddRoomForm addForm = new AddRoomForm(_buildingId))
             {
                 if (addForm.ShowDialog() == DialogResult.OK)

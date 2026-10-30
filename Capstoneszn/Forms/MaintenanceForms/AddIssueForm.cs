@@ -366,8 +366,11 @@ namespace Capstoneszn.Forms
         private void Warn(string message, Control focus)
         {
             MessageBox.Show(message, "Missing Information",
-                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            focus.Focus();
+            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            // focus.Focus();
+            // Focusing a RadioButton checks it automatically (WinForms behaviour),
+            // which picked "All" for the user. Only focus non-radio controls.
+            if (!(focus is RadioButton)) focus.Focus();
         }
 
     }
