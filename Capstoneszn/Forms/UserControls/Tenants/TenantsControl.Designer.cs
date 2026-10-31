@@ -153,7 +153,7 @@
             txtSearch.PlaceholderText = "🔍Search Tenant ";
             txtSearch.Size = new Size(432, 38);
             txtSearch.TabIndex = 0;
-            txtSearch.TextAlign = HorizontalAlignment.Right;
+            txtSearch.TextAlign = HorizontalAlignment.Center;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // pnlTenantContent

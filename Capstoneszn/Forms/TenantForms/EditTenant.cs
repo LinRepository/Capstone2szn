@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,9 +7,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.TenantForms
 {
@@ -29,6 +30,23 @@ namespace Capstoneszn.Forms.TenantForms
         /// <summary>The contact number as loaded, so the duplicate check
         /// only runs when it is actually changed.</summary>
         private string _originalContact = "";
+        // NEW: original values, so "nothing changed" can be detected
+        private string _originalFName = "", _originalMName = "", _originalLName = "", _originalAddress = "";
+
+        // NEW: letters (incl. ñ/accents), single spaces, hyphen, apostrophe, period - e.g. "Dela Cruz", "O'Neil", "Jr."
+        private static readonly Regex NamePattern = new Regex(@"^[\p{L}][\p{L} .'’‘\-–—]*$");
+
+        // NEW: PH mobile number - 11 digits starting with 09
+        private static readonly Regex ContactPattern = new Regex(@"^09\d{9}$");
+
+        // NEW: trims and collapses repeated spaces ("Carl   Aldrin" -> "Carl Aldrin")
+        private static string Clean(string s)
+        {
+            string t = (s ?? "")
+                .Replace('’', '\'').Replace('‘', '\'')
+                .Replace('–', '-').Replace('—', '-');
+            return Regex.Replace(t, @"\s+", " ").Trim();
+        }
 
         public EditTenant(int tenantId)
         {
@@ -42,7 +60,7 @@ namespace Capstoneszn.Forms.TenantForms
             txtEditTenantMName.MaxLength = 50;    // nvarchar(50)
             txtEditTenantLName.MaxLength = 50;    // nvarchar(50)
             txtEditTenantAddress.MaxLength = 255;   // nvarchar(255)
-            txtEditTenantContactNumber.MaxLength = 20;
+            txtEditTenantContactNumber.MaxLength = 11;
 
             txtEditTenantContactNumber.KeyPress += NumericOnly_KeyPress;
 
@@ -91,6 +109,10 @@ namespace Capstoneszn.Forms.TenantForms
                                 txtEditTenantContactNumber.Text = rd.IsDBNull(4) ? "" : rd.GetString(4);
 
                                 _originalContact = txtEditTenantContactNumber.Text.Trim();
+                                _originalFName = txtEditTenantFName.Text.Trim();
+                                _originalMName = txtEditTenantMName.Text.Trim();
+                                _originalLName = txtEditTenantLName.Text.Trim();
+                                _originalAddress = txtEditTenantAddress.Text.Trim();
 
                                 if (rd.GetInt32(5) == 0)
                                     MakeReadOnly();
@@ -123,26 +145,41 @@ namespace Capstoneszn.Forms.TenantForms
 
         private void btnEditConfirm_Click(object sender, EventArgs e)
         {
-            string fname = txtEditTenantFName.Text.Trim();
-            string mname = txtEditTenantMName.Text.Trim();
-            string lname = txtEditTenantLName.Text.Trim();
-            string addr = txtEditTenantAddress.Text.Trim();
+            // NEW: clean the input, then validate each field in screen order,
+            //      focusing the field that actually failed
+            string fname = Clean(txtEditTenantFName.Text);
+            string mname = Clean(txtEditTenantMName.Text);
+            string lname = Clean(txtEditTenantLName.Text);
+            string addr = Clean(txtEditTenantAddress.Text);
             string contact = txtEditTenantContactNumber.Text.Trim();
 
-            if (fname.Length == 0 || lname.Length == 0)
+            if (!ValidateName(fname, "First name", required: true, txtEditTenantFName)) return;
+            if (!ValidateName(mname, "Middle name", required: false, txtEditTenantMName)) return;
+            if (!ValidateName(lname, "Last name", required: true, txtEditTenantLName)) return;
+
+            if (addr.Length == 0)
             {
-                MessageBox.Show("First name and last name are required.", "Required",
+                MessageBox.Show("Address is required.", "Required",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtEditTenantFName.Focus();
+                txtEditTenantAddress.Focus();
                 return;
             }
 
-            // KeyPress blocks typed letters, but not a pasted value — so re-check here.
-            if (contact.Length < 11 || !contact.All(char.IsDigit))
+            // Also catches pasted values that KeyPress could not block.
+            if (!ContactPattern.IsMatch(contact))
             {
-                MessageBox.Show("Contact number must be 11 digits or more.",
+                MessageBox.Show("Contact number must be 11 digits and start with 09 (e.g. 09171234567).",
                     "Invalid Contact Number", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtEditTenantContactNumber.Focus();
+                return;
+            }
+
+            // NEW: nothing changed - don't run an UPDATE or claim a save
+            if (fname == _originalFName && mname == _originalMName && lname == _originalLName &&
+                addr == _originalAddress && contact == _originalContact)
+            {
+                MessageBox.Show("No changes were made.", "Edit Tenant",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -210,6 +247,28 @@ namespace Capstoneszn.Forms.TenantForms
                         "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        // NEW: letters-only names (panel requirement)
+        private static bool ValidateName(string value, string label, bool required, TextBox box)
+        {
+            if (value.Length == 0)
+            {
+                if (!required) return true;
+                MessageBox.Show(label + " is required.", "Required",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                box.Focus();
+                return false;
+            }
+
+            if (!NamePattern.IsMatch(value))
+            {
+                MessageBox.Show(label + " can only contain letters, spaces, hyphens (-), and apostrophes (').",
+                    "Invalid Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                box.Focus();
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
