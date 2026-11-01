@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Capstoneszn.Forms.SettingsForms;
 using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.UserControls.Settings
@@ -52,9 +53,195 @@ namespace Capstoneszn.Forms.UserControls.Settings
             this.Dispose();
         }
 
-        private void btnRestoreData_Click(object sender, EventArgs e)
-        {
+        // ============================================================================
+        // PART 1 — BackupRestoreControl.cs
+        // ============================================================================
+        // Add at the top of the file if missing:
+        //   using Capstoneszn.Forms.SettingsForms;   // RestoreConfirmForm
+        //   (plus the namespace of MainForm, if it is different from this file's)
+        //
+        // REPLACE your empty handler:
+        //     private void btnRestoreData_Click(object sender, EventArgs e) { }
+        // with the method below (note: it is now "async").
+        // Also add the LogOut helper method below it.
+        //
+        // TODO: Session.UserId -> use your real property for the logged-in user's id
+        //       (the same value SettingsControl passes as CurrentUserId).
 
+        private async void btnRestoreData_Click(object sender, EventArgs e)
+        {
+            // ----- 1. Pick the backup file (from this PC or a flash drive) -----
+            string selectedFile;
+            using (var dlg = new OpenFileDialog())
+            {
+                dlg.Title = "Select a backup to restore (from this PC or a flash drive)";
+                dlg.Filter = "Backup files (*.bak)|*.bak";
+                string lastFolder = BackupService.GetLastFolder();
+                if (lastFolder.Length > 0) dlg.InitialDirectory = lastFolder;
+
+                if (dlg.ShowDialog(this) != DialogResult.OK) return;
+                selectedFile = dlg.FileName;
+            }
+
+            string restoreFile = selectedFile;
+            BackupFileInfo info;
+
+            try
+            {
+                // ----- 2. From a flash drive? Copy it to the PC first -----
+                if (BackupService.IsOnRemovableDrive(selectedFile))
+                {
+                    string pcFolder = BackupService.GetLastFolder();
+                    if (pcFolder.Length == 0)
+                    {
+                        using (var folderDlg = new FolderBrowserDialog())
+                        {
+                            folderDlg.Description = "Select a folder on this PC to copy the backup into (e.g. C:\\CapstoneBackupRestore)";
+                            folderDlg.UseDescriptionForTitle = true;
+                            if (folderDlg.ShowDialog(this) != DialogResult.OK) return;
+                            pcFolder = folderDlg.SelectedPath;
+                        }
+                    }
+
+                    SetBusy(true, "Copying the backup from the flash drive to this PC...");
+                    restoreFile = await BackupService.StageToFolderAsync(selectedFile, pcFolder);
+                }
+
+                // ----- 3. Check the file is a real, complete ApartmentDB backup -----
+                SetBusy(true, "Checking the backup file...");
+                info = await BackupService.ReadBackupHeaderAsync(restoreFile);
+
+                if (!string.Equals(info.DatabaseName, "ApartmentDB", StringComparison.OrdinalIgnoreCase)
+                    || info.BackupType != 1)
+                {
+                    SetBusy(false);
+                    await RefreshStatusAsync();
+                    MessageBox.Show("The selected file is not a full backup of this system's database.",
+                        "Invalid Backup", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                await BackupService.VerifyBackupAsync(restoreFile);
+            }
+            catch (SqlException ex)
+            {
+                SetBusy(false);
+                await RefreshStatusAsync();
+                MessageBox.Show("The selected file could not be read as a valid backup.\n\n" +
+                                BackupService.DescribeError(ex), "Invalid Backup",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException
+                                       || ex is InvalidOperationException)
+            {
+                SetBusy(false);
+                await RefreshStatusAsync();
+                MessageBox.Show(ex.Message, "Restore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            SetBusy(false);
+            await RefreshStatusAsync();
+
+            // ----- 4. Confirm (shows the backup date) + password -----
+            while (true)
+            {
+                string password;
+                using (var confirm = new RestoreConfirmForm(Path.GetFileName(restoreFile), info.BackupDate))
+                {
+                    if (confirm.ShowDialog(this) != DialogResult.OK) return;   // cancelled
+                    password = confirm.Password;
+                }
+
+                if (password.Length == 0)   // blank does not count as an attempt
+                {
+                    MessageBox.Show("Enter your password to continue.", "Restore",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue;
+                }
+
+                PasswordCheckResult check;
+                try
+                {
+                    check = ProfileRepository.VerifyPassword(Session.UserId, password);   // TODO: Session.UserId
+                }
+                catch (SqlException)
+                {
+                    MessageBox.Show("Unable to verify your password. Please try again.", "Restore",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (check == PasswordCheckResult.Ok) break;
+
+                if (check == PasswordCheckResult.WrongPassword)
+                {
+                    MessageBox.Show("Incorrect password.", "Restore",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue;
+                }
+
+                // LockedNow / AlreadyLocked
+                MessageBox.Show("Too many incorrect attempts. Your account is temporarily locked " +
+                                "and you will be logged out.", "Account Locked",
+                                MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                LogOut(afterRestore: false);
+                return;
+            }
+
+            // ----- 5. Safety backup of the CURRENT data (same PC folder) -----
+            string safetyFile = Path.Combine(Path.GetDirectoryName(restoreFile)!,
+                                             BackupService.BuildFileName("ApartmentDB_PreRestore"));
+
+            SetBusy(true, "Making a safety backup of the current data...");
+            try
+            {
+                await BackupService.BackupAsync(safetyFile, "ApartmentDB PreRestore Safety Backup");
+            }
+            catch (SqlException ex)
+            {
+                SetBusy(false);
+                await RefreshStatusAsync();
+                MessageBox.Show("The safety backup failed, so the restore was cancelled. Your data was not changed.\n\n" +
+                                BackupService.DescribeError(ex), "Restore Cancelled",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // ----- 6. Restore -----
+            SetBusy(true, "Restoring... please wait. Do not close the system.");
+            try
+            {
+                await BackupService.RestoreAsync(restoreFile);
+            }
+            catch (Exception ex) when (ex is SqlException || ex is InvalidOperationException)
+            {
+                SetBusy(false);
+                await RefreshStatusAsync();
+                MessageBox.Show("The restore failed.\n\n" + ex.Message + "\n\n" +
+                                "If the system shows errors afterwards, restore this safety backup:\n" + safetyFile,
+                                "Restore Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // ----- 7. Done -> automatic logout -----
+            MessageBox.Show("Restore complete.\n\nThe data now matches the backup from " +
+                            info.BackupDate.ToString("MMMM d, yyyy h:mm tt") + ".\n" +
+                            "Safety backup of the previous data:\n" + safetyFile + "\n\n" +
+                            "You will now be logged out.", "Restore Complete",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            LogOut(afterRestore: true);
+        }
+
+        private void LogOut(bool afterRestore)
+        {
+            if (this.FindForm() is MainForm main)
+            {
+                if (afterRestore) main.LogoutAfterRestore();
+                else main.ForceLogout();   // lockout
+            }
         }
 
         private async void btnBackupData_Click(object sender, EventArgs e)

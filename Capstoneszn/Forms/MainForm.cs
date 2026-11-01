@@ -32,6 +32,9 @@ namespace Capstoneszn
         public MainForm(int buildingId, string buildingName)
         {
             InitializeComponent();
+
+            // In the MainForm constructor, after InitializeComponent():
+            this.Shown += MainForm_Shown;
             pnlSideBar.Width = SidebarExpandedWidth;
 
             checkbuildingId = buildingId; //ROOMS MODULE
@@ -95,6 +98,34 @@ namespace Capstoneszn
             // Hidden buttons leave no gap - the FlowLayoutPanel moves the rest up.
             btnReports.Visible = Session.IsLandlord;
 
+        }
+
+        // NEW method in MainForm.cs
+        private async void MainForm_Shown(object? sender, EventArgs e)
+        {
+            // Landlord only (caretakers can't access Backup and Restore)
+            if (Session.Role != "Landlord") return;   // TODO: use your real Session role property
+
+            bool hasBackupToday;
+            try
+            {
+                hasBackupToday = await BackupService.HasBackupTodayAsync();
+            }
+            catch
+            {
+                return;   // if the check fails, don't block the user with an error
+            }
+
+            if (hasBackupToday) return;
+
+            DialogResult go = MessageBox.Show(
+                "No backup has been made today.\n\nGo to Backup and Restore now?",
+                "Daily Backup Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            if (go == DialogResult.Yes)
+            {
+                LoadControl(new SettingsControl());   // opens the Settings screen
+            }
         }
 
 
@@ -188,6 +219,22 @@ namespace Capstoneszn
             Session.LoggingOut = true;
             this.Close();
         }
+
+        // ============================================================================
+        // PART 2 — MainForm.cs   (add next to ForceLogout)
+        // ============================================================================
+        // No audit entry here on purpose: after a restore, the database may not contain
+        // the current user anymore, so writing a log could fail. The restore itself is
+        // recorded by SQL Server (shown as "Last restore" on the Backup and Restore screen).
+
+        public void LogoutAfterRestore()
+        {
+            Session.Clear();
+            Session.LoggingOut = true;
+            this.Close();
+        }
+
+
 
 
         //SIDE PANEL BUTTONS
