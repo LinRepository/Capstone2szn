@@ -102,6 +102,27 @@ namespace Capstoneszn.Forms.RoomsForms
             this.Close();
         }
 
+        /// <summary>NEW (transfer difference): reuse this screen after a transfer.</summary>
+        public void ShowAsTransfer(string fromRoom, string toRoom, int payingCount, int dependentCount, DateTime? firstBill)
+        {
+            int people = payingCount + dependentCount;
+            int receipts = dgvReceipts.Rows.Count;
+
+            Text = "Transfer Complete";
+            lblCompleteTitle.Text = "Transfer Complete";
+            lblCompleteSubtitle.Text = "Room " + fromRoom + " → Room " + toRoom + " · " + people + " moved" +
+                (dependentCount > 0 ? " (" + payingCount + " paying, " + dependentCount + " dependent" + (dependentCount == 1 ? ")" : "s)") : "") +
+                " · " + (receipts == 0 ? "no payment today" : receipts + (receipts == 1 ? " payment recorded" : " payments recorded"));
+            lblNextDueCaption.Text = "New price from";
+            lblNextDueValue.Text = firstBill.HasValue ? firstBill.Value.ToString("MMM d, yyyy", CultureInfo.InvariantCulture) : "-";
+
+            if (receipts == 0)
+            {
+                lblReceiptsTitle.Text = "Receipts (none)";
+                lblHint.Text = "No price difference to pay, or it was covered by advance credit.";
+            }
+        }
+
         private static string Peso(decimal v) => "₱" + v.ToString("N2", CultureInfo.InvariantCulture);
     }
     /// <summary>One receipt saved by a move-in.</summary>

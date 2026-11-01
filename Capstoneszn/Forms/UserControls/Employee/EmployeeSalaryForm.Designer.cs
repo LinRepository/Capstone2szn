@@ -39,6 +39,7 @@
             // 
             // btnCancel
             // 
+            btnCancel.Cursor = Cursors.Hand;
             btnCancel.Font = new Font("Segoe UI", 12F);
             btnCancel.ForeColor = Color.Black;
             btnCancel.Location = new Point(285, 283);
@@ -50,6 +51,7 @@
             // 
             // btnSave
             // 
+            btnSave.Cursor = Cursors.Hand;
             btnSave.Font = new Font("Segoe UI", 12F);
             btnSave.ForeColor = Color.Black;
             btnSave.Location = new Point(404, 283);
@@ -64,6 +66,7 @@
             txtNewSalary.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtNewSalary.Location = new Point(131, 164);
             txtNewSalary.Name = "txtNewSalary";
+            txtNewSalary.PlaceholderText = "*";
             txtNewSalary.Size = new Size(267, 43);
             txtNewSalary.TabIndex = 2;
             // 

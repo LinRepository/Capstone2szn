@@ -37,15 +37,50 @@ namespace Capstoneszn.Forms.RoomsForms
            ================================================================= */
 
         /// <summary>Letters (ñ and accents included), space, period, apostrophe, hyphen.</summary>
-        public static bool IsValidName(string s)
+        // OLD (did not require a leading letter, no length limit, 11-20 digits):
+        // public static bool IsValidName(string s)
+        // {
+        //     return !string.IsNullOrWhiteSpace(s) && Regex.IsMatch(s.Trim(), @"^[\p{L} .'\-]+$");
+        // }
+        //
+        // /// <summary>Digits only, 11 to 20 (matches the database rule).</summary>
+        // public static bool IsValidContact(string s)
+        // {
+        //     return !string.IsNullOrEmpty(s) && Regex.IsMatch(s, @"^[0-9]{11,20}$");
+        // }
+
+        // NEW: the SAME rules as EditTenant, so a name or number accepted at
+        // move-in is also accepted when the tenant is edited later.
+        public const int MaxNameLength = 50;   // nvarchar(50)
+
+        /// <summary>Starts with a letter (ñ / accents included); then letters, space, . ' -</summary>
+        private static readonly Regex NamePattern = new Regex(@"^[\p{L}][\p{L} .'’‘\-–—]*$");
+
+        /// <summary>PH mobile number: 11 digits starting with 09.</summary>
+        private static readonly Regex ContactPattern = new Regex(@"^09\d{9}$");
+
+        /// <summary>
+        /// Same clean-up as EditTenant: curly quotes / long dashes become
+        /// ' and -, repeated spaces collapse to one, ends trimmed.
+        /// "Carl   Aldrin" -> "Carl Aldrin".
+        /// </summary>
+        public static string CleanName(string s)
         {
-            return !string.IsNullOrWhiteSpace(s) && Regex.IsMatch(s.Trim(), @"^[\p{L} .'\-]+$");
+            string t = (s ?? "")
+                .Replace('’', '\'').Replace('‘', '\'')
+                .Replace('–', '-').Replace('—', '-');
+            return Regex.Replace(t, @"\s+", " ").Trim();
         }
 
-        /// <summary>Digits only, 11 to 20 (matches the database rule).</summary>
+        public static bool IsValidName(string s)
+        {
+            string t = CleanName(s);
+            return t.Length > 0 && t.Length <= MaxNameLength && NamePattern.IsMatch(t);
+        }
+
         public static bool IsValidContact(string s)
         {
-            return !string.IsNullOrEmpty(s) && Regex.IsMatch(s, @"^[0-9]{11,20}$");
+            return !string.IsNullOrEmpty(s) && ContactPattern.IsMatch(s.Trim());
         }
 
         /// <summary>GCash reference: exactly 13 digits (same rule as RevisedBillingPaymentForm).</summary>
@@ -509,13 +544,13 @@ namespace Capstoneszn.Forms.RoomsForms
 
                 if (!IsValidName(p.FirstName) || !IsValidName(p.LastName))
                     throw new InvalidOperationException(
-                        "First and last name are required and may contain letters, spaces, . ' - only (" + p.FullName + ").");
+                        "First and last name are required, must start with a letter, and may contain letters, spaces, . ' - only (max 50) (" + p.FullName + ").");
                 if (!string.IsNullOrWhiteSpace(p.MiddleName) && !IsValidName(p.MiddleName))
-                    throw new InvalidOperationException("Middle name may contain letters, spaces, . ' - only (" + p.FullName + ").");
+                    throw new InvalidOperationException("Middle name must start with a letter and may contain letters, spaces, . ' - only (max 50) (" + p.FullName + ").");
                 if (string.IsNullOrWhiteSpace(p.Address))
                     throw new InvalidOperationException("Address is required (" + p.FullName + ").");
                 if (!IsValidContact(p.ContactNumber?.Trim()))
-                    throw new InvalidOperationException("Contact number must be 11 to 20 digits (" + p.FullName + ").");
+                    throw new InvalidOperationException("Contact number must be 11 digits and start with 09 (" + p.FullName + ").");
             }
 
             var contacts = data.Payers.Where(p => p.ExistingTenantId == 0)
@@ -527,11 +562,11 @@ namespace Capstoneszn.Forms.RoomsForms
             {
                 if (!IsValidName(d.FirstName) || !IsValidName(d.LastName))
                     throw new InvalidOperationException(
-                        "A dependent's first and last name are required and may contain letters, spaces, . ' - only (" + d.FullName + ").");
+                        "A dependent's first and last name are required, must start with a letter, and may contain letters, spaces, . ' - only (max 50) (" + d.FullName + ").");
                 if (!string.IsNullOrWhiteSpace(d.MiddleName) && !IsValidName(d.MiddleName))
-                    throw new InvalidOperationException("Middle name may contain letters, spaces, . ' - only (" + d.FullName + ").");
+                    throw new InvalidOperationException("Middle name must start with a letter and may contain letters, spaces, . ' - only (max 50) (" + d.FullName + ").");
                 if (!string.IsNullOrWhiteSpace(d.ContactNumber) && !IsValidContact(d.ContactNumber.Trim()))
-                    throw new InvalidOperationException("A dependent's contact number, if given, must be 11 to 20 digits (" + d.FullName + ").");
+                    throw new InvalidOperationException("A dependent's contact number, if given, must be 11 digits and start with 09 (" + d.FullName + ").");
 
                 bool headInList = d.HeadIndex >= 0 && d.HeadIndex < data.Payers.Count;
                 if (!headInList && d.HeadTenantId <= 0)

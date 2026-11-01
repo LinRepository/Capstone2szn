@@ -27,7 +27,10 @@ namespace Capstoneszn.Forms.SettingsForms
 
     public static class ProfileRepository
     {
-        private static string ConnStr => @"Server=LAPTOP-1LRDH7J7\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
+
+        // Ayano18 laptop = @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;"
+        private static string ConnStr => @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
+        
 
         public static UserProfile GetProfile(int userId)
         {

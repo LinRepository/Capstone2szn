@@ -224,6 +224,7 @@
             txtEditTenantContactNumber.Font = new Font("Segoe UI", 13.2000008F);
             txtEditTenantContactNumber.Location = new Point(213, 10);
             txtEditTenantContactNumber.Name = "txtEditTenantContactNumber";
+            txtEditTenantContactNumber.PlaceholderText = "09XXXXXXXXX";
             txtEditTenantContactNumber.Size = new Size(355, 37);
             txtEditTenantContactNumber.TabIndex = 31;
             // 

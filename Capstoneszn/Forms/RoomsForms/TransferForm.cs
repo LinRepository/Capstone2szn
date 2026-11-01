@@ -42,14 +42,12 @@ namespace Capstoneszn.Forms.RoomsForms
 
         private void TransferForm_Load(object sender, EventArgs e)
         {
-            /* ORIGINAL:
-            LoadSourceRoom();
-            LoadPendingIssueTenants();
-            LoadTenants();
-            LoadDestinations();
-            RefreshWarnings();
-            */
             // NEW (transfer revision)
+            // NEW (price difference): room for "Continue to Payment →" (designer size is 150).
+            btnTransfer.Width = 220;
+            btnTransfer.Left = pnlActions.ClientSize.Width - pnlActions.Padding.Right - btnTransfer.Width;
+            btnCancel.Left = btnTransfer.Left - 10 - btnCancel.Width;
+
             LoadSourceRoomNew();
             LoadPendingIssueTenants();
             LoadHouseholds();
@@ -102,7 +100,6 @@ namespace Capstoneszn.Forms.RoomsForms
            LOADING
            ================================================================= */
 
-        //OLD CODE NO LONGER USED (transfer revision): Old method (still in the file, unused) LoadSourceRoom() Replaced by LoadSourceRoomNew()
         private void LoadSourceRoom()
         {
             try
@@ -166,7 +163,6 @@ namespace Capstoneszn.Forms.RoomsForms
             }
         }
 
-        //OLD CODE NO LONGER USED (transfer revision): Old method (still in the file, unused) LoadTenants() Replaced by LoadHouseholds()
         private void LoadTenants()
         {
             clbTenants.Items.Clear();
@@ -224,7 +220,7 @@ namespace Capstoneszn.Forms.RoomsForms
         /// included - joining an occupied room is allowed, and the tenants
         /// simply adopt its cycle.
         /// </summary>
-        //OLD CODE NO LONGER USED (transfer revision): Old method (still in the file, unused) LoadDestinations() Replaced by LoadDestinationsNew()
+        // NOTE (transfer revision): no longer called - kept as is.
         private void LoadDestinations()
         {
             cboDestination.Items.Clear();
@@ -324,7 +320,6 @@ namespace Capstoneszn.Forms.RoomsForms
             return list;
         }
 
-        //OLD CODE NO LONGER USED (transfer revision): Old method (still in the file, unused) RefreshWarnings() Replaced by RefreshWarningsNew()
         private void RefreshWarnings()
         {
             var selected = CheckedTenants();
@@ -402,7 +397,6 @@ namespace Capstoneszn.Forms.RoomsForms
             TransferSelected();   // NEW (transfer revision): households, dependents, per-category balances
         }
 
-        //OLD CODE NO LONGER USED (transfer revision): Old method (still in the file, unused) ExecuteTransfer(...) Replaced by ExecuteTransferNew(...)
         private bool ExecuteTransfer(List<TenantItem> selected, RoomItem dest)
         {
 
@@ -614,6 +608,22 @@ namespace Capstoneszn.Forms.RoomsForms
         private static readonly string[] Categories = { "Rent", "Water", "Maintenance", "Electricity", "Other" };
 
         private int _sourceDependents;
+
+        // NEW (price difference): the difference for the ticked tenants and the
+        // chosen room - refreshed with the warnings, used by the button.
+        private TransferPlan _plan;
+
+        /// <summary>NEW (price difference): the ticked households in TransferService's shape.</summary>
+        private static List<TransferMover> ToMovers(IEnumerable<HouseholdItem> households)
+        {
+            return households.Select(h => new TransferMover
+            {
+                TenantId = h.TenantId,
+                TenancyId = h.TenancyId,
+                Name = h.Name,
+                Dependents = new List<string>(h.Dependents)
+            }).ToList();
+        }
         private decimal? _sourcePendingPrice;
         private DateTime? _sourcePendingFrom;
         private DateTime? _sourceFirstUnbilled;   // the source room's first bill not created yet
@@ -887,6 +897,39 @@ namespace Capstoneszn.Forms.RoomsForms
             if (owing.Count > 0)
                 lines.Add("Settle first: " + string.Join("; ", owing.Select(h => h.Name + " owes " + h.OwedText)) + ".");
 
+            // NEW (price difference): what the move costs. Only worked out once
+            // everyone ticked is settled (unpaid bills block the transfer anyway).
+            _plan = null;
+            btnTransfer.Text = "Transfer";
+            if (dest != null && selected.Count > 0 && owing.Count == 0)
+            {
+                try
+                {
+                    _plan = TransferService.BuildPlan(_sourceRoomId, dest.RoomId, ToMovers(selected));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);   // the button re-checks on click
+                }
+
+                if (_plan != null)
+                {
+                    foreach (TransferMover m in _plan.Movers.Where(x => x.Difference > 0m))
+                        lines.Add($"Price difference (no proration): {m.Name} " +
+                                  TransferService.Breakdown(m).Replace("\n", "; ") +
+                                  $" = {m.Difference:N2}" +
+                                  (m.CreditUsed > 0m ? $", credit used {m.CreditUsed:N2}, due {m.Due:N2}" : "") +
+                                  ". Must be paid before transferring, even with 1 day left.");
+
+                    if (_plan.Movers.Any(m => m.Lines.Any(l => l.NewShare < l.OldShare)))
+                        lines.Add($"Room {dest.RoomNumber} is cheaper for some tenants: no refund. " +
+                                  "The new price applies from their first bill there.");
+
+                    if (_plan.TotalDue > 0m)
+                        btnTransfer.Text = "Continue to Payment →";
+                }
+            }
+
             lblWarnings.Text = lines.Count == 0
                 ? "No payment is taken and no refund is given. Dependents move with their head."
                 : string.Join(Environment.NewLine + Environment.NewLine, lines);
@@ -930,6 +973,40 @@ namespace Capstoneszn.Forms.RoomsForms
                 return;
             }
 
+            // NEW (price difference): fresh figures for exactly what is ticked now.
+            TransferPlan plan;
+            try
+            {
+                plan = TransferService.BuildPlan(_sourceRoomId, dest.RoomId, ToMovers(selected));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not work out the price difference: " + ex.Message,
+                    "Transfer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Something to pay -> the Transfer Payment screen does confirm + save + receipts.
+            if (plan.TotalDue > 0m)
+            {
+                using (var pay = new TransferPaymentForm(plan))
+                {
+                    DialogResult r = pay.ShowDialog(this);
+
+                    if (r == DialogResult.OK)
+                    {
+                        this.DialogResult = DialogResult.OK;   // Room Information reloads
+                        this.Close();
+                    }
+                    else if (r == DialogResult.Abort)
+                    {
+                        ReloadAll();   // something changed while it was open
+                    }
+                }
+                return;
+            }
+
             DateTime? firstBill = FirstBillAt(dest);
             string confirm =
                 $"Transfer to Room {dest.RoomNumber} today?\n\n" +
@@ -937,6 +1014,8 @@ namespace Capstoneszn.Forms.RoomsForms
                     (h.Dependents.Count > 0 ? "  + " + string.Join(", ", h.Dependents) : ""))) +
                 $"\n\n{moving} people in total. No payment is collected and no refund is given.\n" +
                 (firstBill.HasValue ? $"Their first bill in Room {dest.RoomNumber}: {firstBill.Value:MMM d, yyyy}.\n" : "") +
+                // NEW (price difference): a difference fully covered by advance credit
+                (plan.TotalDifference > 0m ? $"Price difference {plan.TotalDifference:N2} is paid from their advance credit.\n" : "") +
                 "\n" + lblWarnings.Text;
 
             if (MessageBox.Show(confirm, "Confirm Transfer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
@@ -944,9 +1023,13 @@ namespace Capstoneszn.Forms.RoomsForms
 
             btnTransfer.Enabled = false;   // one click = one save
 
+            TransferResult result = null;
             try
             {
-                ExecuteTransferNew(selected, dest);
+                // ORIGINAL (transfer revision): ExecuteTransferNew(selected, dest);
+                // NEW (price difference): one save path for every transfer - it also
+                // records a difference that credit covers.
+                result = TransferService.Save(plan);
             }
             catch (InvalidOperationException ex)
             {
@@ -964,8 +1047,9 @@ namespace Capstoneszn.Forms.RoomsForms
                 return;
             }
 
-            MessageBox.Show($"{moving} people moved to Room {dest.RoomNumber}.",
-                "Transfer Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // ORIGINAL: MessageBox.Show($"{moving} people moved to Room {dest.RoomNumber}.",
+            // ORIGINAL:     "Transfer Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            TransferPaymentForm.ShowComplete(this, plan, result);   // NEW: Transfer Complete screen
 
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -991,6 +1075,8 @@ namespace Capstoneszn.Forms.RoomsForms
         ///   5. One audit entry.
         /// Throws InvalidOperationException (landlord-readable) when a rule fails.
         /// </summary>
+        // NOTE (price difference): no longer called - TransferService.Save does the same
+        // steps plus the price difference, in one transaction. Kept as is.
         private void ExecuteTransferNew(List<HouseholdItem> selected, RoomItem dest)
         {
             DateTime today = DateTime.Today;

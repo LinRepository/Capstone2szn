@@ -262,7 +262,7 @@ namespace Capstoneszn.UserControls
         {
             // NEW (option 1): the first bill not created yet (read in LoadRoom).
             if (_firstUnbilled.HasValue) return _firstUnbilled.Value;
-            
+
             if (!_anchor.HasValue) return DateTime.Today;
             int n = 0;
             while (_anchor.Value.AddMonths(n) <= DateTime.Today) n++;
@@ -391,19 +391,59 @@ namespace Capstoneszn.UserControls
             _roomId = roomId;
 
             txtContactNumber.KeyPress += NumericOnly_KeyPress;
-            txtContactNumber.MaxLength = 20;
+            // txtContactNumber.MaxLength = 20;   // OLD: 11-20 digits
+            txtContactNumber.MaxLength = 11;      // NEW: 09XXXXXXXXX, same as EditTenant
+            txtContactNumber.PlaceholderText = "09XXXXXXXXX";
             txtFName.MaxLength = 50;    // nvarchar(50)
             txtMName.MaxLength = 50;
             txtLName.MaxLength = 50;
             txtAddress.MaxLength = 255;   // nvarchar(255)
             dtpMoveInDate.Value = DateTime.Today;
             dtpMoveInDate.Enabled = false;
+
+            // NEW: same as EditTenant - block digits/symbols while typing a name
+            txtFName.KeyPress += LettersOnly_KeyPress;
+            txtMName.KeyPress += LettersOnly_KeyPress;
+            txtLName.KeyPress += LettersOnly_KeyPress;
         }
 
         private void NumericOnly_KeyPress(object? sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                 e.Handled = true;
+        }
+
+        // NEW: name fields accept letters, space, period, apostrophe and hyphen only (same as EditTenant)
+        private void LettersOnly_KeyPress(object? sender, KeyPressEventArgs e)
+        {
+            char c = e.KeyChar;
+            if (char.IsControl(c) || char.IsLetter(c) || c == ' ' || c == '.' ||
+                c == '\'' || c == '’' || c == '‘' || c == '-')
+                return;
+
+            e.Handled = true;   // blocks digits and other symbols
+        }
+
+        /// <summary>
+        /// NEW: same checks and messages as EditTenant.ValidateName. A pasted
+        /// value skips KeyPress, so this is the real check.
+        /// </summary>
+        private bool ValidateName(string value, string label, bool required, TextBox box)
+        {
+            if (value.Length == 0)
+            {
+                if (!required) return true;
+                Warn(label + " is required.", box);
+                return false;
+            }
+
+            if (!MoveInService.IsValidName(value))
+            {
+                Warn(label + " must start with a letter and can only contain letters, spaces, " +
+                     "periods (.), hyphens (-) and apostrophes ('), up to 50 characters.", box);
+                return false;
+            }
+            return true;
         }
 
         private void btnCancelMoveIn_Click(object sender, EventArgs e)
@@ -948,24 +988,35 @@ namespace Capstoneszn.UserControls
                 return;
             }
 
-            string first = txtFName.Text.Trim();
-            string middle = txtMName.Text.Trim();
-            string last = txtLName.Text.Trim();
+            // OLD: Trim() only, looser rule
+            // string first = txtFName.Text.Trim();
+            // string middle = txtMName.Text.Trim();
+            // string last = txtLName.Text.Trim();
+            // if (!MoveInService.IsValidName(first)) { Warn("Enter a valid first name (letters, spaces, . ' - only).", txtFName); return; }
+            // if (middle.Length > 0 && !MoveInService.IsValidName(middle)) { Warn("Middle name may contain letters, spaces, . ' - only.", txtMName); return; }
+            // if (!MoveInService.IsValidName(last)) { Warn("Enter a valid last name (letters, spaces, . ' - only).", txtLName); return; }
+
+            // NEW: cleaned the same way as EditTenant, then validated in screen order
+            string first = MoveInService.CleanName(txtFName.Text);
+            string middle = MoveInService.CleanName(txtMName.Text);
+            string last = MoveInService.CleanName(txtLName.Text);
             string contact = txtContactNumber.Text.Trim();
 
-            if (!MoveInService.IsValidName(first)) { Warn("Enter a valid first name (letters, spaces, . ' - only).", txtFName); return; }
-            if (middle.Length > 0 && !MoveInService.IsValidName(middle)) { Warn("Middle name may contain letters, spaces, . ' - only.", txtMName); return; }
-            if (!MoveInService.IsValidName(last)) { Warn("Enter a valid last name (letters, spaces, . ' - only).", txtLName); return; }
+            if (!ValidateName(first, "First name", required: true, txtFName)) return;
+            if (!ValidateName(middle, "Middle name", required: false, txtMName)) return;
+            if (!ValidateName(last, "Last name", required: true, txtLName)) return;
 
             if (rdoTenant.Checked)
             {
                 // ---- Paying tenant ----
-                string address = txtAddress.Text.Trim();
+                // string address = txtAddress.Text.Trim();          // OLD
+                string address = MoveInService.CleanName(txtAddress.Text);   // NEW: collapse repeated spaces
                 if (address.Length == 0) { Warn("Address is required.", txtAddress); return; }
 
                 if (!MoveInService.IsValidContact(contact))
                 {
-                    Warn("Contact number must be 11 to 20 digits.", txtContactNumber);
+                    // Warn("Contact number must be 11 to 20 digits.", txtContactNumber);   // OLD
+                    Warn("Contact number must be 11 digits and start with 09 (e.g. 09171234567).", txtContactNumber);
                     return;
                 }
 
@@ -1011,7 +1062,8 @@ namespace Capstoneszn.UserControls
                 // ---- Dependent ----
                 if (contact.Length > 0 && !MoveInService.IsValidContact(contact))
                 {
-                    Warn("A dependent's contact number is optional, but if given it must be 11 to 20 digits.", txtContactNumber);
+                    // Warn("A dependent's contact number is optional, but if given it must be 11 to 20 digits.", txtContactNumber);   // OLD
+                    Warn("A dependent's contact number is optional, but if given it must be 11 digits and start with 09.", txtContactNumber);
                     return;
                 }
 
@@ -1068,7 +1120,7 @@ namespace Capstoneszn.UserControls
             RefreshAll();
         }
         /// <summary>NEW: the X button. Removing a payer also removes their dependents.</summary>
-        private void dgvMoveInList_CellContentClick(object sender, DataGridViewCellEventArgs e) 
+        private void dgvMoveInList_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.RowIndex >= _entries.Count || e.ColumnIndex != colRemove.Index) return;
 

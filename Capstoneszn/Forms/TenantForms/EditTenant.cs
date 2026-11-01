@@ -64,6 +64,11 @@ namespace Capstoneszn.Forms.TenantForms
 
             txtEditTenantContactNumber.KeyPress += NumericOnly_KeyPress;
 
+            // NEW: block numbers/symbols while typing in the name fields
+            txtEditTenantFName.KeyPress += LettersOnly_KeyPress;
+            txtEditTenantMName.KeyPress += LettersOnly_KeyPress;
+            txtEditTenantLName.KeyPress += LettersOnly_KeyPress;
+
             // Enter confirms, Esc cancels.
             this.AcceptButton = btnEditConfirm;
             this.CancelButton = btnEditCancel;
@@ -76,6 +81,16 @@ namespace Capstoneszn.Forms.TenantForms
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                 e.Handled = true;
+        }
+        // NEW: name fields accept letters, space, period, apostrophe and hyphen only
+        private void LettersOnly_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            char c = e.KeyChar;
+            if (char.IsControl(c) || char.IsLetter(c) || c == ' ' || c == '.' ||
+                c == '\'' || c == '’' || c == '‘' || c == '-')
+                return;
+
+            e.Handled = true;   // blocks digits and other symbols
         }
 
         private void LoadTenant()
@@ -109,10 +124,10 @@ namespace Capstoneszn.Forms.TenantForms
                                 txtEditTenantContactNumber.Text = rd.IsDBNull(4) ? "" : rd.GetString(4);
 
                                 _originalContact = txtEditTenantContactNumber.Text.Trim();
-                                _originalFName = txtEditTenantFName.Text.Trim();
-                                _originalMName = txtEditTenantMName.Text.Trim();
-                                _originalLName = txtEditTenantLName.Text.Trim();
-                                _originalAddress = txtEditTenantAddress.Text.Trim();
+                                _originalFName = Clean(txtEditTenantFName.Text);
+                                _originalMName = Clean(txtEditTenantMName.Text);
+                                _originalLName = Clean(txtEditTenantLName.Text);
+                                _originalAddress = Clean(txtEditTenantAddress.Text);
 
                                 if (rd.GetInt32(5) == 0)
                                     MakeReadOnly();
@@ -189,10 +204,12 @@ namespace Capstoneszn.Forms.TenantForms
                 {
                     conn.Open();
 
-                    // Same rule as Move In: a shared number is allowed (family
-                    // members, a company phone) but the landlord is told.
+                    
                     if (contact != _originalContact && !ConfirmSharedContact(conn, contact))
+                    {
+                        txtEditTenantContactNumber.Focus();
                         return;
+                    }
 
                     // The EXISTS clause is the moved-out rule. Even if this
                     // form is somehow opened for a former tenant, the row
@@ -263,7 +280,7 @@ namespace Capstoneszn.Forms.TenantForms
 
             if (!NamePattern.IsMatch(value))
             {
-                MessageBox.Show(label + " can only contain letters, spaces, hyphens (-), and apostrophes (').",
+                MessageBox.Show(label + " can only contain letters, spaces, periods (.), hyphens (-) and apostrophes (').",
                     "Invalid Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 box.Focus();
                 return false;
@@ -271,10 +288,6 @@ namespace Capstoneszn.Forms.TenantForms
             return true;
         }
 
-        /// <summary>
-        /// Returns true to go ahead. Warns, never blocks, when another tenant
-        /// already has this number.
-        /// </summary>
         /// 
         private bool ConfirmSharedContact(SqlConnection conn, string contact)
         {
@@ -290,10 +303,9 @@ namespace Capstoneszn.Forms.TenantForms
                 object other = cmd.ExecuteScalar();
                 if (other == null || other == DBNull.Value) return true;
 
-                return MessageBox.Show(
-                    contact + " is already recorded for " + other + ".\n\nSave it anyway?",
-                    "Contact Number in Use", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning) == DialogResult.Yes;
+                MessageBox.Show(contact + " is already used by " + other + ". Please enter a different number.",
+                    "Contact Number in Use", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
             }
         }
 

@@ -506,7 +506,7 @@ namespace Capstoneszn
         /// of a move out is the oldest credit, so the oldest pesos - up to
         /// the forfeited total - are treated as gone and passed over.
         /// </summary>
-        private static void ConsumeCredit(
+        internal static void ConsumeCredit(
             SqlConnection conn, SqlTransaction tx, int tenantId, int billId, decimal share)
         {
             decimal remaining = share;

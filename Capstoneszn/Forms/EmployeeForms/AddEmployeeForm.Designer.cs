@@ -48,11 +48,11 @@
             // txtAddFullName
             // 
             txtAddFullName.Cursor = Cursors.IBeam;
-            txtAddFullName.Font = new Font("Segoe UI", 12F);
+            txtAddFullName.Font = new Font("Segoe UI", 15F);
             txtAddFullName.Location = new Point(66, 127);
-            txtAddFullName.Multiline = true;
             txtAddFullName.Name = "txtAddFullName";
-            txtAddFullName.Size = new Size(416, 40);
+            txtAddFullName.PlaceholderText = "*";
+            txtAddFullName.Size = new Size(416, 41);
             txtAddFullName.TabIndex = 0;
             // 
             // AddEmployeeContent
@@ -79,6 +79,7 @@
             // 
             // btnCancel
             // 
+            btnCancel.Cursor = Cursors.Hand;
             btnCancel.Font = new Font("Segoe UI", 12F);
             btnCancel.Location = new Point(238, 566);
             btnCancel.Name = "btnCancel";
@@ -90,6 +91,7 @@
             // 
             // btnAdd
             // 
+            btnAdd.Cursor = Cursors.Hand;
             btnAdd.Font = new Font("Segoe UI", 12F);
             btnAdd.Location = new Point(363, 566);
             btnAdd.Name = "btnAdd";
@@ -121,31 +123,30 @@
             // 
             // txtAddPassword
             // 
-            txtAddPassword.Font = new Font("Segoe UI", 12F);
+            txtAddPassword.Font = new Font("Segoe UI", 15F);
             txtAddPassword.Location = new Point(66, 492);
-            txtAddPassword.Multiline = true;
             txtAddPassword.Name = "txtAddPassword";
-            txtAddPassword.Size = new Size(416, 40);
+            txtAddPassword.PlaceholderText = "*";
+            txtAddPassword.Size = new Size(416, 41);
             txtAddPassword.TabIndex = 0;
             // 
             // txtAddUsername
             // 
-            txtAddUsername.Font = new Font("Segoe UI", 12F);
+            txtAddUsername.Font = new Font("Segoe UI", 15F);
             txtAddUsername.Location = new Point(66, 397);
-            txtAddUsername.Multiline = true;
             txtAddUsername.Name = "txtAddUsername";
-            txtAddUsername.PlaceholderText = " @Employee1";
-            txtAddUsername.Size = new Size(416, 40);
+            txtAddUsername.PlaceholderText = "*";
+            txtAddUsername.Size = new Size(416, 41);
             txtAddUsername.TabIndex = 0;
             // 
             // txtAddAddress
             // 
             txtAddAddress.Cursor = Cursors.IBeam;
-            txtAddAddress.Font = new Font("Segoe UI", 12F);
+            txtAddAddress.Font = new Font("Segoe UI", 15F);
             txtAddAddress.Location = new Point(66, 219);
-            txtAddAddress.Multiline = true;
             txtAddAddress.Name = "txtAddAddress";
-            txtAddAddress.Size = new Size(416, 40);
+            txtAddAddress.PlaceholderText = "*";
+            txtAddAddress.Size = new Size(416, 41);
             txtAddAddress.TabIndex = 0;
             // 
             // lblAddDateHired

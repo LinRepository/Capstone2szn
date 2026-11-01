@@ -50,9 +50,9 @@
             pnlBackupRestoreHeader.Controls.Add(lblBackupRestoreTitle);
             pnlBackupRestoreHeader.Controls.Add(btnBackBackupRestore);
             pnlBackupRestoreHeader.Dock = DockStyle.Top;
-            pnlBackupRestoreHeader.Location = new Point(0, 0);
+            pnlBackupRestoreHeader.Location = new Point(1, 1);
             pnlBackupRestoreHeader.Name = "pnlBackupRestoreHeader";
-            pnlBackupRestoreHeader.Size = new Size(1300, 100);
+            pnlBackupRestoreHeader.Size = new Size(1298, 100);
             pnlBackupRestoreHeader.TabIndex = 0;
             // 
             // lblBackupRestoreTitle
@@ -63,9 +63,10 @@
             lblBackupRestoreTitle.ForeColor = Color.White;
             lblBackupRestoreTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblBackupRestoreTitle.Location = new Point(140, 0);
+            lblBackupRestoreTitle.Margin = new Padding(0, 0, 0, 0);
             lblBackupRestoreTitle.Name = "lblBackupRestoreTitle";
             lblBackupRestoreTitle.Padding = new Padding(0, 0, 150, 0);
-            lblBackupRestoreTitle.Size = new Size(1160, 100);
+            lblBackupRestoreTitle.Size = new Size(1158, 100);
             lblBackupRestoreTitle.TabIndex = 8;
             lblBackupRestoreTitle.Text = "Backup and Restore";
             lblBackupRestoreTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -90,9 +91,9 @@
             pnlBackupRestoreContent.BorderStyle = BorderStyle.FixedSingle;
             pnlBackupRestoreContent.Controls.Add(pnlBackupRestoreCenter);
             pnlBackupRestoreContent.Dock = DockStyle.Fill;
-            pnlBackupRestoreContent.Location = new Point(0, 100);
+            pnlBackupRestoreContent.Location = new Point(1, 101);
             pnlBackupRestoreContent.Name = "pnlBackupRestoreContent";
-            pnlBackupRestoreContent.Size = new Size(1300, 650);
+            pnlBackupRestoreContent.Size = new Size(1298, 648);
             pnlBackupRestoreContent.TabIndex = 1;
             // 
             // pnlBackupRestoreCenter
@@ -101,7 +102,7 @@
             pnlBackupRestoreCenter.BorderStyle = BorderStyle.FixedSingle;
             pnlBackupRestoreCenter.Controls.Add(pnlBackupRestoreActions);
             pnlBackupRestoreCenter.Controls.Add(pnlBackupRestoreCenterHeader);
-            pnlBackupRestoreCenter.Location = new Point(348, 165);
+            pnlBackupRestoreCenter.Location = new Point(347, 164);
             pnlBackupRestoreCenter.Name = "pnlBackupRestoreCenter";
             pnlBackupRestoreCenter.Size = new Size(600, 275);
             pnlBackupRestoreCenter.TabIndex = 16;
@@ -127,6 +128,7 @@
             btnRestoreData.TabIndex = 14;
             btnRestoreData.Text = "Restore Data";
             btnRestoreData.UseVisualStyleBackColor = true;
+            btnRestoreData.Click += btnRestoreData_Click;
             // 
             // btnBackupData
             // 
@@ -139,6 +141,7 @@
             btnBackupData.TabIndex = 15;
             btnBackupData.Text = "Backup Data";
             btnBackupData.UseVisualStyleBackColor = true;
+            btnBackupData.Click += btnBackupData_Click;
             // 
             // pnlBackupRestoreCenterHeader
             // 
@@ -170,7 +173,9 @@
             Controls.Add(pnlBackupRestoreContent);
             Controls.Add(pnlBackupRestoreHeader);
             Name = "BackupRestoreControl";
+            Padding = new Padding(1);
             Size = new Size(1300, 750);
+            Load += BackupRestoreControl_Load;
             pnlBackupRestoreHeader.ResumeLayout(false);
             pnlBackupRestoreContent.ResumeLayout(false);
             pnlBackupRestoreCenter.ResumeLayout(false);
