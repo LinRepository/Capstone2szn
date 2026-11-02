@@ -368,6 +368,7 @@ namespace Capstoneszn.Forms.TenantForms
 
                                 dt.Rows.Add(
                                     $"{start:MMM d, yyyy} - {end:MMM d, yyyy}",
+                                    $"{start:MMM d, yyyy} - {end.AddDays(-1):MMM d, yyyy}",
                                     category,
                                     due,
                                     share,
