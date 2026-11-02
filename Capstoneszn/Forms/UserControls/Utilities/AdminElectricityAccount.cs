@@ -67,7 +67,15 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                     {
                         _amount = Convert.ToDecimal(dr["Amount"]);
                         lblStatus.Text = dr["Status"].ToString();
-                        _isLocked = dr["Status"].ToString() == "Paid";
+                        
+                        if (_isLocked = dr["Status"].ToString() == "Paid")
+                        {
+                            lblStatus.BackColor = Color.FromArgb(230, 244, 234);
+                        }
+                        else
+                        {
+                            lblStatus.BackColor = Color.FromArgb(255, 244, 224);
+                        }
                     }
                     else
                     {
@@ -88,6 +96,8 @@ namespace Capstoneszn.Forms.UserControls.Utilities
 
             ShowAmount();
             txtAmount.ReadOnly = AccountId == 0 || _isLocked || BillMonth > DateTime.Today;
+
+            UtilityStatusStyle.ApplyToLabel(lblStatus);   // NEW: Paid green / Unpaid amber / No bill gray
         }
         private void ShowAmount()
         {
