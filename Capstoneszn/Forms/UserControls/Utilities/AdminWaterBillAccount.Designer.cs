@@ -29,75 +29,208 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            panel7 = new Panel();
-            panel6 = new Panel();
-            btnRecordWaterExpense = new Button();
-            panel5 = new Panel();
-            panel15 = new Panel();
-            lblStatus = new Label();
-            panel14 = new Panel();
-            label3 = new Label();
-            panel4 = new Panel();
-            panel13 = new Panel();
-            lblAmount = new Label();
-            panel12 = new Panel();
-            label2 = new Label();
             panel3 = new Panel();
-            panel11 = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
             lblAccountNumber = new Label();
-            panel10 = new Panel();
+            lblAccountName = new Label();
+            lblStatus = new Label();
+            lblAmount = new Label();
+            label3 = new Label();
+            label1 = new Label();
+            label2 = new Label();
             label4 = new Label();
             panel2 = new Panel();
-            panel9 = new Panel();
-            lblAccountName = new Label();
-            panel8 = new Panel();
-            label1 = new Label();
+            label5 = new Label();
+            panel6 = new Panel();
+            btnRecordWaterExpense = new Button();
             panel1.SuspendLayout();
-            panel6.SuspendLayout();
-            panel5.SuspendLayout();
-            panel15.SuspendLayout();
-            panel14.SuspendLayout();
-            panel4.SuspendLayout();
-            panel13.SuspendLayout();
-            panel12.SuspendLayout();
             panel3.SuspendLayout();
-            panel11.SuspendLayout();
-            panel10.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             panel2.SuspendLayout();
-            panel9.SuspendLayout();
-            panel8.SuspendLayout();
+            panel6.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(panel7);
-            panel1.Controls.Add(panel6);
-            panel1.Controls.Add(panel5);
-            panel1.Controls.Add(panel4);
+            panel1.BackColor = Color.White;
             panel1.Controls.Add(panel3);
             panel1.Controls.Add(panel2);
+            panel1.Controls.Add(panel6);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1535, 91);
+            panel1.Size = new Size(1382, 60);
             panel1.TabIndex = 0;
             // 
-            // panel7
+            // panel3
             // 
-            panel7.Dock = DockStyle.Fill;
-            panel7.Location = new Point(1200, 0);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(85, 91);
-            panel7.TabIndex = 5;
+            panel3.Controls.Add(tableLayoutPanel1);
+            panel3.Dock = DockStyle.Fill;
+            panel3.Location = new Point(186, 0);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(983, 60);
+            panel3.TabIndex = 6;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.6614F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.3386F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 318F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 218F));
+            tableLayoutPanel1.Controls.Add(lblAccountNumber, 1, 1);
+            tableLayoutPanel1.Controls.Add(lblAccountName, 0, 1);
+            tableLayoutPanel1.Controls.Add(lblStatus, 3, 1);
+            tableLayoutPanel1.Controls.Add(lblAmount, 2, 1);
+            tableLayoutPanel1.Controls.Add(label3, 3, 0);
+            tableLayoutPanel1.Controls.Add(label1, 0, 0);
+            tableLayoutPanel1.Controls.Add(label2, 2, 0);
+            tableLayoutPanel1.Controls.Add(label4, 1, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(983, 60);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
+            // lblAccountNumber
+            // 
+            lblAccountNumber.AutoSize = true;
+            lblAccountNumber.Dock = DockStyle.Fill;
+            lblAccountNumber.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAccountNumber.ForeColor = Color.Black;
+            lblAccountNumber.Location = new Point(224, 30);
+            lblAccountNumber.Name = "lblAccountNumber";
+            lblAccountNumber.Size = new Size(216, 29);
+            lblAccountNumber.TabIndex = 0;
+            lblAccountNumber.Text = "?";
+            lblAccountNumber.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblAccountName
+            // 
+            lblAccountName.AutoSize = true;
+            lblAccountName.Dock = DockStyle.Fill;
+            lblAccountName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAccountName.ForeColor = Color.Black;
+            lblAccountName.Location = new Point(4, 30);
+            lblAccountName.Name = "lblAccountName";
+            lblAccountName.Size = new Size(213, 29);
+            lblAccountName.TabIndex = 0;
+            lblAccountName.Text = "?";
+            lblAccountName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.Dock = DockStyle.Fill;
+            lblStatus.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblStatus.ForeColor = Color.Black;
+            lblStatus.Location = new Point(766, 30);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(213, 29);
+            lblStatus.TabIndex = 0;
+            lblStatus.Text = "?";
+            lblStatus.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblAmount
+            // 
+            lblAmount.AutoSize = true;
+            lblAmount.Dock = DockStyle.Fill;
+            lblAmount.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblAmount.ForeColor = Color.Black;
+            lblAmount.Location = new Point(447, 30);
+            lblAmount.Name = "lblAmount";
+            lblAmount.Size = new Size(312, 29);
+            lblAmount.TabIndex = 0;
+            lblAmount.Text = "?";
+            lblAmount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Dock = DockStyle.Fill;
+            label3.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.Black;
+            label3.Location = new Point(766, 1);
+            label3.Name = "label3";
+            label3.Size = new Size(213, 28);
+            label3.TabIndex = 0;
+            label3.Text = "Status";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
+            label1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(4, 1);
+            label1.Name = "label1";
+            label1.Size = new Size(213, 28);
+            label1.TabIndex = 0;
+            label1.Text = "Account name";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Dock = DockStyle.Fill;
+            label2.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.ForeColor = Color.Black;
+            label2.Location = new Point(447, 1);
+            label2.Name = "label2";
+            label2.Size = new Size(312, 28);
+            label2.TabIndex = 0;
+            label2.Text = "Amount";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
+            label2.Click += label2_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Dock = DockStyle.Fill;
+            label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.Black;
+            label4.Location = new Point(224, 1);
+            label4.Name = "label4";
+            label4.Size = new Size(216, 28);
+            label4.TabIndex = 0;
+            label4.Text = "Account number";
+            label4.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panel2
+            // 
+            panel2.BorderStyle = BorderStyle.FixedSingle;
+            panel2.Controls.Add(label5);
+            panel2.Dock = DockStyle.Left;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(186, 60);
+            panel2.TabIndex = 5;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.ForeColor = Color.Black;
+            label5.Location = new Point(18, 15);
+            label5.Name = "label5";
+            label5.Size = new Size(139, 23);
+            label5.TabIndex = 0;
+            label5.Text = "Admin Account:";
+            label5.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel6
             // 
             panel6.Controls.Add(btnRecordWaterExpense);
             panel6.Dock = DockStyle.Right;
-            panel6.Location = new Point(1285, 0);
+            panel6.Location = new Point(1169, 0);
             panel6.Name = "panel6";
-            panel6.Padding = new Padding(10);
-            panel6.Size = new Size(250, 91);
+            panel6.Padding = new Padding(8);
+            panel6.Size = new Size(213, 60);
             panel6.TabIndex = 4;
             // 
             // btnRecordWaterExpense
@@ -105,216 +238,14 @@
             btnRecordWaterExpense.BackColor = Color.White;
             btnRecordWaterExpense.Dock = DockStyle.Fill;
             btnRecordWaterExpense.FlatStyle = FlatStyle.Flat;
-            btnRecordWaterExpense.Location = new Point(10, 10);
+            btnRecordWaterExpense.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnRecordWaterExpense.Location = new Point(8, 8);
             btnRecordWaterExpense.Name = "btnRecordWaterExpense";
-            btnRecordWaterExpense.Size = new Size(230, 71);
+            btnRecordWaterExpense.Size = new Size(197, 44);
             btnRecordWaterExpense.TabIndex = 0;
             btnRecordWaterExpense.Text = "Record Expense";
             btnRecordWaterExpense.UseVisualStyleBackColor = false;
             btnRecordWaterExpense.Click += btnRecordWaterExpense_Click;
-            // 
-            // panel5
-            // 
-            panel5.Controls.Add(panel15);
-            panel5.Controls.Add(panel14);
-            panel5.Dock = DockStyle.Left;
-            panel5.Location = new Point(900, 0);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(300, 91);
-            panel5.TabIndex = 3;
-            // 
-            // panel15
-            // 
-            panel15.Controls.Add(lblStatus);
-            panel15.Dock = DockStyle.Fill;
-            panel15.Location = new Point(0, 45);
-            panel15.Name = "panel15";
-            panel15.Size = new Size(300, 46);
-            panel15.TabIndex = 1;
-            // 
-            // lblStatus
-            // 
-            lblStatus.AutoSize = true;
-            lblStatus.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblStatus.ForeColor = Color.White;
-            lblStatus.Location = new Point(120, 13);
-            lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(18, 23);
-            lblStatus.TabIndex = 0;
-            lblStatus.Text = "?";
-            lblStatus.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // panel14
-            // 
-            panel14.Controls.Add(label3);
-            panel14.Dock = DockStyle.Top;
-            panel14.Location = new Point(0, 0);
-            panel14.Name = "panel14";
-            panel14.Size = new Size(300, 45);
-            panel14.TabIndex = 1;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.White;
-            label3.Location = new Point(108, 10);
-            label3.Name = "label3";
-            label3.Size = new Size(56, 23);
-            label3.TabIndex = 0;
-            label3.Text = "Status";
-            // 
-            // panel4
-            // 
-            panel4.Controls.Add(panel13);
-            panel4.Controls.Add(panel12);
-            panel4.Dock = DockStyle.Left;
-            panel4.Location = new Point(600, 0);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(300, 91);
-            panel4.TabIndex = 2;
-            // 
-            // panel13
-            // 
-            panel13.Controls.Add(lblAmount);
-            panel13.Dock = DockStyle.Fill;
-            panel13.Location = new Point(0, 45);
-            panel13.Name = "panel13";
-            panel13.Size = new Size(300, 46);
-            panel13.TabIndex = 1;
-            // 
-            // lblAmount
-            // 
-            lblAmount.AutoSize = true;
-            lblAmount.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAmount.ForeColor = Color.White;
-            lblAmount.Location = new Point(141, 13);
-            lblAmount.Name = "lblAmount";
-            lblAmount.Size = new Size(18, 23);
-            lblAmount.TabIndex = 0;
-            lblAmount.Text = "?";
-            lblAmount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // panel12
-            // 
-            panel12.Controls.Add(label2);
-            panel12.Dock = DockStyle.Top;
-            panel12.Location = new Point(0, 0);
-            panel12.Name = "panel12";
-            panel12.Size = new Size(300, 45);
-            panel12.TabIndex = 1;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(121, 10);
-            label2.Name = "label2";
-            label2.Size = new Size(72, 23);
-            label2.TabIndex = 0;
-            label2.Text = "Amount";
-            // 
-            // panel3
-            // 
-            panel3.Controls.Add(panel11);
-            panel3.Controls.Add(panel10);
-            panel3.Dock = DockStyle.Left;
-            panel3.Location = new Point(300, 0);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(300, 91);
-            panel3.TabIndex = 1;
-            // 
-            // panel11
-            // 
-            panel11.Controls.Add(lblAccountNumber);
-            panel11.Dock = DockStyle.Fill;
-            panel11.Location = new Point(0, 45);
-            panel11.Name = "panel11";
-            panel11.Size = new Size(300, 46);
-            panel11.TabIndex = 1;
-            // 
-            // lblAccountNumber
-            // 
-            lblAccountNumber.AutoSize = true;
-            lblAccountNumber.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAccountNumber.ForeColor = Color.White;
-            lblAccountNumber.Location = new Point(135, 13);
-            lblAccountNumber.Name = "lblAccountNumber";
-            lblAccountNumber.Size = new Size(18, 23);
-            lblAccountNumber.TabIndex = 0;
-            lblAccountNumber.Text = "?";
-            // 
-            // panel10
-            // 
-            panel10.Controls.Add(label4);
-            panel10.Dock = DockStyle.Top;
-            panel10.Location = new Point(0, 0);
-            panel10.Name = "panel10";
-            panel10.Size = new Size(300, 45);
-            panel10.TabIndex = 1;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.ForeColor = Color.White;
-            label4.Location = new Point(76, 10);
-            label4.Name = "label4";
-            label4.Size = new Size(138, 23);
-            label4.TabIndex = 0;
-            label4.Text = "Account number";
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(panel9);
-            panel2.Controls.Add(panel8);
-            panel2.Dock = DockStyle.Left;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(300, 91);
-            panel2.TabIndex = 0;
-            // 
-            // panel9
-            // 
-            panel9.Controls.Add(lblAccountName);
-            panel9.Dock = DockStyle.Fill;
-            panel9.Location = new Point(0, 45);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(300, 46);
-            panel9.TabIndex = 1;
-            // 
-            // lblAccountName
-            // 
-            lblAccountName.AutoSize = true;
-            lblAccountName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblAccountName.ForeColor = Color.White;
-            lblAccountName.Location = new Point(128, 13);
-            lblAccountName.Name = "lblAccountName";
-            lblAccountName.Size = new Size(18, 23);
-            lblAccountName.TabIndex = 0;
-            lblAccountName.Text = "?";
-            lblAccountName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // panel8
-            // 
-            panel8.Controls.Add(label1);
-            panel8.Dock = DockStyle.Top;
-            panel8.Location = new Point(0, 0);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(300, 45);
-            panel8.TabIndex = 0;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(85, 10);
-            label1.Name = "label1";
-            label1.Size = new Size(121, 23);
-            label1.TabIndex = 0;
-            label1.Text = "Account name";
             // 
             // AdminWaterBillAccount
             // 
@@ -323,50 +254,22 @@
             BackColor = Color.FromArgb(25, 25, 70);
             Controls.Add(panel1);
             Name = "AdminWaterBillAccount";
-            Size = new Size(1535, 91);
+            Size = new Size(1382, 60);
             panel1.ResumeLayout(false);
-            panel6.ResumeLayout(false);
-            panel5.ResumeLayout(false);
-            panel15.ResumeLayout(false);
-            panel15.PerformLayout();
-            panel14.ResumeLayout(false);
-            panel14.PerformLayout();
-            panel4.ResumeLayout(false);
-            panel13.ResumeLayout(false);
-            panel13.PerformLayout();
-            panel12.ResumeLayout(false);
-            panel12.PerformLayout();
             panel3.ResumeLayout(false);
-            panel11.ResumeLayout(false);
-            panel11.PerformLayout();
-            panel10.ResumeLayout(false);
-            panel10.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             panel2.ResumeLayout(false);
-            panel9.ResumeLayout(false);
-            panel9.PerformLayout();
-            panel8.ResumeLayout(false);
-            panel8.PerformLayout();
+            panel2.PerformLayout();
+            panel6.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
         private Panel panel1;
-        private Panel panel2;
-        private Panel panel4;
-        private Panel panel3;
-        private Panel panel5;
         private Panel panel6;
-        private Panel panel7;
         private Button btnRecordWaterExpense;
-        private Panel panel8;
-        private Panel panel12;
-        private Panel panel11;
-        private Panel panel10;
-        private Panel panel9;
-        private Panel panel15;
-        private Panel panel14;
-        private Panel panel13;
         private Label label1;
         private Label label2;
         private Label lblStatus;
@@ -375,5 +278,9 @@
         private Label lblAccountName;
         private Label lblAccountNumber;
         private Label label4;
+        private Label label5;
+        private Panel panel2;
+        private Panel panel3;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

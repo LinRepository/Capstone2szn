@@ -31,7 +31,6 @@ namespace Capstoneszn.Forms.UserControls.Utilities
         public void LoadAccount()
         {
             // Reset first, so a failed or empty load never shows last month's numbers
-            //lblAccountName.Text = AccountName;
             lblAmount.Text = "—";
             lblStatus.Text = "No bill yet";
             WaterBillId = 0;
@@ -39,18 +38,10 @@ namespace Capstoneszn.Forms.UserControls.Utilities
             _isPaid = false;
             _paidDate = null;
 
-            /*
-            const string sql = @"
-                SELECT WaterBillId, AdminAmount, AdminStatus, AdminPaidDate
-                FROM dbo.WaterBills
-                WHERE  BuildingId = @BuildingId
-                  AND  BillingMonth = @MonthStart; ";
-            */
-
             // NEW: same columns as before, plus the account the bill was recorded under
             const string sql = @"
                 SELECT wb.WaterBillId, wb.AdminAmount, wb.AdminStatus, wb.AdminPaidDate,
-                       wa.AccountName, wa.AccountNumber
+                       wa.AccountName, wa.AccountNumber, wb.DueDate
                 FROM   dbo.WaterBills wb
                 LEFT JOIN dbo.WaterAccounts wa ON wa.WaterAccountId = wb.WaterAccountId
                 WHERE  wb.BuildingId   = @BuildingId
@@ -76,10 +67,18 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                 using SqlDataReader dr = cmd.ExecuteReader();
                 if (!dr.Read()) return;   // no bill this month → stays "No bill yet"
 
+
                 WaterBillId = dr.GetInt32(0);
                 _ownerShare = dr.GetDecimal(1);
-                _isPaid = dr.GetString(2) == "Paid";
+
+                if (_isPaid = dr.GetString(2) == "Paid")
+                {
+                    lblStatus.BackColor = Color.FromArgb(230, 244, 234);
+                }   else {
+                    lblStatus.BackColor = Color.FromArgb(255, 244, 224);
+                }
                 _paidDate = dr.IsDBNull(3) ? null : dr.GetDateTime(3);
+                
 
                 // NEW: a linked bill shows the account it was billed under (history)
                 if (!dr.IsDBNull(4))
@@ -89,14 +88,25 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                 }
 
                 lblAmount.Text = _ownerShare.ToString("₱#,##0.00");
-                lblStatus.Text = _isPaid ? $"Paid ({_paidDate:MMM d, yyyy})"
+                lblStatus.Text = _isPaid ? $"Paid" //({_paidDate:MMM d, yyyy})"
                                : _ownerShare <= 0 ? "No share"
                                                   : "Unpaid";
+
+
+
+                // NEW: unpaid owner share past its due date → Overdue (column #6 = DueDate)
+                if (lblStatus.Text == "Unpaid" && dr.GetDateTime(6).Date < DateTime.Today)
+                    lblStatus.Text = "Overdue";
+
             }
             catch (SqlException ex)
             {
                 MessageBox.Show("Error loading water account: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                UtilityStatusStyle.ApplyToLabel(lblStatus);   // NEW: color the final status
             }
         }
         private void btnRecordWaterExpense_Click(object sender, EventArgs e)
@@ -129,6 +139,11 @@ namespace Capstoneszn.Forms.UserControls.Utilities
             using var rwef = new RecordWaterExpenseForm(WaterBillId, _ownerShare, MonthStart);
             if (rwef.ShowDialog(this) == DialogResult.OK)
                 LoadAccount();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

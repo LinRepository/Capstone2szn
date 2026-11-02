@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace Capstoneszn.UserControls
 {
@@ -34,7 +35,97 @@ namespace Capstoneszn.UserControls
             InitializeComponent();
             SetupWaterGrid();
             SetupElectricityGrid();
+
+            SetupTabStyle();          // NEW
+            SetupStatusColors();      // NEW (section 2)
         }
+        // NEW: owner-drawn tabs so the open tab is obvious
+        private void SetupTabStyle()
+        {
+            tabUtilities.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabUtilities.SizeMode = TabSizeMode.Fixed;
+            tabUtilities.ItemSize = new Size(210, 40);
+            tabUtilities.DrawItem += TabUtilities_DrawItem;
+        }
+        private void TabUtilities_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            bool selected = e.Index == tabUtilities.SelectedIndex;
+            Rectangle r = tabUtilities.GetTabRect(e.Index);
+
+            Color back = selected ? Color.FromArgb(39, 111, 227) : Color.FromArgb(35, 35, 90);
+            Color fore = selected ? Color.White : Color.FromArgb(180, 185, 210);
+
+            using (var b = new SolidBrush(back))
+                e.Graphics.FillRectangle(b, r);
+
+            if (selected)   // gold underline on the active tab
+                using (var accent = new SolidBrush(Color.FromArgb(250, 204, 21)))
+                    e.Graphics.FillRectangle(accent, r.X, r.Bottom - 4, r.Width, 4);
+
+            using var font = new Font(tabUtilities.Font, selected ? FontStyle.Bold : FontStyle.Regular);
+            TextRenderer.DrawText(e.Graphics, tabUtilities.TabPages[e.Index].Text, font, r, fore,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+
+
+        // NEW: status colors for both grids
+        private void SetupStatusColors()
+        {
+            dgvWaterBillData.CellFormatting += dgvWaterBillData_CellFormatting;
+            dgvElectricity.CellFormatting += dgvElectricity_CellFormatting;
+
+            // button cells ignore BackColor unless they're flat
+            colElectricityStatus.FlatStyle = FlatStyle.Flat;
+
+            // don't start with the first row highlighted blue
+            dgvWaterBillData.DataBindingComplete += (s, e) => dgvWaterBillData.ClearSelection();
+            dgvElectricity.DataBindingComplete += (s, e) => dgvElectricity.ClearSelection();
+        }
+
+        private void dgvWaterBillData_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != colWaterStatus.Index || e.CellStyle == null) return;
+
+            string status = e.Value?.ToString() ?? "";
+
+            // Unpaid + due date already passed → show Overdue (display only)
+            string dueText = dgvWaterBillData.Rows[e.RowIndex].Cells[colWaterDueDate.Index].Value?.ToString() ?? "";
+            if (status == "Unpaid"
+                && DateTime.TryParseExact(dueText, "MMM d, yyyy", CultureInfo.CurrentCulture,
+                                          DateTimeStyles.None, out DateTime due)
+                && due.Date < DateTime.Today)
+            {
+                status = "Overdue";
+                e.Value = status;
+                e.FormattingApplied = true;
+            }
+
+            UtilityStatusStyle.ApplyToCell(e.CellStyle, status, dgvWaterBillData.DefaultCellStyle.Font!);
+        }
+
+        private void dgvElectricity_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != colElectricityStatus.Index || e.CellStyle == null) return;
+
+            // Electricity: Paid / Unpaid / No bill only (no overdue for now)
+            UtilityStatusStyle.ApplyToCell(e.CellStyle, e.Value?.ToString(), dgvElectricity.DefaultCellStyle.Font!);
+
+            string status = e.Value?.ToString() ?? "";
+
+            // No due date is stored for electricity: unpaid from a previous month = Overdue
+            DateTime thisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            if (status == "Unpaid" && ElectricityMonthStart < thisMonth)
+            {
+                status = "Overdue";
+                e.Value = status;
+                e.FormattingApplied = true;
+            }
+
+            UtilityStatusStyle.ApplyToCell(e.CellStyle, status, dgvElectricity.DefaultCellStyle.Font!);
+        }
+
+
+
         private void SetupWaterGrid()
         {
             dgvWaterBillData.AutoGenerateColumns = false;
@@ -886,6 +977,11 @@ namespace Capstoneszn.UserControls
 
             e.HasMorePages = false;
             return i;
+        }
+
+        private void lblWaterTitle_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

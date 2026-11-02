@@ -123,7 +123,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(11, 20, 38);
+            BackColor = Color.FromArgb(25, 25, 70);
             ClientSize = new Size(445, 366);
             Controls.Add(btnCancelRecordWaterExpense);
             Controls.Add(btnConfirmRecordWaterExpense);
@@ -138,6 +138,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "RecordWaterExpenseForm";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "RecordWaterExpenseForm";
             Load += RecordWaterExpenseForm_Load;
             ResumeLayout(false);

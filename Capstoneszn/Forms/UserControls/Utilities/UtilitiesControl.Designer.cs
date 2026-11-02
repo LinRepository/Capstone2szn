@@ -29,9 +29,11 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             pnlUtilitiesContent = new Panel();
             tabUtilities = new TabControl();
             tabWater = new TabPage();
@@ -45,8 +47,6 @@
             panel6 = new Panel();
             label4 = new Label();
             pnlWaterAdminAccount = new Panel();
-            panel4 = new Panel();
-            label3 = new Label();
             pnlWaterHeader = new Panel();
             tblWaterActions = new TableLayoutPanel();
             pnlButtons = new Panel();
@@ -61,10 +61,10 @@
             pnlCurrentTotal = new Panel();
             lblCurrentTotalBillValue = new Label();
             pnlCurrentTotalBillTitle = new Label();
-            pnlWaterDate = new Panel();
+            pnlHeaderWaterTitle = new Panel();
+            panel1 = new Panel();
             dtpWaterDate = new DateTimePicker();
             lblWaterDateTitle = new Label();
-            pnlHeaderWaterTitle = new Panel();
             lblWaterTitle = new Label();
             tabElectricity = new TabPage();
             pnlElectricityContent = new Panel();
@@ -80,15 +80,12 @@
             btnSelectAllUnpaid = new Button();
             panel7 = new Panel();
             btnMarkPaid = new Button();
-            panel1 = new Panel();
             pnlElecAdminAccount = new Panel();
-            panel2 = new Panel();
-            label1 = new Label();
             pnlElectricityHeader = new Panel();
+            pnlHeaderElectricityTitle = new Panel();
             pnlDate = new Panel();
             dtpElectricityDate = new DateTimePicker();
             lblElectricityDate = new Label();
-            pnlHeaderElectricityTitle = new Panel();
             pnlElectricityTitle = new Label();
             lblOtherTitle = new Label();
             btnAddOther = new Button();
@@ -98,23 +95,20 @@
             pnlWaterContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvWaterBillData).BeginInit();
             panel6.SuspendLayout();
-            panel4.SuspendLayout();
             pnlWaterHeader.SuspendLayout();
             tblWaterActions.SuspendLayout();
             pnlButtons.SuspendLayout();
             pnlTotalShares.SuspendLayout();
             pnlCurrentTotal.SuspendLayout();
-            pnlWaterDate.SuspendLayout();
             pnlHeaderWaterTitle.SuspendLayout();
+            panel1.SuspendLayout();
             tabElectricity.SuspendLayout();
             pnlElectricityContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvElectricity).BeginInit();
             panel5.SuspendLayout();
-            panel1.SuspendLayout();
-            panel2.SuspendLayout();
             pnlElectricityHeader.SuspendLayout();
-            pnlDate.SuspendLayout();
             pnlHeaderElectricityTitle.SuspendLayout();
+            pnlDate.SuspendLayout();
             SuspendLayout();
             // 
             // pnlUtilitiesContent
@@ -145,7 +139,6 @@
             tabWater.Controls.Add(pnlWaterContent);
             tabWater.Controls.Add(panel6);
             tabWater.Controls.Add(pnlWaterAdminAccount);
-            tabWater.Controls.Add(panel4);
             tabWater.Controls.Add(pnlWaterHeader);
             tabWater.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             tabWater.Location = new Point(4, 40);
@@ -161,9 +154,9 @@
             pnlWaterContent.BorderStyle = BorderStyle.FixedSingle;
             pnlWaterContent.Controls.Add(dgvWaterBillData);
             pnlWaterContent.Dock = DockStyle.Fill;
-            pnlWaterContent.Location = new Point(3, 271);
+            pnlWaterContent.Location = new Point(3, 254);
             pnlWaterContent.Name = "pnlWaterContent";
-            pnlWaterContent.Size = new Size(1286, 432);
+            pnlWaterContent.Size = new Size(1286, 449);
             pnlWaterContent.TabIndex = 16;
             // 
             // dgvWaterBillData
@@ -172,7 +165,7 @@
             dgvWaterBillData.AllowUserToDeleteRows = false;
             dgvWaterBillData.AllowUserToResizeRows = false;
             dgvWaterBillData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvWaterBillData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvWaterBillData.BackgroundColor = Color.White;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -183,14 +176,14 @@
             dgvWaterBillData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvWaterBillData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvWaterBillData.Columns.AddRange(new DataGridViewColumn[] { colWaterRoom, colWaterTenant, colWaterDueDate, colWaterAmount, colWaterStatus });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dgvWaterBillData.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = SystemColors.Window;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvWaterBillData.DefaultCellStyle = dataGridViewCellStyle3;
             dgvWaterBillData.Dock = DockStyle.Fill;
             dgvWaterBillData.Location = new Point(0, 0);
             dgvWaterBillData.Name = "dgvWaterBillData";
@@ -198,7 +191,7 @@
             dgvWaterBillData.RowHeadersVisible = false;
             dgvWaterBillData.RowHeadersWidth = 51;
             dgvWaterBillData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvWaterBillData.Size = new Size(1284, 430);
+            dgvWaterBillData.Size = new Size(1284, 447);
             dgvWaterBillData.TabIndex = 12;
             dgvWaterBillData.CellContentClick += dgvWaterBillData_CellContentClick;
             // 
@@ -212,7 +205,6 @@
             // 
             // colWaterTenant
             // 
-            colWaterTenant.FillWeight = 150F;
             colWaterTenant.HeaderText = "Tenant";
             colWaterTenant.MinimumWidth = 6;
             colWaterTenant.Name = "colWaterTenant";
@@ -227,6 +219,9 @@
             // 
             // colWaterAmount
             // 
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Padding = new Padding(0, 0, 12, 0);
+            colWaterAmount.DefaultCellStyle = dataGridViewCellStyle2;
             colWaterAmount.HeaderText = "Amount";
             colWaterAmount.MinimumWidth = 6;
             colWaterAmount.Name = "colWaterAmount";
@@ -241,10 +236,10 @@
             // 
             // panel6
             // 
-            panel6.BackColor = Color.Gainsboro;
+            panel6.BackColor = Color.FromArgb(224, 224, 224);
             panel6.Controls.Add(label4);
             panel6.Dock = DockStyle.Top;
-            panel6.Location = new Point(3, 244);
+            panel6.Location = new Point(3, 227);
             panel6.Name = "panel6";
             panel6.Size = new Size(1286, 27);
             panel6.TabIndex = 19;
@@ -252,40 +247,23 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.Location = new Point(4, 4);
+            label4.Dock = DockStyle.Left;
+            label4.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label4.Location = new Point(0, 0);
             label4.Name = "label4";
-            label4.Size = new Size(136, 23);
+            label4.Size = new Size(154, 25);
             label4.TabIndex = 0;
             label4.Text = "Tenant Accounts";
+            label4.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlWaterAdminAccount
             // 
+            pnlWaterAdminAccount.BorderStyle = BorderStyle.FixedSingle;
             pnlWaterAdminAccount.Dock = DockStyle.Top;
-            pnlWaterAdminAccount.Location = new Point(3, 154);
+            pnlWaterAdminAccount.Location = new Point(3, 167);
             pnlWaterAdminAccount.Name = "pnlWaterAdminAccount";
-            pnlWaterAdminAccount.Size = new Size(1286, 90);
+            pnlWaterAdminAccount.Size = new Size(1286, 60);
             pnlWaterAdminAccount.TabIndex = 18;
-            // 
-            // panel4
-            // 
-            panel4.BackColor = Color.Gainsboro;
-            panel4.Controls.Add(label3);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(3, 127);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(1286, 27);
-            panel4.TabIndex = 17;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(4, 3);
-            label3.Name = "label3";
-            label3.Size = new Size(128, 23);
-            label3.TabIndex = 0;
-            label3.Text = "Admin Account";
             // 
             // pnlWaterHeader
             // 
@@ -295,28 +273,27 @@
             pnlWaterHeader.Dock = DockStyle.Top;
             pnlWaterHeader.Location = new Point(3, 3);
             pnlWaterHeader.Name = "pnlWaterHeader";
-            pnlWaterHeader.Size = new Size(1286, 124);
+            pnlWaterHeader.Size = new Size(1286, 164);
             pnlWaterHeader.TabIndex = 15;
             // 
             // tblWaterActions
             // 
             tblWaterActions.ColumnCount = 4;
-            tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.3021812F));
+            tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.5732079F));
             tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tblWaterActions.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             tblWaterActions.Controls.Add(pnlButtons, 3, 0);
-            tblWaterActions.Controls.Add(pnlTotalShares, 2, 0);
+            tblWaterActions.Controls.Add(pnlTotalShares, 0, 0);
             tblWaterActions.Controls.Add(pnlCurrentTotal, 1, 0);
-            tblWaterActions.Controls.Add(pnlWaterDate, 0, 0);
             tblWaterActions.Dock = DockStyle.Fill;
-            tblWaterActions.Location = new Point(0, 41);
+            tblWaterActions.Location = new Point(0, 64);
             tblWaterActions.Name = "tblWaterActions";
             tblWaterActions.RowCount = 1;
             tblWaterActions.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tblWaterActions.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tblWaterActions.Size = new Size(1284, 81);
+            tblWaterActions.Size = new Size(1284, 98);
             tblWaterActions.TabIndex = 1;
             // 
             // pnlButtons
@@ -327,39 +304,39 @@
             pnlButtons.Controls.Add(pnlSpacer);
             pnlButtons.Controls.Add(btnAddWaterBill);
             pnlButtons.Dock = DockStyle.Right;
-            pnlButtons.Location = new Point(821, 3);
+            pnlButtons.Location = new Point(772, 3);
             pnlButtons.Name = "pnlButtons";
             pnlButtons.Padding = new Padding(10);
-            pnlButtons.Size = new Size(460, 75);
+            pnlButtons.Size = new Size(509, 92);
             pnlButtons.TabIndex = 3;
             // 
             // btnGenerateBill
             // 
             btnGenerateBill.Dock = DockStyle.Right;
             btnGenerateBill.FlatStyle = FlatStyle.Flat;
-            btnGenerateBill.Location = new Point(26, 10);
+            btnGenerateBill.Location = new Point(10, 10);
             btnGenerateBill.Name = "btnGenerateBill";
-            btnGenerateBill.Size = new Size(134, 55);
+            btnGenerateBill.Size = new Size(199, 72);
             btnGenerateBill.TabIndex = 9;
-            btnGenerateBill.Text = "Generate bill";
+            btnGenerateBill.Text = "Print Unpaid Report";
             btnGenerateBill.UseVisualStyleBackColor = true;
             btnGenerateBill.Click += btnGenerateBill_Click;
             // 
             // panel3
             // 
             panel3.Dock = DockStyle.Right;
-            panel3.Location = new Point(160, 10);
+            panel3.Location = new Point(209, 10);
             panel3.Name = "panel3";
-            panel3.Size = new Size(34, 55);
+            panel3.Size = new Size(34, 72);
             panel3.TabIndex = 10;
             // 
             // btnEditWaterBill
             // 
             btnEditWaterBill.Dock = DockStyle.Right;
             btnEditWaterBill.FlatStyle = FlatStyle.Flat;
-            btnEditWaterBill.Location = new Point(194, 10);
+            btnEditWaterBill.Location = new Point(243, 10);
             btnEditWaterBill.Name = "btnEditWaterBill";
-            btnEditWaterBill.Size = new Size(107, 55);
+            btnEditWaterBill.Size = new Size(107, 72);
             btnEditWaterBill.TabIndex = 8;
             btnEditWaterBill.Text = "Edit Bill";
             btnEditWaterBill.UseVisualStyleBackColor = true;
@@ -368,9 +345,9 @@
             // pnlSpacer
             // 
             pnlSpacer.Dock = DockStyle.Right;
-            pnlSpacer.Location = new Point(301, 10);
+            pnlSpacer.Location = new Point(350, 10);
             pnlSpacer.Name = "pnlSpacer";
-            pnlSpacer.Size = new Size(34, 55);
+            pnlSpacer.Size = new Size(34, 72);
             pnlSpacer.TabIndex = 7;
             // 
             // btnAddWaterBill
@@ -378,9 +355,9 @@
             btnAddWaterBill.BackColor = Color.LightSkyBlue;
             btnAddWaterBill.Dock = DockStyle.Right;
             btnAddWaterBill.FlatStyle = FlatStyle.Flat;
-            btnAddWaterBill.Location = new Point(335, 10);
+            btnAddWaterBill.Location = new Point(384, 10);
             btnAddWaterBill.Name = "btnAddWaterBill";
-            btnAddWaterBill.Size = new Size(115, 55);
+            btnAddWaterBill.Size = new Size(115, 72);
             btnAddWaterBill.TabIndex = 6;
             btnAddWaterBill.Text = "Add Bill";
             btnAddWaterBill.UseVisualStyleBackColor = false;
@@ -390,18 +367,19 @@
             // 
             pnlTotalShares.Controls.Add(lblTotalSharesValue);
             pnlTotalShares.Controls.Add(lblTotalSharesTitle);
-            pnlTotalShares.Dock = DockStyle.Left;
-            pnlTotalShares.Location = new Point(515, 3);
+            pnlTotalShares.Dock = DockStyle.Fill;
+            pnlTotalShares.Location = new Point(3, 3);
             pnlTotalShares.Name = "pnlTotalShares";
-            pnlTotalShares.Size = new Size(250, 75);
+            pnlTotalShares.Size = new Size(229, 92);
             pnlTotalShares.TabIndex = 2;
             // 
             // lblTotalSharesValue
             // 
             lblTotalSharesValue.Dock = DockStyle.Top;
+            lblTotalSharesValue.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTotalSharesValue.Location = new Point(0, 37);
             lblTotalSharesValue.Name = "lblTotalSharesValue";
-            lblTotalSharesValue.Size = new Size(250, 30);
+            lblTotalSharesValue.Size = new Size(229, 30);
             lblTotalSharesValue.TabIndex = 28;
             lblTotalSharesValue.Text = "₱***";
             lblTotalSharesValue.TextAlign = ContentAlignment.MiddleCenter;
@@ -409,30 +387,31 @@
             // lblTotalSharesTitle
             // 
             lblTotalSharesTitle.Dock = DockStyle.Top;
-            lblTotalSharesTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotalSharesTitle.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTotalSharesTitle.Location = new Point(0, 0);
             lblTotalSharesTitle.Name = "lblTotalSharesTitle";
-            lblTotalSharesTitle.Size = new Size(250, 37);
+            lblTotalSharesTitle.Size = new Size(229, 37);
             lblTotalSharesTitle.TabIndex = 26;
-            lblTotalSharesTitle.Text = "TotalShares(Tenants + owner)";
+            lblTotalSharesTitle.Text = "Total Shares (Tenants + Owner)";
             lblTotalSharesTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlCurrentTotal
             // 
             pnlCurrentTotal.Controls.Add(lblCurrentTotalBillValue);
             pnlCurrentTotal.Controls.Add(pnlCurrentTotalBillTitle);
-            pnlCurrentTotal.Dock = DockStyle.Left;
-            pnlCurrentTotal.Location = new Point(259, 3);
+            pnlCurrentTotal.Dock = DockStyle.Fill;
+            pnlCurrentTotal.Location = new Point(238, 3);
             pnlCurrentTotal.Name = "pnlCurrentTotal";
-            pnlCurrentTotal.Size = new Size(250, 75);
+            pnlCurrentTotal.Size = new Size(271, 92);
             pnlCurrentTotal.TabIndex = 1;
             // 
             // lblCurrentTotalBillValue
             // 
             lblCurrentTotalBillValue.Dock = DockStyle.Top;
+            lblCurrentTotalBillValue.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblCurrentTotalBillValue.Location = new Point(0, 37);
             lblCurrentTotalBillValue.Name = "lblCurrentTotalBillValue";
-            lblCurrentTotalBillValue.Size = new Size(250, 38);
+            lblCurrentTotalBillValue.Size = new Size(271, 38);
             lblCurrentTotalBillValue.TabIndex = 27;
             lblCurrentTotalBillValue.Text = "₱***";
             lblCurrentTotalBillValue.TextAlign = ContentAlignment.MiddleCenter;
@@ -442,71 +421,70 @@
             pnlCurrentTotalBillTitle.Dock = DockStyle.Top;
             pnlCurrentTotalBillTitle.Location = new Point(0, 0);
             pnlCurrentTotalBillTitle.Name = "pnlCurrentTotalBillTitle";
-            pnlCurrentTotalBillTitle.Size = new Size(250, 37);
+            pnlCurrentTotalBillTitle.Size = new Size(271, 37);
             pnlCurrentTotalBillTitle.TabIndex = 26;
             pnlCurrentTotalBillTitle.Text = "Current Total Bill";
             pnlCurrentTotalBillTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // pnlWaterDate
+            // pnlHeaderWaterTitle
             // 
-            pnlWaterDate.Controls.Add(dtpWaterDate);
-            pnlWaterDate.Controls.Add(lblWaterDateTitle);
-            pnlWaterDate.Dock = DockStyle.Left;
-            pnlWaterDate.Location = new Point(3, 3);
-            pnlWaterDate.Name = "pnlWaterDate";
-            pnlWaterDate.Padding = new Padding(10, 0, 10, 10);
-            pnlWaterDate.Size = new Size(250, 75);
-            pnlWaterDate.TabIndex = 0;
+            pnlHeaderWaterTitle.BorderStyle = BorderStyle.FixedSingle;
+            pnlHeaderWaterTitle.Controls.Add(panel1);
+            pnlHeaderWaterTitle.Controls.Add(lblWaterTitle);
+            pnlHeaderWaterTitle.Dock = DockStyle.Top;
+            pnlHeaderWaterTitle.Location = new Point(0, 0);
+            pnlHeaderWaterTitle.Name = "pnlHeaderWaterTitle";
+            pnlHeaderWaterTitle.Size = new Size(1284, 64);
+            pnlHeaderWaterTitle.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(dtpWaterDate);
+            panel1.Controls.Add(lblWaterDateTitle);
+            panel1.Dock = DockStyle.Left;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(272, 62);
+            panel1.TabIndex = 2;
             // 
             // dtpWaterDate
             // 
             dtpWaterDate.CustomFormat = "MMMM yyyy";
-            dtpWaterDate.Dock = DockStyle.Fill;
             dtpWaterDate.Font = new Font("Segoe UI", 10F);
             dtpWaterDate.Format = DateTimePickerFormat.Custom;
-            dtpWaterDate.Location = new Point(10, 32);
+            dtpWaterDate.Location = new Point(17, 25);
             dtpWaterDate.Name = "dtpWaterDate";
-            dtpWaterDate.Size = new Size(230, 30);
+            dtpWaterDate.Size = new Size(238, 30);
             dtpWaterDate.TabIndex = 26;
             dtpWaterDate.Value = new DateTime(2026, 10, 14, 0, 0, 0, 0);
             dtpWaterDate.ValueChanged += dtpWaterDate_ValueChanged;
             // 
             // lblWaterDateTitle
             // 
-            lblWaterDateTitle.Dock = DockStyle.Top;
-            lblWaterDateTitle.Location = new Point(10, 0);
+            lblWaterDateTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblWaterDateTitle.Location = new Point(92, 0);
             lblWaterDateTitle.Name = "lblWaterDateTitle";
-            lblWaterDateTitle.Size = new Size(230, 32);
+            lblWaterDateTitle.Size = new Size(75, 22);
             lblWaterDateTitle.TabIndex = 25;
             lblWaterDateTitle.Text = "Date";
             lblWaterDateTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // pnlHeaderWaterTitle
-            // 
-            pnlHeaderWaterTitle.BorderStyle = BorderStyle.FixedSingle;
-            pnlHeaderWaterTitle.Controls.Add(lblWaterTitle);
-            pnlHeaderWaterTitle.Dock = DockStyle.Top;
-            pnlHeaderWaterTitle.Location = new Point(0, 0);
-            pnlHeaderWaterTitle.Name = "pnlHeaderWaterTitle";
-            pnlHeaderWaterTitle.Size = new Size(1284, 41);
-            pnlHeaderWaterTitle.TabIndex = 0;
-            // 
             // lblWaterTitle
             // 
-            lblWaterTitle.Dock = DockStyle.Fill;
-            lblWaterTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblWaterTitle.Location = new Point(0, 0);
+            lblWaterTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblWaterTitle.Location = new Point(538, -1);
             lblWaterTitle.Name = "lblWaterTitle";
-            lblWaterTitle.Size = new Size(1282, 39);
+            lblWaterTitle.Size = new Size(366, 62);
             lblWaterTitle.TabIndex = 1;
             lblWaterTitle.Text = "Water Bill Monitor";
             lblWaterTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblWaterTitle.Click += lblWaterTitle_Click;
             // 
             // tabElectricity
             // 
             tabElectricity.Controls.Add(pnlElectricityContent);
             tabElectricity.Controls.Add(panel5);
-            tabElectricity.Controls.Add(panel1);
+            tabElectricity.Controls.Add(pnlElecAdminAccount);
             tabElectricity.Controls.Add(pnlElectricityHeader);
             tabElectricity.Location = new Point(4, 40);
             tabElectricity.Name = "tabElectricity";
@@ -520,9 +498,9 @@
             // 
             pnlElectricityContent.Controls.Add(dgvElectricity);
             pnlElectricityContent.Dock = DockStyle.Fill;
-            pnlElectricityContent.Location = new Point(3, 321);
+            pnlElectricityContent.Location = new Point(3, 190);
             pnlElectricityContent.Name = "pnlElectricityContent";
-            pnlElectricityContent.Size = new Size(1286, 382);
+            pnlElectricityContent.Size = new Size(1286, 513);
             pnlElectricityContent.TabIndex = 19;
             // 
             // dgvElectricity
@@ -531,25 +509,25 @@
             dgvElectricity.AllowUserToDeleteRows = false;
             dgvElectricity.AllowUserToResizeRows = false;
             dgvElectricity.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvElectricity.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 14F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvElectricity.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            dgvElectricity.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvElectricity.Columns.AddRange(new DataGridViewColumn[] { colSelect, colElectricityRoom, colElectricityAccountName, colElectricityAccountNumber, colElectricityAmount, colElectricityStatus });
+            dgvElectricity.BackgroundColor = Color.White;
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.BackColor = SystemColors.Control;
             dataGridViewCellStyle4.Font = new Font("Segoe UI", 14F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dgvElectricity.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvElectricity.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dgvElectricity.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvElectricity.Columns.AddRange(new DataGridViewColumn[] { colSelect, colElectricityRoom, colElectricityAccountName, colElectricityAccountNumber, colElectricityAmount, colElectricityStatus });
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = SystemColors.Window;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 14F);
+            dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            dgvElectricity.DefaultCellStyle = dataGridViewCellStyle6;
             dgvElectricity.Dock = DockStyle.Fill;
             dgvElectricity.EditMode = DataGridViewEditMode.EditOnEnter;
             dgvElectricity.Location = new Point(0, 0);
@@ -557,7 +535,7 @@
             dgvElectricity.RowHeadersVisible = false;
             dgvElectricity.RowHeadersWidth = 51;
             dgvElectricity.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            dgvElectricity.Size = new Size(1286, 382);
+            dgvElectricity.Size = new Size(1286, 513);
             dgvElectricity.TabIndex = 13;
             dgvElectricity.CellContentClick += dgvElectricityBillData_CellContentClick;
             // 
@@ -570,7 +548,7 @@
             // 
             // colElectricityRoom
             // 
-            colElectricityRoom.FillWeight = 50F;
+            colElectricityRoom.FillWeight = 45F;
             colElectricityRoom.HeaderText = "Room";
             colElectricityRoom.MinimumWidth = 6;
             colElectricityRoom.Name = "colElectricityRoom";
@@ -589,6 +567,9 @@
             // 
             // colElectricityAmount
             // 
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Padding = new Padding(0, 0, 12, 0);
+            colElectricityAmount.DefaultCellStyle = dataGridViewCellStyle5;
             colElectricityAmount.HeaderText = "Amount";
             colElectricityAmount.MinimumWidth = 6;
             colElectricityAmount.Name = "colElectricityAmount";
@@ -601,12 +582,13 @@
             // 
             // panel5
             // 
+            panel5.BackColor = Color.FromArgb(224, 224, 224);
             panel5.Controls.Add(label2);
             panel5.Controls.Add(btnSelectAllUnpaid);
             panel5.Controls.Add(panel7);
             panel5.Controls.Add(btnMarkPaid);
             panel5.Dock = DockStyle.Top;
-            panel5.Location = new Point(3, 273);
+            panel5.Location = new Point(3, 142);
             panel5.Name = "panel5";
             panel5.Padding = new Padding(5);
             panel5.Size = new Size(1286, 48);
@@ -616,16 +598,17 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.ForeColor = Color.Black;
-            label2.Location = new Point(7, 14);
+            label2.Location = new Point(3, 15);
             label2.Name = "label2";
-            label2.Size = new Size(137, 23);
+            label2.Size = new Size(169, 28);
             label2.TabIndex = 0;
             label2.Text = "Rooms Accounts";
             // 
             // btnSelectAllUnpaid
             // 
+            btnSelectAllUnpaid.BackColor = Color.White;
             btnSelectAllUnpaid.Dock = DockStyle.Right;
             btnSelectAllUnpaid.FlatAppearance.BorderColor = Color.Black;
             btnSelectAllUnpaid.FlatStyle = FlatStyle.Flat;
@@ -636,7 +619,7 @@
             btnSelectAllUnpaid.Size = new Size(163, 38);
             btnSelectAllUnpaid.TabIndex = 1;
             btnSelectAllUnpaid.Text = "Select all unpaid";
-            btnSelectAllUnpaid.UseVisualStyleBackColor = true;
+            btnSelectAllUnpaid.UseVisualStyleBackColor = false;
             btnSelectAllUnpaid.Click += btnSelectAllUnpaid_Click_1;
             // 
             // panel7
@@ -649,6 +632,7 @@
             // 
             // btnMarkPaid
             // 
+            btnMarkPaid.BackColor = Color.White;
             btnMarkPaid.Dock = DockStyle.Right;
             btnMarkPaid.FlatAppearance.BorderColor = Color.Black;
             btnMarkPaid.FlatStyle = FlatStyle.Flat;
@@ -659,78 +643,56 @@
             btnMarkPaid.Size = new Size(122, 38);
             btnMarkPaid.TabIndex = 0;
             btnMarkPaid.Text = "Mark Paid";
-            btnMarkPaid.UseVisualStyleBackColor = true;
+            btnMarkPaid.UseVisualStyleBackColor = false;
             btnMarkPaid.Click += btnMarkPaid_Click;
-            // 
-            // panel1
-            // 
-            panel1.BackColor = Color.White;
-            panel1.Controls.Add(pnlElecAdminAccount);
-            panel1.Controls.Add(panel2);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(3, 153);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1286, 120);
-            panel1.TabIndex = 20;
             // 
             // pnlElecAdminAccount
             // 
+            pnlElecAdminAccount.BackColor = Color.White;
+            pnlElecAdminAccount.BorderStyle = BorderStyle.FixedSingle;
             pnlElecAdminAccount.Dock = DockStyle.Top;
-            pnlElecAdminAccount.Location = new Point(0, 27);
+            pnlElecAdminAccount.Location = new Point(3, 82);
             pnlElecAdminAccount.Name = "pnlElecAdminAccount";
-            pnlElecAdminAccount.Size = new Size(1286, 90);
-            pnlElecAdminAccount.TabIndex = 2;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(label1);
-            panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(1286, 27);
-            panel2.TabIndex = 0;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.Black;
-            label1.Location = new Point(22, 3);
-            label1.Name = "label1";
-            label1.Size = new Size(128, 23);
-            label1.TabIndex = 0;
-            label1.Text = "Admin Account";
+            pnlElecAdminAccount.Size = new Size(1286, 60);
+            pnlElecAdminAccount.TabIndex = 20;
             // 
             // pnlElectricityHeader
             // 
-            pnlElectricityHeader.BorderStyle = BorderStyle.FixedSingle;
-            pnlElectricityHeader.Controls.Add(pnlDate);
             pnlElectricityHeader.Controls.Add(pnlHeaderElectricityTitle);
             pnlElectricityHeader.Dock = DockStyle.Top;
             pnlElectricityHeader.Location = new Point(3, 3);
             pnlElectricityHeader.Name = "pnlElectricityHeader";
-            pnlElectricityHeader.Size = new Size(1286, 150);
+            pnlElectricityHeader.Size = new Size(1286, 79);
             pnlElectricityHeader.TabIndex = 18;
+            // 
+            // pnlHeaderElectricityTitle
+            // 
+            pnlHeaderElectricityTitle.BorderStyle = BorderStyle.FixedSingle;
+            pnlHeaderElectricityTitle.Controls.Add(pnlDate);
+            pnlHeaderElectricityTitle.Controls.Add(pnlElectricityTitle);
+            pnlHeaderElectricityTitle.Dock = DockStyle.Top;
+            pnlHeaderElectricityTitle.Location = new Point(0, 0);
+            pnlHeaderElectricityTitle.Name = "pnlHeaderElectricityTitle";
+            pnlHeaderElectricityTitle.Size = new Size(1286, 64);
+            pnlHeaderElectricityTitle.TabIndex = 0;
             // 
             // pnlDate
             // 
-            pnlDate.BorderStyle = BorderStyle.FixedSingle;
             pnlDate.Controls.Add(dtpElectricityDate);
             pnlDate.Controls.Add(lblElectricityDate);
             pnlDate.Dock = DockStyle.Left;
-            pnlDate.Location = new Point(0, 60);
+            pnlDate.Location = new Point(0, 0);
             pnlDate.Name = "pnlDate";
             pnlDate.Padding = new Padding(5);
-            pnlDate.Size = new Size(250, 88);
+            pnlDate.Size = new Size(272, 62);
             pnlDate.TabIndex = 1;
             // 
             // dtpElectricityDate
             // 
             dtpElectricityDate.CustomFormat = "MMMM yyyy";
-            dtpElectricityDate.Dock = DockStyle.Fill;
             dtpElectricityDate.Font = new Font("Segoe UI", 10F);
             dtpElectricityDate.Format = DateTimePickerFormat.Custom;
-            dtpElectricityDate.Location = new Point(5, 42);
+            dtpElectricityDate.Location = new Point(17, 25);
             dtpElectricityDate.Name = "dtpElectricityDate";
             dtpElectricityDate.Size = new Size(238, 30);
             dtpElectricityDate.TabIndex = 28;
@@ -739,32 +701,20 @@
             // 
             // lblElectricityDate
             // 
-            lblElectricityDate.Dock = DockStyle.Top;
-            lblElectricityDate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblElectricityDate.Location = new Point(5, 5);
+            lblElectricityDate.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblElectricityDate.Location = new Point(92, 0);
             lblElectricityDate.Name = "lblElectricityDate";
-            lblElectricityDate.Size = new Size(238, 37);
+            lblElectricityDate.Size = new Size(75, 22);
             lblElectricityDate.TabIndex = 27;
             lblElectricityDate.Text = "Date";
             lblElectricityDate.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // pnlHeaderElectricityTitle
-            // 
-            pnlHeaderElectricityTitle.BorderStyle = BorderStyle.FixedSingle;
-            pnlHeaderElectricityTitle.Controls.Add(pnlElectricityTitle);
-            pnlHeaderElectricityTitle.Dock = DockStyle.Top;
-            pnlHeaderElectricityTitle.Location = new Point(0, 0);
-            pnlHeaderElectricityTitle.Name = "pnlHeaderElectricityTitle";
-            pnlHeaderElectricityTitle.Size = new Size(1284, 60);
-            pnlHeaderElectricityTitle.TabIndex = 0;
-            // 
             // pnlElectricityTitle
             // 
-            pnlElectricityTitle.Dock = DockStyle.Top;
             pnlElectricityTitle.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            pnlElectricityTitle.Location = new Point(0, 0);
+            pnlElectricityTitle.Location = new Point(508, 4);
             pnlElectricityTitle.Name = "pnlElectricityTitle";
-            pnlElectricityTitle.Size = new Size(1282, 58);
+            pnlElectricityTitle.Size = new Size(389, 51);
             pnlElectricityTitle.TabIndex = 1;
             pnlElectricityTitle.Text = "Electricity Bill Monitor";
             pnlElectricityTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -799,26 +749,21 @@
             ((System.ComponentModel.ISupportInitialize)dgvWaterBillData).EndInit();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
-            panel4.ResumeLayout(false);
-            panel4.PerformLayout();
             pnlWaterHeader.ResumeLayout(false);
             tblWaterActions.ResumeLayout(false);
             pnlButtons.ResumeLayout(false);
             pnlTotalShares.ResumeLayout(false);
             pnlCurrentTotal.ResumeLayout(false);
-            pnlWaterDate.ResumeLayout(false);
             pnlHeaderWaterTitle.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             tabElectricity.ResumeLayout(false);
             pnlElectricityContent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvElectricity).EndInit();
             panel5.ResumeLayout(false);
             panel5.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
             pnlElectricityHeader.ResumeLayout(false);
-            pnlDate.ResumeLayout(false);
             pnlHeaderElectricityTitle.ResumeLayout(false);
+            pnlDate.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -838,7 +783,6 @@
         private TableLayoutPanel tblWaterActions;
         private Panel pnlTotalShares;
         private Panel pnlCurrentTotal;
-        private Panel pnlWaterDate;
         private DateTimePicker dtpWaterDate;
         private Label lblWaterDateTitle;
         private Label lblTotalSharesTitle;
@@ -850,43 +794,39 @@
         private Button btnAddWaterBill;
         private Label lblTotalSharesValue;
         private Label lblWaterTitle;
-        private Panel pnlElectricityHeader;
-        private Panel pnlDate;
-        private Panel pnlHeaderElectricityTitle;
-        private DateTimePicker dtpElectricityDate;
-        private Label lblElectricityDate;
-        private Label pnlElectricityTitle;
         private Panel panel13;
         private Label lblOtherTitle;
         private Button btnAddOther;
         private Panel pnlElectricityContent;
-        private DataGridViewTextBoxColumn colWaterRoom;
-        private DataGridViewTextBoxColumn colWaterTenant;
-        private DataGridViewTextBoxColumn colWaterDueDate;
-        private DataGridViewTextBoxColumn colWaterAmount;
-        private DataGridViewTextBoxColumn colWaterStatus;
         private DataGridView dgvElectricity;
-        private Panel panel1;
         private Panel pnlElecAdminAccount;
         private Label label2;
-        private Panel panel2;
-        private Label label1;
         private Panel pnlWaterAdminAccount;
-        private Panel panel4;
         private Panel panel6;
-        private Label label3;
         private Label label4;
-        private DataGridViewCheckBoxColumn colSelect;
-        private DataGridViewTextBoxColumn colElectricityRoom;
-        private DataGridViewTextBoxColumn colElectricityAccountName;
-        private DataGridViewTextBoxColumn colElectricityAccountNumber;
-        private DataGridViewTextBoxColumn colElectricityAmount;
-        private DataGridViewButtonColumn colElectricityStatus;
         private Panel panel5;
         private Button btnMarkPaid;
         private Button btnSelectAllUnpaid;
         private Panel panel7;
         private Button btnGenerateBill;
         private Panel panel3;
+        private Panel pnlElectricityHeader;
+        private Panel pnlHeaderElectricityTitle;
+        private Panel pnlDate;
+        private DateTimePicker dtpElectricityDate;
+        private Label lblElectricityDate;
+        private Label pnlElectricityTitle;
+        private DataGridViewTextBoxColumn colWaterRoom;
+        private DataGridViewTextBoxColumn colWaterTenant;
+        private DataGridViewTextBoxColumn colWaterDueDate;
+        private DataGridViewTextBoxColumn colWaterAmount;
+        private DataGridViewTextBoxColumn colWaterStatus;
+        private DataGridViewCheckBoxColumn colSelect;
+        private DataGridViewTextBoxColumn colElectricityRoom;
+        private DataGridViewTextBoxColumn colElectricityAccountName;
+        private DataGridViewTextBoxColumn colElectricityAccountNumber;
+        private DataGridViewTextBoxColumn colElectricityAmount;
+        private DataGridViewButtonColumn colElectricityStatus;
+        private Panel panel1;
     }
 }
