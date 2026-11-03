@@ -49,17 +49,22 @@ namespace Capstoneszn
             // changes during the session. Kept here commented out per team rule.
             //
             // SYSTEM CLOCK CHECK – must pass before the system load
-             using (var clockForm = new SystemClockForm())
-             {
-                 if (clockForm.ShowDialog() != DialogResult.OK)
-                 {
-                     // User went back or closed the window: treat it like a logout
-                     Session.Clear();
-                     Session.LoggingOut = true;
-                     BeginInvoke(new Action(Close)); // close MainForm safely after Load finishes
-                     return;
-                 }
-             }
+
+            /*
+
+           using (var clockForm = new SystemClockForm())
+            {
+                if (clockForm.ShowDialog() != DialogResult.OK)
+                {
+                    // User went back or closed the window: treat it like a logout
+                    Session.Clear();
+                    Session.LoggingOut = true;
+                    BeginInvoke(new Action(Close)); // close MainForm safely after Load finishes
+                    return;
+                }
+            }
+
+             */
 
             // ADDED (Employee module STEP 7): record the salary expense of every
             // finished month not recorded yet. It runs HERE, after the clock check

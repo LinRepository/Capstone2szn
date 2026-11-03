@@ -42,6 +42,12 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         private DateTime? _currentDueDate;
         private DataTable _tenants;
 
+        // NEW (fix 2): when the room has no rent bill yet, the date and price
+        // of its first one, so the screen says "First bill: Dec 1, 2026 · ₱3,000.00"
+        // instead of just "No bill yet". Null = no billing cycle (empty room).
+        private DateTime? _firstBillDate;
+        private decimal _firstBillPrice;
+
         // NEW (Billing v2): the drop-down list of periods for Generate statement
         private readonly ContextMenuStrip _periodMenu = new ContextMenuStrip();
         public BillingRoomDetailsControl(int roomId)
@@ -138,13 +144,26 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         {
             _currentBillId = -1;
             _currentDueDate = null;
+            _firstBillDate = null;   // NEW (fix 2)
+            _firstBillPrice = 0m;    // NEW (fix 2)
             lblPeriodValue.Text = "No bill yet";
 
+            // ORIGINAL query (picked up the transfer "Price difference" bills too,
+            // which are short partial periods, e.g. "Nov 2 - Nov 30"):
+            //     SELECT TOP 1 BillId, BillingPeriodStart, BillingPeriodEnd, DueDate
+            //     FROM   Bills
+            //     WHERE  RoomId = @rid
+            //       AND  BillCategory = @cat
+            //     ORDER BY BillingPeriodStart DESC;
+
+            // NEW (fix 2): the room's latest REGULAR rent bill. Difference bills
+            // are extra charges for one tenant, not the room's period.
             using (SqlCommand cmd = new SqlCommand(@"
                 SELECT TOP 1 BillId, BillingPeriodStart, BillingPeriodEnd, DueDate
                 FROM   Bills
                 WHERE  RoomId = @rid
                   AND  BillCategory = @cat
+                  AND  (Remarks IS NULL OR Remarks NOT LIKE N'Price difference%')
                 ORDER BY BillingPeriodStart DESC;", conn))
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;
@@ -152,16 +171,73 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
-                    if (!rd.Read()) return;
+                    if (rd.Read())
+                    {
+                        _currentBillId = rd.GetInt32(0);
+                        DateTime start = rd.GetDateTime(1);
+                        DateTime end = rd.GetDateTime(2);
+                        _currentDueDate = rd.GetDateTime(3);
 
-                    _currentBillId = rd.GetInt32(0);
-                    DateTime start = rd.GetDateTime(1);
-                    DateTime end = rd.GetDateTime(2);
-                    _currentDueDate = rd.GetDateTime(3);
-
-                    lblPeriodValue.Text = $"{start:MMM d} - {end:MMM d, yyyy}";
+                        // ORIGINAL: lblPeriodValue.Text = $"{start:MMM d} - {end:MMM d, yyyy}";
+                        // NEW (fix 3): BillingPeriodEnd is the day the NEXT period starts
+                        // (Nov 1 -> Dec 1), so the last day of this one is the day before:
+                        // "Nov 1 - Nov 30, 2026", the same as the statement.
+                        lblPeriodValue.Text = $"{start:MMM d} - {end.AddDays(-1):MMM d, yyyy}";
+                        return;
+                    }
                 }
             }
+
+            // NEW (fix 2): no rent bill yet -> work out the first one.
+            LoadFirstBill(conn);
+        }
+
+        /// <summary>
+        /// NEW (fix 2): the date and amount of the room's first rent bill.
+        ///
+        /// Same rule as Move-In and Transfer: the first period after today
+        /// that has no bill yet (BillGenerator.NextUnbilledPeriod), at the
+        /// price that period will be billed at - the scheduled (pending)
+        /// price if it starts by then, otherwise the current price.
+        ///
+        ///   anchor Nov 1, today Nov 2, no bills   -> First bill: Dec 1, 2026 · ₱3,000.00
+        ///
+        /// A room with no billing cycle (nobody has moved in) keeps "No bill yet".
+        /// </summary>
+        private void LoadFirstBill(SqlConnection conn)
+        {
+            DateTime? anchor = null, pendingFrom = null;
+            decimal price = 0m;
+            decimal? pending = null;
+
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT BillingAnchorDate, RoomPrice, PendingRoomPrice, PendingPriceFrom
+                FROM   Rooms
+                WHERE  RoomId = @rid;", conn))
+            {
+                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;
+
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    if (!rd.Read()) return;
+
+                    anchor = rd.IsDBNull(0) ? (DateTime?)null : rd.GetDateTime(0);
+                    price = rd.IsDBNull(1) ? 0m : rd.GetDecimal(1);
+                    pending = rd.IsDBNull(2) ? (decimal?)null : rd.GetDecimal(2);
+                    pendingFrom = rd.IsDBNull(3) ? (DateTime?)null : rd.GetDateTime(3);
+                }
+            }
+
+            if (!anchor.HasValue) return;   // no cycle yet: stays "No bill yet"
+
+            DateTime first = BillGenerator.NextUnbilledPeriod(conn, null, _roomId, anchor.Value, DateTime.Today);
+
+            _firstBillDate = first;
+            _firstBillPrice = (pending.HasValue && pendingFrom.HasValue && pendingFrom.Value <= first)
+                ? pending.Value
+                : price;
+
+            lblPeriodValue.Text = $"First bill: {first:MMM d, yyyy}";
         }
 
         /// <summary>
@@ -436,7 +512,11 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
             if (_currentBillId <= 0 || !_currentDueDate.HasValue)
             {
-                lblBillStatusValue.Text = "No bill yet";
+                // ORIGINAL: lblBillStatusValue.Text = "No bill yet";
+                // NEW (fix 2): say when the first bill comes and how much it is.
+                lblBillStatusValue.Text = _firstBillDate.HasValue
+                    ? $"First bill: {_firstBillDate.Value:MMM d, yyyy}   |   ₱{_firstBillPrice:N2}"
+                    : "No bill yet";
                 lblBillStatusValue.ForeColor = Color.Gainsboro;
                 return;
             }
@@ -574,13 +654,31 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
             if (periods.Count == 0)
             {
-                MessageBox.Show("This room has no billing periods yet.", "Statement",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // ORIGINAL: MessageBox.Show("This room has no billing periods yet.", "Statement",
+                //               MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // NEW (fix 2): also say when the first bill comes.
+                string msg = "This room has no billing periods yet.";
+                if (_firstBillDate.HasValue)
+                    msg += $"\n\nFirst bill: {_firstBillDate.Value:MMM d, yyyy} (₱{_firstBillPrice:N2}).";
+                MessageBox.Show(msg, "Statement", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             _periodMenu.Items.Clear();
             DateTime today = DateTime.Today;
+
+            // NEW (fix 5): "All periods" first - every period up to now on one
+            // statement (several pages if needed). Picking a month still works
+            // exactly as before.
+            StatementPeriod all = RoomStatementService.AllPeriods(periods);
+            if (all != null)
+            {
+                ToolStripItem allItem = _periodMenu.Items.Add(
+                    $"All periods  ({all.Start:MMM d, yyyy} - {all.LastDay:MMM d, yyyy})");
+                allItem.Font = new Font(allItem.Font, FontStyle.Bold);
+                allItem.Click += (s, a) => ShowStatement(all);
+                _periodMenu.Items.Add(new ToolStripSeparator());
+            }
 
             foreach (StatementPeriod p in periods)
             {
@@ -611,4 +709,6 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             }
         }
     }
+
+
 }

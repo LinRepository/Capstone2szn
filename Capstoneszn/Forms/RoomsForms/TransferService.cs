@@ -25,10 +25,15 @@ namespace Capstoneszn.Forms.RoomsForms
                 Difference 6,000, due now. New price from the Nov 30 bill.
 
        How it is recorded (so every screen already understands it):
-         ONE Rent bill in the destination room, period today -> their first
-         bill there, due today, Remarks "Price difference - transfer from
-         Room 311", one share per payer = their difference. Credit is moved
-         onto it, then each payment is a normal receipt (BillingHelper).
+         ONE Rent bill PER PAID PERIOD in the destination room (the current
+         month, plus next month inside the 7-day window), starting today (or
+         that period's start), due on its start, Remarks "Price difference -
+         transfer from Room 311", one share per payer = their difference.
+         Credit is moved onto it, then each payment is a normal receipt.
+
+       "Paid" means money actually allocated, in ANY room of the tenant's
+       current chain of stays (stays joined by transfers), plus differences
+       already paid on earlier transfers - so A -> C -> B can't skip it.
 
        Everything happens in ONE transaction with the transfer itself.
        A broken rule throws InvalidOperationException with a landlord-
@@ -60,7 +65,7 @@ namespace Capstoneszn.Forms.RoomsForms
     {
         public DateTime PeriodStart;
         public DateTime PeriodEnd;
-        public decimal OldShare;            // what they paid in the old room
+        public decimal OldShare;            // what they ACTUALLY PAID for this period (any room, plus earlier differences)
         public decimal NewShare;            // their share in the new room
         public decimal Difference => Math.Max(0m, NewShare - OldShare);
     }
@@ -94,6 +99,10 @@ namespace Capstoneszn.Forms.RoomsForms
     public static class TransferService
     {
         private const string Rent = "Rent";
+
+        /// <summary>NEW: marks a price-difference bill (Bills.Remarks starts with this).</summary>
+        public const string DifferenceRemark = "Price difference - transfer from Room";
+
         private static readonly string[] Categories = { "Rent", "Water", "Maintenance", "Electricity", "Other" };
 
         /* =================================================================
@@ -181,50 +190,65 @@ namespace Capstoneszn.Forms.RoomsForms
             {
                 m.Lines.Clear();
 
-                // Rent periods already billed (and, since they must be settled,
-                // paid) in the old room that have not ended yet, and that start
-                // before their first bill in the new room.
+                // ORIGINAL (first version): only bills of the room being left were
+                // counted, so A (3,000) -> C (3,000) -> B (12,000) found nothing
+                // paid in C and charged 0. (Old query kept in TransferService history.)
+                //
+                // NEW (loophole fix): count what the tenant ACTUALLY PAID for each
+                // rent period still running, in ANY room of their current chain of
+                // stays (stays joined by transfers), plus any price difference
+                // already paid for that period on an earlier transfer.
+                DateTime chainStart = ChainStart(conn, tx, m.TenancyId);
+
+                var bills = new List<(DateTime Start, DateTime End, decimal Paid, bool IsDiff)>();
                 using (SqlCommand cmd = new SqlCommand(@"
-                    SELECT b.BillingPeriodStart, b.BillingPeriodEnd, bt.Share
+                    SELECT b.BillingPeriodStart, b.BillingPeriodEnd,
+                           ISNULL((SELECT SUM(a.Amount)
+                                   FROM   PaymentAllocations a
+                                   JOIN   Payments p ON p.PaymentId = a.PaymentId
+                                   WHERE  a.BillId = b.BillId AND a.TenantId = bt.TenantId
+                                     AND  a.IsVoided = 0 AND p.IsVoided = 0), 0) AS Paid,
+                           CASE WHEN b.Remarks LIKE @diffMark THEN 1 ELSE 0 END AS IsDiff
                     FROM   BillTenants bt
-                    JOIN   Bills b      ON b.BillId = bt.BillId
-                    JOIN   Tenancies tn ON tn.TenancyId = @tn
+                    JOIN   Bills b ON b.BillId = bt.BillId
                     WHERE  bt.TenantId = @tid
-                      AND  b.RoomId = @src
                       AND  b.BillCategory = @rent
-                      AND  b.BillingPeriodStart >= tn.MoveInDate
+                      AND  b.BillingPeriodStart >= @chainStart
                       AND  b.BillingPeriodEnd > @today
-                      AND  (@first IS NULL OR b.BillingPeriodStart < @first)
                     ORDER BY b.BillingPeriodStart;", conn, tx))
                 {
-                    cmd.Parameters.Add("@tn", SqlDbType.Int).Value = m.TenancyId;
                     cmd.Parameters.Add("@tid", SqlDbType.Int).Value = m.TenantId;
-                    cmd.Parameters.Add("@src", SqlDbType.Int).Value = plan.SourceRoomId;
                     cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
+                    cmd.Parameters.Add("@chainStart", SqlDbType.Date).Value = chainStart;
                     cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
-                    cmd.Parameters.Add("@first", SqlDbType.Date).Value =
-                        plan.FirstBill.HasValue ? (object)plan.FirstBill.Value : DBNull.Value;
+                    cmd.Parameters.Add("@diffMark", SqlDbType.NVarChar, 60).Value = DifferenceRemark + "%";
 
                     using (SqlDataReader r = cmd.ExecuteReader())
-                    {
                         while (r.Read())
-                        {
-                            DateTime start = r.GetDateTime(0);
+                            bills.Add((r.GetDateTime(0), r.GetDateTime(1), r.GetDecimal(2), r.GetInt32(3) == 1));
+                }
 
-                            // The new room's price for that period (a scheduled price if it starts by then).
-                            decimal price = destPending.HasValue && destPendingFrom.HasValue && start >= destPendingFrom.Value
-                                ? destPending.Value
-                                : destPrice;
+                // Each normal rent period that starts before their first bill in
+                // the new room is one line; a difference paid earlier counts
+                // toward the period it was charged in.
+                foreach (var period in bills.Where(b => !b.IsDiff &&
+                                                        (!plan.FirstBill.HasValue || b.Start < plan.FirstBill.Value)))
+                {
+                    decimal paidBefore = bills.Where(d => d.IsDiff && d.Start >= period.Start && d.Start < period.End)
+                                              .Sum(d => d.Paid);
 
-                            m.Lines.Add(new TransferDiffLine
-                            {
-                                PeriodStart = start,
-                                PeriodEnd = r.GetDateTime(1),
-                                OldShare = r.GetDecimal(2),
-                                NewShare = Math.Floor(price / payersAfter * 100m) / 100m   // same rounding as the bills
-                            });
-                        }
-                    }
+                    // The new room's price for that period (a scheduled price if it starts by then).
+                    decimal price = destPending.HasValue && destPendingFrom.HasValue && period.Start >= destPendingFrom.Value
+                        ? destPending.Value
+                        : destPrice;
+
+                    m.Lines.Add(new TransferDiffLine
+                    {
+                        PeriodStart = period.Start,
+                        PeriodEnd = period.End,
+                        OldShare = period.Paid + paidBefore,
+                        NewShare = Math.Floor(price / payersAfter * 100m) / 100m   // same rounding as the bills
+                    });
                 }
 
                 m.Difference = m.Lines.Sum(l => l.Difference);
@@ -235,6 +259,51 @@ namespace Capstoneszn.Forms.RoomsForms
                 m.CreditUsed = Math.Min(credit, m.Difference);
                 m.Due = m.Difference - m.CreditUsed;
             }
+        }
+
+        /// <summary>
+        /// NEW (loophole fix): the move-in date of the tenant's current chain of
+        /// stays. Walks back from the active stay while the previous stay ended
+        /// by a transfer on the day this one began. A stay ended by a move out
+        /// (later reactivated) stops the chain, so its old bills never count.
+        /// </summary>
+        private static DateTime ChainStart(SqlConnection conn, SqlTransaction tx, int tenancyId)
+        {
+            var stays = new List<(int Id, DateTime In, DateTime? Out, string Reason)>();
+            int tenantId = 0;
+
+            using (SqlCommand cmd = new SqlCommand("SELECT TenantId FROM Tenancies WHERE TenancyId = @tn;", conn, tx))
+            {
+                cmd.Parameters.Add("@tn", SqlDbType.Int).Value = tenancyId;
+                tenantId = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT TenancyId, MoveInDate, MoveOutDate, MoveOutReason
+                FROM   Tenancies WHERE TenantId = @tid
+                ORDER BY MoveInDate DESC, TenancyId DESC;", conn, tx))
+            {
+                cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
+                using (SqlDataReader r = cmd.ExecuteReader())
+                    while (r.Read())
+                        stays.Add((r.GetInt32(0), r.GetDateTime(1),
+                                   r.IsDBNull(2) ? (DateTime?)null : r.GetDateTime(2),
+                                   r.IsDBNull(3) ? "" : r.GetString(3)));
+            }
+
+            int i = stays.FindIndex(x => x.Id == tenancyId);
+            if (i < 0) return DateTime.Today;
+
+            DateTime start = stays[i].In;
+            for (int k = i + 1; k < stays.Count; k++)
+            {
+                var prev = stays[k];
+                if (prev.Reason == "Transferred" && prev.Out.HasValue && prev.Out.Value == start)
+                    start = prev.In;          // same chain: moved here by a transfer
+                else
+                    break;                    // a move out ends the chain
+            }
+            return start;
         }
 
         /// <summary>"Oct 31 – Nov 30: 12,000.00 − 6,000.00" lines for screens.</summary>
@@ -464,22 +533,42 @@ namespace Capstoneszn.Forms.RoomsForms
 
             if (plan.TotalDifference > 0m)
             {
-                int billId = CreateDifferenceBill(conn, tx, plan, today);
+                // ORIGINAL (first version): ONE difference bill for everything.
+                // NEW (loophole fix): one difference bill PER rent period, so a
+                // later transfer can tell which period each difference paid for.
+                var periods = plan.Movers.SelectMany(m => m.Lines.Where(l => l.Difference > 0m))
+                                         .Select(l => (l.PeriodStart, l.PeriodEnd))
+                                         .Distinct()
+                                         .OrderBy(p => p.PeriodStart)
+                                         .ToList();
 
-                foreach (TransferMover m in plan.Movers.Where(x => x.Difference > 0m))
+                foreach (var period in periods)
                 {
-                    using (SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO BillTenants (BillId, TenantId, Share) VALUES (@bid, @tid, @share);", conn, tx))
-                    {
-                        cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
-                        cmd.Parameters.Add("@tid", SqlDbType.Int).Value = m.TenantId;
-                        AddMoney(cmd, "@share", m.Difference);
-                        cmd.ExecuteNonQuery();
-                    }
+                    var shares = plan.Movers
+                        .Select(m => (Mover: m, Diff: m.Lines.Where(l => l.PeriodStart == period.PeriodStart && l.PeriodEnd == period.PeriodEnd)
+                                                             .Sum(l => l.Difference)))
+                        .Where(x => x.Diff > 0m)
+                        .ToList();
 
-                    // Advance credit first (the same routine new bills use).
-                    if (m.CreditUsed > 0m)
-                        BillGenerator.ConsumeCredit(conn, tx, m.TenantId, billId, m.Difference);
+                    DateTime billStart = period.PeriodStart > today ? period.PeriodStart : today;
+                    int billId = CreateDifferenceBill(conn, tx, plan, billStart, period.PeriodEnd, shares.Sum(x => x.Diff));
+
+                    foreach (var x in shares)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(
+                            "INSERT INTO BillTenants (BillId, TenantId, Share) VALUES (@bid, @tid, @share);", conn, tx))
+                        {
+                            cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
+                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = x.Mover.TenantId;
+                            AddMoney(cmd, "@share", x.Diff);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // Advance credit first (the same routine new bills use); it
+                        // stops by itself once the tenant's credit runs out.
+                        if (x.Mover.CreditUsed > 0m)
+                            BillGenerator.ConsumeCredit(conn, tx, x.Mover.TenantId, billId, x.Diff);
+                    }
                 }
 
                 // The rest is paid now: one normal receipt per payer.
@@ -526,7 +615,9 @@ namespace Capstoneszn.Forms.RoomsForms
         /// If the room already has a Rent bill starting today, the difference
         /// joins it (one bill per room per period start is a database rule).
         /// </summary>
-        private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
+        // ORIGINAL: private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
+        private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan,
+                                                DateTime start, DateTime end, decimal amount)
         {
             using (SqlCommand cmd = new SqlCommand(@"
                 SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
@@ -534,7 +625,7 @@ namespace Capstoneszn.Forms.RoomsForms
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
                 cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
-                cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
+                cmd.Parameters.Add("@today", SqlDbType.Date).Value = start;
                 object existing = cmd.ExecuteScalar();
 
                 if (existing != null && existing != DBNull.Value)
@@ -543,7 +634,7 @@ namespace Capstoneszn.Forms.RoomsForms
                     using (SqlCommand up = new SqlCommand("UPDATE Bills SET Amount = Amount + @amt WHERE BillId = @bid;", conn, tx))
                     {
                         up.Parameters.Add("@bid", SqlDbType.Int).Value = id;
-                        AddMoney(up, "@amt", plan.TotalDifference);
+                        AddMoney(up, "@amt", amount);
                         up.ExecuteNonQuery();
                     }
                     return id;
@@ -553,9 +644,9 @@ namespace Capstoneszn.Forms.RoomsForms
             // Today is one of the destination's own billing dates but its bill was
             // not generated yet: our bill would take that slot and the room's real
             // bill could never be created. Ask for the bills to be generated first.
-            if (!plan.DestEmpty && IsAnchorPeriod(conn, tx, plan.DestRoomId, today))
+            if (!plan.DestEmpty && IsAnchorPeriod(conn, tx, plan.DestRoomId, start))
                 throw new InvalidOperationException(
-                    $"Room {plan.DestRoomNumber}'s rent bill for today has not been created yet. " +
+                    $"Room {plan.DestRoomNumber}'s rent bill for {start:MMM d} has not been created yet. " +
                     "Log out and back in (or use Generate Bills), then try the transfer again.");
 
             using (SqlCommand cmd = new SqlCommand(@"
@@ -565,11 +656,11 @@ namespace Capstoneszn.Forms.RoomsForms
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
                 cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
-                cmd.Parameters.Add("@start", SqlDbType.Date).Value = today;
-                cmd.Parameters.Add("@end", SqlDbType.Date).Value = plan.FirstBill ?? today.AddMonths(1);
-                AddMoney(cmd, "@amt", plan.TotalDifference);
+                cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+                cmd.Parameters.Add("@end", SqlDbType.Date).Value = end;
+                AddMoney(cmd, "@amt", amount);
                 cmd.Parameters.Add("@remarks", SqlDbType.NVarChar, 255).Value =
-                    "Price difference - transfer from Room " + plan.SourceRoomNumber;
+                    DifferenceRemark + " " + plan.SourceRoomNumber;
                 return (int)cmd.ExecuteScalar();
             }
         }

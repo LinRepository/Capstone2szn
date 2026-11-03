@@ -449,7 +449,8 @@ namespace Capstoneszn.UserControls
                         else
                         {
                             rentShareThisPeriod = Convert.ToDecimal(rd["Share"]);
-                            current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy}", dueDate,
+                            // ORIGINAL: current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy}", dueDate,
+                            current.Add(($"Rent {periodStart:MMM d} – {periodEnd.AddDays(-1):MMM d, yyyy}", dueDate,
                                 rentShareThisPeriod, Convert.ToDecimal(rd["Paid"]), false));
                         }
                     }
@@ -481,8 +482,8 @@ namespace Capstoneszn.UserControls
                     int n = Math.Max(heads.Count, 1);
                     decimal each = Math.Floor(roomPrice / n * 100m) / 100m;
                     decimal share = (heads.Count > 0 && heads[0] == tenantId) ? roomPrice - each * (n - 1) : each;
-
-                    current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy} (estimate)",
+                    // ORIGINAL: current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy} (estimate)",
+                    current.Add(($"Rent {periodStart:MMM d} – {periodEnd.AddDays(-1):MMM d, yyyy} (estimate)",
                         dueDate, share, 0m, true));
 
                     // NEW: remember the share (used for the credit coverage line)
@@ -704,7 +705,8 @@ namespace Capstoneszn.UserControls
 
                 Info("Statement No.", statementNo);
                 Info("Statement Date", today.ToString("MMM d, yyyy"));
-                Info("Billing Period", $"{periodStart:MMM d, yyyy} – {periodEnd:MMM d, yyyy}");
+                // ORIGINAL: Info("Billing Period", $"{periodStart:MMM d, yyyy} – {periodEnd:MMM d, yyyy}");
+                Info("Billing Period", $"{periodStart:MMM d, yyyy} – {periodEnd.AddDays(-1):MMM d, yyyy}");
                 Info("Payment Due Date", dueDate.ToString("MMM d, yyyy"));
                 y += 4;
                 Info("Tenant", tenantName);
@@ -737,7 +739,8 @@ namespace Capstoneszn.UserControls
                     Amount("Advance credit remaining", "₱" + (rentCreditLeft + waterCreditLeft).ToString("N2"), fBold);
 
                 // Lines
-                Section($"CURRENT CHARGES ({periodStart:MMM d} – {periodEnd:MMM d, yyyy})");
+                // ORIGINAL: Section($"CURRENT CHARGES ({periodStart:MMM d} – {periodEnd:MMM d, yyyy})");
+                Section($"CURRENT CHARGES ({periodStart:MMM d} – {periodEnd.AddDays(-1):MMM d, yyyy})");
                 Table(current, "No current charges.");
                 Section("UNPAID PREVIOUS BILLS");
                 Table(unpaid, "No unpaid bills.");

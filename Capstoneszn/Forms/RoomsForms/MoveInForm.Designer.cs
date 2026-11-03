@@ -723,6 +723,7 @@
             txtAddress.Font = new Font("Segoe UI", 12F);
             txtAddress.Location = new Point(173, 8);
             txtAddress.Name = "txtAddress";
+            txtAddress.PlaceholderText = "*";
             txtAddress.Size = new Size(247, 34);
             txtAddress.TabIndex = 1;
             // 
@@ -757,6 +758,7 @@
             txtLName.Font = new Font("Segoe UI", 12F);
             txtLName.Location = new Point(173, 8);
             txtLName.Name = "txtLName";
+            txtLName.PlaceholderText = "*";
             txtLName.Size = new Size(247, 34);
             txtLName.TabIndex = 1;
             // 
@@ -826,6 +828,7 @@
             txtFName.Font = new Font("Segoe UI", 12F);
             txtFName.Location = new Point(173, 8);
             txtFName.Name = "txtFName";
+            txtFName.PlaceholderText = "*";
             txtFName.Size = new Size(247, 34);
             txtFName.TabIndex = 1;
             // 
