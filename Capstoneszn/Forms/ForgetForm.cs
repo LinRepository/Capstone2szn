@@ -1,4 +1,5 @@
 ﻿using Capstoneszn.Forms;
+using Capstoneszn.Forms.BuildingForms;   // LoginLockout (Forgot Password attempt limit)
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,17 @@ namespace Capstoneszn
                         }
 
                         _userId = (int)result;
+                    }
+
+                    // FORGOT PASSWORD ATTEMPT LIMIT - if recovery is locked, say so now
+                    // instead of letting the user type three answers only to be refused.
+                    int lockedSeconds = LoginLockout.GetRecoverySecondsRemaining(conn, _userId);
+                    if (lockedSeconds > 0)
+                    {
+                        MessageBox.Show(LoginLockout.RecoveryLockedMessage(lockedSeconds),
+                            "Password Recovery Locked", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        this.Close();
+                        return;
                     }
 
                     // 2. Load that user's three questions from the SecurityQuestions table
@@ -118,6 +130,21 @@ namespace Capstoneszn
 
             try
             {
+                // FORGOT PASSWORD ATTEMPT LIMIT - checked BEFORE the answers, so even
+                // correct answers are refused while recovery is locked. (Blank answers
+                // were already rejected above, so they never count as an attempt.)
+                int lockedSeconds;
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+                    lockedSeconds = LoginLockout.GetRecoverySecondsRemaining(conn, _userId);
+                }
+                if (lockedSeconds > 0)
+                {
+                    CloseForRecoveryLockout(lockedSeconds);
+                    return;
+                }
+
                 var hashes = new Dictionary<int, string>();
 
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
@@ -149,6 +176,14 @@ namespace Capstoneszn
 
                 if (ok1 && ok2 && ok3)
                 {
+                    // All three correct - clear the Forgot Password counters. (The login
+                    // counters are cleared when the new password is saved in PasswordResetForm.)
+                    using (SqlConnection conn = DatabaseHelper.GetConnection())
+                    {
+                        conn.Open();
+                        LoginLockout.ResetRecovery(conn, _userId);
+                    }
+
                     MessageBox.Show("Verification successful! You can now reset your password.",
                         "Verified", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -159,6 +194,19 @@ namespace Capstoneszn
                 }
                 else
                 {
+                    // Count the failed attempt; the 3rd one in a row locks recovery.
+                    int lockMinutes;
+                    using (SqlConnection conn = DatabaseHelper.GetConnection())
+                    {
+                        conn.Open();
+                        lockMinutes = LoginLockout.RecordRecoveryFailure(conn, _userId);
+                    }
+                    if (lockMinutes > 0)
+                    {
+                        CloseForRecoveryLockout(lockMinutes * 60);
+                        return;
+                    }
+
                     // Deliberately generic. Naming which questions failed - or even how many -
                     // would let an attacker verify answers one at a time instead of all three
                     // together, which is the whole point of a multi-question check.
@@ -193,6 +241,19 @@ namespace Capstoneszn
             }
         }
 
+
+        // Forgot Password attempt limit: recovery is now locked. Show the lock time and
+        // close, which returns to the login screen (LoginForm opened this with ShowDialog).
+        private void CloseForRecoveryLockout(int secondsRemaining)
+        {
+            txtQuestionOne.Clear();
+            txtQuestionTwo.Clear();
+            txtQuestionThree.Clear();
+
+            MessageBox.Show(LoginLockout.RecoveryLockedMessage(secondsRemaining),
+                "Password Recovery Locked", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            this.Close();
+        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {

@@ -30,7 +30,7 @@ namespace Capstoneszn.Forms.SettingsForms
 
         // Ayano18 laptop = @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;"
         private static string ConnStr => @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
-        
+
 
         public static UserProfile GetProfile(int userId)
         {
@@ -114,10 +114,17 @@ namespace Capstoneszn.Forms.SettingsForms
 
                     if (BCrypt.Net.BCrypt.Verify(password, hash))
                     {
-                        if (failed > 0)
+                        // Correct password: clear ALL lockout counters, the same as
+                        // LoginLockout.Reset. The old code cleared only FailedLoginCount,
+                        // so LockoutCount stayed and the next lock jumped to 5 or 15 min.
+                        // was: if (failed > 0)
+                        // was:     "UPDATE Users SET FailedLoginCount = 0 WHERE UserId = @UserId"
+                        if (failed > 0 || lockouts > 0)
                         {
                             using (var cmd = new SqlCommand(
-                                "UPDATE Users SET FailedLoginCount = 0 WHERE UserId = @UserId", conn, tx))
+                                @"UPDATE Users
+                                  SET FailedLoginCount = 0, LockoutCount = 0, LockoutUntilUtc = NULL
+                                  WHERE UserId = @UserId", conn, tx))
                             {
                                 cmd.Parameters.AddWithValue("@UserId", userId);
                                 cmd.ExecuteNonQuery();
