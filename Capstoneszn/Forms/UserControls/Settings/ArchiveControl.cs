@@ -19,11 +19,16 @@ namespace Capstoneszn.Forms.UserControls.Settings
     /// action that brings it back.
     ///
     ///   Rooms    - archived rooms of the selected building. Restore.
+    ///              (UPDATED Nov 3, 2026: restoring a room also restores its
+    ///              electricity account; the account is shown as a column here.)
     ///   Tenants  - moved-out tenants (no active stay). Reactivate = a new
     ///              stay under the same tenant record.
     ///   Employee - archived employees. Restore = re-hire (ADDED Oct 28, 2026).
-    ///   Bill Accounts / Audits - their modules are not built
-    ///              yet; the tabs say so instead of showing an empty grid.
+    ///   (OLD: "Bill Accounts / Audits - their modules are not built
+    ///              yet; the tabs say so instead of showing an empty grid.")
+    ///   Bill Accounts - HIDDEN (Nov 3, 2026): a room's electricity account is
+    ///              archived/restored only through its room, and water/owner
+    ///              accounts are edited in place, so the tab had no action.
     ///   (OLD: "Bill Accounts / Audits / Employee - their modules are not built yet")
     ///
     /// Nothing here deletes anything. Archiving keeps the row; restoring or
@@ -37,9 +42,16 @@ namespace Capstoneszn.Forms.UserControls.Settings
         private DataTable _rooms = new DataTable();
         private DataTable _tenants = new DataTable();
 
+        // (Nov 3, 2026) The Electricity Account column is now in the Designer
+        // (colArchivedRoomElectricity), so it is no longer created here.
+        // OLD: private DataGridViewTextBoxColumn colArchivedRoomElectricity = null!;
+
         public ArchiveControl()
         {
             InitializeComponent();
+
+            // (Nov 3, 2026) Bill Accounts tab removed from the Designer, so nothing to hide here.
+            // OLD: tabArchive.TabPages.Remove(tabBillAccounts);
 
             // ---- Rooms grid ----
             dgvArchivedRooms.AutoGenerateColumns = false;
@@ -57,6 +69,17 @@ namespace Capstoneszn.Forms.UserControls.Settings
             colArchivedRoomPrice.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             colRoomArchivedAt.DefaultCellStyle.Format = "MMM d, yyyy  h:mm tt";
             colRoomArchivedAt.DefaultCellStyle.NullValue = "-";
+
+            // ADDED Nov 3, 2026: Electricity Account column (now defined in the Designer)
+            colArchivedRoomElectricity.DataPropertyName = "ElectricityAccount";
+            colArchivedRoomElectricity.DefaultCellStyle.NullValue = "-";
+
+            // OLD (column was created in code before it moved to the Designer):
+            // colArchivedRoomElectricity = new DataGridViewTextBoxColumn { ... };
+            // dgvArchivedRooms.Columns.Insert(colRoomArchivedAt.Index, colArchivedRoomElectricity);
+
+            // (Nov 3, 2026) The note text is now set in the Designer ("Unconfigured" removed).
+            // OLD: lblRoomsNote.Text = "Restore returns the room (and its electricity account) ...";
 
             // ---- Tenants grid ----
             dgvArchivedTenants.AutoGenerateColumns = false;
@@ -109,11 +132,26 @@ namespace Capstoneszn.Forms.UserControls.Settings
             try
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
+                // ORIGINAL query (kept for reference):
+                //   SELECT r.RoomId, f.FloorNumber, r.RoomNumber, r.RoomType,
+                //          r.Capacity, r.RoomPrice, r.ArchivedAt
+                //   FROM   Rooms r
+                //   JOIN   Floors f ON f.FloorId = r.FloorId
+                //   WHERE  r.BuildingId = @bid
+                //     AND  r.IsArchived = 1
+                //   ORDER BY r.ArchivedAt DESC;
+                // NEW (Nov 3, 2026): also returns the room's electricity account
                 using (SqlCommand cmd = new SqlCommand(@"
                     SELECT r.RoomId, f.FloorNumber, r.RoomNumber, r.RoomType,
-                           r.Capacity, r.RoomPrice, r.ArchivedAt
+                           r.Capacity, r.RoomPrice, r.ArchivedAt,
+                           e.ElectricityAccount
                     FROM   Rooms r
                     JOIN   Floors f ON f.FloorId = r.FloorId
+                    OUTER APPLY (SELECT TOP 1
+                                        ISNULL(ea.AccountName + ' - ', '') + ea.AccountNumber AS ElectricityAccount
+                                 FROM   ElectricityAccounts ea
+                                 WHERE  ea.RoomId = r.RoomId
+                                 ORDER BY ea.IsArchived DESC, ea.ArchivedAt DESC) e
                     WHERE  r.BuildingId = @bid
                       AND  r.IsArchived = 1
                     ORDER BY r.ArchivedAt DESC;", conn))
@@ -167,6 +205,14 @@ namespace Capstoneszn.Forms.UserControls.Settings
         {
             if (e.RowIndex < 0 || e.ColumnIndex != colRoomArchiveAction.Index) return;
 
+            // ADDED Nov 3, 2026: landlord only (same check as the Employees tab)
+            if (!Session.IsLandlord)
+            {
+                MessageBox.Show("Only the landlord can restore rooms.", "Not Allowed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             DataRowView row = dgvArchivedRooms.Rows[e.RowIndex].DataBoundItem as DataRowView;
             if (row == null) return;
 
@@ -174,16 +220,35 @@ namespace Capstoneszn.Forms.UserControls.Settings
             string roomNumber = Convert.ToString(row["RoomNumber"]);
             int floorNumber = Convert.ToInt32(row["FloorNumber"]);
 
-            if (MessageBox.Show(
-                    $"Restore Room {roomNumber} (Floor {floorNumber})?\n\n" +
-                    "It returns to the Rooms map as Available (or Unconfigured if it was " +
-                    "never set up), ready for a move in.",
-                    "Restore Room", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            // ADDED Nov 3, 2026
+            string account = row["ElectricityAccount"] == DBNull.Value
+                ? ""
+                : Convert.ToString(row["ElectricityAccount"]) ?? "";
+
+            // ORIGINAL message:
+            //   $"Restore Room {roomNumber} (Floor {floorNumber})?\n\n" +
+            //   "It returns to the Rooms map as Available (or Unconfigured if it was " +
+            //   "never set up), ready for a move in.",
+            string message = $"Restore Room {roomNumber} (Floor {floorNumber})?\n\n" +
+                             "It returns to the Rooms map as Available, ready for a move in.";
+            if (account.Length > 0)
+                message += "\n\nIts electricity account (" + account + ") will be restored too.";
+
+            if (MessageBox.Show(message, "Restore Room", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                 != DialogResult.Yes)
                 return;
 
             if (RestoreRoom(roomId, roomNumber))
             {
+                // ADDED Nov 3, 2026: audit log (decided Oct 25: room archive/restore are logged)
+                // If AuditLogger has no ModuleRooms constant, use the module name your Rooms code uses.
+                try
+                {
+                    AuditLogger.Log(AuditLogger.ModuleRooms, "Restore Room",
+                        "Restored Room " + roomNumber + (account.Length > 0 ? " and its electricity account" : ""));
+                }
+                catch (Exception ex) { Debug.WriteLine(ex); }   // a log failure must not undo the restore
+
                 MessageBox.Show("Room " + roomNumber + " has been restored.", "Room Restored",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadArchivedRooms();
@@ -197,6 +262,9 @@ namespace Capstoneszn.Forms.UserControls.Settings
         ///
         /// The reason is checked first so the message can say exactly what
         /// blocks it; the UPDATE then enforces the same rules itself.
+        ///
+        /// UPDATED Nov 3, 2026: the room's electricity account is restored in the
+        /// same transaction, so the room and its account always come back together.
         /// </summary>
         private bool RestoreRoom(int roomId, string roomNumber)
         {
@@ -253,35 +321,84 @@ namespace Capstoneszn.Forms.UserControls.Settings
                         }
                     }
 
-                    // 2. Restore - the same rules, enforced in the statement itself.
-                    using (SqlCommand cmd = new SqlCommand(@"
-                        UPDATE r
-                           SET r.IsArchived = 0,
-                               r.ArchivedAt = NULL
-                        FROM   Rooms r
-                        JOIN   vwRoomStatus v ON v.RoomId = r.RoomId
-                        WHERE  r.RoomId     = @rid
-                          AND  r.BuildingId = @bid
-                          AND  r.IsArchived = 1
-                          AND  v.Status NOT IN ('Occupied', 'Maintenance')
-                          AND  NOT EXISTS (SELECT 1 FROM Tenancies tn
-                                           WHERE tn.RoomId = r.RoomId AND tn.Status = 'Active')
-                          AND  NOT EXISTS (SELECT 1 FROM Rooms r2
-                                           WHERE r2.BuildingId = r.BuildingId
-                                             AND r2.RoomNumber = r.RoomNumber
-                                             AND r2.IsArchived = 0
-                                             AND r2.RoomId <> r.RoomId);", conn))
+                    // ADDED Nov 3, 2026: room + electricity account in one transaction
+                    using (SqlTransaction tx = conn.BeginTransaction())
                     {
-                        cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
-                        cmd.Parameters.Add("@bid", SqlDbType.Int).Value = Session.BuildingId;
+                        try
+                        {
+                            // 2. Restore the room - the same rules, enforced in the statement itself.
+                            int roomRows;
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                UPDATE r
+                                   SET r.IsArchived = 0,
+                                       r.ArchivedAt = NULL
+                                FROM   Rooms r
+                                JOIN   vwRoomStatus v ON v.RoomId = r.RoomId
+                                WHERE  r.RoomId     = @rid
+                                  AND  r.BuildingId = @bid
+                                  AND  r.IsArchived = 1
+                                  AND  v.Status NOT IN ('Occupied', 'Maintenance')
+                                  AND  NOT EXISTS (SELECT 1 FROM Tenancies tn
+                                                   WHERE tn.RoomId = r.RoomId AND tn.Status = 'Active')
+                                  AND  NOT EXISTS (SELECT 1 FROM Rooms r2
+                                                   WHERE r2.BuildingId = r.BuildingId
+                                                     AND r2.RoomNumber = r.RoomNumber
+                                                     AND r2.IsArchived = 0
+                                                     AND r2.RoomId <> r.RoomId);", conn, tx))
+                            {
+                                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                                cmd.Parameters.Add("@bid", SqlDbType.Int).Value = Session.BuildingId;
+                                roomRows = cmd.ExecuteNonQuery();
+                            }
 
-                        if (cmd.ExecuteNonQuery() == 1) return true;
+                            if (roomRows != 1)
+                            {
+                                tx.Rollback();
+                                MessageBox.Show("Room " + roomNumber + " could not be restored. Nothing was changed.",
+                                    "Not Restored", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                LoadArchivedRooms();
+                                return false;
+                            }
+
+                            // 3. ADDED: restore its electricity account (archived together with the room)
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                UPDATE ElectricityAccounts
+                                   SET IsArchived = 0,
+                                       ArchivedAt = NULL
+                                WHERE  RoomId = @rid
+                                  AND  IsArchived = 1;", conn, tx))
+                            {
+                                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                                cmd.ExecuteNonQuery();   // 0 rows is fine (room had no archived account)
+                            }
+
+                            tx.Commit();
+                            return true;
+                        }
+                        catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+                        {
+                            tx.Rollback();
+                            MessageBox.Show("Room " + roomNumber + " cannot be restored: its electricity account " +
+                                            "number is now used by another account. Nothing was changed.",
+                                "Not Restored", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return false;
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
                     }
 
-                    MessageBox.Show("Room " + roomNumber + " could not be restored. Nothing was changed.",
-                        "Not Restored", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    LoadArchivedRooms();
-                    return false;
+                    // ORIGINAL step 2 (replaced by the transaction above):
+                    // using (SqlCommand cmd = new SqlCommand(@"UPDATE r SET r.IsArchived = 0, ... ", conn))
+                    // {
+                    //     ...
+                    //     if (cmd.ExecuteNonQuery() == 1) return true;
+                    // }
+                    // MessageBox.Show("Room " + roomNumber + " could not be restored. Nothing was changed.", ...);
+                    // LoadArchivedRooms();
+                    // return false;
                 }
             }
             catch (Exception ex)

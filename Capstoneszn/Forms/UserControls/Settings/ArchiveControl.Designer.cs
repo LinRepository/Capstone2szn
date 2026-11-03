@@ -40,6 +40,7 @@
             colArchivedRoomType = new DataGridViewTextBoxColumn();
             colArchivedRoomCapacity = new DataGridViewTextBoxColumn();
             colArchivedRoomPrice = new DataGridViewTextBoxColumn();
+            colArchivedRoomElectricity = new DataGridViewTextBoxColumn();
             colRoomArchivedAt = new DataGridViewTextBoxColumn();
             colRoomArchiveAction = new DataGridViewButtonColumn();
             lblNoArchivedRooms = new Label();
@@ -63,15 +64,6 @@
             txtSearchTenants = new TextBox();
             lblSearchTenants = new Label();
             lblTenantsNote = new Label();
-            tabBillAccounts = new TabPage();
-            dgvArchivedBillAccounts = new DataGridView();
-            colBillAccountArchiveID = new DataGridViewTextBoxColumn();
-            colBillAccountArchivedAt = new DataGridViewTextBoxColumn();
-            colArchivedBillAccountType = new DataGridViewTextBoxColumn();
-            colArchivedBillAccountRoom = new DataGridViewTextBoxColumn();
-            colArchivedBillAccountNumber = new DataGridViewTextBoxColumn();
-            colBillAccountArchiveAction = new DataGridViewButtonColumn();
-            lblNoArchivedBillAccounts = new Label();
             tabEmployee = new TabPage();
             dgvArchivedEmployees = new DataGridView();
             colEmployeeArchiveID = new DataGridViewTextBoxColumn();
@@ -90,8 +82,6 @@
             tabTenants.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedTenants).BeginInit();
             pnlTenantsToolbar.SuspendLayout();
-            tabBillAccounts.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvArchivedBillAccounts).BeginInit();
             tabEmployee.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvArchivedEmployees).BeginInit();
             SuspendLayout();
@@ -151,7 +141,6 @@
             // 
             tabArchive.Controls.Add(tabRooms);
             tabArchive.Controls.Add(tabTenants);
-            tabArchive.Controls.Add(tabBillAccounts);
             tabArchive.Controls.Add(tabEmployee);
             tabArchive.Dock = DockStyle.Fill;
             tabArchive.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -183,7 +172,7 @@
             dgvArchivedRooms.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvArchivedRooms.BackgroundColor = Color.DarkGray;
             dgvArchivedRooms.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvArchivedRooms.Columns.AddRange(new DataGridViewColumn[] { colArchivedRoomFloor, colArchivedRoom, colArchivedRoomType, colArchivedRoomCapacity, colArchivedRoomPrice, colRoomArchivedAt, colRoomArchiveAction });
+            dgvArchivedRooms.Columns.AddRange(new DataGridViewColumn[] { colArchivedRoomFloor, colArchivedRoom, colArchivedRoomType, colArchivedRoomCapacity, colArchivedRoomPrice, colArchivedRoomElectricity, colRoomArchivedAt, colRoomArchiveAction });
             dgvArchivedRooms.Dock = DockStyle.Fill;
             dgvArchivedRooms.Location = new Point(10, 60);
             dgvArchivedRooms.MultiSelect = false;
@@ -234,6 +223,15 @@
             colArchivedRoomPrice.MinimumWidth = 6;
             colArchivedRoomPrice.Name = "colArchivedRoomPrice";
             colArchivedRoomPrice.ReadOnly = true;
+            // 
+            // colArchivedRoomElectricity
+            // 
+            colArchivedRoomElectricity.DataPropertyName = "ElectricityAccount";
+            colArchivedRoomElectricity.FillWeight = 150F;
+            colArchivedRoomElectricity.HeaderText = "Electricity Account";
+            colArchivedRoomElectricity.MinimumWidth = 6;
+            colArchivedRoomElectricity.Name = "colArchivedRoomElectricity";
+            colArchivedRoomElectricity.ReadOnly = true;
             // 
             // colRoomArchivedAt
             // 
@@ -315,7 +313,7 @@
             lblRoomsNote.Name = "lblRoomsNote";
             lblRoomsNote.Size = new Size(1250, 40);
             lblRoomsNote.TabIndex = 2;
-            lblRoomsNote.Text = "Restore returns the room to the Rooms map as Available (or Unconfigured). A room with an open maintenance issue cannot be restored.";
+            lblRoomsNote.Text = "Restore returns the room (and its electricity account) to the Rooms map as Available. A room with an open maintenance issue cannot be restored.";
             lblRoomsNote.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // tabTenants
@@ -473,96 +471,6 @@
             lblTenantsNote.Text = "Reactivate moves a returning tenant into a room under the same record, so their full history stays together. Balances from the earlier stay remain settled.";
             lblTenantsNote.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // tabBillAccounts
-            // 
-            tabBillAccounts.BackColor = Color.FromArgb(25, 25, 70);
-            tabBillAccounts.Controls.Add(dgvArchivedBillAccounts);
-            tabBillAccounts.Controls.Add(lblNoArchivedBillAccounts);
-            tabBillAccounts.Location = new Point(4, 34);
-            tabBillAccounts.Name = "tabBillAccounts";
-            tabBillAccounts.Padding = new Padding(10);
-            tabBillAccounts.Size = new Size(1270, 590);
-            tabBillAccounts.TabIndex = 2;
-            tabBillAccounts.Text = "Bill Accounts";
-            // 
-            // dgvArchivedBillAccounts
-            // 
-            dgvArchivedBillAccounts.AllowUserToAddRows = false;
-            dgvArchivedBillAccounts.AllowUserToDeleteRows = false;
-            dgvArchivedBillAccounts.AllowUserToResizeRows = false;
-            dgvArchivedBillAccounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvArchivedBillAccounts.BackgroundColor = Color.DarkGray;
-            dgvArchivedBillAccounts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvArchivedBillAccounts.Columns.AddRange(new DataGridViewColumn[] { colBillAccountArchiveID, colBillAccountArchivedAt, colArchivedBillAccountType, colArchivedBillAccountRoom, colArchivedBillAccountNumber, colBillAccountArchiveAction });
-            dgvArchivedBillAccounts.Dock = DockStyle.Fill;
-            dgvArchivedBillAccounts.Location = new Point(10, 10);
-            dgvArchivedBillAccounts.MultiSelect = false;
-            dgvArchivedBillAccounts.Name = "dgvArchivedBillAccounts";
-            dgvArchivedBillAccounts.ReadOnly = true;
-            dgvArchivedBillAccounts.RowHeadersVisible = false;
-            dgvArchivedBillAccounts.RowHeadersWidth = 51;
-            dgvArchivedBillAccounts.ScrollBars = ScrollBars.Vertical;
-            dgvArchivedBillAccounts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvArchivedBillAccounts.Size = new Size(1250, 570);
-            dgvArchivedBillAccounts.TabIndex = 1;
-            dgvArchivedBillAccounts.Visible = false;
-            // 
-            // colBillAccountArchiveID
-            // 
-            colBillAccountArchiveID.HeaderText = "ID";
-            colBillAccountArchiveID.MinimumWidth = 6;
-            colBillAccountArchiveID.Name = "colBillAccountArchiveID";
-            colBillAccountArchiveID.ReadOnly = true;
-            // 
-            // colBillAccountArchivedAt
-            // 
-            colBillAccountArchivedAt.HeaderText = "Archived On";
-            colBillAccountArchivedAt.MinimumWidth = 6;
-            colBillAccountArchivedAt.Name = "colBillAccountArchivedAt";
-            colBillAccountArchivedAt.ReadOnly = true;
-            // 
-            // colArchivedBillAccountType
-            // 
-            colArchivedBillAccountType.HeaderText = "Type";
-            colArchivedBillAccountType.MinimumWidth = 6;
-            colArchivedBillAccountType.Name = "colArchivedBillAccountType";
-            colArchivedBillAccountType.ReadOnly = true;
-            // 
-            // colArchivedBillAccountRoom
-            // 
-            colArchivedBillAccountRoom.HeaderText = "Room";
-            colArchivedBillAccountRoom.MinimumWidth = 6;
-            colArchivedBillAccountRoom.Name = "colArchivedBillAccountRoom";
-            colArchivedBillAccountRoom.ReadOnly = true;
-            // 
-            // colArchivedBillAccountNumber
-            // 
-            colArchivedBillAccountNumber.HeaderText = "Account Number";
-            colArchivedBillAccountNumber.MinimumWidth = 6;
-            colArchivedBillAccountNumber.Name = "colArchivedBillAccountNumber";
-            colArchivedBillAccountNumber.ReadOnly = true;
-            // 
-            // colBillAccountArchiveAction
-            // 
-            colBillAccountArchiveAction.HeaderText = "Action";
-            colBillAccountArchiveAction.MinimumWidth = 6;
-            colBillAccountArchiveAction.Name = "colBillAccountArchiveAction";
-            colBillAccountArchiveAction.ReadOnly = true;
-            colBillAccountArchiveAction.Text = "Restore";
-            colBillAccountArchiveAction.UseColumnTextForButtonValue = true;
-            // 
-            // lblNoArchivedBillAccounts
-            // 
-            lblNoArchivedBillAccounts.Dock = DockStyle.Fill;
-            lblNoArchivedBillAccounts.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNoArchivedBillAccounts.ForeColor = Color.Silver;
-            lblNoArchivedBillAccounts.Location = new Point(10, 10);
-            lblNoArchivedBillAccounts.Name = "lblNoArchivedBillAccounts";
-            lblNoArchivedBillAccounts.Size = new Size(1250, 570);
-            lblNoArchivedBillAccounts.TabIndex = 2;
-            lblNoArchivedBillAccounts.Text = "No archived records yet.";
-            lblNoArchivedBillAccounts.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // tabEmployee
             // 
             tabEmployee.BackColor = Color.FromArgb(25, 25, 70);
@@ -572,7 +480,7 @@
             tabEmployee.Name = "tabEmployee";
             tabEmployee.Padding = new Padding(10);
             tabEmployee.Size = new Size(1270, 590);
-            tabEmployee.TabIndex = 4;
+            tabEmployee.TabIndex = 2;
             tabEmployee.Text = "Employee";
             // 
             // dgvArchivedEmployees
@@ -673,8 +581,6 @@
             ((System.ComponentModel.ISupportInitialize)dgvArchivedTenants).EndInit();
             pnlTenantsToolbar.ResumeLayout(false);
             pnlTenantsToolbar.PerformLayout();
-            tabBillAccounts.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvArchivedBillAccounts).EndInit();
             tabEmployee.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvArchivedEmployees).EndInit();
             ResumeLayout(false);
@@ -694,6 +600,7 @@
         private DataGridViewTextBoxColumn colArchivedRoomType;
         private DataGridViewTextBoxColumn colArchivedRoomCapacity;
         private DataGridViewTextBoxColumn colArchivedRoomPrice;
+        private DataGridViewTextBoxColumn colArchivedRoomElectricity;
         private DataGridViewTextBoxColumn colRoomArchivedAt;
         private DataGridViewButtonColumn colRoomArchiveAction;
         private Label lblNoArchivedRooms;
@@ -717,15 +624,6 @@
         private TextBox txtSearchTenants;
         private Label lblSearchTenants;
         private Label lblTenantsNote;
-        private TabPage tabBillAccounts;
-        private DataGridView dgvArchivedBillAccounts;
-        private DataGridViewTextBoxColumn colBillAccountArchiveID;
-        private DataGridViewTextBoxColumn colBillAccountArchivedAt;
-        private DataGridViewTextBoxColumn colArchivedBillAccountType;
-        private DataGridViewTextBoxColumn colArchivedBillAccountRoom;
-        private DataGridViewTextBoxColumn colArchivedBillAccountNumber;
-        private DataGridViewButtonColumn colBillAccountArchiveAction;
-        private Label lblNoArchivedBillAccounts;
         private TabPage tabEmployee;
         private DataGridView dgvArchivedEmployees;
         private DataGridViewTextBoxColumn colEmployeeArchiveID;
