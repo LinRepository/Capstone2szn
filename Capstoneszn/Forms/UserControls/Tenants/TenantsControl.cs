@@ -47,6 +47,8 @@ namespace Capstoneszn.UserControls
         {
             InitializeComponent();
 
+            ApplyTenantsTheme();   // NEW (UI improvement)
+
             // Map grid columns to the SQL result
             dgvTenants.AutoGenerateColumns = false;
             colRoom.DataPropertyName = "RoomNumber";
@@ -319,6 +321,29 @@ namespace Capstoneszn.UserControls
                 billing.ShowDialog(this.FindForm());
         }
 
+        /* =================================================================
+           GENERATE STATEMENT  (NEW - aligned with Billing Management v2)
+
+           One tenant's Statement of Account for ONE billing period, using the
+           SAME formula and period list as the room statement in Bill
+           Management (RoomStatementService), so both always agree:
+
+               Previous balance
+             + Current charges (Rent, Water, Maintenance DUE within the period)
+             - Payments received during the period
+             +/- Adjustments (write-off = less owed, forfeit = credit given up)
+             = Amount due   (negative = advance credit)
+
+           Period  = the room's newest rent period (the first one Bill
+                     Management lists; bills exist 7 days before the due date).
+           As-of   = the period's last day if it is already over, else today.
+                     Only bills generated / payments dated on or before it
+                     count; a payment voided AFTER it still counts.
+           Scope   = this tenant's whole account (every room, every stay), so
+                     a transfer or a return never hides a debt or a credit.
+
+           Read-only. Electricity is excluded (paid directly to AKELCO).
+           ================================================================= */
         private void btnGenerateStatement_Click(object sender, EventArgs e)
         {
             if (_selectedTenantId <= 0)
@@ -328,8 +353,6 @@ namespace Capstoneszn.UserControls
                 return;
             }
 
-            // NEW: validation - the preview needs at least one printer driver
-            // (e.g. Microsoft Print to PDF); without one it fails while drawing.
             if (PrinterSettings.InstalledPrinters.Count == 0)
             {
                 MessageBox.Show("No printer is installed. Enable \"Microsoft Print to PDF\" in Windows Features.",
@@ -341,38 +364,27 @@ namespace Capstoneszn.UserControls
             DateTime today = DateTime.Today;
 
             string building = "", tenantName = "", roomNo = "", preparedBy = "-";
-            DateTime moveIn = today, periodStart = today, periodEnd = today, dueDate = today;
-            bool isEstimate = false;
-            decimal rentCredit = 0m;
+            DateTime moveIn = today;
+            StatementPeriod period;
+            DateTime asOf;
 
-            // NEW: advance payment (credit) held per category, and this period's rent share
-            decimal waterCredit = 0m;
-            decimal rentShareThisPeriod = 0m;
+            decimal prevBalance = 0m, rent = 0m, water = 0m, maint = 0m, payments = 0m, adjustments = 0m;
 
-            // Desc, Due, Share, Paid, IsEstimate
-            var current = new List<(string Desc, DateTime Due, decimal Share, decimal Paid, bool Est)>();
-            var unpaid = new List<(string Desc, DateTime Due, decimal Share, decimal Paid, bool Est)>();
+            // Desc, Due, Share, Paid (as of the statement date)
+            var lines = new List<(string Desc, DateTime Due, decimal Share, decimal Paid)>();
+            var receipts = new List<(DateTime Date, string Receipt, string Method, string PaidBy, decimal Amount)>();
             var notes = new List<string>();
-
-            // What this tenant has paid on one bill (voided allocations / payments don't count)
-            const string PaidSql = @"ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
-                                             JOIN Payments p ON p.PaymentId = a.PaymentId
-                                             WHERE a.BillId = bt.BillId AND a.TenantId = bt.TenantId
-                                               AND a.IsVoided = 0 AND p.IsVoided = 0), 0)";
 
             try
             {
                 using SqlConnection conn = DatabaseHelper.GetConnection();
                 conn.Open();
 
-                // ---- 1. Active stay, room, building ----
-                int roomId, buildingId;
-                decimal roomPrice;
-                DateTime? anchor;
-
+                // ---- 1. Active stay, room, building -------------------------------
+                int roomId;
                 using (var cmd = new SqlCommand(@"
                     SELECT tn.RoomId, tn.MoveInDate, t.FirstName, t.MiddleName, t.LastName,
-                           r.RoomNumber, r.RoomPrice, r.BillingAnchorDate, r.BuildingId, b.BuildingName
+                           r.RoomNumber, b.BuildingName
                     FROM   Tenancies tn
                     JOIN   Tenants t   ON t.TenantId   = tn.TenantId
                     JOIN   Rooms r     ON r.RoomId     = tn.RoomId
@@ -392,169 +404,148 @@ namespace Capstoneszn.UserControls
                     }
 
                     roomId = Convert.ToInt32(rd["RoomId"]);
-                    buildingId = Convert.ToInt32(rd["BuildingId"]);
                     moveIn = Convert.ToDateTime(rd["MoveInDate"]).Date;
                     roomNo = Str(rd["RoomNumber"]);
                     building = Str(rd["BuildingName"]);
-                    roomPrice = rd["RoomPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(rd["RoomPrice"]);
-                    anchor = rd["BillingAnchorDate"] == DBNull.Value
-                        ? (DateTime?)null : Convert.ToDateTime(rd["BillingAnchorDate"]).Date;
 
                     string mid = Str(rd["MiddleName"]);
                     tenantName = Str(rd["LastName"]) + ", " + Str(rd["FirstName"]) +
                                  (mid.Length > 0 ? " " + mid[0] + "." : "");
                 }
 
-                if (anchor == null)
+                // ---- 2. The period: same list Bill Management uses -----------------
+                List<StatementPeriod> periods = RoomStatementService.GetPeriods(roomId);
+                if (periods.Count == 0)
                 {
-                    MessageBox.Show("This room has no billing cycle yet.", "Billing Statement",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Room {roomNo} has no rent bill yet, so there is no billing period to show.",
+                        "Billing Statement", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
-                // ---- 2. The period: next rent due date (room anchor + k months) ----
-                int k = 0;
-                while (anchor.Value.AddMonths(k) < today) k++;
-                periodStart = anchor.Value.AddMonths(k);
-                periodEnd = anchor.Value.AddMonths(k + 1);
-                dueDate = periodStart;
+                period = periods[0];                                   // newest first
+                asOf = period.LastDay < today ? period.LastDay : today;
+                DateTime dNext = asOf.AddDays(1);                      // "on or before asOf" = "< dNext"
 
-                // ---- 3. Rent: the real bill if already generated ----
-                int rentBillId = 0;
-                using (var cmd = new SqlCommand(@"
-                    SELECT TOP 1 b.BillId, b.BillingPeriodStart, b.DueDate, bt.Share, " + PaidSql + @" AS Paid
-                    FROM   Bills b
-                    LEFT JOIN BillTenants bt ON bt.BillId = b.BillId AND bt.TenantId = @tid
-                    WHERE  b.RoomId = @rid AND b.BillCategory = 'Rent' AND b.BillingPeriodStart >= @today
-                    ORDER BY b.BillingPeriodStart;", conn))
+                void AddParams(SqlCommand c)
                 {
-                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
-                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
-                    cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
+                    c.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
+                    c.Parameters.Add("@S", SqlDbType.Date).Value = period.Start;
+                    c.Parameters.Add("@E", SqlDbType.Date).Value = period.End;
+                    c.Parameters.Add("@Dnext", SqlDbType.Date).Value = dNext;
+                }
+
+                // ---- 3. Summary totals (RoomStatementService formula, one tenant) --
+                using (var cmd = new SqlCommand(@"
+                    SELECT
+                      ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                              WHERE bt.TenantId = @tid AND b.BillCategory IN ('Rent','Water','Maintenance')
+                                AND b.DueDate < @S
+                                AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext), 0)
+                    - ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a JOIN Payments p ON p.PaymentId = a.PaymentId
+                              WHERE a.TenantId = @tid AND p.PaymentDate < @S
+                                AND (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)), 0)
+                    + ISNULL((SELECT SUM(CASE WHEN ta.AdjustmentType = 'WriteOff' THEN -ta.Amount ELSE ta.Amount END)
+                              FROM TenantAdjustments ta
+                              WHERE ta.TenantId = @tid AND ta.AdjustmentDate < @S), 0)                AS PrevBalance,
+
+                      ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                              WHERE bt.TenantId = @tid AND b.BillCategory = 'Rent'
+                                AND b.DueDate >= @S AND b.DueDate < @E
+                                AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext), 0) AS Rent,
+                      ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                              WHERE bt.TenantId = @tid AND b.BillCategory = 'Water'
+                                AND b.DueDate >= @S AND b.DueDate < @E
+                                AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext), 0) AS Water,
+                      ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                              WHERE bt.TenantId = @tid AND b.BillCategory = 'Maintenance'
+                                AND b.DueDate >= @S AND b.DueDate < @E
+                                AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext), 0) AS Maint,
+
+                      ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a JOIN Payments p ON p.PaymentId = a.PaymentId
+                              WHERE a.TenantId = @tid AND p.PaymentDate >= @S AND p.PaymentDate < @Dnext
+                                AND (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)), 0)                AS Payments,
+
+                      ISNULL((SELECT SUM(CASE WHEN ta.AdjustmentType = 'WriteOff' THEN -ta.Amount ELSE ta.Amount END)
+                              FROM TenantAdjustments ta
+                              WHERE ta.TenantId = @tid AND ta.AdjustmentDate >= @S
+                                AND ta.AdjustmentDate < @Dnext), 0)                                AS Adjustments;", conn))
+                {
+                    AddParams(cmd);
                     using SqlDataReader rd = cmd.ExecuteReader();
-                    if (rd.Read())
-                    {
-                        rentBillId = Convert.ToInt32(rd["BillId"]);
-                        periodStart = Convert.ToDateTime(rd["BillingPeriodStart"]).Date;
-                        dueDate = Convert.ToDateTime(rd["DueDate"]).Date;
-
-                        if (rd["Share"] == DBNull.Value)
-                            notes.Add("No rent share this period (joined after the bill was generated).");
-                        // OLD:
-                        // else
-                        //     current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy}", dueDate,
-                        //         Convert.ToDecimal(rd["Share"]), Convert.ToDecimal(rd["Paid"]), false));
-                        // NEW: same line, and also remember the share (used to show how many
-                        //      periods the remaining advance credit covers)
-                        else
-                        {
-                            rentShareThisPeriod = Convert.ToDecimal(rd["Share"]);
-                            // ORIGINAL: current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy}", dueDate,
-                            current.Add(($"Rent {periodStart:MMM d} – {periodEnd.AddDays(-1):MMM d, yyyy}", dueDate,
-                                rentShareThisPeriod, Convert.ToDecimal(rd["Paid"]), false));
-                        }
-                    }
+                    rd.Read();
+                    prevBalance = rd.GetDecimal(0);
+                    rent = rd.GetDecimal(1);
+                    water = rd.GetDecimal(2);
+                    maint = rd.GetDecimal(3);
+                    payments = rd.GetDecimal(4);
+                    adjustments = rd.GetDecimal(5);
                 }
 
-                // ---- 4. Rent: estimate if not generated yet ----
-                if (rentBillId == 0)
-                {
-                    // NEW: validation - no room price means no estimate can be made
-                    if (roomPrice <= 0m)
-                    {
-                        MessageBox.Show($"Room {roomNo} has no room price set, so the rent can't be estimated.",
-                            "Billing Statement", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-
-                    isEstimate = true;
-                    var heads = new List<int>();   // longest-tenured first
-                    using (var cmd = new SqlCommand(@"
-                        SELECT TenantId FROM Tenancies
-                        WHERE RoomId = @rid AND Status = 'Active'
-                        ORDER BY MoveInDate, TenantId;", conn))
-                    {
-                        cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
-                        using SqlDataReader rd = cmd.ExecuteReader();
-                        while (rd.Read()) heads.Add(rd.GetInt32(0));
-                    }
-
-                    int n = Math.Max(heads.Count, 1);
-                    decimal each = Math.Floor(roomPrice / n * 100m) / 100m;
-                    decimal share = (heads.Count > 0 && heads[0] == tenantId) ? roomPrice - each * (n - 1) : each;
-                    // ORIGINAL: current.Add(($"Rent {periodStart:MMM d} – {periodEnd:MMM d, yyyy} (estimate)",
-                    current.Add(($"Rent {periodStart:MMM d} – {periodEnd.AddDays(-1):MMM d, yyyy} (estimate)",
-                        dueDate, share, 0m, true));
-
-                    // NEW: remember the share (used for the credit coverage line)
-                    rentShareThisPeriod = share;
-
-                    // OLD: credit was only read for estimates, so a tenant whose bill was
-                    //      already generated never saw their remaining advance payment.
-                    // rentCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Rent");
-                }
-
-                // NEW: advance payment (credit) is read for EVERY statement.
-                //      GetAvailableCredit = unclaimed credit, minus anything forfeited,
-                //      never below zero (same figure the Billing Summary uses).
-                rentCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Rent");
-                waterCredit = BillingHelper.GetAvailableCredit(conn, tenantId, "Water");
-
-                // ---- 5. Water for the period's month ----
-                DateTime waterMonth = new DateTime(periodStart.Year, periodStart.Month, 1);
-                int waterBillId = 0;
+                // ---- 4. Current charges, itemized (bills due within the period) ----
                 using (var cmd = new SqlCommand(@"
-                    SELECT TOP 1 b.BillId, b.DueDate, bt.Share, " + PaidSql + @" AS Paid
-                    FROM   Bills b
-                    JOIN   BillTenants bt ON bt.BillId = b.BillId AND bt.TenantId = @tid
-                    WHERE  b.BillCategory = 'Water' AND b.BillingPeriodStart = @m;", conn))
-                {
-                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
-                    cmd.Parameters.Add("@m", SqlDbType.Date).Value = waterMonth;
-                    using SqlDataReader rd = cmd.ExecuteReader();
-                    if (rd.Read())
-                    {
-                        waterBillId = Convert.ToInt32(rd["BillId"]);
-                        current.Add(($"Water – {waterMonth:MMMM yyyy}", Convert.ToDateTime(rd["DueDate"]).Date,
-                            Convert.ToDecimal(rd["Share"]), Convert.ToDecimal(rd["Paid"]), false));
-                    }
-                }
-                if (waterBillId == 0 && moveIn <= waterMonth)
-                    notes.Add($"Water – {waterMonth:MMMM yyyy}: to follow (not yet recorded).");
-
-                // ---- 6. Other unpaid bills (current stay only) ----
-                using (var cmd = new SqlCommand(@"
-                    SELECT b.BillId, b.BillCategory, b.BillingPeriodStart, b.DueDate,
-                           bt.Share, " + PaidSql + @" AS Paid, mi.IssueTitle
+                    SELECT b.BillCategory, b.BillingPeriodStart, b.BillingPeriodEnd, b.DueDate, bt.Share,
+                           ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
+                                   JOIN Payments p ON p.PaymentId = a.PaymentId
+                                   WHERE a.BillId = bt.BillId AND a.TenantId = bt.TenantId
+                                     AND p.PaymentDate < @Dnext
+                                     AND (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)), 0) AS Paid,
+                           mi.IssueTitle, b.Remarks
                     FROM   BillTenants bt
-                    JOIN   Bills b      ON b.BillId = bt.BillId
-                    JOIN   Tenancies tn ON tn.TenantId = bt.TenantId AND tn.Status = 'Active'
+                    JOIN   Bills b ON b.BillId = bt.BillId
                     LEFT JOIN MaintenanceIssues mi ON mi.IssueId = b.MaintenanceIssueId
                     WHERE  bt.TenantId = @tid
-                      AND  b.BillCategory IN ('Rent', 'Maintenance', 'Water')
-                      AND  b.BillingPeriodStart >= tn.MoveInDate
-                      AND  bt.Share - " + PaidSql + @" > 0
-                    ORDER BY b.DueDate;", conn))
+                      AND  b.BillCategory IN ('Rent','Water','Maintenance')
+                      AND  b.DueDate >= @S AND b.DueDate < @E
+                      AND  ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
+                    ORDER BY b.DueDate, b.BillCategory;", conn))
                 {
-                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
+                    AddParams(cmd);
                     using SqlDataReader rd = cmd.ExecuteReader();
                     while (rd.Read())
                     {
-                        int id = Convert.ToInt32(rd["BillId"]);
-                        if (id == rentBillId || id == waterBillId) continue;   // already in current charges
-
                         string cat = Str(rd["BillCategory"]);
-                        DateTime start = Convert.ToDateTime(rd["BillingPeriodStart"]);
-                        string desc = cat == "Water" ? $"Water – {start:MMMM yyyy}"
-                                    : cat == "Maintenance" ? "Maintenance – " + Str(rd["IssueTitle"])
-                                    : $"Rent from {start:MMM d, yyyy}";
+                        DateTime start = Convert.ToDateTime(rd["BillingPeriodStart"]).Date;
+                        DateTime end = rd["BillingPeriodEnd"] == DBNull.Value
+                            ? start : Convert.ToDateTime(rd["BillingPeriodEnd"]).Date;
+                        string remarks = Str(rd["Remarks"]);
 
-                        unpaid.Add((desc, Convert.ToDateTime(rd["DueDate"]).Date,
-                            Convert.ToDecimal(rd["Share"]), Convert.ToDecimal(rd["Paid"]), false));
+                        string desc =
+                            cat == "Water" ? $"Water – {start:MMMM yyyy}"
+                          : cat == "Maintenance" ? "Maintenance – " + (Str(rd["IssueTitle"]) is { Length: > 0 } t ? t : "repair")
+                          : remarks.StartsWith("Price difference", StringComparison.OrdinalIgnoreCase) ? "Rent – " + remarks
+                          : end > start ? $"Rent {start:MMM d} – {end.AddDays(-1):MMM d, yyyy}"   // stored end = next period start
+                          : $"Rent {start:MMM d, yyyy}";
+
+                        lines.Add((desc, Convert.ToDateTime(rd["DueDate"]).Date,
+                            Convert.ToDecimal(rd["Share"]), Convert.ToDecimal(rd["Paid"])));
                     }
                 }
 
-                // ---- 7. Pending maintenance (label only, no amount) ----
+                // ---- 5. Payments received during the period (this tenant's part) ----
+                using (var cmd = new SqlCommand(@"
+                    SELECT p.PaymentDate, p.ReceiptNo, p.PaymentMethod,
+                           payer.FirstName + ' ' + payer.LastName AS PaidBy, SUM(a.Amount) AS Amount
+                    FROM   PaymentAllocations a
+                    JOIN   Payments p     ON p.PaymentId    = a.PaymentId
+                    JOIN   Tenants  payer ON payer.TenantId = p.TenantId
+                    WHERE  a.TenantId = @tid
+                      AND  p.PaymentDate >= @S AND p.PaymentDate < @Dnext
+                      AND  (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)
+                    GROUP BY p.PaymentId, p.PaymentDate, p.ReceiptNo, p.PaymentMethod,
+                             payer.FirstName, payer.LastName
+                    ORDER BY p.PaymentDate, p.PaymentId;", conn))
+                {
+                    AddParams(cmd);
+                    using SqlDataReader rd = cmd.ExecuteReader();
+                    while (rd.Read())
+                        receipts.Add((Convert.ToDateTime(rd["PaymentDate"]), Str(rd["ReceiptNo"]),
+                            Str(rd["PaymentMethod"]), Str(rd["PaidBy"]), Convert.ToDecimal(rd["Amount"])));
+                }
+
+                // ---- 6. Notes: water not yet recorded, pending maintenance ----------
+                if (!lines.Any(l => l.Desc.StartsWith("Water")) && period.End > today)
+                    notes.Add("Water for this period has not been recorded yet – to follow.");
+
                 using (var cmd = new SqlCommand(@"
                     SELECT mi.IssueTitle
                     FROM   MaintenanceIssues mi
@@ -567,7 +558,48 @@ namespace Capstoneszn.UserControls
                         notes.Add($"Possible additional charge: Maintenance – {Str(rd["IssueTitle"])} (pending, amount to be determined).");
                 }
 
-                // ---- 8. Prepared by ----
+                // ---- 7. Next bill (estimate) - only while the next bill is not issued yet ----
+                //      Same price rule and split as BillGenerator; NOT added to the total.
+                if (period.End > today)
+                {
+                    DateTime nextStart = period.End;
+                    decimal price = 0m;
+                    using (var cmd = new SqlCommand(@"
+                        SELECT RoomPrice, PendingRoomPrice, PendingPriceFrom FROM Rooms WHERE RoomId = @rid;", conn))
+                    {
+                        cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                        using SqlDataReader rd = cmd.ExecuteReader();
+                        if (rd.Read())
+                        {
+                            price = rd.IsDBNull(0) ? 0m : rd.GetDecimal(0);
+                            if (!rd.IsDBNull(1) && !rd.IsDBNull(2) && nextStart >= rd.GetDateTime(2))
+                                price = rd.GetDecimal(1);
+                        }
+                    }
+
+                    var heads = new List<int>();   // longest-tenured first, as BillGenerator
+                    using (var cmd = new SqlCommand(@"
+                        SELECT TenantId FROM Tenancies
+                        WHERE  RoomId = @rid AND Status = 'Active' AND MoveInDate <= @start
+                        ORDER BY MoveInDate, TenantId;", conn))
+                    {
+                        cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                        cmd.Parameters.Add("@start", SqlDbType.Date).Value = nextStart;
+                        using SqlDataReader rd = cmd.ExecuteReader();
+                        while (rd.Read()) heads.Add(rd.GetInt32(0));
+                    }
+
+                    int idx = heads.IndexOf(tenantId);
+                    if (price > 0m && idx >= 0)
+                    {
+                        decimal share = BillGenerator.SplitEqually(price, heads.Count)[idx];
+                        notes.Add($"Next bill (estimate): Rent {nextStart:MMM d} – {nextStart.AddMonths(1).AddDays(-1):MMM d, yyyy}, " +
+                                  $"₱{share:N2}, due {nextStart:MMM d, yyyy}. It will be issued on " +
+                                  $"{nextStart.AddDays(-7):MMM d, yyyy} and may change if tenants move in or out.");
+                    }
+                }
+
+                // ---- 8. Prepared by ------------------------------------------------
                 using (var cmd = new SqlCommand(
                     "SELECT ISNULL(NULLIF(Name, ''), Username) FROM Users WHERE UserId = @uid;", conn))
                 {
@@ -584,43 +616,26 @@ namespace Capstoneszn.UserControls
                 return;
             }
 
-            // ---- Totals ----
+            // ---- Totals (same formula as the room statement) -------------------
+            decimal currentCharges = rent + water + maint;
+            decimal amountDue = prevBalance + currentCharges - payments + adjustments;   // negative = credit
+
             decimal Bal(decimal share, decimal paid) => Math.Max(0m, share - paid);
+            string Status(decimal share, decimal paid, DateTime due) =>
+                Bal(share, paid) <= 0m ? "Paid"
+              : asOf > due ? "Overdue"                       // overdue starts the day after the due date
+              : paid > 0m ? "Partially Paid" : "Unpaid";
 
-            decimal unpaidTotal = unpaid.Sum(l => Bal(l.Share, l.Paid));
-            decimal currentTotal = current.Sum(l => l.Share);
-            decimal paidCurrent = current.Sum(l => Math.Min(l.Paid, l.Share));
-            decimal creditApplied = isEstimate ? Math.Min(rentCredit, current.Where(l => l.Est).Sum(l => l.Share)) : 0m;
-            decimal amountDue = Math.Max(0m, unpaidTotal + currentTotal - paidCurrent - creditApplied);
+            bool hasOverdue = prevBalance > 0m || lines.Any(l => Bal(l.Share, l.Paid) > 0m && asOf > l.Due);
+            DateTime payBy = period.DueDate;
 
-            // NEW: advance payment left AFTER this statement.
-            //  - Estimate: part of the rent credit is shown as applied to this period
-            //    (the system applies it when the bill is generated).
-            //  - Real bill: the system already applied credit to it (it is inside "Paid"),
-            //    so what GetAvailableCredit returns is already the remainder.
-            decimal rentCreditLeft = Math.Max(0m, rentCredit - creditApplied);
-            decimal waterCreditLeft = waterCredit;
-            int periodsCovered = rentShareThisPeriod > 0m
-                ? (int)Math.Floor(rentCreditLeft / rentShareThisPeriod)
-                : 0;
+            string statementNo = $"SOA-{roomNo}-{tenantId:D5}-{period.Start:yyyyMMdd}";
+            string P(decimal v) => (v < 0m ? "-₱" : "₱") + Math.Abs(v).ToString("N2");
 
-            string statementNo = $"{(isEstimate ? "EST" : "SOA")}-{tenantId:D5}-{periodStart:yyyyMMdd}";
-
-            string Status(decimal share, decimal paid, DateTime due, bool est) =>
-                est ? "Estimate"
-                : Bal(share, paid) <= 0m ? "Paid"
-                : today > due ? "Overdue"
-                : paid > 0m ? "Partially Paid" : "Unpaid";
-
-            // ---- Print document ----
-            using var doc = new PrintDocument { DocumentName = "Billing Statement - " + tenantName };
-            try
-            {
-                foreach (PaperSize ps in doc.PrinterSettings.PaperSizes)
-                    if (ps.Kind == PaperKind.A4) { doc.DefaultPageSettings.PaperSize = ps; break; }
-                doc.DefaultPageSettings.Margins = new Margins(50, 50, 50, 50);
-            }
-            catch (InvalidPrinterException) { }
+            // ---- Print document -------------------------------------------------
+            using var doc = new PrintDocument { DocumentName = statementNo };
+            doc.DefaultPageSettings.PaperSize = new PaperSize("A4", 827, 1169);   // same as RoomStatementPrinter
+            doc.DefaultPageSettings.Margins = new Margins(50, 50, 50, 50);
 
             doc.PrintPage += (s, ev) =>
             {
@@ -655,59 +670,22 @@ namespace Capstoneszn.UserControls
                     y += lh;
                     g.DrawLine(Pens.Black, x, y - 3, x + w, y - 3);
                 }
-                // Description | Due Date | Status | Share | Paid | Balance
-                void TableRow(string[] c, Font f)
+                void Note(string text, Brush brush)
                 {
-                    g.DrawString(c[0], f, Brushes.Black, new RectangleF(x, y, w * 0.40f, lh));
-                    g.DrawString(c[1], f, Brushes.Black, x + w * 0.40f, y);
-                    g.DrawString(c[2], f, Brushes.Black, x + w * 0.53f, y);
-                    g.DrawString(c[3], f, Brushes.Black, new RectangleF(x, y, w * 0.77f, lh), right);
-                    g.DrawString(c[4], f, Brushes.Black, new RectangleF(x, y, w * 0.88f, lh), right);
-                    g.DrawString(c[5], f, Brushes.Black, new RectangleF(x, y, w, lh), right);
-                    y += lh;
+                    SizeF sz = g.MeasureString(text, fText, (int)w);
+                    g.DrawString(text, fText, brush, new RectangleF(x, y, w, sz.Height));
+                    y += sz.Height + 2;
                 }
-                void Table(List<(string Desc, DateTime Due, decimal Share, decimal Paid, bool Est)> lines, string empty)
-                {
-                    if (lines.Count == 0) { g.DrawString(empty, fText, Brushes.DimGray, x, y); y += lh; return; }
-                    TableRow(new[] { "Description", "Due Date", "Status", "Your Share", "Paid", "Balance" }, fBold);
-                    foreach (var l in lines)
-                        TableRow(new[] { l.Desc, l.Due.ToString("MMM d, yyyy"), Status(l.Share, l.Paid, l.Due, l.Est),
-                                         "₱" + l.Share.ToString("N2"), l.Est ? "—" : "₱" + l.Paid.ToString("N2"),
-                                         "₱" + Bal(l.Share, l.Paid).ToString("N2") }, fText);
-                }
-
-                // NEW: a grey explanation line under an amount
-                void Hint(string text)
-                {
-                    g.DrawString(text, fText, Brushes.DimGray, x + 12, y);
-                    y += lh;
-                }
-
-                /*
-                // Estimate watermark
-                if (isEstimate)
-                {
-                    var state = g.Save();
-                    using var fMark = new Font("Segoe UI", 72F, FontStyle.Bold);
-                    using var mark = new SolidBrush(Color.FromArgb(28, 0, 0, 0));
-                    g.TranslateTransform(ev.PageBounds.Width / 2f, ev.PageBounds.Height / 2f);
-                    g.RotateTransform(-35f);
-                    SizeF sz = g.MeasureString("ESTIMATE", fMark);
-                    g.DrawString("ESTIMATE", fMark, mark, -sz.Width / 2f, -sz.Height / 2f);
-                    g.Restore(state);
-                }
-                */
 
                 // Header
                 g.DrawString(building, fTitle, Brushes.Black, x, y); y += fTitle.GetHeight(g) + 2;
-                g.DrawString(isEstimate ? "BILLING STATEMENT (ESTIMATE)" : "BILLING STATEMENT", fHead, Brushes.Black, x, y);
+                g.DrawString("STATEMENT OF ACCOUNT", fHead, Brushes.Black, x, y);
                 y += fHead.GetHeight(g) + 10;
 
                 Info("Statement No.", statementNo);
-                Info("Statement Date", today.ToString("MMM d, yyyy"));
-                // ORIGINAL: Info("Billing Period", $"{periodStart:MMM d, yyyy} – {periodEnd:MMM d, yyyy}");
-                Info("Billing Period", $"{periodStart:MMM d, yyyy} – {periodEnd.AddDays(-1):MMM d, yyyy}");
-                Info("Payment Due Date", dueDate.ToString("MMM d, yyyy"));
+                Info("Statement Date", asOf.ToString("MMM d, yyyy"));
+                Info("Billing Period", $"{period.Start:MMM d, yyyy} – {period.LastDay:MMM d, yyyy}");
+                Info("Rent Due Date", period.DueDate.ToString("MMM d, yyyy"));
                 y += 4;
                 Info("Tenant", tenantName);
                 Info("Room", roomNo);
@@ -715,61 +693,63 @@ namespace Capstoneszn.UserControls
 
                 // Summary
                 Section("SUMMARY");
-                Amount("Unpaid previous bills", "₱" + unpaidTotal.ToString("N2"), fText);
-                Amount("Current charges", "₱" + currentTotal.ToString("N2"), fText);
-                if (paidCurrent > 0m) Amount("Less: already paid", "-₱" + paidCurrent.ToString("N2"), fText);
-                if (creditApplied > 0m) Amount("Less: advance credit", "-₱" + creditApplied.ToString("N2"), fText);
+                Amount("Previous balance", P(prevBalance), fText);
+                Amount("Add: Rent", P(rent), fText);
+                Amount("Add: Water", P(water), fText);
+                Amount("Add: Maintenance", P(maint), fText);
+                Amount("Less: Payments received", "-" + P(payments), fText);
+                if (adjustments != 0m) Amount("Adjustments", P(adjustments), fText);
                 g.FillRectangle(Brushes.Gainsboro, x, y, w, fTotal.GetHeight(g) + 6);
                 y += 3;
-                Amount("TOTAL AMOUNT DUE", "₱" + amountDue.ToString("N2"), fTotal);
+                Amount(amountDue < 0m ? "ADVANCE CREDIT" : "TOTAL AMOUNT DUE",
+                       amountDue < 0m ? P(-amountDue) : P(amountDue), fTotal);
 
-                // OLD:
-                // g.DrawString(amountDue > 0m ? $"Please pay on or before {dueDate:MMM d, yyyy}." : "No amount due.",
-                //     fText, Brushes.Black, x, y);
-                // NEW: say WHY nothing is due when an advance payment covers it
-                string dueText = amountDue > 0m ? $"Please pay on or before {dueDate:MMM d, yyyy}."
-                               : (rentCredit > 0m || waterCredit > 0m || paidCurrent > 0m)
-                                   ? "No amount due. This period is covered by your payment in advance."
-                                   : "No amount due.";
+                string dueText =
+                    amountDue > 0m && hasOverdue ? "Includes overdue amounts. Please pay immediately."
+                  : amountDue > 0m ? $"Please pay on or before {payBy:MMM d, yyyy}."
+                  : amountDue < 0m ? "Paid in advance. The credit is applied automatically to your next bills."
+                  : "No amount due.";
                 g.DrawString(dueText, fText, Brushes.Black, x, y);
                 y += lh;
 
-                // NEW: remaining credit shown right under the total (summary level)
-                if (rentCreditLeft > 0m || waterCreditLeft > 0m)
-                    Amount("Advance credit remaining", "₱" + (rentCreditLeft + waterCreditLeft).ToString("N2"), fBold);
-
-                // Lines
-                // ORIGINAL: Section($"CURRENT CHARGES ({periodStart:MMM d} – {periodEnd:MMM d, yyyy})");
-                Section($"CURRENT CHARGES ({periodStart:MMM d} – {periodEnd.AddDays(-1):MMM d, yyyy})");
-                Table(current, "No current charges.");
-                Section("UNPAID PREVIOUS BILLS");
-                Table(unpaid, "No unpaid bills.");
-
-                // NEW: Advance payment (credit) section
-                Section("ADVANCE PAYMENT (CREDIT)");
-                if (rentCredit <= 0m && waterCredit <= 0m)
-                {
-                    g.DrawString("No advance payment on record.", fText, Brushes.DimGray, x, y);
-                    y += lh;
-                }
+                // Current charges
+                Section($"CURRENT CHARGES ({period.Start:MMM d} – {period.LastDay:MMM d, yyyy})");
+                if (lines.Count == 0) Note("No charges due in this period.", Brushes.DimGray);
                 else
                 {
-                    if (rentCredit > 0m)
+                    void Row(string[] c, Font f)
                     {
-                        Amount("Rent credit available", "₱" + rentCredit.ToString("N2"), fText);
-                        if (creditApplied > 0m)
-                            Amount("Less: to be applied to this period's rent", "-₱" + creditApplied.ToString("N2"), fText);
-                        Amount("Rent credit remaining", "₱" + rentCreditLeft.ToString("N2"), fBold);
-                        if (periodsCovered > 0)
-                            Hint($"Covers about {periodsCovered} more rent period(s) at ₱{rentShareThisPeriod:N2} each.");
-                        else if (rentCreditLeft > 0m)
-                            Hint("Will be applied to your next rent bill.");
+                        g.DrawString(c[0], f, Brushes.Black, new RectangleF(x, y, w * 0.40f, lh));
+                        g.DrawString(c[1], f, Brushes.Black, x + w * 0.40f, y);
+                        g.DrawString(c[2], f, Brushes.Black, x + w * 0.53f, y);
+                        g.DrawString(c[3], f, Brushes.Black, new RectangleF(x, y, w * 0.77f, lh), right);
+                        g.DrawString(c[4], f, Brushes.Black, new RectangleF(x, y, w * 0.88f, lh), right);
+                        g.DrawString(c[5], f, Brushes.Black, new RectangleF(x, y, w, lh), right);
+                        y += lh;
                     }
-                    if (waterCredit > 0m)
+                    Row(new[] { "Description", "Due Date", "Status", "Your Share", "Paid", "Balance" }, fBold);
+                    foreach (var l in lines)
+                        Row(new[] { l.Desc, l.Due.ToString("MMM d, yyyy"), Status(l.Share, l.Paid, l.Due),
+                                    P(l.Share), P(l.Paid), P(Bal(l.Share, l.Paid)) }, fText);
+                }
+
+                // Payments received
+                Section($"PAYMENTS RECEIVED ({period.Start:MMM d} – {asOf:MMM d, yyyy})");
+                if (receipts.Count == 0) Note("No payments received in this period.", Brushes.DimGray);
+                else
+                {
+                    void PRow(string[] c, Font f)
                     {
-                        Amount("Water credit remaining", "₱" + waterCreditLeft.ToString("N2"), fBold);
-                        Hint("Will be applied to your next water bill.");
+                        g.DrawString(c[0], f, Brushes.Black, x, y);
+                        g.DrawString(c[1], f, Brushes.Black, x + w * 0.17f, y);
+                        g.DrawString(c[2], f, Brushes.Black, x + w * 0.42f, y);
+                        g.DrawString(c[3], f, Brushes.Black, x + w * 0.55f, y);
+                        g.DrawString(c[4], f, Brushes.Black, new RectangleF(x, y, w, lh), right);
+                        y += lh;
                     }
+                    PRow(new[] { "Date", "Receipt No.", "Method", "Paid By", "Amount" }, fBold);
+                    foreach (var r in receipts)
+                        PRow(new[] { r.Date.ToString("MMM d, yyyy"), r.Receipt, r.Method, r.PaidBy, P(r.Amount) }, fText);
                 }
 
                 // Notes
@@ -780,27 +760,13 @@ namespace Capstoneszn.UserControls
                     "A bill becomes overdue the day after its due date.",
                     "Electricity is paid directly to AKELCO and is not included."
                 };
-                if (isEstimate)
-                    allNotes.Add("ESTIMATE: rent for this period is not billed yet. It is based on the room price and " +
-                                 "active tenants today and may change. This is not a demand for payment.");
+                if (amountDue < 0m)
+                    allNotes.Add("Unused advance payment is not refunded upon move-out.");
+                foreach (string n in allNotes) Note("• " + n, Brushes.DimGray);
 
-                // NEW: advance payment terms (credit is used automatically; unused credit is forfeited on move-out)
-                if (rentCredit > 0m || waterCredit > 0m)
-                    allNotes.Add("Advance payments are applied automatically to your next bills of the same category. " +
-                                 "Unused advance payment is not refunded upon move-out.");
-
-                foreach (string n in allNotes)
-                {
-                    SizeF sz = g.MeasureString("• " + n, fText, (int)w);
-                    g.DrawString("• " + n, fText, Brushes.DimGray, new RectangleF(x, y, w, sz.Height));
-                    y += sz.Height + 2;
-                }
-
-                // Signatures
                 y += 20;
                 g.DrawString("Prepared by: " + preparedBy, fText, Brushes.Black, x, y);
 
-                // Footer
                 g.DrawString($"{statementNo} • Generated {DateTime.Now:MMM d, yyyy h:mm tt} • System-generated statement",
                     fText, Brushes.Gray, x, m.Bottom - lh);
 

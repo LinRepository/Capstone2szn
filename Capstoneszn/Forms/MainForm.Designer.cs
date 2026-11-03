@@ -51,8 +51,10 @@
             lblUserRole = new Label();
             lblCurrentUser = new Label();
             pnlDateTime = new Panel();
+            panel2 = new Panel();
             lblDate = new Label();
             pnlSystemName = new Panel();
+            lblSystemNameLegit = new Label();
             lblSystemName = new Label();
             pnlLogo = new Panel();
             Logo = new PictureBox();
@@ -352,11 +354,11 @@
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 5;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.05263F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 31.5789471F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.05263F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.5263157F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.1437025F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 47.0836868F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.85038F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.7083683F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.129333F));
             tableLayoutPanel1.Controls.Add(pnlUsers, 3, 0);
             tableLayoutPanel1.Controls.Add(pnlDateTime, 2, 0);
             tableLayoutPanel1.Controls.Add(pnlSystemName, 1, 0);
@@ -375,82 +377,104 @@
             pnlUsers.Controls.Add(lblUserRole);
             pnlUsers.Controls.Add(lblCurrentUser);
             pnlUsers.Dock = DockStyle.Fill;
-            pnlUsers.Location = new Point(811, 3);
+            pnlUsers.Location = new Point(903, 3);
             pnlUsers.Name = "pnlUsers";
             pnlUsers.Padding = new Padding(10);
-            pnlUsers.Size = new Size(243, 119);
+            pnlUsers.Size = new Size(168, 119);
             pnlUsers.TabIndex = 10;
             // 
             // lblUserRole
             // 
-            lblUserRole.BorderStyle = BorderStyle.FixedSingle;
-            lblUserRole.Dock = DockStyle.Bottom;
-            lblUserRole.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUserRole.AutoSize = true;
+            lblUserRole.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUserRole.ForeColor = Color.White;
             lblUserRole.ImageAlign = ContentAlignment.MiddleRight;
-            lblUserRole.Location = new Point(10, 65);
+            lblUserRole.Location = new Point(13, 62);
             lblUserRole.Name = "lblUserRole";
-            lblUserRole.Size = new Size(223, 44);
+            lblUserRole.Size = new Size(94, 28);
             lblUserRole.TabIndex = 7;
             lblUserRole.Text = "User Role";
             lblUserRole.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblCurrentUser
             // 
-            lblCurrentUser.BorderStyle = BorderStyle.FixedSingle;
-            lblCurrentUser.Dock = DockStyle.Top;
-            lblCurrentUser.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCurrentUser.AutoSize = true;
+            lblCurrentUser.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblCurrentUser.ForeColor = Color.White;
             lblCurrentUser.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentUser.Location = new Point(10, 10);
+            lblCurrentUser.Location = new Point(13, 26);
             lblCurrentUser.Name = "lblCurrentUser";
-            lblCurrentUser.Size = new Size(223, 44);
+            lblCurrentUser.Size = new Size(54, 28);
             lblCurrentUser.TabIndex = 6;
             lblCurrentUser.Text = "User";
             lblCurrentUser.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlDateTime
             // 
+            pnlDateTime.Controls.Add(panel2);
             pnlDateTime.Controls.Add(lblDate);
             pnlDateTime.Dock = DockStyle.Fill;
-            pnlDateTime.Location = new Point(438, 3);
+            pnlDateTime.Location = new Point(680, 3);
             pnlDateTime.Name = "pnlDateTime";
-            pnlDateTime.Padding = new Padding(10);
-            pnlDateTime.Size = new Size(367, 119);
+            pnlDateTime.Padding = new Padding(0, 10, 0, 10);
+            pnlDateTime.Size = new Size(217, 119);
             pnlDateTime.TabIndex = 9;
+            // 
+            // panel2
+            // 
+            panel2.BackColor = Color.DimGray;
+            panel2.Dock = DockStyle.Right;
+            panel2.Location = new Point(214, 10);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(3, 99);
+            panel2.TabIndex = 4;
             // 
             // lblDate
             // 
-            lblDate.Dock = DockStyle.Right;
-            lblDate.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblDate.AutoSize = true;
+            lblDate.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblDate.ForeColor = Color.White;
             lblDate.ImageAlign = ContentAlignment.MiddleRight;
-            lblDate.Location = new Point(81, 10);
+            lblDate.Location = new Point(77, 44);
             lblDate.Name = "lblDate";
-            lblDate.Size = new Size(276, 99);
+            lblDate.Size = new Size(150, 31);
             lblDate.TabIndex = 3;
             lblDate.Text = "MM:DD:YYYY";
             lblDate.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlSystemName
             // 
+            pnlSystemName.Controls.Add(lblSystemNameLegit);
             pnlSystemName.Controls.Add(lblSystemName);
             pnlSystemName.Dock = DockStyle.Fill;
-            pnlSystemName.Location = new Point(189, 3);
+            pnlSystemName.Location = new Point(123, 3);
             pnlSystemName.Name = "pnlSystemName";
             pnlSystemName.Padding = new Padding(5);
-            pnlSystemName.Size = new Size(243, 119);
+            pnlSystemName.Size = new Size(551, 119);
             pnlSystemName.TabIndex = 8;
+            // 
+            // lblSystemNameLegit
+            // 
+            lblSystemNameLegit.AutoSize = true;
+            lblSystemNameLegit.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSystemNameLegit.ForeColor = Color.White;
+            lblSystemNameLegit.ImageAlign = ContentAlignment.MiddleRight;
+            lblSystemNameLegit.Location = new Point(8, 27);
+            lblSystemNameLegit.Name = "lblSystemNameLegit";
+            lblSystemNameLegit.Size = new Size(197, 38);
+            lblSystemNameLegit.TabIndex = 2;
+            lblSystemNameLegit.Text = "System Name";
+            lblSystemNameLegit.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblSystemName
             // 
-            lblSystemName.Dock = DockStyle.Fill;
-            lblSystemName.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSystemName.ForeColor = Color.White;
+            lblSystemName.AutoSize = true;
+            lblSystemName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSystemName.ForeColor = Color.Gold;
             lblSystemName.ImageAlign = ContentAlignment.MiddleRight;
-            lblSystemName.Location = new Point(5, 5);
+            lblSystemName.Location = new Point(8, 65);
             lblSystemName.Name = "lblSystemName";
-            lblSystemName.Size = new Size(233, 109);
+            lblSystemName.Size = new Size(141, 28);
             lblSystemName.TabIndex = 2;
             lblSystemName.Text = "Building Name";
             lblSystemName.TextAlign = ContentAlignment.MiddleCenter;
@@ -462,7 +486,7 @@
             pnlLogo.Location = new Point(3, 3);
             pnlLogo.Name = "pnlLogo";
             pnlLogo.Padding = new Padding(5);
-            pnlLogo.Size = new Size(180, 119);
+            pnlLogo.Size = new Size(114, 119);
             pnlLogo.TabIndex = 1;
             // 
             // Logo
@@ -470,7 +494,7 @@
             Logo.Anchor = AnchorStyles.None;
             Logo.BackColor = Color.FromArgb(25, 25, 80);
             Logo.Image = (Image)resources.GetObject("Logo.Image");
-            Logo.Location = new Point(35, 1);
+            Logo.Location = new Point(2, 1);
             Logo.Name = "Logo";
             Logo.Size = new Size(119, 119);
             Logo.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -481,19 +505,20 @@
             // 
             panel1.Controls.Add(btnNotification);
             panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(1061, 3);
+            panel1.Location = new Point(1077, 3);
             panel1.Name = "panel1";
             panel1.Padding = new Padding(5);
-            panel1.Size = new Size(119, 119);
+            panel1.Size = new Size(103, 119);
             panel1.TabIndex = 11;
             // 
             // btnNotification
             // 
             btnNotification.BackColor = Color.FromArgb(25, 25, 80);
             btnNotification.Cursor = Cursors.Hand;
-            btnNotification.FlatAppearance.BorderSize = 0;
+            btnNotification.FlatStyle = FlatStyle.Flat;
+            btnNotification.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnNotification.ForeColor = Color.White;
-            btnNotification.Location = new Point(32, 30);
+            btnNotification.Location = new Point(23, 33);
             btnNotification.Name = "btnNotification";
             btnNotification.Size = new Size(60, 60);
             btnNotification.TabIndex = 12;
@@ -533,8 +558,11 @@
             pnlHeader.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             pnlUsers.ResumeLayout(false);
+            pnlUsers.PerformLayout();
             pnlDateTime.ResumeLayout(false);
+            pnlDateTime.PerformLayout();
             pnlSystemName.ResumeLayout(false);
+            pnlSystemName.PerformLayout();
             pnlLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)Logo).EndInit();
             panel1.ResumeLayout(false);
@@ -573,5 +601,7 @@
         private PictureBox Logo;
         private Panel panel1;
         private Button btnNotification;
+        private Label lblSystemNameLegit;
+        private Panel panel2;
     }
 }

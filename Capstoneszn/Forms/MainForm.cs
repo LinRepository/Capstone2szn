@@ -44,6 +44,8 @@ namespace Capstoneszn
         //MAIN FORM 
         private void MainForm_Load(object sender, EventArgs e)
         {
+
+            lblSystemNameLegit.Text = "KSU: Billing Management System";
             // MOVED (System Clock STEP 6): the clock check now runs at app startup,
             // BEFORE Login (Program.cs), and ClockWatcher re-checks it if the clock
             // changes during the session. Kept here commented out per team rule.
@@ -171,6 +173,7 @@ namespace Capstoneszn
 
             // NEW (Notification): keep the bell count fresh on every module switch.
             RefreshNotificationBell();
+            SetActiveModule(userControl);   // NEW (UI improvement)
         }
 
         // NEW (Notification): the bell shows how many rooms are Overdue or

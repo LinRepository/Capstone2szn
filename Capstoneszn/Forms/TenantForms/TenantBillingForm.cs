@@ -365,10 +365,23 @@ namespace Capstoneszn.Forms.TenantForms
                                     outstanding = 0m;
                                     status = WrittenOffStatus;
                                 }
-
+                                /*
                                 dt.Rows.Add(
                                     $"{start:MMM d, yyyy} - {end:MMM d, yyyy}",
                                     $"{start:MMM d, yyyy} - {end.AddDays(-1):MMM d, yyyy}",
+                                    category,
+                                    due,
+                                    share,
+                                    paid,
+                                    outstanding,
+                                    status);
+                                */
+                                string period = end > start
+                                    ? $"{start:MMM d, yyyy} - {end.AddDays(-1):MMM d, yyyy}"
+                                    : $"{start:MMM d, yyyy}";
+
+                                dt.Rows.Add(
+                                    period,
                                     category,
                                     due,
                                     share,
@@ -383,7 +396,11 @@ namespace Capstoneszn.Forms.TenantForms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                MessageBox.Show("Could not load the bill history.",
+                // OLD:
+                // MessageBox.Show("Could not load the bill history.",
+                //     "Billing Summary", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // NEW: include the reason (same style as TenantsControl)
+                MessageBox.Show("Could not load the bill history: " + ex.Message,
                     "Billing Summary", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
