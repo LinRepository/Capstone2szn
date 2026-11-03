@@ -31,18 +31,19 @@
             pnlNotificationHeader = new Panel();
             lblNotificationTitle = new Label();
             pnlNotificationHeaderContent = new Panel();
+            panel3 = new Panel();
+            label2 = new Label();
+            label1 = new Label();
+            panel2 = new Panel();
             panel1 = new Panel();
-            btnNotificationDelete = new Button();
             pnlNotificationSearchContainer = new Panel();
             txtNotificationSearch = new TextBox();
-            picNotificationSearch = new PictureBox();
             pnlNotificationContent = new Panel();
             flpNotifications = new FlowLayoutPanel();
             pnlNotificationHeader.SuspendLayout();
             pnlNotificationHeaderContent.SuspendLayout();
-            panel1.SuspendLayout();
+            panel3.SuspendLayout();
             pnlNotificationSearchContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picNotificationSearch).BeginInit();
             pnlNotificationContent.SuspendLayout();
             SuspendLayout();
             // 
@@ -53,7 +54,7 @@
             pnlNotificationHeader.Dock = DockStyle.Top;
             pnlNotificationHeader.Location = new Point(10, 10);
             pnlNotificationHeader.Name = "pnlNotificationHeader";
-            pnlNotificationHeader.Size = new Size(1280, 85);
+            pnlNotificationHeader.Size = new Size(1280, 53);
             pnlNotificationHeader.TabIndex = 0;
             // 
             // lblNotificationTitle
@@ -64,7 +65,7 @@
             lblNotificationTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblNotificationTitle.Location = new Point(0, 0);
             lblNotificationTitle.Name = "lblNotificationTitle";
-            lblNotificationTitle.Size = new Size(1278, 83);
+            lblNotificationTitle.Size = new Size(1278, 51);
             lblNotificationTitle.TabIndex = 7;
             lblNotificationTitle.Text = "Notification";
             lblNotificationTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -72,81 +73,103 @@
             // pnlNotificationHeaderContent
             // 
             pnlNotificationHeaderContent.BorderStyle = BorderStyle.FixedSingle;
-            pnlNotificationHeaderContent.Controls.Add(panel1);
+            pnlNotificationHeaderContent.Controls.Add(panel3);
             pnlNotificationHeaderContent.Controls.Add(pnlNotificationSearchContainer);
             pnlNotificationHeaderContent.Dock = DockStyle.Top;
-            pnlNotificationHeaderContent.Location = new Point(10, 95);
+            pnlNotificationHeaderContent.Location = new Point(10, 63);
             pnlNotificationHeaderContent.Name = "pnlNotificationHeaderContent";
-            pnlNotificationHeaderContent.Size = new Size(1280, 75);
+            pnlNotificationHeaderContent.Size = new Size(1280, 57);
             pnlNotificationHeaderContent.TabIndex = 1;
+            // 
+            // panel3
+            // 
+            panel3.Controls.Add(label2);
+            panel3.Controls.Add(label1);
+            panel3.Controls.Add(panel2);
+            panel3.Controls.Add(panel1);
+            panel3.Dock = DockStyle.Right;
+            panel3.Location = new Point(948, 0);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(330, 55);
+            panel3.TabIndex = 7;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(59, 16);
+            label2.Name = "label2";
+            label2.Size = new Size(95, 25);
+            label2.TabIndex = 6;
+            label2.Text = "Near Due";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.White;
+            label1.Location = new Point(233, 16);
+            label1.Name = "label1";
+            label1.Size = new Size(88, 25);
+            label1.TabIndex = 6;
+            label1.Text = "Overdue";
+            // 
+            // panel2
+            // 
+            panel2.BackColor = Color.DarkOrange;
+            panel2.Location = new Point(18, 10);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(35, 35);
+            panel2.TabIndex = 5;
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnNotificationDelete);
-            panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(1112, 0);
+            panel1.BackColor = Color.Crimson;
+            panel1.Location = new Point(192, 10);
             panel1.Name = "panel1";
-            panel1.Size = new Size(166, 73);
+            panel1.Size = new Size(35, 35);
             panel1.TabIndex = 5;
-            // 
-            // btnNotificationDelete
-            // 
-            btnNotificationDelete.Location = new Point(39, 26);
-            btnNotificationDelete.Name = "btnNotificationDelete";
-            btnNotificationDelete.Size = new Size(95, 29);
-            btnNotificationDelete.TabIndex = 0;
-            btnNotificationDelete.Text = "Delete";
-            btnNotificationDelete.UseVisualStyleBackColor = true;
             // 
             // pnlNotificationSearchContainer
             // 
             pnlNotificationSearchContainer.BackColor = Color.Transparent;
-            pnlNotificationSearchContainer.BorderStyle = BorderStyle.FixedSingle;
             pnlNotificationSearchContainer.Controls.Add(txtNotificationSearch);
-            pnlNotificationSearchContainer.Controls.Add(picNotificationSearch);
             pnlNotificationSearchContainer.Dock = DockStyle.Left;
             pnlNotificationSearchContainer.Location = new Point(0, 0);
             pnlNotificationSearchContainer.Name = "pnlNotificationSearchContainer";
-            pnlNotificationSearchContainer.Size = new Size(450, 73);
+            pnlNotificationSearchContainer.Size = new Size(398, 55);
             pnlNotificationSearchContainer.TabIndex = 4;
             // 
             // txtNotificationSearch
             // 
             txtNotificationSearch.Cursor = Cursors.IBeam;
-            txtNotificationSearch.Location = new Point(14, 14);
+            txtNotificationSearch.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtNotificationSearch.Location = new Point(9, 5);
             txtNotificationSearch.Multiline = true;
             txtNotificationSearch.Name = "txtNotificationSearch";
+            txtNotificationSearch.PlaceholderText = "Search room number";
             txtNotificationSearch.Size = new Size(376, 40);
             txtNotificationSearch.TabIndex = 0;
             txtNotificationSearch.TextAlign = HorizontalAlignment.Center;
-            // 
-            // picNotificationSearch
-            // 
-            picNotificationSearch.BackColor = Color.White;
-            picNotificationSearch.Cursor = Cursors.Hand;
-            picNotificationSearch.Location = new Point(396, 14);
-            picNotificationSearch.Name = "picNotificationSearch";
-            picNotificationSearch.Size = new Size(40, 40);
-            picNotificationSearch.SizeMode = PictureBoxSizeMode.Zoom;
-            picNotificationSearch.TabIndex = 1;
-            picNotificationSearch.TabStop = false;
             // 
             // pnlNotificationContent
             // 
             pnlNotificationContent.Controls.Add(flpNotifications);
             pnlNotificationContent.Dock = DockStyle.Fill;
-            pnlNotificationContent.Location = new Point(10, 170);
+            pnlNotificationContent.Location = new Point(10, 120);
             pnlNotificationContent.Name = "pnlNotificationContent";
             pnlNotificationContent.Padding = new Padding(10);
-            pnlNotificationContent.Size = new Size(1280, 570);
+            pnlNotificationContent.Size = new Size(1280, 620);
             pnlNotificationContent.TabIndex = 2;
             // 
             // flpNotifications
             // 
             flpNotifications.Dock = DockStyle.Fill;
+            flpNotifications.FlowDirection = FlowDirection.TopDown;
             flpNotifications.Location = new Point(10, 10);
             flpNotifications.Name = "flpNotifications";
-            flpNotifications.Size = new Size(1260, 550);
+            flpNotifications.Size = new Size(1260, 600);
             flpNotifications.TabIndex = 0;
             // 
             // NotificationControl
@@ -165,10 +188,10 @@
             Load += NotificationControl_Load;
             pnlNotificationHeader.ResumeLayout(false);
             pnlNotificationHeaderContent.ResumeLayout(false);
-            panel1.ResumeLayout(false);
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
             pnlNotificationSearchContainer.ResumeLayout(false);
             pnlNotificationSearchContainer.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)picNotificationSearch).EndInit();
             pnlNotificationContent.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -180,10 +203,12 @@
         private Panel pnlNotificationHeaderContent;
         private Panel pnlNotificationContent;
         private FlowLayoutPanel flpNotifications;
-        private Button btnNotificationDelete;
         private Panel pnlNotificationSearchContainer;
         private TextBox txtNotificationSearch;
-        private PictureBox picNotificationSearch;
+        private Label label1;
         private Panel panel1;
+        private Label label2;
+        private Panel panel2;
+        private Panel panel3;
     }
 }

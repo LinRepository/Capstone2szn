@@ -34,6 +34,63 @@ namespace Capstoneszn.UserControls
             LoadRoomOverview();
             LoadMaintenance();
             LoadRecentActivities();
+            LoadNotifications();   // NEW (Notification)
+        }
+
+        /* =================================================================
+           NOTIFICATIONS - every room that is Overdue or Due Soon
+           NEW (Notification): same list as the Notification module and
+           the bell (NotificationService), all of them - no limit.
+           "View All" opens the full module.
+           ================================================================= */
+
+        private void LoadNotifications()
+        {
+            ListView lv = lvNotification;
+
+            // Same setup as Recent Activities: Details view shows the columns.
+            lv.View = View.Details;
+            lv.FullRowSelect = true;
+            lv.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lv.MultiSelect = false;
+            lv.ShowItemToolTips = true;
+
+            Date.Text = "Due Date";
+            Description.Text = "Description";
+            Date.Width = 110;
+            // Description takes the rest of the width (minus room for a scrollbar).
+            Description.Width = Math.Max(150, lv.ClientSize.Width - Date.Width - 25);
+
+            lv.BeginUpdate();
+            lv.Items.Clear();
+            try
+            {
+                foreach (RoomNotification n in NotificationService.GetRoomNotifications(Session.BuildingId))
+                {
+                    var item = new ListViewItem(n.KeyDueDate.ToString("MMM dd, yyyy"));
+                    item.SubItems.Add(n.ShortText);                 // Room 202 - Overdue (5 days)
+                    item.ToolTipText = n.Title + "\n" + n.Description;
+                    item.ForeColor = n.IsOverdue ? Color.DarkRed : Color.Black;
+                    lv.Items.Add(item);
+                }
+
+                if (lv.Items.Count == 0)
+                {
+                    var empty = new ListViewItem("");
+                    empty.SubItems.Add("No due or overdue bills.");
+                    lv.Items.Add(empty);
+                }
+            }
+            catch (Exception ex)
+            {
+                // A summary panel; a failure leaves it empty rather than
+                // blocking the dashboard (same rule as the other panels).
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                lv.EndUpdate();
+            }
         }
 
         /* =================================================================

@@ -163,6 +163,28 @@ namespace Capstoneszn
 
             userControl.Dock = DockStyle.Fill;
             pnlContent.Controls.Add(userControl);
+
+            // NEW (Notification): keep the bell count fresh on every module switch.
+            RefreshNotificationBell();
+        }
+
+        // NEW (Notification): the bell shows how many rooms are Overdue or
+        // Due Soon - the same list as the Notification module and Home.
+        // "\U0001F514" is the bell emoji the designer already uses.
+        public void RefreshNotificationBell()
+        {
+            int count = 0;
+            try
+            {
+                count = NotificationService.GetRoomNotifications(checkbuildingId).Count;
+            }
+            catch (Exception ex)
+            {
+                // A count is not worth an error box - just show the plain bell.
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+
+            btnNotification.Text = count > 0 ? "\U0001F514 " + count : "\U0001F514";
         }
 
         private void CollapseSidebar()
@@ -336,6 +358,32 @@ namespace Capstoneszn
         public void OpenNotificationModule()
         {
             LoadControl(new Capstoneszn.Forms.UserControls.NotificationControl());
+        }
+
+        // NEW (Notification): a notification card opens that room's billing
+        // details. It builds the same stack as clicking through by hand -
+        // Bill Management -> Room Account -> the room - so the Back buttons
+        // work exactly as usual (details -> room list -> Bill Management).
+        public void OpenRoomBilling(int roomId)
+        {
+            BillingManagementControl billing = new BillingManagementControl(checkbuildingId);
+            LoadControl(billing);
+
+            var account = new Capstoneszn.Forms.UserControls.BillingManagement.BillingRoomAccountControl(checkbuildingId)
+            {
+                Dock = DockStyle.Fill
+            };
+            pnlContent.Controls.Add(account);
+            account.BringToFront();
+            billing.Hide();
+
+            var details = new Capstoneszn.Forms.UserControls.BillingManagement.BillingRoomDetailsControl(roomId)
+            {
+                Dock = DockStyle.Fill
+            };
+            pnlContent.Controls.Add(details);
+            details.BringToFront();
+            account.Hide();
         }
 
         #endregion
