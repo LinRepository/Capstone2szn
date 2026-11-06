@@ -155,6 +155,7 @@ namespace Capstoneszn.UserControls
         // confirm -> save -> reload, so the grid always shows what the database says.
         private void ToggleStatus(int employeeId, string name, bool isActive)
         {
+            /* OLD (Oct 28, 2026) - leave was still paid:
             string question = isActive
                 ? $"Set {name} to INACTIVE (on leave)?\n\n" +
                   "• They will not be able to log in.\n• Their salary continues."
@@ -164,10 +165,43 @@ namespace Capstoneszn.UserControls
             if (MessageBox.Show(question, "Confirm Status Change",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
+            */
+
+            // ADDED (Nov 5, 2026): Status = working day. Unchecked = day off, NOT paid.
+            string today = DateTime.Today.ToString("MMM dd, yyyy");
+            bool todayIsWorkingDay = false;
+
+            if (isActive)
+            {
+                // Unchecking: ask whether today still counts as a working day.
+                DialogResult answer = MessageBox.Show(
+                    $"Set {name} to INACTIVE (day off)?\n\n" +
+                    $"Is today ({today}) counted as a WORKING day?\n\n" +
+                    "• Yes - today is paid; unpaid from tomorrow.\n" +
+                    "• No - today is not paid.\n" +
+                    "• Cancel - no change.\n\n" +
+                    "While inactive they cannot log in and are not paid.",
+                    "Confirm Day Off", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (answer == DialogResult.Cancel) return;
+                todayIsWorkingDay = answer == DialogResult.Yes;
+            }
+            else
+            {
+                // Checking: back to work, paid from today.
+                if (MessageBox.Show(
+                        $"Set {name} to ACTIVE?\n\n" +
+                        $"• Paid from today ({today}).\n" +
+                        "• They will be able to log in again.",
+                        "Confirm Status Change", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    != DialogResult.Yes)
+                    return;
+            }
 
             try
             {
-                EmployeeHelper.SetStatus(employeeId, !isActive);
+                // OLD: EmployeeHelper.SetStatus(employeeId, !isActive);
+                EmployeeHelper.SetStatus(employeeId, !isActive, todayIsWorkingDay);   // ADDED
             }
             catch (InvalidOperationException ex)
             {
@@ -211,7 +245,9 @@ namespace Capstoneszn.UserControls
                 if (MessageBox.Show(
                         $"Archive {name}?\n\n" +
                         "• They can no longer log in.\n" +
-                        "• Their salary stops today (today is not paid).\n" +
+                        // OLD: "• Their salary stops today (today is not paid).\n" +
+                        "• Their paid days end today (today is not paid).\n" +
+                        "• Days already worked are recorded at the next cutoff (15th / month end).\n" +
                         "• You can restore them in Settings › Archive.",
                         "Confirm Archive", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                     != DialogResult.Yes)

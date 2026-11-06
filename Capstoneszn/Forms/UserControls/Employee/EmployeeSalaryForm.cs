@@ -28,8 +28,9 @@ namespace Capstoneszn.Forms.UserControls.Employee
     {
         // ADDED
         private static readonly CultureInfo PH = new CultureInfo("en-PH");
-        private const decimal MaxSalary = 1_000_000m;
-
+        //private const decimal MaxSalary = 1_000_000m;
+        private const decimal MaxSalary = 10_000m;            // ADDED (Nov 5, 2026): DAILY salary, max P10,000 per day
+        
         public EmployeeSalaryForm()
         {
             InitializeComponent();
@@ -37,11 +38,14 @@ namespace Capstoneszn.Forms.UserControls.Employee
             // ADDED
             StartPosition = FormStartPosition.CenterParent;
             // OLD: txtNewSalary.MaxLength = 13;                       // "1,000,000.00" + spare
-            txtNewSalary.MaxLength = 7;                                // ADDED: whole pesos only, max 1000000
+            // OLD: txtNewSalary.MaxLength = 7;                         // whole pesos only, max 1000000
+            txtNewSalary.MaxLength = 5;                                // ADDED: whole pesos only, max 10000
             txtNewSalary.KeyPress += txtNewSalary_KeyPress;            // ADDED: digits only
             txtNewSalary.TextAlign = HorizontalAlignment.Right;        // keeps digits clear of the ₱ label
-            lblCurrentSalary.Text = "Monthly Salary:";
-            lblEntertheSalaryofEmployees.Text = "Enter the monthly salary";
+            // OLD: lblCurrentSalary.Text = "Monthly Salary:";
+            // OLD: lblEntertheSalaryofEmployees.Text = "Enter the monthly salary";
+            lblCurrentSalary.Text = "Daily Salary:";                          // ADDED
+            lblEntertheSalaryofEmployees.Text = "Enter the salary per day";   // ADDED
             AcceptButton = btnSave;
             CancelButton = btnCancel;
 
@@ -65,7 +69,8 @@ namespace Capstoneszn.Forms.UserControls.Employee
                 decimal? current = SalaryHelper.GetSalaryForMonth(Session.BuildingId, DateTime.Today);
                 var pending = SalaryHelper.GetPendingSalary(Session.BuildingId);
 
-                string text = current.HasValue ? current.Value.ToString("C2", PH) : "Not set yet";
+                // OLD: string text = current.HasValue ? current.Value.ToString("C2", PH) : "Not set yet";
+                string text = current.HasValue ? current.Value.ToString("C2", PH) + " / day" : "Not set yet";   // ADDED
                 if (pending.HasValue)
                     text += Environment.NewLine + $"(From {pending.Value.EffectiveMonth:MMMM yyyy}: " +
                             pending.Value.Salary.ToString("C2", PH) + ")";
@@ -95,7 +100,8 @@ namespace Capstoneszn.Forms.UserControls.Employee
                 || !int.TryParse(input, NumberStyles.None, CultureInfo.InvariantCulture, out int whole)
                 || whole <= 0)
             {
-                MessageBox.Show("Enter a whole number greater than zero (e.g. 10000).",
+                // OLD: "Enter a whole number greater than zero (e.g. 10000)."
+                MessageBox.Show("Enter a whole number greater than zero (e.g. 500).",
                     "Invalid Salary", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNewSalary.Focus();
                 txtNewSalary.SelectAll();
@@ -103,7 +109,8 @@ namespace Capstoneszn.Forms.UserControls.Employee
             }
             if (whole > MaxSalary)
             {
-                MessageBox.Show($"Salary must be at most {MaxSalary.ToString("C0", PH)}.",
+                // OLD: $"Salary must be at most {MaxSalary.ToString("C0", PH)}."
+                MessageBox.Show($"The daily salary must be at most {MaxSalary.ToString("C0", PH)}.",
                     "Invalid Salary", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNewSalary.Focus();
                 txtNewSalary.SelectAll();
@@ -131,7 +138,8 @@ namespace Capstoneszn.Forms.UserControls.Employee
 
             if (current == null)
             {
-                question = $"Set the monthly salary to {salary.ToString("C2", PH)} for ALL employees of this building?\n\n" +
+                // OLD: $"Set the monthly salary to ..."
+                question = $"Set the daily salary to {salary.ToString("C2", PH)} per day for ALL employees of this building?\n\n" +
                            $"It applies from {thisMonth:MMMM yyyy}.";
             }
             else if (current.Value == salary)
@@ -148,7 +156,8 @@ namespace Capstoneszn.Forms.UserControls.Employee
             }
             else
             {
-                question = $"Change the monthly salary to {salary.ToString("C2", PH)} for ALL employees?\n\n" +
+                // OLD: $"Change the monthly salary to ..."
+                question = $"Change the daily salary to {salary.ToString("C2", PH)} per day for ALL employees?\n\n" +
                            $"It applies from {thisMonth.AddMonths(1):MMMM yyyy}.\n" +
                            $"{thisMonth:MMMM yyyy} keeps the current salary ({current.Value.ToString("C2", PH)}).";
             }

@@ -47,6 +47,7 @@ namespace Capstoneszn.Forms
         private const int MinSharedCapacity = 2;
         private const int MaxSharedCapacity = 10;
         private const decimal MaxRoomPrice = 999999.99m;
+        private const decimal MinRoomPrice = 1.00m;     // NEW: at least ₱1.00 (matches CK_Rooms_Price)
 
         private const string SingleRoom = "Single Room";
         private const string SharedRoom = "Shared Room";
@@ -273,10 +274,11 @@ namespace Capstoneszn.Forms
 
             if (!decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint,
                                   CultureInfo.InvariantCulture, out decimal roomPrice)
-                || roomPrice <= 0m || roomPrice > MaxRoomPrice
+                // || roomPrice <= 0m || roomPrice > MaxRoomPrice   // OLD: allowed 0.01
+                || roomPrice < MinRoomPrice || roomPrice > MaxRoomPrice
                 || decimal.Round(roomPrice, 2) != roomPrice)
             {
-                MessageBox.Show("Room Price must be greater than 0 and at most 999,999.99, with up to 2 decimal places.",
+                MessageBox.Show("Room Price must be greater than 1 and at most 999,999.99, with up to 2 decimal places.",
                     "Invalid Room Price", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtRoomPrice.Focus();
                 return;
