@@ -128,7 +128,7 @@
             lblArchiveNotice.Name = "lblArchiveNotice";
             lblArchiveNotice.Size = new Size(390, 105);
             lblArchiveNotice.TabIndex = 33;
-            lblArchiveNotice.Text = "It will no longer appear in the Rooms and Bill Management screens. Its bills and payment history are kept, and it can be restored later from Settings > Archive.";
+            lblArchiveNotice.Text = "It will no longer appear in the Rooms, Bill Management and Utilities screens. Its bills and payment history are kept, and it can be restored later from Settings > Archive.";
             lblArchiveNotice.TextAlign = ContentAlignment.TopCenter;
             // 
             // ArchiveRoomConfirmationForm

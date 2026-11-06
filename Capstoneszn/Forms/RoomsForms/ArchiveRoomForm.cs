@@ -178,13 +178,36 @@ namespace Capstoneszn.Forms.RoomsForms
             string roomNumber = Convert.ToString(row["RoomNumber"]);
             int floorNumber = Convert.ToInt32(row["FloorNumber"]);
 
+            // NEW (ARC-03): warn about unpaid electricity, then let the landlord decide.
+            decimal unpaidElectricity;
+            try
+            {
+                unpaidElectricity = GetUnpaidElectricity(roomId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Unable to check the room's electricity bills: " + ex.Message,
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (unpaidElectricity > 0m &&
+                MessageBox.Show(
+                    $"Room {roomNumber} has an unpaid electricity balance of ₱{unpaidElectricity:N2}.\n\n" +
+                    "If you archive this room, the bill will be hidden from Utilities " +
+                    "until the room is restored.\n\nArchive anyway?",
+                    "Unpaid Electricity", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                return;
+
             using (var confirm = new ArchiveRoomConfirmationForm(roomNumber, floorNumber))
             {
                 if (confirm.ShowDialog(this) != DialogResult.OK)
                     return;
             }
 
-            bool? archived = ArchiveRoom(roomId);
+            bool? archived = ArchiveRoom(roomId, roomNumber, unpaidElectricity);   // NEW
             if (archived == null) return;          // database error, already shown
 
             if (archived == true)
@@ -207,36 +230,102 @@ namespace Capstoneszn.Forms.RoomsForms
             }
         }
 
+        private static decimal GetUnpaidElectricity(int roomId)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT ISNULL(SUM(ec.Amount), 0)
+                FROM   ElectricityCharges ec
+                JOIN   ElectricityAccounts ea
+                       ON ea.ElectricityAccountId = ec.ElectricityAccountId
+                WHERE  ea.RoomId = @rid
+                  AND  ec.Status = 'Unpaid';", conn))
+            {
+                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                conn.Open();
+                return Convert.ToDecimal(cmd.ExecuteScalar());
+            }
+        }
+
         /// <summary>
         /// Archives the room only if it is still archivable at this moment.
         /// true = archived; false = the rule no longer holds, nothing changed;
         /// null = database error (already shown to the user).
+        ///
+        /// NEW (ARC-01, ARC-02): the room, its electricity account and the
+        /// audit entry are saved in ONE transaction: all or nothing.
         /// </summary>
-        private bool? ArchiveRoom(int roomId)
+        private bool? ArchiveRoom(int roomId, string roomNumber, decimal unpaidElectricity)
         {
             try
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
-                using (SqlCommand cmd = new SqlCommand($@"
-                    UPDATE r
-                       SET r.IsArchived        = 1,
-                           r.ArchivedAt        = SYSDATETIME(),
-                           r.BillingAnchorDate = NULL      -- an empty room has no cycle
-                    FROM   Rooms r
-                    JOIN   vwRoomStatus v ON v.RoomId = r.RoomId
-                    WHERE  r.RoomId     = @rid
-                      AND  r.BuildingId = @bid
-                      AND  r.IsArchived = 0
-                      AND  v.Status NOT IN ({BlockedStatuses})
-                      AND  NOT EXISTS (SELECT 1 FROM Tenancies tn
-                                       WHERE tn.RoomId = r.RoomId
-                                         AND tn.Status = 'Active');", conn))
                 {
-                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
-                    cmd.Parameters.Add("@bid", SqlDbType.Int).Value = _buildingId;
-
                     conn.Open();
-                    return cmd.ExecuteNonQuery() == 1;
+
+                    using (SqlTransaction tx = conn.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 1. The room - same rules as before.
+                            int roomRows;
+                            using (SqlCommand cmd = new SqlCommand($@"
+                                UPDATE r
+                                   SET r.IsArchived        = 1,
+                                       r.ArchivedAt        = SYSDATETIME(),
+                                       r.BillingAnchorDate = NULL      -- an empty room has no cycle
+                                FROM   Rooms r
+                                JOIN   vwRoomStatus v ON v.RoomId = r.RoomId
+                                WHERE  r.RoomId     = @rid
+                                  AND  r.BuildingId = @bid
+                                  AND  r.IsArchived = 0
+                                  AND  v.Status NOT IN ({BlockedStatuses})
+                                  AND  NOT EXISTS (SELECT 1 FROM Tenancies tn
+                                                   WHERE tn.RoomId = r.RoomId
+                                                     AND tn.Status = 'Active');", conn, tx))
+                            {
+                                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                                cmd.Parameters.Add("@bid", SqlDbType.Int).Value = _buildingId;
+                                roomRows = cmd.ExecuteNonQuery();
+                            }
+
+                            if (roomRows != 1)
+                            {
+                                tx.Rollback();
+                                return false;
+                            }
+
+                            // 2. Its electricity account (ARC-01).
+                            int accountRows;
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                UPDATE ElectricityAccounts
+                                   SET IsArchived = 1,
+                                       ArchivedAt = SYSDATETIME()
+                                WHERE  RoomId = @rid
+                                  AND  IsArchived = 0;", conn, tx))
+                            {
+                                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                                accountRows = cmd.ExecuteNonQuery();
+                            }
+
+                            // 3. Audit entry (ARC-02).
+                            string details = "Archived Room " + roomNumber;
+                            if (accountRows > 0)
+                                details += " and its electricity account";
+                            if (unpaidElectricity > 0m)
+                                details += " (unpaid electricity PHP " + unpaidElectricity.ToString("N2") + ")";
+
+                            AuditLogger.Log(conn, tx, AuditLogger.ModuleRooms, "Archive Room", details);
+
+                            tx.Commit();
+                            return true;
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
+                    }
                 }
             }
             catch (Exception ex)

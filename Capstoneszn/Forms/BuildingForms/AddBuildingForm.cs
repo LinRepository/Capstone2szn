@@ -159,11 +159,33 @@ namespace Capstoneszn
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
+                catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+                {
+                    transaction?.Rollback();
+
+                    if (ex.Message.Contains("UQ_Buildings_Name"))
+                    {
+                        MessageBox.Show($"A building named \"{buildingName}\" already exists. Please enter a different name.",
+                            "Duplicate Building", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtBuildingName.Focus();
+                    }
+                    else if (ex.Message.Contains("UQ_ElecAcct_Number"))
+                    {
+                        MessageBox.Show("This electricity account number is already used by another account. Please check the number.",
+                            "Duplicate Account", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtElecAccountNumber.Focus();
+                    }
+                    else
+                    {
+                        MessageBox.Show("This record already exists. Nothing was saved. Please check the details and try again.",
+                            "Duplicate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
                 catch (Exception ex)
                 {
                     transaction?.Rollback();
                     MessageBox.Show("Error saving building: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                } 
             }
         }
 

@@ -477,7 +477,8 @@ namespace Capstoneszn.UserControls
                        ON ec.ElectricityAccountId = ea.ElectricityAccountId
                       AND ec.BillingMonth = @MonthStart
                 WHERE  ea.BuildingId = @BuildingId
-                  AND  ea.RoomId IS NOT NULL
+                AND  ea.RoomId IS NOT NULL
+                AND  ea.IsArchived = 0      -- NEW (ARC-01): archived rooms leave this grid
                 ORDER BY r.RoomNumber;";
 
             try
