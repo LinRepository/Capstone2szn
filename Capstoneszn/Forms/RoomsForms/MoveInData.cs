@@ -58,6 +58,14 @@ namespace Capstoneszn.Forms.RoomsForms
         /// </summary>
         public bool ExpectVacant { get; set; }
 
+
+        /// <summary>
+        /// NEW (Step 3, joiners): what the screen showed as due now for the
+        /// joiners (0 = nothing to pay). The save works it out again and stops
+        /// if it changed while the form was open.
+        /// </summary>
+        public decimal JoinDue { get; set; }
+
         /// <summary>
         /// Older callers fill only the single-person fields. Turn them into
         /// one payer so the new save handles both the same way.
@@ -113,6 +121,23 @@ namespace Capstoneszn.Forms.RoomsForms
         public int HeadTenantId { get; set; }
 
         public string FullName => (FirstName + " " + LastName).Trim();
+    }
+
+    /// <summary>
+    /// NEW (Step 3): what joiners owe when moving into an OCCUPIED room.
+    ///   Next bill already issued  -> 0 now, they start on the next bill not issued yet
+    ///   Current period paid       -> 0 now
+    ///   Current period unpaid     -> their fair share, capped at what is unpaid
+    /// </summary>
+    public class JoinQuote
+    {
+        public bool NearDue { get; set; }                       // the room's next bill is already issued
+        public decimal Total { get; set; }                      // due now for all joiners together
+        public decimal[] Shares { get; set; } = new decimal[0]; // due now per paying joiner (same order as Payers)
+        public DateTime? CoversUntil { get; set; }              // last day of the period they pay for now
+        public DateTime? FirstBill { get; set; }                // their first normal bill
+        public int PayersAfter { get; set; }                    // paying tenants in the room after the move-in
+        public List<string> Lines { get; set; } = new List<string>();   // what the screens explain
     }
 
     /// <summary>NEW (move-in redesign): what the save returns, for MoveInCompleteForm.</summary>

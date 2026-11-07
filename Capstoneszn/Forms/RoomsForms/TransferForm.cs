@@ -303,9 +303,11 @@ namespace Capstoneszn.Forms.RoomsForms
                 DateTime? firstBill = FirstBillAt(dest);
                 string when = firstBill.HasValue ? firstBill.Value.ToString("MMM d, yyyy") : "-";
 
+                // ORIGINAL: lblDestinationInfo.Text = dest.ActiveTenants == 0
+                // ORIGINAL:     ? $"{dest.FreeSlots} free slot(s). The room is empty, so it keeps the tenants' cycle: " +
+                // ORIGINAL:       $"first bill at this room's price on {when}."
                 lblDestinationInfo.Text = dest.ActiveTenants == 0
-                    ? $"{dest.FreeSlots} free slot(s). The room is empty, so it keeps the tenants' cycle: " +
-                      $"first bill at this room's price on {when}."
+                    ? $"{dest.FreeSlots} free slot(s). The room is empty: next bill at this room's price on {when}."
                     : $"{dest.FreeSlots} free slot(s). They join this room's cycle: first bill on {when}.";
             }
 
@@ -831,7 +833,13 @@ namespace Capstoneszn.Forms.RoomsForms
         /// </summary>
         private DateTime? FirstBillAt(RoomItem dest)
         {
-            if (dest.ActiveTenants == 0) return _sourceFirstUnbilled;
+            // ORIGINAL: if (dest.ActiveTenants == 0) return _sourceFirstUnbilled;
+            // NEW (Transfer rules): a next bill they paid moves with them as credit,
+            // so a vacant room keeps their cycle from the next billing date.
+            // ORIGINAL (Step 2 edit 1): if (dest.ActiveTenants == 0) return NextDueDate(_sourceAnchor);
+            // NEW (Nov 7): if the old room's next bill is already issued, a vacant
+            // room starts a new cycle today; otherwise it keeps their cycle.
+            if (dest.ActiveTenants == 0) return TransferService.VacantFirstBill(_sourceRoomId);
             if (!dest.AnchorDate.HasValue) return null;
 
             if (!dest.FirstUnbilled.HasValue)
@@ -914,16 +922,32 @@ namespace Capstoneszn.Forms.RoomsForms
 
                 if (_plan != null)
                 {
-                    foreach (TransferMover m in _plan.Movers.Where(x => x.Difference > 0m))
-                        lines.Add($"Price difference (no proration): {m.Name} " +
-                                  TransferService.Breakdown(m).Replace("\n", "; ") +
-                                  $" = {m.Difference:N2}" +
-                                  (m.CreditUsed > 0m ? $", credit used {m.CreditUsed:N2}, due {m.Due:N2}" : "") +
-                                  ". Must be paid before transferring, even with 1 day left.");
+                    // ORIGINAL: foreach (TransferMover m in _plan.Movers.Where(x => x.Difference > 0m))
+                    // ORIGINAL:     lines.Add($"Price difference (no proration): {m.Name} " +
+                    // ORIGINAL:               TransferService.Breakdown(m).Replace("\n", "; ") +
+                    // ORIGINAL:               $" = {m.Difference:N2}" +
+                    // ORIGINAL:               (m.CreditUsed > 0m ? $", credit used {m.CreditUsed:N2}, due {m.Due:N2}" : "") +
+                    // ORIGINAL:               ". Must be paid before transferring, even with 1 day left.");
+                    // ORIGINAL:
+                    // ORIGINAL: if (_plan.Movers.Any(m => m.Lines.Any(l => l.NewShare < l.OldShare)))
+                    // ORIGINAL:     lines.Add($"Room {dest.RoomNumber} is cheaper for some tenants: no refund. " +
+                    // ORIGINAL:               "The new price applies from their first bill there.");
 
-                    if (_plan.Movers.Any(m => m.Lines.Any(l => l.NewShare < l.OldShare)))
-                        lines.Add($"Room {dest.RoomNumber} is cheaper for some tenants: no refund. " +
-                                  "The new price applies from their first bill there.");
+                    // NEW (Transfer rules): what each mover carries, pays and keeps as credit.
+                    foreach (TransferMover m in _plan.Movers)
+                    {
+                        string text = $"{m.Name}: carries {m.Carried:N2}, room share {m.NewShare:N2}";
+
+                        if (m.Due > 0m) text += $", pays {m.Due:N2} now";
+                        if (m.CreditUsed > 0m) text += $", credit used {m.CreditUsed:N2}";
+                        if (m.NextShare > 0m) text += $", next bill share {m.NextShare:N2}";
+                        if (m.CreditAfter > 0m) text += $", credit left {m.CreditAfter:N2}";
+
+                        lines.Add(text + ".");
+                    }
+
+                    // NEW (Transfer rules): what the people staying will owe.
+                    lines.AddRange(TransferService.StayerLines(_plan));
 
                     if (_plan.TotalDue > 0m)
                         btnTransfer.Text = "Continue to Payment →";
@@ -931,8 +955,10 @@ namespace Capstoneszn.Forms.RoomsForms
             }
 
             lblWarnings.Text = lines.Count == 0
-                ? "No payment is taken and no refund is given. Dependents move with their head."
-                : string.Join(Environment.NewLine + Environment.NewLine, lines);
+                // ORIGINAL: ? "No payment is taken and no refund is given. Dependents move with their head."
+                // ORIGINAL: : string.Join(Environment.NewLine + Environment.NewLine, lines);
+                ? "Dependents move with their head."
+                : string.Join(Environment.NewLine, lines);   // NEW: one line each, so all of them fit
             lblWarnings.ForeColor = lines.Count == 0 ? Color.Gainsboro : Color.Gold;
         }
 
@@ -1012,10 +1038,12 @@ namespace Capstoneszn.Forms.RoomsForms
                 $"Transfer to Room {dest.RoomNumber} today?\n\n" +
                 string.Join("\n", selected.Select(h => "   " + h.Name +
                     (h.Dependents.Count > 0 ? "  + " + string.Join(", ", h.Dependents) : ""))) +
-                $"\n\n{moving} people in total. No payment is collected and no refund is given.\n" +
+                // ORIGINAL: $"\n\n{moving} people in total. No payment is collected and no refund is given.\n" +
+                $"\n\n{moving} people in total.\n" +
                 (firstBill.HasValue ? $"Their first bill in Room {dest.RoomNumber}: {firstBill.Value:MMM d, yyyy}.\n" : "") +
                 // NEW (price difference): a difference fully covered by advance credit
-                (plan.TotalDifference > 0m ? $"Price difference {plan.TotalDifference:N2} is paid from their advance credit.\n" : "") +
+                // ORIGINAL: (plan.TotalDifference > 0m ? $"Price difference {plan.TotalDifference:N2} is paid from their advance credit.\n" : "") +
+                (plan.TotalDifference > 0m ? $"{plan.TotalDifference:N2} is paid from their advance credit.\n" : "") +
                 "\n" + lblWarnings.Text;
 
             if (MessageBox.Show(confirm, "Confirm Transfer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)

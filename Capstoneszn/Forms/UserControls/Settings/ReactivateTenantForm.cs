@@ -308,24 +308,100 @@ namespace Capstoneszn.Forms.UserControls.Settings
                 return;
             }
 
-            // Occupied room: joins without paying now, same as Move In.
+            // ORIGINAL: // Occupied room: joins without paying now, same as Move In.
+            // ORIGINAL: string msg =
+            // ORIGINAL:     "Room " + roomNumber + " is already occupied, so no payment is collected now.\n\n" +
+            // ORIGINAL:     FullName() + " will be reactivated into Room " + roomNumber + ", and their " +
+            // ORIGINAL:     "rent is collected with the room's next bill.\n\nContinue?";
+            // ORIGINAL:
+            // ORIGINAL: if (MessageBox.Show(msg, "Reactivate Tenant", MessageBoxButtons.YesNo,
+            // ORIGINAL:         MessageBoxIcon.Question) != DialogResult.Yes)
+            // ORIGINAL:     return;
+            // ORIGINAL:
+            // ORIGINAL: if (JoinRoom(roomId))
+            // ORIGINAL: {
+            // ORIGINAL:     MessageBox.Show(FullName() + " has been reactivated into Room " + roomNumber + ".",
+            // ORIGINAL:         "Tenant Reactivated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // ORIGINAL:
+            // ORIGINAL:     this.DialogResult = DialogResult.OK;
+            // ORIGINAL:     this.Close();
+            // ORIGINAL: }
+
+            // NEW (Step 3): an occupied room follows the same Move In rules as any joiner.
+            var joinData = new MoveInData
+            {
+                RoomId = roomId,
+                FirstName = _firstName,
+                MiddleName = _middleName,
+                LastName = _lastName,
+                Address = _address,
+                ContactNumber = _contact,
+                DateOccupied = DateTime.Today,
+                ExistingTenantId = _tenantId,
+                ExpectVacant = false
+            };
+
+            JoinQuote quote;
+            try
+            {
+                quote = MoveInService.QuoteJoin(roomId, 1);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not check the room: " + ex.Message, "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            joinData.JoinDue = quote.Total;
+
+            // The current period is unpaid: pay the share first (PaymentForm saves everything).
+            if (quote.Total > 0m)
+            {
+                using (PaymentForm pay = new PaymentForm(joinData, quote))
+                {
+                    if (pay.ShowDialog(this) == DialogResult.OK)
+                    {
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                }
+                return;
+            }
+
             string msg =
-                "Room " + roomNumber + " is already occupied, so no payment is collected now.\n\n" +
-                FullName() + " will be reactivated into Room " + roomNumber + ", and their " +
-                "rent is collected with the room's next bill.\n\nContinue?";
+                "Room " + roomNumber + " is already occupied.\n\n" +
+                string.Join("\n", quote.Lines) + "\n\n" +
+                FullName() + " will be reactivated into Room " + roomNumber + ".\n\nContinue?";
 
             if (MessageBox.Show(msg, "Reactivate Tenant", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
 
-            if (JoinRoom(roomId))
+            try
             {
-                MessageBox.Show(FullName() + " has been reactivated into Room " + roomNumber + ".",
-                    "Tenant Reactivated", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                MoveInService.SaveMoveIn(joinData);
             }
+            catch (InvalidOperationException ex)
+            {
+                // A rule said no (room full or changed, moved out today...). Nothing was saved.
+                MessageBox.Show(ex.Message, "Cannot Reactivate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LoadRooms();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not reactivate the tenant: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show(FullName() + " has been reactivated into Room " + roomNumber + ".",
+                "Tenant Reactivated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         private void btnCancelReactivate_Click(object sender, EventArgs e)
@@ -334,6 +410,7 @@ namespace Capstoneszn.Forms.UserControls.Settings
             this.Close();
         }
 
+        // NOTE (Step 3): no longer called - MoveInService.SaveMoveIn saves a joiner now. Kept per team rule.
         /// <summary>
         /// Adds the new stay for a tenant joining an occupied room. Every
         /// condition is re-checked inside the transaction - the screen may

@@ -233,7 +233,9 @@ namespace Capstoneszn.Forms.RoomsForms
                 try
                 {
                     using (SqlConnection conn = DatabaseHelper.GetConnection())
-                    using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Payments WHERE ReferenceNo = @ref;", conn))
+                    // ORIGINAL: using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Payments WHERE ReferenceNo = @ref;", conn))
+                    // NEW (PAY-01): a voided receipt no longer reserves its GCash reference
+                    using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Payments WHERE ReferenceNo = @ref AND IsVoided = 0;", conn))
                     {
                         cmd.Parameters.Add("@ref", SqlDbType.NVarChar, 100).Value = reference;
                         conn.Open();

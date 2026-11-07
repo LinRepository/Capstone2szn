@@ -137,7 +137,8 @@ namespace Capstoneszn.Forms.PaymentsForms
                         SELECT TOP 1 BillId, BillingPeriodStart, BillingPeriodEnd
                         FROM Bills
                         WHERE RoomId = @rid AND BillCategory = @cat
-                        ORDER BY BillingPeriodStart DESC;", conn))
+                          AND BillKind = N'Regular'
+                        ORDER BY BillingPeriodStart DESC;", conn))   // NEW (BillKind): the room's real rent period
                     {
                         cmd.Parameters.AddWithValue("@rid", _roomId);
                         cmd.Parameters.AddWithValue("@cat", RentCategory);

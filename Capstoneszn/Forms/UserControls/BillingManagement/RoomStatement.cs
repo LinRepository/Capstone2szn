@@ -167,7 +167,8 @@ namespace Capstoneszn
                   AND  BillCategory = 'Rent'
                   AND  BillingPeriodStart <= DATEADD(DAY, 7, CAST(GETDATE() AS DATE))
                   -- NEW: a transfer's price-difference bill is a charge, not a billing period
-                  AND  (Remarks IS NULL OR Remarks NOT LIKE N'Price difference%')
+                  -- ORIGINAL: AND  (Remarks IS NULL OR Remarks NOT LIKE N'Price difference%')
+                  AND  BillKind = N'Regular'   -- NEW (BillKind)
                 ORDER BY BillingPeriodStart DESC;";
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())

@@ -165,7 +165,8 @@ namespace Capstoneszn
             using (SqlCommand cmd = new SqlCommand(@"
         SELECT b.RoomId, b.BillingPeriodStart
         FROM   Bills b
-        WHERE  b.BillCategory = @cat;", conn))
+        WHERE  b.BillCategory = @cat
+          AND  b.BillKind NOT IN (N'TransferGap', N'JoinerShare');", conn))   // NEW (BillKind): gap and joiner bills are not rent periods
             {
                 cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = RentCategory;
 
@@ -446,7 +447,8 @@ namespace Capstoneszn
 
                 using (SqlCommand cmd = new SqlCommand(@"
                     SELECT COUNT(*) FROM Bills
-                    WHERE  RoomId = @rid AND BillCategory = @cat AND BillingPeriodStart = @start;", conn, tx))
+                    WHERE  RoomId = @rid AND BillCategory = @cat AND BillingPeriodStart = @start
+                      AND  BillKind NOT IN (N'TransferGap', N'JoinerShare');", conn, tx))   // NEW (BillKind): gap and joiner bills are not rent periods
                 {
                     cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
                     cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = RentCategory;

@@ -17,6 +17,7 @@ namespace Capstoneszn.Forms
     {
         private MoveInData _data;
         private decimal _roomPrice;
+        private JoinQuote? _join;   // NEW (Step 3): set when joiners pay their share of an unpaid period
 
         private readonly List<PayerCardControl> _cards = new List<PayerCardControl>();
         private decimal[] _shares = new decimal[0];   // each payer's share of the first bill
@@ -68,6 +69,17 @@ namespace Capstoneszn.Forms
             _data.ExpectVacant = true;
         }
 
+        /// <summary>
+        /// NEW (Step 3): joiners moving into an OCCUPIED room whose current period
+        /// is unpaid. They pay their share of it (from MoveInService.QuoteJoin).
+        /// </summary>
+        public PaymentForm(MoveInData data, JoinQuote join) : this(data)
+        {
+            _join = join;
+            _data.ExpectVacant = false;   // the room is occupied
+            _data.JoinDue = join.Total;
+        }
+
         private void Decimal_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
@@ -99,7 +111,8 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            _shares = MoveInService.ComputeShares(_roomPrice, _data.Payers.Count);
+            // ORIGINAL: _shares = MoveInService.ComputeShares(_roomPrice, _data.Payers.Count);
+            _shares = _join != null ? _join.Shares : MoveInService.ComputeShares(_roomPrice, _data.Payers.Count);   // NEW (Step 3)
             ShowHeaderAndSummary();
             FillPaidBy();
             FillCreditTo();   // NEW (credit choice)
@@ -605,6 +618,16 @@ namespace Capstoneszn.Forms
             lblShare.Text = ShareText();
             lblCycleStart.Text = today.ToString("MMM d, yyyy");
 
+            // NEW (Step 3): joiners pay part of a period, not the room price.
+            if (_join != null)
+            {
+                lblRoomPriceCaption.Text = "Due now";
+                lblRoomPrice.Text = Peso(_join.Total);
+                lblShareCaption.Text = "Share now";
+                lblCycleCaption.Text = "Next bill";
+                lblCycleStart.Text = _join.FirstBill.HasValue ? _join.FirstBill.Value.ToString("MMM d, yyyy") : "—";
+            }
+
             // "Paid by" is only for Whole Room (one person hands over the money).
             pnlPaidBy.Visible = _data.WholeRoom;
 
@@ -674,7 +697,11 @@ namespace Capstoneszn.Forms
             if (_data.WholeRoom)
             {
                 int i = _data.WholeRoomPayerIndex;
-                AddCard(i, _data.Payers[i].FullName + " — whole room", "Room price due", _roomPrice);
+                // ORIGINAL: AddCard(i, _data.Payers[i].FullName + " — whole room", "Room price due", _roomPrice);
+                if (_join != null)
+                    AddCard(i, _data.Payers[i].FullName + " — whole group", "Group share due", _join.Total);   // NEW (Step 3)
+                else
+                    AddCard(i, _data.Payers[i].FullName + " — whole room", "Room price due", _roomPrice);
             }
             else
             {
@@ -766,8 +793,16 @@ namespace Capstoneszn.Forms
         /// "≈" for Advance: a later share can change if people move in or out,
         /// so the date is an estimate. The credit itself is exact.
         /// </summary>
-        private static string CoversText(decimal paid, decimal monthly)
+        // ORIGINAL: private static string CoversText(decimal paid, decimal monthly)
+        // ORIGINAL: private static string CoversText(decimal paid, decimal monthly)
+        private string CoversText(decimal paid, decimal monthly)   // NEW (Step 3): not static, it reads _join
         {
+            // NEW (Step 3): joiners pay up to the end of the current period; any extra is credit.
+            if (_join != null)
+            {
+                string lastDay = _join.CoversUntil.HasValue ? _join.CoversUntil.Value.ToString("MMM d, yyyy") : "—";
+                return paid == monthly ? "Covers until " + lastDay : "Covers until " + lastDay + " + credit";
+            }
             decimal months = Math.Floor(paid / monthly);   // whole months only
             if (months > 120) return "≈ covers 10+ years";   // a typo-sized amount; avoids a date overflow
 
@@ -878,7 +913,9 @@ namespace Capstoneszn.Forms
         private static bool ReferenceAlreadyUsed(string reference)
         {
             using (SqlConnection conn = DatabaseHelper.GetConnection())
-            using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Payments WHERE ReferenceNo = @ref;", conn))
+            // ORIGINAL: using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Payments WHERE ReferenceNo = @ref;", conn))
+            // NEW (PAY-01): a voided receipt no longer reserves its GCash reference
+            using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Payments WHERE ReferenceNo = @ref AND IsVoided = 0;", conn))
             {
                 cmd.Parameters.Add("@ref", SqlDbType.NVarChar, 100).Value = reference;
                 conn.Open();
@@ -895,7 +932,12 @@ namespace Capstoneszn.Forms
             foreach (PayerCardControl card in _cards)
             {
                 decimal paid = card.AmountPaid ?? 0m;
-                decimal months = Math.Floor(paid / card.AmountDue);   // decimal: no overflow on a huge typo
+                // ORIGINAL: decimal months = Math.Floor(paid / card.AmountDue);   // decimal: no overflow on a huge typo
+                // NEW (Step 3): a joiner's due is part of a month, so count their monthly share instead.
+                decimal monthly = _join == null ? card.AmountDue
+                    : _roomPrice / Math.Max(_join.PayersAfter, 1) * (_data.WholeRoom ? _data.Payers.Count : 1);
+                if (monthly <= 0m) continue;
+                decimal months = Math.Floor(paid / monthly);   // decimal: no overflow on a huge typo
                 if (months <= 12) continue;
 
                 if (MessageBox.Show(PayerName(card) + " is paying " + Peso(paid) + ", about " + months.ToString("N0") +

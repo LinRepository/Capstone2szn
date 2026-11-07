@@ -60,6 +60,8 @@ namespace Capstoneszn.UserControls
         private DateTime? _anchor;
         private DateTime? _firstUnbilled;       // NEW (option 1): the first rent bill not created yet (a joiner's first bill)
         private bool _vacant;
+        private JoinQuote? _join;   // NEW (Step 3): what joiners owe now (occupied room only)
+        private bool JoinPays => !_vacant && _join != null && _join.Total > 0m;   // NEW (Step 3)
         private readonly List<HeadChoice> _currentTenants = new List<HeadChoice>();
 
         private static string Peso(decimal v) => "₱" + v.ToString("N2");
@@ -156,6 +158,14 @@ namespace Capstoneszn.UserControls
         {
             var payers = PayerEntries;
 
+            // NEW (Step 3): what the joiners owe now. The save works it out again.
+            _join = null;
+            if (!_vacant)
+            {
+                try { _join = MoveInService.QuoteJoin(_roomId, payers.Count); }
+                catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex); }
+            }
+
             // ---- The list ----
             dgvMoveInList.Rows.Clear();
             for (int i = 0; i < _entries.Count; i++)
@@ -186,7 +196,8 @@ namespace Capstoneszn.UserControls
             ReselectHead(keep);
 
             // ---- Who pays (vacant room with 2+ payers only) ----
-            bool choose = _vacant && payers.Count > 1;
+            // ORIGINAL: bool choose = _vacant && payers.Count > 1;
+            bool choose = (_vacant || JoinPays) && payers.Count > 1;   // NEW (Step 3): joiners who pay can choose too
             rdoWholeRoom.Visible = choose;
             rdoIndividual.Visible = choose;
             lblPaidBy.Visible = choose && rdoWholeRoom.Checked;
@@ -200,7 +211,11 @@ namespace Capstoneszn.UserControls
                 cboPaidBy.SelectedIndex = paidByIndex >= 0 && paidByIndex < cboPaidBy.Items.Count ? paidByIndex : 0;
 
             if (!_vacant)
-                lblPayNote.Text = "Joining an occupied room: nothing is paid at move-in.";
+                // ORIGINAL: lblPayNote.Text = "Joining an occupied room: nothing is paid at move-in.";
+                lblPayNote.Text = JoinPays   // NEW (Step 3)
+                    ? "Paid by " + (payers.Count > 0 ? payers[0].Payer.FullName : "the new tenant") +
+                      ": their share of the unpaid current period."
+                    : "Joining an occupied room: nothing is paid at move-in.";
             else if (payers.Count == 0)
                 lblPayNote.Text = "Add at least one paying tenant. Dependents have no share.";
             else
@@ -233,7 +248,8 @@ namespace Capstoneszn.UserControls
                 lblCoversCaption.Text = "Room cycle";
                 lblNextDueCaption.Text = "Next bill";
 
-                lblTotalDue.Text = Peso(0m);
+                // ORIGINAL: lblTotalDue.Text = Peso(0m);
+                lblTotalDue.Text = Peso(_join?.Total ?? 0m);   // NEW (Step 3)
                 lblShare.Text = ShareText(_roomPrice, Math.Max(payingAfter, 1));
                 // ORIGINAL: lblCovers.Text = "Joins the room's cycle";
                 lblCovers.Text = "Room's cycle";   // NEW: shorter, fits the label
@@ -242,9 +258,12 @@ namespace Capstoneszn.UserControls
                 lblSummaryNote.Text = payers.Count == 0
                     ? "Dependents only: no change to billing."
                     // ORIGINAL: : "From the " + next.ToString("MMM d") + " bill, rent is split among " + payingAfter + " paying tenants.";
+                    : JoinPays   // NEW (Step 3)
+                        ? "Pays " + Peso(_join!.Total) + " now. From " + next.ToString("MMM d") + ": " + payingAfter + " payers."
                     : "From " + next.ToString("MMM d") + ": split among " + payingAfter + " payers.";   // NEW: shorter, fits the label
             }
 
+            btnConfirmMoveIn.Text = _vacant || JoinPays ? "Continue to Payment" : "Confirm Move In";   // NEW (Step 3)
             btnConfirmMoveIn.Enabled = _entries.Count > 0 && (!_vacant || payers.Count > 0);
         }
 
@@ -379,7 +398,9 @@ namespace Capstoneszn.UserControls
                 data.Dependents.Add(e.Dependent);
             }
 
-            data.WholeRoom = _vacant && data.Payers.Count > 1 && rdoWholeRoom.Checked;
+            // ORIGINAL: data.WholeRoom = _vacant && data.Payers.Count > 1 && rdoWholeRoom.Checked;
+            data.WholeRoom = (_vacant || JoinPays) && data.Payers.Count > 1 && rdoWholeRoom.Checked;   // NEW (Step 3)
+            data.JoinDue = _join?.Total ?? 0m;                                                          // NEW (Step 3)
             data.WholeRoomPayerIndex = data.WholeRoom ? Math.Max(cboPaidBy.SelectedIndex, 0) : 0;
             return data;
         }
@@ -722,6 +743,20 @@ namespace Capstoneszn.UserControls
                 return;
             }
 
+            // ---- NEW (Step 3): joiners into an unpaid current period pay their share first ----
+            if (JoinPays)
+            {
+                using (PaymentForm pay = new PaymentForm(data, _join!))
+                {
+                    if (pay.ShowDialog(this) == DialogResult.OK)
+                    {
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                }
+                return;
+            }
+
             // ---- Occupied room (joiner): nothing is paid now ----
             string names = string.Join(Environment.NewLine, _entries.Select(x =>
                 "   " + x.Name + (x.IsPayer ? "  (pays)" : "  (dependent of " + x.HeadName + ")")));
@@ -730,6 +765,8 @@ namespace Capstoneszn.UserControls
                 "Add these people to Room " + _roomNumber + "?" + Environment.NewLine + Environment.NewLine +
                 names + Environment.NewLine + Environment.NewLine +
                 "No payment is collected now." + Environment.NewLine +
+                (_join != null && data.Payers.Count > 0 && _join.Lines.Count > 0                       // NEW (Step 3)
+                    ? string.Join(Environment.NewLine, _join.Lines) + Environment.NewLine : "") +
                 (data.Payers.Count > 0
                     ? "Paying tenants are included from the " + NextDueDate().ToString("MMM d, yyyy") + " bill."
                     : "Dependents have no billing.");

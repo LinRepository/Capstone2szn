@@ -1,4 +1,704 @@
-﻿using System;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Data;
+//using System.Text;
+//using System.Threading.Tasks;
+//using Microsoft.Data.SqlClient;
+
+//namespace Capstoneszn.Forms.RoomsForms
+//{
+
+//    /* =========================================================================
+//       NEW (transfer price difference - decision C)
+//       -------------------------------------------------------------------------
+//       The rule (approved):
+//         A payer who transfers to a room where their share is HIGHER pays the
+//         difference for each rent period they ALREADY PAID that has not ended
+//         yet, up to their first bill in the new room - BEFORE the transfer is
+//         saved. Whole periods only (no proration), even with 1 day left.
+//         Same or lower share: nothing charged, nothing refunded.
+//         Advance credit is used first; only the rest is collected.
+
+//       Example: Usopp paid Oct 31 - Nov 30 at 6,000 in Room 311 (alone).
+//                Nov 5 -> empty Room 312 (12,000): new share 12,000.
+//                Difference 6,000, due now. New price from the Nov 30 bill.
+
+//       How it is recorded (so every screen already understands it):
+//         ONE Rent bill PER PAID PERIOD in the destination room (the current
+//         month, plus next month inside the 7-day window), starting today (or
+//         that period's start), due on its start, Remarks "Price difference -
+//         transfer from Room 311", one share per payer = their difference.
+//         Credit is moved onto it, then each payment is a normal receipt.
+
+//       "Paid" means money actually allocated, in ANY room of the tenant's
+//       current chain of stays (stays joined by transfers), plus differences
+//       already paid on earlier transfers - so A -> C -> B can't skip it.
+
+//       Everything happens in ONE transaction with the transfer itself.
+//       A broken rule throws InvalidOperationException with a landlord-
+//       readable message; nothing is saved.
+//       ========================================================================= */
+
+//    /// <summary>NEW: one paying tenant who moves (with their dependents).</summary>
+//    public sealed class TransferMover
+//    {
+//        public int TenantId;
+//        public int TenancyId;
+//        public string Name = "";
+//        public List<string> Dependents = new List<string>();
+
+//        // Filled by TransferService.BuildPlan
+//        public List<TransferDiffLine> Lines = new List<TransferDiffLine>();
+//        public decimal Difference;          // sum of the lines
+//        public decimal CreditUsed;          // advance credit applied first
+//        public decimal Due;                 // Difference - CreditUsed, collected now
+
+//        // Filled by TransferPaymentForm (only when Due > 0)
+//        public decimal AmountPaid;
+//        public string Method = MoveInService.Cash;
+//        public string ReferenceNo = "";
+//    }
+
+//    /// <summary>NEW: one already-paid rent period and its difference.</summary>
+//    public sealed class TransferDiffLine
+//    {
+//        public DateTime PeriodStart;
+//        public DateTime PeriodEnd;
+//        public decimal OldShare;            // what they ACTUALLY PAID for this period (any room, plus earlier differences)
+//        public decimal NewShare;            // their share in the new room
+//        public decimal Difference => Math.Max(0m, NewShare - OldShare);
+//    }
+
+//    /// <summary>NEW: everything the Transfer screens show and the save uses.</summary>
+//    public sealed class TransferPlan
+//    {
+//        public int SourceRoomId;
+//        public string SourceRoomNumber = "";
+//        public int DestRoomId;
+//        public string DestRoomNumber = "";
+//        public bool DestEmpty;              // no paying tenant there before the move
+//        public DateTime? FirstBill;         // their first bill in the new room
+//        public List<TransferMover> Movers = new List<TransferMover>();
+
+//        public decimal TotalDifference => Movers.Sum(m => m.Difference);
+//        public decimal TotalCredit => Movers.Sum(m => m.CreditUsed);
+//        public decimal TotalDue => Movers.Sum(m => m.Due);
+//        public int DependentCount => Movers.Sum(m => m.Dependents.Count);
+//    }
+
+//    /// <summary>NEW: what the save returns, for the Transfer Complete screen.</summary>
+//    public sealed class TransferResult
+//    {
+//        public List<MoveInReceiptLine> Receipts = new List<MoveInReceiptLine>();
+//        public int PayingCount;
+//        public int DependentCount;
+//        public DateTime? FirstBill;
+//    }
+
+//    public static class TransferService
+//    {
+//        private const string Rent = "Rent";
+
+//        /// <summary>NEW: marks a price-difference bill (Bills.Remarks starts with this).</summary>
+//        public const string DifferenceRemark = "Price difference - transfer from Room";
+
+//        private static readonly string[] Categories = { "Rent", "Water", "Maintenance", "Electricity", "Other" };
+
+//        /* =================================================================
+//           PLAN (read only) - the difference per payer
+//           ================================================================= */
+
+//        /// <summary>Works out the difference, credit and amount due for each mover.</summary>
+//        public static TransferPlan BuildPlan(int sourceRoomId, int destRoomId, IList<TransferMover> movers)
+//        {
+//            var plan = new TransferPlan { SourceRoomId = sourceRoomId, DestRoomId = destRoomId };
+//            plan.Movers.AddRange(movers);
+
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            {
+//                conn.Open();
+//                ComputeInto(conn, null, plan, DateTime.Today);
+//            }
+//            return plan;
+//        }
+
+//        /// <summary>
+//        /// Fills the plan. Used for the screen (tx null) and again inside the
+//        /// save, so what is charged is always worked out from fresh data.
+//        /// </summary>
+//        private static void ComputeInto(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
+//        {
+//            // ---- The two rooms ----
+//            DateTime? srcAnchor = null, destAnchor = null, destPendingFrom = null;
+//            decimal destPrice = 0m;
+//            decimal? destPending = null;
+//            int destPayers = 0;
+
+//            using (SqlCommand cmd = new SqlCommand(@"
+//                SELECT v.RoomId, v.RoomNumber, v.BillingAnchorDate, ISNULL(v.RoomPrice, 0),
+//                       v.PendingRoomPrice, v.PendingPriceFrom, ISNULL(v.ActiveTenants, 0)
+//                FROM   vwRoomStatus v
+//                WHERE  v.RoomId IN (@src, @dest);", conn, tx))
+//            {
+//                cmd.Parameters.Add("@src", SqlDbType.Int).Value = plan.SourceRoomId;
+//                cmd.Parameters.Add("@dest", SqlDbType.Int).Value = plan.DestRoomId;
+//                using (SqlDataReader r = cmd.ExecuteReader())
+//                {
+//                    while (r.Read())
+//                    {
+//                        int id = r.GetInt32(0);
+//                        string number = Convert.ToString(r.GetValue(1)) ?? "";
+//                        DateTime? anchor = r.IsDBNull(2) ? (DateTime?)null : r.GetDateTime(2);
+
+//                        if (id == plan.SourceRoomId)
+//                        {
+//                            plan.SourceRoomNumber = number;
+//                            srcAnchor = anchor;
+//                        }
+//                        else
+//                        {
+//                            plan.DestRoomNumber = number;
+//                            destAnchor = anchor;
+//                            destPrice = r.GetDecimal(3);
+//                            destPending = r.IsDBNull(4) ? (decimal?)null : r.GetDecimal(4);
+//                            destPendingFrom = r.IsDBNull(5) ? (DateTime?)null : r.GetDateTime(5);
+//                            destPayers = r.GetInt32(6);
+//                        }
+//                    }
+//                }
+//            }
+
+//            plan.DestEmpty = destPayers == 0;
+
+//            // ---- Their first bill in the new room ----
+//            //   Empty room    -> keeps their cycle: the source room's first bill not created yet
+//            //   Occupied room -> joins its cycle: the destination's first bill not created yet
+//            if (plan.DestEmpty)
+//                plan.FirstBill = srcAnchor.HasValue
+//                    ? BillGenerator.NextUnbilledPeriod(conn, tx, plan.SourceRoomId, srcAnchor.Value, today)
+//                    : (DateTime?)null;
+//            else
+//                plan.FirstBill = destAnchor.HasValue
+//                    ? BillGenerator.NextUnbilledPeriod(conn, tx, plan.DestRoomId, destAnchor.Value, today)
+//                    : (DateTime?)null;
+
+//            int payersAfter = destPayers + plan.Movers.Count;
+
+//            // ---- Per mover ----
+//            foreach (TransferMover m in plan.Movers)
+//            {
+//                m.Lines.Clear();
+
+//                // ORIGINAL (first version): only bills of the room being left were
+//                // counted, so A (3,000) -> C (3,000) -> B (12,000) found nothing
+//                // paid in C and charged 0. (Old query kept in TransferService history.)
+//                //
+//                // NEW (loophole fix): count what the tenant ACTUALLY PAID for each
+//                // rent period still running, in ANY room of their current chain of
+//                // stays (stays joined by transfers), plus any price difference
+//                // already paid for that period on an earlier transfer.
+//                DateTime chainStart = ChainStart(conn, tx, m.TenancyId);
+
+//                var bills = new List<(DateTime Start, DateTime End, decimal Paid, bool IsDiff)>();
+//                using (SqlCommand cmd = new SqlCommand(@"
+//                    SELECT b.BillingPeriodStart, b.BillingPeriodEnd,
+//                           ISNULL((SELECT SUM(a.Amount)
+//                                   FROM   PaymentAllocations a
+//                                   JOIN   Payments p ON p.PaymentId = a.PaymentId
+//                                   WHERE  a.BillId = b.BillId AND a.TenantId = bt.TenantId
+//                                     AND  a.IsVoided = 0 AND p.IsVoided = 0), 0) AS Paid,
+//                           CASE WHEN b.Remarks LIKE @diffMark THEN 1 ELSE 0 END AS IsDiff
+//                    FROM   BillTenants bt
+//                    JOIN   Bills b ON b.BillId = bt.BillId
+//                    WHERE  bt.TenantId = @tid
+//                      AND  b.BillCategory = @rent
+//                      AND  b.BillingPeriodStart >= @chainStart
+//                      AND  b.BillingPeriodEnd > @today
+//                    ORDER BY b.BillingPeriodStart;", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = m.TenantId;
+//                    cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
+//                    cmd.Parameters.Add("@chainStart", SqlDbType.Date).Value = chainStart;
+//                    cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
+//                    cmd.Parameters.Add("@diffMark", SqlDbType.NVarChar, 60).Value = DifferenceRemark + "%";
+
+//                    using (SqlDataReader r = cmd.ExecuteReader())
+//                        while (r.Read())
+//                            bills.Add((r.GetDateTime(0), r.GetDateTime(1), r.GetDecimal(2), r.GetInt32(3) == 1));
+//                }
+
+//                // Each normal rent period that starts before their first bill in
+//                // the new room is one line; a difference paid earlier counts
+//                // toward the period it was charged in.
+//                foreach (var period in bills.Where(b => !b.IsDiff &&
+//                                                        (!plan.FirstBill.HasValue || b.Start < plan.FirstBill.Value)))
+//                {
+//                    decimal paidBefore = bills.Where(d => d.IsDiff && d.Start >= period.Start && d.Start < period.End)
+//                                              .Sum(d => d.Paid);
+
+//                    // The new room's price for that period (a scheduled price if it starts by then).
+//                    decimal price = destPending.HasValue && destPendingFrom.HasValue && period.Start >= destPendingFrom.Value
+//                        ? destPending.Value
+//                        : destPrice;
+
+//                    m.Lines.Add(new TransferDiffLine
+//                    {
+//                        PeriodStart = period.Start,
+//                        PeriodEnd = period.End,
+//                        OldShare = period.Paid + paidBefore,
+//                        NewShare = Math.Floor(price / payersAfter * 100m) / 100m   // same rounding as the bills
+//                    });
+//                }
+
+//                m.Difference = m.Lines.Sum(l => l.Difference);
+
+//                decimal credit = m.Difference > 0m
+//                    ? BillingHelper.GetAvailableCredit(conn, m.TenantId, Rent, tx)
+//                    : 0m;
+//                m.CreditUsed = Math.Min(credit, m.Difference);
+//                m.Due = m.Difference - m.CreditUsed;
+//            }
+//        }
+
+//        /// <summary>
+//        /// NEW (loophole fix): the move-in date of the tenant's current chain of
+//        /// stays. Walks back from the active stay while the previous stay ended
+//        /// by a transfer on the day this one began. A stay ended by a move out
+//        /// (later reactivated) stops the chain, so its old bills never count.
+//        /// </summary>
+//        private static DateTime ChainStart(SqlConnection conn, SqlTransaction tx, int tenancyId)
+//        {
+//            var stays = new List<(int Id, DateTime In, DateTime? Out, string Reason)>();
+//            int tenantId = 0;
+
+//            using (SqlCommand cmd = new SqlCommand("SELECT TenantId FROM Tenancies WHERE TenancyId = @tn;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@tn", SqlDbType.Int).Value = tenancyId;
+//                tenantId = Convert.ToInt32(cmd.ExecuteScalar());
+//            }
+
+//            using (SqlCommand cmd = new SqlCommand(@"
+//                SELECT TenancyId, MoveInDate, MoveOutDate, MoveOutReason
+//                FROM   Tenancies WHERE TenantId = @tid
+//                ORDER BY MoveInDate DESC, TenancyId DESC;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@tid", SqlDbType.Int).Value = tenantId;
+//                using (SqlDataReader r = cmd.ExecuteReader())
+//                    while (r.Read())
+//                        stays.Add((r.GetInt32(0), r.GetDateTime(1),
+//                                   r.IsDBNull(2) ? (DateTime?)null : r.GetDateTime(2),
+//                                   r.IsDBNull(3) ? "" : r.GetString(3)));
+//            }
+
+//            int i = stays.FindIndex(x => x.Id == tenancyId);
+//            if (i < 0) return DateTime.Today;
+
+//            DateTime start = stays[i].In;
+//            for (int k = i + 1; k < stays.Count; k++)
+//            {
+//                var prev = stays[k];
+//                if (prev.Reason == "Transferred" && prev.Out.HasValue && prev.Out.Value == start)
+//                    start = prev.In;          // same chain: moved here by a transfer
+//                else
+//                    break;                    // a move out ends the chain
+//            }
+//            return start;
+//        }
+
+//        /// <summary>"Oct 31 – Nov 30: 12,000.00 − 6,000.00" lines for screens.</summary>
+//        public static string Breakdown(TransferMover m)
+//        {
+//            return string.Join("\n", m.Lines.Where(l => l.Difference > 0m).Select(l =>
+//                $"{l.PeriodStart:MMM d} – {l.PeriodEnd:MMM d}: {l.NewShare:N2} − {l.OldShare:N2}"));
+//        }
+
+
+//        /* =================================================================
+//           SAVE - transfer + difference bill + credit + receipts, one transaction
+//           ================================================================= */
+
+//        public static TransferResult Save(TransferPlan plan)
+//        {
+//            if (plan == null) throw new ArgumentNullException(nameof(plan));
+//            if (plan.Movers.Count == 0) throw new InvalidOperationException("Tick at least one tenant to transfer.");
+
+//            ValidatePayments(plan);
+
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            {
+//                conn.Open();
+//                using (SqlTransaction tx = conn.BeginTransaction())
+//                {
+//                    try
+//                    {
+//                        TransferResult result = SaveInsideTransaction(conn, tx, plan, DateTime.Today);
+//                        tx.Commit();
+//                        return result;
+//                    }
+//                    catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
+//                    {
+//                        TryRollback(tx);
+//                        throw new InvalidOperationException(
+//                            "A GCash reference number or receipt number is already used. Check the reference.");
+//                    }
+//                    catch
+//                    {
+//                        TryRollback(tx);
+//                        throw;
+//                    }
+//                }
+//            }
+//        }
+
+//        /// <summary>Amount at least what is due, 2 decimals, Cash/GCash, valid unique references.</summary>
+//        private static void ValidatePayments(TransferPlan plan)
+//        {
+//            var references = new List<string>();
+
+//            foreach (TransferMover m in plan.Movers.Where(x => x.Due > 0m))
+//            {
+//                if (m.AmountPaid < m.Due)
+//                    throw new InvalidOperationException($"{m.Name} must pay at least the difference due: PHP {m.Due:N2}.");
+//                if (m.AmountPaid != Math.Round(m.AmountPaid, 2))
+//                    throw new InvalidOperationException($"Amounts can have at most 2 decimal places ({m.Name}).");
+//                if (m.Method != MoveInService.Cash && m.Method != MoveInService.GCash)
+//                    throw new InvalidOperationException($"Choose Cash or GCash ({m.Name}).");
+
+//                if (m.Method == MoveInService.GCash)
+//                {
+//                    string reference = (m.ReferenceNo ?? "").Trim();
+//                    if (!MoveInService.IsValidGCashReference(reference))
+//                        throw new InvalidOperationException($"GCash reference number must be exactly 13 digits ({m.Name}).");
+//                    references.Add(reference);
+//                }
+//            }
+
+//            if (references.Distinct().Count() != references.Count)
+//                throw new InvalidOperationException("Two payers have the same GCash reference number.");
+//        }
+
+//        private static TransferResult SaveInsideTransaction(SqlConnection conn, SqlTransaction tx,
+//                                                            TransferPlan plan, DateTime today)
+//        {
+//            // ---- 1. Lock both rooms (lower RoomId first: two transfers can't deadlock) ----
+//            foreach (int roomId in new[] { plan.SourceRoomId, plan.DestRoomId }.OrderBy(x => x))
+//            {
+//                using (SqlCommand cmd = new SqlCommand(
+//                    "SELECT RoomId FROM Rooms WITH (UPDLOCK, HOLDLOCK) WHERE RoomId = @rid;", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+//                    cmd.ExecuteScalar();
+//                }
+//            }
+
+//            // ---- 2. Re-check everything from fresh data ----
+//            var shownDue = plan.Movers.ToDictionary(m => m.TenantId, m => m.Due);
+//            decimal shownDifference = plan.TotalDifference;
+
+//            ComputeInto(conn, tx, plan, today);
+
+//            if (plan.TotalDifference != shownDifference ||
+//                plan.Movers.Any(m => m.Due != shownDue[m.TenantId]))
+//                throw new InvalidOperationException(
+//                    "The price difference changed while this screen was open (a bill, price or payment changed). Start the transfer again.");
+
+//            foreach (TransferMover m in plan.Movers)
+//            {
+//                foreach (string cat in Categories)
+//                {
+//                    decimal owed = BillingHelper.GetTotalOutstanding(conn, m.TenantId, cat, tx);
+//                    if (owed >= 0.005m)
+//                        throw new InvalidOperationException($"{m.Name} now owes {cat} {owed:N2}. Settle it first.");
+//                }
+//            }
+
+//            int destCapacity, destOccupants;
+//            using (SqlCommand cmd = new SqlCommand(
+//                "SELECT ISNULL(Capacity, 0), ISNULL(Occupants, 0) FROM vwRoomStatus WHERE RoomId = @rid;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+//                using (SqlDataReader r = cmd.ExecuteReader())
+//                {
+//                    r.Read();
+//                    destCapacity = r.GetInt32(0);
+//                    destOccupants = r.GetInt32(1);
+//                }
+//            }
+
+//            int moving = 0;
+//            foreach (TransferMover m in plan.Movers)
+//            {
+//                using (SqlCommand cmd = new SqlCommand(
+//                    "SELECT COUNT(*) FROM Dependents WHERE TenancyId = @tn AND Status = 'Active';", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@tn", SqlDbType.Int).Value = m.TenancyId;
+//                    moving += 1 + (int)cmd.ExecuteScalar();
+//                }
+//            }
+
+//            if (destOccupants + moving > destCapacity)
+//                throw new InvalidOperationException($"Room {plan.DestRoomNumber} no longer has space for {moving} people.");
+
+//            // ---- 3. The transfer itself (same steps as TransferForm) ----
+//            var log = new List<string>();
+//            int dependentsMoved = 0;
+
+//            foreach (TransferMover m in plan.Movers)
+//            {
+//                using (SqlCommand cmd = new SqlCommand(@"
+//                    UPDATE Tenancies
+//                       SET Status = 'Inactive', MoveOutDate = @date, MoveOutReason = 'Transferred'
+//                     WHERE TenancyId = @tn AND Status = 'Active';", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+//                    cmd.Parameters.Add("@tn", SqlDbType.Int).Value = m.TenancyId;
+//                    if (cmd.ExecuteNonQuery() != 1)
+//                        throw new InvalidOperationException(m.Name + " is no longer an active tenant of Room " + plan.SourceRoomNumber + ".");
+//                }
+
+//                int newTenancyId;
+//                using (SqlCommand cmd = new SqlCommand(@"
+//                    INSERT INTO Tenancies (TenantId, RoomId, MoveInDate, Status)
+//                    OUTPUT INSERTED.TenancyId
+//                    VALUES (@tid, @rid, @date, 'Active');", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = m.TenantId;
+//                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+//                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+//                    newTenancyId = (int)cmd.ExecuteScalar();
+//                }
+
+//                // Dependents: re-add under the new stay, then close the old rows.
+//                int deps;
+//                using (SqlCommand cmd = new SqlCommand(@"
+//                    INSERT INTO Dependents (TenancyId, FirstName, MiddleName, LastName, ContactNumber, MoveInDate, Status)
+//                    SELECT @newTn, FirstName, MiddleName, LastName, ContactNumber, @date, 'Active'
+//                    FROM   Dependents
+//                    WHERE  TenancyId = @oldTn AND Status = 'Active';
+
+//                    UPDATE Dependents
+//                       SET Status = 'Inactive', MoveOutDate = @date, MoveOutReason = 'Transferred'
+//                     WHERE TenancyId = @oldTn AND Status = 'Active';", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@newTn", SqlDbType.Int).Value = newTenancyId;
+//                    cmd.Parameters.Add("@oldTn", SqlDbType.Int).Value = m.TenancyId;
+//                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+//                    deps = cmd.ExecuteNonQuery() / 2;   // each dependent = 1 insert + 1 update
+//                }
+
+//                dependentsMoved += deps;
+//                log.Add(m.Name + (deps > 0 ? $" + {deps} dependent(s)" : ""));
+//            }
+
+//            // Empty destination: keep their cycle (first bill not created yet in the
+//            // source room) and apply a scheduled price now.
+//            if (plan.DestEmpty)
+//            {
+//                using (SqlCommand cmd = new SqlCommand(@"
+//                    UPDATE Rooms
+//                       SET BillingAnchorDate = @date,
+//                           RoomPrice         = ISNULL(PendingRoomPrice, RoomPrice),
+//                           PendingRoomPrice  = NULL,
+//                           PendingPriceFrom  = NULL
+//                     WHERE RoomId = @rid;", conn, tx))
+//                {
+//                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = plan.FirstBill ?? today;
+//                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+//                    cmd.ExecuteNonQuery();
+//                }
+//            }
+
+//            // Source left empty: no cycle, and a scheduled price becomes the price.
+//            using (SqlCommand cmd = new SqlCommand(@"
+//                UPDATE Rooms
+//                   SET BillingAnchorDate = NULL,
+//                       RoomPrice         = ISNULL(PendingRoomPrice, RoomPrice),
+//                       PendingRoomPrice  = NULL,
+//                       PendingPriceFrom  = NULL
+//                 WHERE RoomId = @rid
+//                   AND NOT EXISTS (SELECT 1 FROM Tenancies tn WHERE tn.RoomId = @rid AND tn.Status = 'Active');", conn, tx))
+//            {
+//                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.SourceRoomId;
+//                cmd.ExecuteNonQuery();
+//            }
+
+//            // ---- 4. The price difference: bill, credit, receipts ----
+//            var result = new TransferResult
+//            {
+//                PayingCount = plan.Movers.Count,
+//                DependentCount = dependentsMoved,
+//                FirstBill = plan.FirstBill
+//            };
+
+//            if (plan.TotalDifference > 0m)
+//            {
+//                // ORIGINAL (first version): ONE difference bill for everything.
+//                // NEW (loophole fix): one difference bill PER rent period, so a
+//                // later transfer can tell which period each difference paid for.
+//                var periods = plan.Movers.SelectMany(m => m.Lines.Where(l => l.Difference > 0m))
+//                                         .Select(l => (l.PeriodStart, l.PeriodEnd))
+//                                         .Distinct()
+//                                         .OrderBy(p => p.PeriodStart)
+//                                         .ToList();
+
+//                foreach (var period in periods)
+//                {
+//                    var shares = plan.Movers
+//                        .Select(m => (Mover: m, Diff: m.Lines.Where(l => l.PeriodStart == period.PeriodStart && l.PeriodEnd == period.PeriodEnd)
+//                                                             .Sum(l => l.Difference)))
+//                        .Where(x => x.Diff > 0m)
+//                        .ToList();
+
+//                    DateTime billStart = period.PeriodStart > today ? period.PeriodStart : today;
+//                    int billId = CreateDifferenceBill(conn, tx, plan, billStart, period.PeriodEnd, shares.Sum(x => x.Diff));
+
+//                    foreach (var x in shares)
+//                    {
+//                        using (SqlCommand cmd = new SqlCommand(
+//                            "INSERT INTO BillTenants (BillId, TenantId, Share) VALUES (@bid, @tid, @share);", conn, tx))
+//                        {
+//                            cmd.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
+//                            cmd.Parameters.Add("@tid", SqlDbType.Int).Value = x.Mover.TenantId;
+//                            AddMoney(cmd, "@share", x.Diff);
+//                            cmd.ExecuteNonQuery();
+//                        }
+
+//                        // Advance credit first (the same routine new bills use); it
+//                        // stops by itself once the tenant's credit runs out.
+//                        if (x.Mover.CreditUsed > 0m)
+//                            BillGenerator.ConsumeCredit(conn, tx, x.Mover.TenantId, billId, x.Diff);
+//                    }
+//                }
+
+//                // The rest is paid now: one normal receipt per payer.
+//                var payers = plan.Movers.Where(x => x.Due > 0m).ToList();
+//                string baseNo = "R" + DateTime.Now.ToString("yyyyMMddHHmmss");
+
+//                for (int i = 0; i < payers.Count; i++)
+//                {
+//                    TransferMover m = payers[i];
+//                    string receiptNo = payers.Count == 1 ? baseNo : baseNo + "-" + (i + 1);
+//                    string type = m.AmountPaid == m.Due ? "Full" : "Advance";   // more than due becomes Rent credit
+
+//                    BillingHelper.RecordReceipt(conn, tx, plan.DestRoomId, m.TenantId, false,
+//                        new List<PaymentLine> { new PaymentLine(Rent, m.AmountPaid, type) },
+//                        m.Method,
+//                        m.Method == MoveInService.GCash ? m.ReferenceNo.Trim() : null,
+//                        today, Session.UserId, receiptNo);
+
+//                    result.Receipts.Add(new MoveInReceiptLine
+//                    {
+//                        ReceiptNo = receiptNo,
+//                        PayerName = m.Name + " (difference)",
+//                        Method = m.Method,
+//                        Amount = m.AmountPaid
+//                    });
+//                }
+//            }
+
+//            // ---- 5. Audit, same transaction ----
+//            string money = plan.TotalDifference > 0m
+//                ? $"; price difference {plan.TotalDifference:N2} (credit {plan.TotalCredit:N2}, paid {plan.Movers.Sum(m => m.Due > 0m ? m.AmountPaid : 0m):N2})"
+//                : "";
+
+//            AuditLogger.Log(conn, tx, AuditLogger.ModuleTenants, "Transfer",
+//                string.Join("; ", log) + " transferred from Room " + plan.SourceRoomNumber +
+//                " to Room " + plan.DestRoomNumber + " on " + today.ToString("MMM dd, yyyy") + money);
+
+//            return result;
+//        }
+
+//        /// <summary>
+//        /// The one "price difference" Rent bill in the destination room:
+//        /// today -> their first bill there, due today.
+//        /// If the room already has a Rent bill starting today, the difference
+//        /// joins it (one bill per room per period start is a database rule).
+//        /// </summary>
+//        // ORIGINAL: private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
+//        private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan,
+//                                                DateTime start, DateTime end, decimal amount)
+//        {
+//            using (SqlCommand cmd = new SqlCommand(@"
+//                SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
+//                WHERE  RoomId = @rid AND BillCategory = @rent AND BillingPeriodStart = @today;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+//                cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
+//                cmd.Parameters.Add("@today", SqlDbType.Date).Value = start;
+//                object existing = cmd.ExecuteScalar();
+
+//                if (existing != null && existing != DBNull.Value)
+//                {
+//                    int id = Convert.ToInt32(existing);
+//                    using (SqlCommand up = new SqlCommand("UPDATE Bills SET Amount = Amount + @amt WHERE BillId = @bid;", conn, tx))
+//                    {
+//                        up.Parameters.Add("@bid", SqlDbType.Int).Value = id;
+//                        AddMoney(up, "@amt", amount);
+//                        up.ExecuteNonQuery();
+//                    }
+//                    return id;
+//                }
+//            }
+
+//            // Today is one of the destination's own billing dates but its bill was
+//            // not generated yet: our bill would take that slot and the room's real
+//            // bill could never be created. Ask for the bills to be generated first.
+//            if (!plan.DestEmpty && IsAnchorPeriod(conn, tx, plan.DestRoomId, start))
+//                throw new InvalidOperationException(
+//                    $"Room {plan.DestRoomNumber}'s rent bill for {start:MMM d} has not been created yet. " +
+//                    "Log out and back in (or use Generate Bills), then try the transfer again.");
+
+//            using (SqlCommand cmd = new SqlCommand(@"
+//                INSERT INTO Bills (RoomId, BillCategory, BillingPeriodStart, BillingPeriodEnd, DueDate, Amount, Remarks)
+//                OUTPUT INSERTED.BillId
+//                VALUES (@rid, @rent, @start, @end, @start, @amt, @remarks);", conn, tx))
+//            {
+//                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+//                cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
+//                cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+//                cmd.Parameters.Add("@end", SqlDbType.Date).Value = end;
+//                AddMoney(cmd, "@amt", amount);
+//                cmd.Parameters.Add("@remarks", SqlDbType.NVarChar, 255).Value =
+//                    DifferenceRemark + " " + plan.SourceRoomNumber;
+//                return (int)cmd.ExecuteScalar();
+//            }
+//        }
+
+//        /// <summary>True when today is one of the room's anchor period starts.</summary>
+//        private static bool IsAnchorPeriod(SqlConnection conn, SqlTransaction tx, int roomId, DateTime today)
+//        {
+//            using (SqlCommand cmd = new SqlCommand("SELECT BillingAnchorDate FROM Rooms WHERE RoomId = @rid;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+//                object o = cmd.ExecuteScalar();
+//                if (o == null || o == DBNull.Value) return false;
+
+//                DateTime anchor = (DateTime)o;
+//                for (int n = 0; anchor.AddMonths(n) <= today; n++)
+//                    if (anchor.AddMonths(n) == today) return true;
+//                return false;
+//            }
+//        }
+
+//        private static void AddMoney(SqlCommand cmd, string name, decimal value)
+//        {
+//            SqlParameter p = cmd.Parameters.Add(name, SqlDbType.Decimal);
+//            p.Precision = 18;
+//            p.Scale = 2;
+//            p.Value = value;
+//        }
+
+//        private static void TryRollback(SqlTransaction tx)
+//        {
+//            try { tx.Rollback(); }
+//            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex); }
+//        }
+//    }
+
+//}
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data;
@@ -8,6 +708,22 @@ using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms.RoomsForms
 {
+
+    /* =========================================================================
+       NEW (Transfer rules, Nov 6, 2026) - READ THIS FIRST
+       -------------------------------------------------------------------------
+       The approved rules replace the price difference below:
+         - Paid rent always moves with the tenant.
+         - Vacant room: they pay the new room's price less what they carry.
+         - Paid room: 0 now, everything carried becomes credit.
+         - Unpaid room: their fair share, capped at what is unpaid.
+         - Whatever they carry and do not need becomes credit.
+         - Those who stay owe up to their fair share of what left.
+
+       The save path is now ComputeNew + SaveNew, with RoomRentShares.cs doing
+       the shares. ComputeInto, SaveInsideTransaction and CreateDifferenceBill
+       are no longer called and are kept as they were.
+       ========================================================================= */
 
     /* =========================================================================
        NEW (transfer price difference - decision C)
@@ -54,6 +770,13 @@ namespace Capstoneszn.Forms.RoomsForms
         public decimal CreditUsed;          // advance credit applied first
         public decimal Due;                 // Difference - CreditUsed, collected now
 
+        // NEW (Transfer rules): filled by TransferService.ComputeNew
+        // Difference above now means NewShare - Carried, never below 0.
+        public decimal Carried;             // paid rent moving with them
+        public decimal NewShare;            // what they must cover now in the new room
+        public decimal NextShare;           // their share of a next bill already issued there
+        public decimal CreditAfter;         // credit left after those shares
+
         // Filled by TransferPaymentForm (only when Due > 0)
         public decimal AmountPaid;
         public string Method = MoveInService.Cash;
@@ -80,6 +803,15 @@ namespace Capstoneszn.Forms.RoomsForms
         public bool DestEmpty;              // no paying tenant there before the move
         public DateTime? FirstBill;         // their first bill in the new room
         public List<TransferMover> Movers = new List<TransferMover>();
+
+        // NEW (Transfer rules): worked out by ComputeNew, used by the screens and the save
+        internal List<RentPeriod> SourcePeriods = new List<RentPeriod>();
+        internal List<StayerCharge> StayerCharges = new List<StayerCharge>();
+        internal List<JoinPart> JoinParts = new List<JoinPart>();
+        public List<string> NextBillLines = new List<string>();   // NEW (Nov 7): a vacant room's next bill issued at once
+        public bool SourceNextIssued;                              // NEW (Nov 7): the old room's next bill is already issued
+        public DateTime? SourceNextDue;                            // NEW (Nov 7): that bill's due date
+        public bool DestNextIssued;                                // NEW (Nov 7): the new room's next bill is already issued
 
         public decimal TotalDifference => Movers.Sum(m => m.Difference);
         public decimal TotalCredit => Movers.Sum(m => m.CreditUsed);
@@ -118,7 +850,8 @@ namespace Capstoneszn.Forms.RoomsForms
             using (SqlConnection conn = DatabaseHelper.GetConnection())
             {
                 conn.Open();
-                ComputeInto(conn, null, plan, DateTime.Today);
+                // ORIGINAL: ComputeInto(conn, null, plan, DateTime.Today);
+                ComputeNew(conn, null, plan, DateTime.Today);   // NEW (Transfer rules)
             }
             return plan;
         }
@@ -127,6 +860,7 @@ namespace Capstoneszn.Forms.RoomsForms
         /// Fills the plan. Used for the screen (tx null) and again inside the
         /// save, so what is charged is always worked out from fresh data.
         /// </summary>
+        // NOTE (Transfer rules): no longer called - ComputeNew replaces it. Kept as is.
         private static void ComputeInto(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
         {
             // ---- The two rooms ----
@@ -309,8 +1043,9 @@ namespace Capstoneszn.Forms.RoomsForms
         /// <summary>"Oct 31 – Nov 30: 12,000.00 − 6,000.00" lines for screens.</summary>
         public static string Breakdown(TransferMover m)
         {
-            return string.Join("\n", m.Lines.Where(l => l.Difference > 0m).Select(l =>
-                $"{l.PeriodStart:MMM d} – {l.PeriodEnd:MMM d}: {l.NewShare:N2} − {l.OldShare:N2}"));
+            // ORIGINAL: return string.Join("\n", m.Lines.Where(l => l.Difference > 0m).Select(l =>
+            // ORIGINAL:     $"{l.PeriodStart:MMM d} – {l.PeriodEnd:MMM d}: {l.NewShare:N2} − {l.OldShare:N2}"));
+            return $"Room share {m.NewShare:N2} − carried {m.Carried:N2}";   // NEW (Transfer rules)
         }
 
 
@@ -332,8 +1067,15 @@ namespace Capstoneszn.Forms.RoomsForms
                 {
                     try
                     {
-                        TransferResult result = SaveInsideTransaction(conn, tx, plan, DateTime.Today);
+                        // ORIGINAL: TransferResult result = SaveInsideTransaction(conn, tx, plan, DateTime.Today);
+                        TransferResult result = SaveNew(conn, tx, plan, DateTime.Today);   // NEW (Transfer rules)
                         tx.Commit();
+
+                        // NEW (option 2): a next bill already inside the 7-day window is
+                        // issued now, the same as at login, so it is final from today.
+                        try { BillGenerator.RunForBuilding(Session.BuildingId); }
+                        catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex); }   // login will create it
+
                         return result;
                     }
                     catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
@@ -378,6 +1120,7 @@ namespace Capstoneszn.Forms.RoomsForms
                 throw new InvalidOperationException("Two payers have the same GCash reference number.");
         }
 
+        // NOTE (Transfer rules): no longer called - SaveNew replaces it. Kept as is.
         private static TransferResult SaveInsideTransaction(SqlConnection conn, SqlTransaction tx,
                                                             TransferPlan plan, DateTime today)
         {
@@ -615,6 +1358,7 @@ namespace Capstoneszn.Forms.RoomsForms
         /// If the room already has a Rent bill starting today, the difference
         /// joins it (one bill per room per period start is a database rule).
         /// </summary>
+        // NOTE (Transfer rules): no longer called. Kept as is.
         // ORIGINAL: private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
         private static int CreateDifferenceBill(SqlConnection conn, SqlTransaction tx, TransferPlan plan,
                                                 DateTime start, DateTime end, decimal amount)
@@ -679,6 +1423,547 @@ namespace Capstoneszn.Forms.RoomsForms
                     if (anchor.AddMonths(n) == today) return true;
                 return false;
             }
+        }
+
+        /* =================================================================
+           NEW (Transfer rules, Nov 6, 2026)
+           ================================================================= */
+
+        /// <summary>
+        /// NEW (Nov 7): true when the room's next rent bill is already issued
+        /// (a Regular bill whose period has not started yet).
+        /// </summary>
+        private static bool SourceNextIssued(SqlConnection conn, SqlTransaction tx, int roomId, DateTime today)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT CASE WHEN EXISTS (
+                           SELECT 1 FROM Bills
+                           WHERE  RoomId = @rid
+                             AND  BillCategory = @rent
+                             AND  BillKind = N'Regular'
+                             AND  MaintenanceIssueId IS NULL
+                             AND  BillingPeriodStart > @today)
+                       THEN 1 ELSE 0 END;", conn, tx))
+            {
+                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
+                cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
+                return (int)cmd.ExecuteScalar() == 1;
+            }
+        }
+
+        /// <summary>
+        /// NEW (Nov 7): the first bill date in a vacant room, for the Transfer screen.
+        ///   Old room's next bill issued -> a new cycle from today (next due in 1 month)
+        ///   Otherwise                   -> keeps their cycle (the old room's next date)
+        /// </summary>
+        public static DateTime? VacantFirstBill(int sourceRoomId)
+        {
+            DateTime today = DateTime.Today;
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+
+                if (SourceNextIssued(conn, null, sourceRoomId, today))
+                    return today.AddMonths(1);
+
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT BillingAnchorDate FROM Rooms WHERE RoomId = @rid;", conn))
+                {
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = sourceRoomId;
+                    object value = cmd.ExecuteScalar();
+                    return value == null || value == DBNull.Value
+                        ? (DateTime?)null
+                        : NextPeriodStart(Convert.ToDateTime(value), today);
+                }
+            }
+        }
+
+        /// <summary>The room's next billing date after today, from its fixed anchor.</summary>
+        private static DateTime NextPeriodStart(DateTime? anchor, DateTime today)
+        {
+            if (!anchor.HasValue) return today.AddMonths(1);
+
+            int n = 0;
+            while (anchor.Value.AddMonths(n) <= today) n++;
+            return anchor.Value.AddMonths(n);
+        }
+
+        /// <summary>
+        /// NEW: fills the plan under the approved rules. Runs for the screen
+        /// (tx null) and again inside the save, so the save uses fresh figures.
+        /// </summary>
+        private static void ComputeNew(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
+        {
+            // ---- The two rooms ----
+            DateTime? srcAnchor = null, destAnchor = null;
+            decimal destPrice = 0m;
+            decimal? destPending = null;
+            int destPayers = 0;
+
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT v.RoomId, v.RoomNumber, v.BillingAnchorDate, ISNULL(v.RoomPrice, 0),
+                       v.PendingRoomPrice, ISNULL(v.ActiveTenants, 0)
+                FROM   vwRoomStatus v
+                WHERE  v.RoomId IN (@src, @dest);", conn, tx))
+            {
+                cmd.Parameters.Add("@src", SqlDbType.Int).Value = plan.SourceRoomId;
+                cmd.Parameters.Add("@dest", SqlDbType.Int).Value = plan.DestRoomId;
+                using (SqlDataReader r = cmd.ExecuteReader())
+                {
+                    while (r.Read())
+                    {
+                        string number = Convert.ToString(r.GetValue(1)) ?? "";
+                        DateTime? anchor = r.IsDBNull(2) ? (DateTime?)null : r.GetDateTime(2);
+
+                        if (r.GetInt32(0) == plan.SourceRoomId)
+                        {
+                            plan.SourceRoomNumber = number;
+                            srcAnchor = anchor;
+                        }
+                        else
+                        {
+                            plan.DestRoomNumber = number;
+                            destAnchor = anchor;
+                            destPrice = r.GetDecimal(3);
+                            destPending = r.IsDBNull(4) ? (decimal?)null : r.GetDecimal(4);
+                            destPayers = r.GetInt32(5);
+                        }
+                    }
+                }
+            }
+
+            plan.DestEmpty = destPayers == 0;
+
+            // NEW (Nov 7): is the old room's next bill already issued (7 days before due)?
+            plan.SourceNextIssued = SourceNextIssued(conn, tx, plan.SourceRoomId, today);
+            plan.SourceNextDue = srcAnchor.HasValue ? NextPeriodStart(srcAnchor, today) : (DateTime?)null;
+
+            // ---- Their first normal bill in the new room ----
+            //   Vacant room   -> keeps their cycle: the old room's next billing date.
+            //                    NEW (Nov 7): if the old room's next bill is already
+            //                    issued, a new cycle starts today, like a Move In.
+            //   Occupied room -> joins its cycle: its first bill not created yet.
+            if (plan.DestEmpty)
+                // ORIGINAL (Step 2 v3): plan.FirstBill = NextPeriodStart(srcAnchor, today);
+                plan.FirstBill = plan.SourceNextIssued ? today.AddMonths(1) : NextPeriodStart(srcAnchor, today);
+            else
+                plan.FirstBill = destAnchor.HasValue
+                    ? BillGenerator.NextUnbilledPeriod(conn, tx, plan.DestRoomId, destAnchor.Value, today)
+                    : (DateTime?)null;
+
+            // ---- The room they leave: what moves, and who covers it ----
+            var moverIds = new HashSet<int>(plan.Movers.Select(m => m.TenantId));
+
+            // ORIGINAL (first Step 2 file): plan.SourcePeriods = RoomRentShares.ReadPeriods(conn, tx, plan.SourceRoomId, today);
+            // NEW (option 2, Nov 6): only the CURRENT period moves. A next bill already
+            // issued is final, so their paid share stays on it.
+            // NEW (Nov 7): once the next bill is issued, the current period is final
+            // too. Nothing moves and nobody staying is charged.
+            plan.SourcePeriods = plan.SourceNextIssued
+                ? new List<RentPeriod>()
+                : RoomRentShares.ReadPeriods(conn, tx, plan.SourceRoomId, today)
+                                .Where(p => p.HasStarted(today))
+                                .ToList();
+
+            List<int> stayers = RoomRentShares.ActiveTenantIds(conn, tx, plan.SourceRoomId)
+                                              .Where(id => !moverIds.Contains(id))
+                                              .ToList();
+
+            plan.StayerCharges = RoomRentShares.PlanLeave(plan.SourcePeriods, moverIds, stayers);
+
+            foreach (StayerCharge charge in plan.StayerCharges)
+                charge.Name = AuditLogger.TenantName(conn, tx, charge.TenantId);
+
+            // ---- The room they join: what they must cover ----
+            int count = plan.Movers.Count;
+            var nowShares = new decimal[count];
+            var nextShares = new decimal[count];
+
+            if (plan.DestEmpty)
+            {
+                plan.JoinParts = new List<JoinPart>();
+                nowShares = BillGenerator.SplitEqually(destPending ?? destPrice, count);
+            }
+            else
+            {
+                // NEW (Nov 7): the room is near due (its next bill is already issued).
+                // Joiners pay nothing now and start on the first bill not issued yet.
+                plan.DestNextIssued = SourceNextIssued(conn, tx, plan.DestRoomId, today);
+
+                // Movers coming back may still hold a paid share on a next bill there.
+                List<RentPeriod> destPeriods = RoomRentShares.ReadPeriods(conn, tx, plan.DestRoomId, today, moverIds);
+
+                // ORIGINAL (Step 2 v4): plan.JoinParts = RoomRentShares.PlanJoin(destPeriods, destPayers,
+                // ORIGINAL:                                 plan.Movers.Select(m => m.TenantId).ToList(), today);
+                plan.JoinParts = plan.DestNextIssued
+                    ? new List<JoinPart>()
+                    : RoomRentShares.PlanJoin(destPeriods, destPayers,
+                                              plan.Movers.Select(m => m.TenantId).ToList(), today);
+
+                foreach (JoinPart part in plan.JoinParts)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (part.Period.HasStarted(today)) nowShares[i] += part.Shares[i];
+                        else nextShares[i] += part.Shares[i];
+                    }
+                }
+            }
+
+            // ---- Per mover ----
+            for (int i = 0; i < count; i++)
+            {
+                TransferMover m = plan.Movers[i];
+                m.Lines.Clear();
+
+                m.Carried = plan.SourcePeriods.SelectMany(p => p.Shares)
+                                              .Where(s => s.TenantId == m.TenantId)
+                                              .Sum(s => s.Paid);
+                m.NewShare = nowShares[i];
+                m.NextShare = nextShares[i];
+
+                decimal credit = BillingHelper.GetAvailableCredit(conn, m.TenantId, Rent, tx);
+
+                m.Difference = Math.Max(0m, m.NewShare - m.Carried);
+                m.CreditUsed = Math.Min(credit, m.Difference);
+                m.Due = m.Difference - m.CreditUsed;
+                m.CreditAfter = Math.Max(0m, m.Carried + credit - m.NewShare - m.NextShare);
+            }
+
+            // ---- NEW (Nov 7): a vacant room's next bill that falls within 7 days ----
+            // The save issues it at once (BillGenerator, 7 days before due), so the
+            // landlord is told before confirming.
+            plan.NextBillLines.Clear();
+
+            // NEW (Nov 7): explain the issued case first.
+            if (plan.SourceNextIssued)
+            {
+                plan.NextBillLines.Add(
+                    $"Room {plan.SourceRoomNumber}'s next bill" +
+                    (plan.SourceNextDue.HasValue ? $" ({plan.SourceNextDue.Value:MMM d})" : "") +
+                    " is already issued, so its bills are final: their paid rent stays there and nothing moves." +
+                    (plan.DestEmpty && plan.FirstBill.HasValue
+                        ? $" Room {plan.DestRoomNumber} starts a new cycle today, next due {plan.FirstBill.Value:MMM d}."
+                        : ""));
+            }
+            // NEW (Nov 7): joining a room that is near due -> free until its next unissued bill.
+            if (!plan.DestEmpty && plan.DestNextIssued)
+            {
+                plan.NextBillLines.Add(
+                    $"Room {plan.DestRoomNumber}'s next bill is already issued, so they pay nothing for the current period" +
+                    (plan.FirstBill.HasValue ? $" and start on the {plan.FirstBill.Value:MMM d} bill." : "."));
+            }
+
+            // NEW (Nov 7): joining before the next bill is issued -> who owes less.
+            string movers = string.Join(", ", plan.Movers.Select(m => m.Name));
+            foreach (JoinPart part in plan.JoinParts)
+            {
+                List<RentShare> open = part.Period.Shares
+                    .Where(s => s.Owing > 0m && !moverIds.Contains(s.TenantId))
+                    .ToList();
+
+                var owing = open.Select((s, i) => new KeyValuePair<int, decimal>(i, s.Owing)).ToList();
+
+                List<string> less = BillingHelper.SplitWholeRoom(owing, part.Amount)
+                    .Where(c => c.Value > 0m)
+                    .GroupBy(c => open[c.Key].TenantId)
+                    .Select(g => $"{AuditLogger.TenantName(conn, tx, g.Key)} owes {g.Sum(x => x.Value):N2} less")
+                    .ToList();
+
+                plan.NextBillLines.Add(
+                    $"{movers} take{(plan.Movers.Count == 1 ? "s" : "")} over {part.Amount:N2} of Room " +
+                    $"{plan.DestRoomNumber}'s unpaid current period" +
+                    (less.Count > 0 ? ", so " + string.Join(", ", less) + "." : "."));
+            }
+
+            if (plan.DestEmpty && plan.FirstBill.HasValue && plan.FirstBill.Value <= today.AddDays(7))
+            {
+                decimal[] next = BillGenerator.SplitEqually(destPending ?? destPrice, count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    TransferMover m = plan.Movers[i];
+                    decimal creditUsed = Math.Min(m.CreditAfter, next[i]);
+
+                    plan.NextBillLines.Add(
+                        $"Room {plan.DestRoomNumber}'s {plan.FirstBill.Value:MMM d} bill is issued right away: " +
+                        $"{m.Name} pays {next[i]:N2}" +
+                        (creditUsed > 0m ? $" (credit {creditUsed:N2} used first)" : "") +
+                        $" by {plan.FirstBill.Value:MMM d}.");
+                }
+            }
+        }
+
+        /// <summary>What the Transfer screen says about the people staying.</summary>
+        public static List<string> StayerLines(TransferPlan plan)
+        {
+            DateTime today = DateTime.Today;
+
+            // ORIGINAL (first Step 2 file): return plan.StayerCharges.Select(c => c.Period.HasStarted(today)
+            // NEW (Nov 7): the new room's next bill first, then those who stay.
+            return plan.NextBillLines.Concat(plan.StayerCharges.Select(c => c.Period.HasStarted(today)
+                    ? $"{c.Name} will owe {c.Amount:N2} now, unless someone joins Room {plan.SourceRoomNumber} and takes it over."
+                    : $"{c.Name}'s {c.Period.FirstStart:MMM d} bill rises by {c.Amount:N2}. The due date stays the same."))
+                .ToList();
+        }
+
+        /// <summary>
+        /// NEW: the transfer, one transaction:
+        ///   1. Lock both rooms, re-check everything from fresh data.
+        ///   2. Read the payment rows that will move.
+        ///   3. Move the stays and dependents, and update both rooms' cycles.
+        ///   4. Old room: shares come off, those who stay are charged.
+        ///   5. New room: a Regular bill, or join its unpaid bills.
+        ///   6. Credit, then carried money, pays the new shares. The rest is credit.
+        ///   7. Anything still due now: one normal receipt per payer.
+        ///   8. Audit.
+        /// </summary>
+        private static TransferResult SaveNew(SqlConnection conn, SqlTransaction tx, TransferPlan plan, DateTime today)
+        {
+            // ---- 1. Lock both rooms (lower RoomId first: two transfers can't deadlock) ----
+            foreach (int roomId in new[] { plan.SourceRoomId, plan.DestRoomId }.OrderBy(x => x))
+            {
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT RoomId FROM Rooms WITH (UPDLOCK, HOLDLOCK) WHERE RoomId = @rid;", conn, tx))
+                {
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                    cmd.ExecuteScalar();
+                }
+            }
+
+            // Everyone must be fully settled, so everything they carry is real money.
+            foreach (TransferMover m in plan.Movers)
+            {
+                foreach (string cat in Categories)
+                {
+                    decimal owed = BillingHelper.GetTotalOutstanding(conn, m.TenantId, cat, tx);
+                    if (owed >= 0.005m)
+                        throw new InvalidOperationException($"{m.Name} now owes {cat} {owed:N2}. Settle it first.");
+                }
+            }
+
+            var shownDue = plan.Movers.ToDictionary(m => m.TenantId, m => m.Due);
+
+            ComputeNew(conn, tx, plan, today);
+
+            if (plan.Movers.Any(m => m.Due != shownDue[m.TenantId]))
+                throw new InvalidOperationException(
+                    "The amount due changed while this screen was open (a bill, price or payment changed). Start the transfer again.");
+
+            int destCapacity, destOccupants;
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT ISNULL(Capacity, 0), ISNULL(Occupants, 0) FROM vwRoomStatus WHERE RoomId = @rid;", conn, tx))
+            {
+                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+                using (SqlDataReader r = cmd.ExecuteReader())
+                {
+                    r.Read();
+                    destCapacity = r.GetInt32(0);
+                    destOccupants = r.GetInt32(1);
+                }
+            }
+
+            int moving = 0;
+            foreach (TransferMover m in plan.Movers)
+            {
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM Dependents WHERE TenancyId = @tn AND Status = 'Active';", conn, tx))
+                {
+                    cmd.Parameters.Add("@tn", SqlDbType.Int).Value = m.TenancyId;
+                    moving += 1 + (int)cmd.ExecuteScalar();
+                }
+            }
+
+            if (destOccupants + moving > destCapacity)
+                throw new InvalidOperationException($"Room {plan.DestRoomNumber} no longer has space for {moving} people.");
+
+            // ---- 2. The payment rows that move (read while the old stays are active) ----
+            var carried = new Dictionary<int, List<CarriedRow>>();
+            foreach (TransferMover m in plan.Movers)
+                // ORIGINAL (Step 2 v3): carried[m.TenantId] = RoomRentShares.ReadCarriedRows(conn, tx, m.TenantId, plan.SourceRoomId, today);
+                carried[m.TenantId] = plan.SourceNextIssued
+                    ? new List<CarriedRow>()   // NEW (Nov 7): next bill issued, nothing moves
+                    : RoomRentShares.ReadCarriedRows(conn, tx, m.TenantId, plan.SourceRoomId, today);
+
+            // ---- 3. The stays and dependents ----
+            var log = new List<string>();
+            var newTenancies = new Dictionary<int, int>();
+            int dependentsMoved = 0;
+
+            foreach (TransferMover m in plan.Movers)
+            {
+                using (SqlCommand cmd = new SqlCommand(@"
+                    UPDATE Tenancies
+                       SET Status = 'Inactive', MoveOutDate = @date, MoveOutReason = 'Transferred'
+                     WHERE TenancyId = @tn AND Status = 'Active';", conn, tx))
+                {
+                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+                    cmd.Parameters.Add("@tn", SqlDbType.Int).Value = m.TenancyId;
+                    if (cmd.ExecuteNonQuery() != 1)
+                        throw new InvalidOperationException(m.Name + " is no longer an active tenant of Room " + plan.SourceRoomNumber + ".");
+                }
+
+                int newTenancyId;
+                using (SqlCommand cmd = new SqlCommand(@"
+                    INSERT INTO Tenancies (TenantId, RoomId, MoveInDate, Status)
+                    OUTPUT INSERTED.TenancyId
+                    VALUES (@tid, @rid, @date, 'Active');", conn, tx))
+                {
+                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = m.TenantId;
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+                    newTenancyId = (int)cmd.ExecuteScalar();
+                }
+                newTenancies[m.TenantId] = newTenancyId;
+
+                // Dependents: re-add under the new stay, then close the old rows.
+                int deps;
+                using (SqlCommand cmd = new SqlCommand(@"
+                    INSERT INTO Dependents (TenancyId, FirstName, MiddleName, LastName, ContactNumber, MoveInDate, Status)
+                    SELECT @newTn, FirstName, MiddleName, LastName, ContactNumber, @date, 'Active'
+                    FROM   Dependents
+                    WHERE  TenancyId = @oldTn AND Status = 'Active';
+
+                    UPDATE Dependents
+                       SET Status = 'Inactive', MoveOutDate = @date, MoveOutReason = 'Transferred'
+                     WHERE TenancyId = @oldTn AND Status = 'Active';", conn, tx))
+                {
+                    cmd.Parameters.Add("@newTn", SqlDbType.Int).Value = newTenancyId;
+                    cmd.Parameters.Add("@oldTn", SqlDbType.Int).Value = m.TenancyId;
+                    cmd.Parameters.Add("@date", SqlDbType.Date).Value = today;
+                    deps = cmd.ExecuteNonQuery() / 2;   // each dependent = 1 insert + 1 update
+                }
+
+                dependentsMoved += deps;
+                log.Add(m.Name + (deps > 0 ? $" + {deps} dependent(s)" : ""));
+            }
+
+            // Vacant room: it keeps their cycle, and a scheduled price applies now.
+            if (plan.DestEmpty)
+            {
+                using (SqlCommand cmd = new SqlCommand(@"
+                    UPDATE Rooms
+                       SET BillingAnchorDate = @date,
+                           RoomPrice         = ISNULL(PendingRoomPrice, RoomPrice),
+                           PendingRoomPrice  = NULL,
+                           PendingPriceFrom  = NULL
+                     WHERE RoomId = @rid;", conn, tx))
+                {
+                    // ORIGINAL (Step 2 v3): cmd.Parameters.Add("@date", SqlDbType.Date).Value = plan.FirstBill ?? today.AddMonths(1);
+                    // NEW (Nov 7): a new cycle from today, the same as Move In
+                    cmd.Parameters.Add("@date", SqlDbType.Date).Value =
+                        plan.SourceNextIssued ? today : (plan.FirstBill ?? today.AddMonths(1));
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.DestRoomId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            // Old room left empty: no cycle, and a scheduled price becomes the price.
+            using (SqlCommand cmd = new SqlCommand(@"
+                UPDATE Rooms
+                   SET BillingAnchorDate = NULL,
+                       RoomPrice         = ISNULL(PendingRoomPrice, RoomPrice),
+                       PendingRoomPrice  = NULL,
+                       PendingPriceFrom  = NULL
+                 WHERE RoomId = @rid
+                   AND NOT EXISTS (SELECT 1 FROM Tenancies tn WHERE tn.RoomId = @rid AND tn.Status = 'Active');", conn, tx))
+            {
+                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = plan.SourceRoomId;
+                cmd.ExecuteNonQuery();
+            }
+
+            // ---- 4. The old room ----
+            List<int> joinerIds = plan.Movers.Select(m => m.TenantId).ToList();
+
+            RoomRentShares.ApplyLeave(conn, tx, plan.SourceRoomId, plan.SourceRoomNumber,
+                                      plan.SourcePeriods, joinerIds, plan.StayerCharges, today);
+
+            // ---- 5. The new room ----
+            var newShares = joinerIds.ToDictionary(id => id, id => new List<NewRoomShare>());
+
+            if (plan.DestEmpty)
+            {
+                DateTime end = plan.FirstBill ?? today.AddMonths(1);
+                int billId = RoomRentShares.FindOrInsertRegular(conn, tx, plan.DestRoomId, today, end,
+                                                                plan.Movers.Sum(m => m.NewShare));
+
+                foreach (TransferMover m in plan.Movers.Where(x => x.NewShare > 0m))
+                {
+                    RoomRentShares.AddShare(conn, tx, billId, m.TenantId, m.NewShare);
+                    newShares[m.TenantId].Add(new NewRoomShare { BillId = billId, Amount = m.NewShare });
+                }
+
+                RoomRentShares.RefreshBill(conn, tx, billId);
+            }
+            else
+            {
+                foreach (JoinPart part in plan.JoinParts)
+                {
+                    int billId = RoomRentShares.ApplyJoin(conn, tx, plan.DestRoomId, plan.DestRoomNumber,
+                                                          part, joinerIds, today);
+
+                    for (int i = 0; i < joinerIds.Count; i++)
+                    {
+                        if (part.Shares[i] > 0m)
+                            newShares[joinerIds[i]].Add(new NewRoomShare { BillId = billId, Amount = part.Shares[i] });
+                    }
+                }
+            }
+
+            // ---- 6. The money that moves ----
+            foreach (TransferMover m in plan.Movers)
+            {
+                RoomRentShares.MoveCarriedMoney(conn, tx, m.TenantId, m.TenancyId, newTenancies[m.TenantId],
+                                                newShares[m.TenantId], carried[m.TenantId], Session.UserId);
+            }
+
+            // ---- 7. Anything still due now: one normal receipt per payer ----
+            var result = new TransferResult
+            {
+                PayingCount = plan.Movers.Count,
+                DependentCount = dependentsMoved,
+                FirstBill = plan.FirstBill
+            };
+
+            var payers = plan.Movers.Where(x => x.Due > 0m).ToList();
+            string baseNo = "R" + DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            for (int i = 0; i < payers.Count; i++)
+            {
+                TransferMover m = payers[i];
+                string receiptNo = payers.Count == 1 ? baseNo : baseNo + "-" + (i + 1);
+                string type = m.AmountPaid == m.Due ? "Full" : "Advance";   // more than due becomes Rent credit
+
+                BillingHelper.RecordReceipt(conn, tx, plan.DestRoomId, m.TenantId, false,
+                    new List<PaymentLine> { new PaymentLine(Rent, m.AmountPaid, type) },
+                    m.Method,
+                    m.Method == MoveInService.GCash ? m.ReferenceNo.Trim() : null,
+                    today, Session.UserId, receiptNo);
+
+                result.Receipts.Add(new MoveInReceiptLine
+                {
+                    ReceiptNo = receiptNo,
+                    PayerName = m.Name + " (transfer)",
+                    Method = m.Method,
+                    Amount = m.AmountPaid
+                });
+            }
+
+            // ---- 8. Audit, same transaction ----
+            string money = "; carried " + plan.Movers.Sum(m => m.Carried).ToString("N2") +
+                           ", room share " + plan.Movers.Sum(m => m.NewShare).ToString("N2") +
+                           ", paid now " + payers.Sum(m => m.AmountPaid).ToString("N2");
+
+            string stayers = plan.StayerCharges.Count == 0 ? ""
+                : "; " + string.Join(", ", plan.StayerCharges.Select(c => $"{c.Name} owes {c.Amount:N2}"));
+
+            AuditLogger.Log(conn, tx, AuditLogger.ModuleTenants, "Transfer",
+                string.Join("; ", log) + " transferred from Room " + plan.SourceRoomNumber +
+                " to Room " + plan.DestRoomNumber + " on " + today.ToString("MMM dd, yyyy") + money + stayers);
+
+            return result;
         }
 
         private static void AddMoney(SqlCommand cmd, string name, decimal value)

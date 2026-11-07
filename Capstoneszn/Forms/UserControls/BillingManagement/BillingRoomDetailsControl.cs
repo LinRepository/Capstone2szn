@@ -163,7 +163,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 FROM   Bills
                 WHERE  RoomId = @rid
                   AND  BillCategory = @cat
-                  AND  (Remarks IS NULL OR Remarks NOT LIKE N'Price difference%')
+                  -- ORIGINAL: AND  (Remarks IS NULL OR Remarks NOT LIKE N'Price difference%')
+                  AND  BillKind = N'Regular'   -- NEW (BillKind)
                 ORDER BY BillingPeriodStart DESC;", conn))
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;

@@ -219,7 +219,11 @@ namespace Capstoneszn
             // (money left after the whole room is settled).
             //   null      -> split equally (the old rule; other callers unchanged)
             //   tenantId  -> all of the extra goes to that tenant
-            int? extraCreditTenantId = null)
+            // ORIGINAL (credit choice): int? extraCreditTenantId = null)
+            int? extraCreditTenantId = null,
+            // NEW (Step 3): Whole Room for joiners - only these tenants' debts are paid,
+            // never the debts of people already living in the room. null = everyone (unchanged).
+            IList<int>? onlyTenantIds = null)
         {
             if (lines == null || lines.Count == 0)
                 throw new InvalidOperationException("Choose at least one category to pay.");
@@ -315,6 +319,10 @@ namespace Capstoneszn
                 else
                 {
                     List<KeyValuePair<int, decimal>> owing = GetRoomOwing(conn, roomId, line.Category, tx);
+
+                    // NEW (Step 3): a joiners' Whole Room payment settles the joiners only.
+                    if (onlyTenantIds != null)
+                        owing = owing.Where(x => onlyTenantIds.Contains(x.Key)).ToList();
 
                     if (owing.Count == 0)
                         throw new InvalidOperationException("Whole Room payment on a room with no active tenants.");

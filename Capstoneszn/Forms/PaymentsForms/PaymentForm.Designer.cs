@@ -40,12 +40,12 @@
             flpPayerCards = new FlowLayoutPanel();
             lblCreditedTo = new Label();
             lblDependents = new Label();
+            pnlCreditTo = new Panel();
+            cboCreditTo = new ComboBox();
+            lblCreditTo = new Label();
             pnlPaidBy = new Panel();
             cboPaidBy = new ComboBox();
             lblPaidBy = new Label();
-            pnlCreditTo = new Panel();          // NEW (credit choice)
-            cboCreditTo = new ComboBox();       // NEW (credit choice)
-            lblCreditTo = new Label();          // NEW (credit choice)
             pnlSummary = new Panel();
             lblStatus = new Label();
             lblReceiptsLine = new Label();
@@ -89,8 +89,8 @@
             pnlPaymentActions.SuspendLayout();
             pnlPaymentContent.SuspendLayout();
             pnlPayerArea.SuspendLayout();
+            pnlCreditTo.SuspendLayout();
             pnlPaidBy.SuspendLayout();
-            pnlCreditTo.SuspendLayout();        // NEW (credit choice)
             pnlSummary.SuspendLayout();
             tlpSummary.SuspendLayout();
             pnlLegacyFields.SuspendLayout();
@@ -211,7 +211,7 @@
             pnlPayerArea.Controls.Add(flpPayerCards);
             pnlPayerArea.Controls.Add(lblCreditedTo);
             pnlPayerArea.Controls.Add(lblDependents);
-            pnlPayerArea.Controls.Add(pnlCreditTo);   // NEW (credit choice): docks under "Paid by"
+            pnlPayerArea.Controls.Add(pnlCreditTo);
             pnlPayerArea.Controls.Add(pnlPaidBy);
             pnlPayerArea.Dock = DockStyle.Fill;
             pnlPayerArea.Location = new Point(16, 14);
@@ -225,9 +225,9 @@
             flpPayerCards.AutoScroll = true;
             flpPayerCards.Dock = DockStyle.Fill;
             flpPayerCards.FlowDirection = FlowDirection.TopDown;
-            flpPayerCards.Location = new Point(0, 52);
+            flpPayerCards.Location = new Point(0, 98);
             flpPayerCards.Name = "flpPayerCards";
-            flpPayerCards.Size = new Size(654, 444);
+            flpPayerCards.Size = new Size(654, 398);
             flpPayerCards.TabIndex = 1;
             flpPayerCards.WrapContents = false;
             // 
@@ -259,7 +259,7 @@
             lblDependents.TextAlign = ContentAlignment.MiddleLeft;
             lblDependents.Visible = false;
             // 
-            // pnlCreditTo  (NEW - credit choice: Whole Room, who gets the extra)
+            // pnlCreditTo
             // 
             pnlCreditTo.Controls.Add(cboCreditTo);
             pnlCreditTo.Controls.Add(lblCreditTo);
@@ -806,8 +806,8 @@
             pnlPaymentActions.ResumeLayout(false);
             pnlPaymentContent.ResumeLayout(false);
             pnlPayerArea.ResumeLayout(false);
+            pnlCreditTo.ResumeLayout(false);
             pnlPaidBy.ResumeLayout(false);
-            pnlCreditTo.ResumeLayout(false);   // NEW (credit choice)
             pnlSummary.ResumeLayout(false);
             tlpSummary.ResumeLayout(false);
             pnlLegacyFields.ResumeLayout(false);
