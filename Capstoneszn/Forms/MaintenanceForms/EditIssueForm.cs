@@ -256,7 +256,8 @@ namespace Capstoneszn.Forms
             bool markComplete = _repairDone;   // NEW (Maintenance v2): only the Repair Done button completes the repair
 
             // ---- Completing is final: show exactly what will happen -------
-            if (markComplete && !ConfirmComplete(tenants.Count))
+            // ORIGINAL: if (markComplete && !ConfirmComplete(tenants.Count))
+            if (markComplete && !ConfirmComplete(tenants.Count, responsible.Count))   // NEW (Step 4): responsible people share the cost
                 return;
 
             IssueSaveResult result;
@@ -280,6 +281,17 @@ namespace Capstoneszn.Forms
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            // NEW (MNT-01): a missing expense category, in plain words.
+            catch (Microsoft.Data.SqlClient.SqlException ex)
+                when (ex.Number == 547 && ex.Message.Contains("FK_Expenses_Category"))
+            {
+                MessageBox.Show(
+                    "This repair was not saved because its expense category is missing from the database.\n\n" +
+                    "Nothing was changed, and the issue is still Pending. " +
+                    "Ask the system administrator to run the expense category setup, then try again.",
+                    "Setup Needed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("The issue was not saved.\n\n" + ex.Message,
@@ -299,7 +311,8 @@ namespace Capstoneszn.Forms
         /// Tells the landlord, before anything is saved, what Complete will
         /// create. Returns true only on Yes.
         /// </summary>
-        private bool ConfirmComplete(int tenantCount)
+        ///  // ORIGINAL: private bool ConfirmComplete(int tenantCount)
+        private bool ConfirmComplete(int tenantCount, int responsibleCount) // NEW (Step 4)
         {
             decimal total;
             try
@@ -316,12 +329,38 @@ namespace Capstoneszn.Forms
             string outcome;
             if (total <= 0m)
                 outcome = "No materials were recorded, so nobody will be charged and no expense will be recorded.";
+            // ORIGINAL (Maintenance v2):
+            // else if (tenantCount > 0)
+            //     outcome = tenantCount + " tenant(s) will be billed a total of " + Peso(total)
+            //             + " (about " + Peso(Math.Round(total / tenantCount, 2)) + " each), due "
+            //             + DateTime.Today.AddDays(MaintenanceService.MaintenanceDueDays).ToString("MMM dd, yyyy")
+            //             + ".\nThey pay it in Bill Management. The issue becomes Complete once all have paid.";
             else if (tenantCount > 0)
-                // NEW (Maintenance v2): the issue waits For Payment until the tenants pay.
-                outcome = tenantCount + " tenant(s) will be billed a total of " + Peso(total)
-                        + " (about " + Peso(Math.Round(total / tenantCount, 2)) + " each), due "
+            {
+                // NEW (Step 4): tenants + responsible people share equally, rounded down;
+                // the responsible shares and any rounding are a building expense.
+                int heads = tenantCount + responsibleCount;
+                decimal share = Math.Floor(total / heads * 100m) / 100m;
+                decimal expense = total - share * tenantCount;
+
+                if (share < 1m)
+                {
+                    MessageBox.Show("Each person's share would be " + Peso(share) + " (" + Peso(total) + " split among " +
+                                    heads + "). A share must be at least ₱1.00.\n\n" +
+                                    "Charge fewer people, or choose None under Affected Tenants to record it as a building expense.",
+                        "Share Too Small", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
+
+                outcome = tenantCount + " tenant(s) will each be billed " + Peso(share) + ", due "
                         + DateTime.Today.AddDays(MaintenanceService.MaintenanceDueDays).ToString("MMM dd, yyyy")
-                        + ".\nThey pay it in Bill Management. The issue becomes Complete once all have paid.";
+                        + ", in the room each lives in now."
+                        + (expense > 0m
+                            ? "\n" + Peso(expense) + " is recorded as a building expense"
+                              + (responsibleCount > 0 ? " (the " + responsibleCount + " responsible share(s))." : " (rounding).")
+                            : "")
+                        + "\nThey pay it in Bill Management. The issue becomes Complete once all have paid.";
+            }
             else
                 outcome = Peso(total) + " will be recorded as a building expense.";
 
@@ -339,9 +378,14 @@ namespace Capstoneszn.Forms
                 return "Changes saved.";
             if (r.TenantsCharged > 0)
                 // NEW (Maintenance v2)
-                return "Repair done. " + r.TenantsCharged + " tenant(s) billed "
-                     + Peso(r.MaterialsTotal) + " in total, due "
-                     + r.DueDate.Value.ToString("MMM dd, yyyy") + ".\nStatus: For Payment.";
+                // ORIGINAL: return "Repair done. " + r.TenantsCharged + " tenant(s) billed "
+                // ORIGINAL:      + Peso(r.MaterialsTotal) + " in total, due "
+                // ORIGINAL:      + r.DueDate.Value.ToString("MMM dd, yyyy") + ".\nStatus: For Payment.";
+                return "Repair done. " + r.TenantsCharged + " tenant(s) billed "        // NEW (Step 4)
+                     + Peso(r.SharePerTenant) + " each, due "
+                     + r.DueDate.Value.ToString("MMM dd, yyyy") + "."
+                     + (r.ExpenseAmount > 0m ? "\n" + Peso(r.ExpenseAmount) + " recorded as a building expense." : "")
+                     + "\nStatus: For Payment.";
             if (r.ExpenseRecorded)
                 return "Issue completed. " + Peso(r.MaterialsTotal) + " recorded as a building expense.";
             return "Issue completed. No charge and no expense (no materials).";

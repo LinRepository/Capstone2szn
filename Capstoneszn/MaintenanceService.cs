@@ -160,6 +160,8 @@ namespace Capstoneszn
         public int TenantsCharged { get; set; }
         public bool ExpenseRecorded { get; set; }
         public DateTime? DueDate { get; set; }
+        public decimal SharePerTenant { get; set; }   // NEW (Step 4): what each charged tenant pays
+        public decimal ExpenseAmount { get; set; }    // NEW (Step 4): what the building pays
     }
 
     /// <summary>
@@ -504,6 +506,8 @@ namespace Capstoneszn
 
                         foreach (int tenantId in affectedTenantIds)
                         {
+                            EnsureMovedInBy(conn, tx, tenantId, dateReported);   // NEW (Step 4)
+
                             using (var cmd = new SqlCommand(tenantSql, conn, tx))
                             {
                                 cmd.Parameters.AddWithValue("@iid", issueId);
@@ -605,6 +609,8 @@ namespace Capstoneszn
                         // ---- 2. Affected tenants: still active in THIS building
                         foreach (int tenantId in affectedTenantIds)
                         {
+                            EnsureMovedInBy(conn, tx, tenantId, dateReported);   // NEW (Step 4)
+
                             using (var cmd = new SqlCommand(@"
                                 INSERT INTO MaintenanceAffectedTenants (IssueId, TenantId)
                                 SELECT @iid, tn.TenantId
@@ -861,6 +867,10 @@ namespace Capstoneszn
         /// </summary>
         public static void AddMaterial(int issueId, string materialName, int quantity, decimal unitPrice)
         {
+            // NEW (Step 4): PHP 0 (free) or at least PHP 1.00 - no centavo-only prices.
+            if (unitPrice < 0m || (unitPrice > 0m && unitPrice < 1m))
+                throw new InvalidOperationException("Unit price must be 0.00 (free) or at least 1.00.");
+
             string sql = @"
                 INSERT INTO MaintenanceMaterials (IssueId, MaterialName, Quantity, UnitPrice)
                 SELECT @iid, @name, @qty, @price
@@ -1228,6 +1238,8 @@ namespace Capstoneszn
 
                         foreach (int tenantId in affectedTenantIds)
                         {
+                            EnsureMovedInBy(conn, tx, tenantId, dateReported);   // NEW (Step 4)
+
                             using (var cmd = new SqlCommand(@"
                                 INSERT INTO MaintenanceAffectedTenants (IssueId, TenantId)
                                 SELECT @iid, tn.TenantId
@@ -1305,10 +1317,16 @@ namespace Capstoneszn
                             if (total > 0m && affectedTenantIds.Count > 0)
                             {
                                 // ORIGINAL: CreateMaintenanceBill(conn, tx, issueId, roomId, issueTitle, total, today, result);
-                                if (roomId == 0)
-                                    CreateBuildingMaintenanceBills(conn, tx, issueId, issueTitle, total, today, result);   // NEW
-                                else
-                                    CreateMaintenanceBill(conn, tx, issueId, roomId, issueTitle, total, today, result);
+                                // ORIGINAL (Maintenance v2):
+                                // if (roomId == 0)
+                                //     CreateBuildingMaintenanceBills(conn, tx, issueId, issueTitle, total, today, result);
+                                // else
+                                //     CreateMaintenanceBill(conn, tx, issueId, roomId, issueTitle, total, today, result);
+
+                                // NEW (Step 4): one rule for Room and Building issues -
+                                // responsible people share the cost, each tenant is billed
+                                // in the room they live in NOW, and rounding goes to the building.
+                                CreateSharedCharge(conn, tx, issueId, roomId, issueTitle, total, today, userId, result);
                             }
                             else if (total > 0m)
                             {
@@ -1320,9 +1338,16 @@ namespace Capstoneszn
                                 result.ExpenseRecorded = true;
                             }
 
-                            string outcome =
+                            // ORIGINAL: string outcome =
+                            // ORIGINAL:     total <= 0m ? "no materials, nothing charged"
+                            // ORIGINAL:     : result.TenantsCharged > 0 ? "PHP " + total.ToString("N2") + " charged to " + result.TenantsCharged + " tenant(s)"
+                            // ORIGINAL:     : "PHP " + total.ToString("N2") + " recorded as building expense";
+                            string outcome =   // NEW (Step 4)
                                 total <= 0m ? "no materials, nothing charged"
-                                : result.TenantsCharged > 0 ? "PHP " + total.ToString("N2") + " charged to " + result.TenantsCharged + " tenant(s)"
+                                : result.TenantsCharged > 0
+                                    ? "PHP " + total.ToString("N2") + ": PHP " + result.SharePerTenant.ToString("N2") +
+                                      " each to " + result.TenantsCharged + " tenant(s)" +
+                                      (result.ExpenseAmount > 0m ? ", PHP " + result.ExpenseAmount.ToString("N2") + " building expense" : "")
                                 : "PHP " + total.ToString("N2") + " recorded as building expense";
 
                             AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Complete Issue",
@@ -1343,6 +1368,160 @@ namespace Capstoneszn
             }
         }
 
+        /* =================================================================
+           NEW (Step 4): SHARED CHARGE
+           ================================================================= */
+
+        /// <summary>
+        /// NEW (Step 4): Repair Done with charged tenants, for Room and Building issues.
+        ///
+        ///   1. Heads = charged tenants + every Responsible person ticked
+        ///      (the owner and each employee count as one head each).
+        ///   2. Each head's share = total / heads, rounded DOWN to the centavo,
+        ///      so a tenant is never overcharged.
+        ///   3. Each tenant is billed in the room they live in NOW
+        ///      (a tenant who transferred is billed in their new room).
+        ///      One bill per room (UX_Bills_MaintIssue_Room).
+        ///   4. Everything the tenants do not pay - the Responsible shares and
+        ///      any rounding centavos - is ONE building expense.
+        ///   5. A share under PHP 1.00 is not allowed.
+        ///
+        /// Example: PHP 600, 2 tenants + owner + 1 employee -> PHP 150 each;
+        ///          tenants billed PHP 150 each, PHP 300 building expense.
+        /// Example: PHP 1,000, 11 tenants + 2 responsible -> PHP 76.92 each;
+        ///          tenants billed PHP 846.12, PHP 153.88 building expense.
+        /// </summary>
+        private static void CreateSharedCharge(
+            SqlConnection conn, SqlTransaction tx,
+            int issueId, int issueRoomId, string issueTitle, decimal total,
+            DateTime today, int userId, IssueSaveResult result)
+        {
+            DateTime due = today.AddDays(MaintenanceDueDays);
+
+            // Charged tenants and the room each lives in now, longest-tenured first.
+            var tenants = new List<(int TenantId, int RoomId)>();
+            using (var cmd = new SqlCommand(@"
+                SELECT mat.TenantId, tn.RoomId
+                FROM   MaintenanceAffectedTenants mat
+                JOIN   Tenancies tn ON tn.TenantId = mat.TenantId AND tn.Status = 'Active'
+                WHERE  mat.IssueId = @iid
+                ORDER BY tn.MoveInDate, tn.TenantId;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@iid", issueId);
+                using (var rd = cmd.ExecuteReader())
+                    while (rd.Read()) tenants.Add((rd.GetInt32(0), rd.GetInt32(1)));
+            }
+
+            int responsible;
+            using (var cmd = new SqlCommand(
+                "SELECT COUNT(*) FROM MaintenanceResponsible WHERE IssueId = @iid;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@iid", issueId);
+                responsible = (int)cmd.ExecuteScalar();
+            }
+
+            long cents = (long)Math.Round(total * 100m);
+            int heads = tenants.Count + responsible;
+            long share = heads == 0 ? 0 : cents / heads;   // integer division = rounded down
+
+            if (tenants.Count > 0 && share < 100)
+                throw new InvalidOperationException(
+                    "Each person's share would be " + (share / 100m).ToString("N2") + " (" +
+                    total.ToString("N2") + " split among " + heads + "). A share must be at least PHP 1.00. " +
+                    "Charge fewer people, or record it with no affected tenants as a building expense.");
+
+            // One bill per room the charged tenants live in now.
+            foreach (var room in tenants.GroupBy(t => t.RoomId))
+            {
+                string remarks =
+                    issueRoomId == 0 ? "Maintenance (Building): " + issueTitle
+                  : room.Key == issueRoomId ? "Maintenance: " + issueTitle
+                  : "Maintenance (Room " + GetRoomNumber(conn, tx, issueRoomId) + "): " + issueTitle;
+
+                int billId;
+                using (var cmd = new SqlCommand(@"
+                    INSERT INTO Bills (RoomId, BillCategory, BillingPeriodStart, BillingPeriodEnd,
+                                       DueDate, Amount, Remarks, MaintenanceIssueId)
+                    OUTPUT INSERTED.BillId
+                    VALUES (@rid, 'Maintenance', @today, @today, @due, @amt, @remarks, @iid);", conn, tx))
+                {
+                    cmd.Parameters.AddWithValue("@rid", room.Key);
+                    cmd.Parameters.AddWithValue("@today", today);
+                    cmd.Parameters.AddWithValue("@due", due);
+                    cmd.Parameters.AddWithValue("@amt", share * room.Count() / 100m);
+                    cmd.Parameters.AddWithValue("@remarks", Trim255(remarks));
+                    cmd.Parameters.AddWithValue("@iid", issueId);
+                    billId = (int)cmd.ExecuteScalar();
+                }
+
+                foreach (var t in room)
+                {
+                    using (var cmd = new SqlCommand(@"
+                        INSERT INTO BillTenants (BillId, TenantId, Share)
+                        VALUES (@bid, @tid, @share);", conn, tx))
+                    {
+                        cmd.Parameters.AddWithValue("@bid", billId);
+                        cmd.Parameters.AddWithValue("@tid", t.TenantId);
+                        cmd.Parameters.AddWithValue("@share", share / 100m);
+                        cmd.ExecuteNonQuery();
+                    }
+                    result.TenantsCharged++;
+                }
+            }
+
+            // What the tenants do not pay: Responsible shares + rounding.
+            long expenseCents = cents - share * tenants.Count;
+            if (expenseCents > 0)
+            {
+                using (var cmd = new SqlCommand(@"
+                    INSERT INTO Expenses (BuildingId, ExpenseCategory, Description, Amount,
+                                          ExpenseDate, MaintenanceIssueId, RecordedBy)
+                    SELECT mi.BuildingId, 'Maintenance', @desc, @amt, @today, @iid, @by
+                    FROM   MaintenanceIssues mi
+                    WHERE  mi.IssueId = @iid;", conn, tx))
+                {
+                    string where = issueRoomId == 0 ? "Building" : "Room " + GetRoomNumber(conn, tx, issueRoomId);
+                    string why = tenants.Count == 0 ? ""
+                               : responsible > 0 ? " (responsible shares)"
+                               : " (rounding)";
+                    cmd.Parameters.AddWithValue("@desc", Trim255(where + " - " + issueTitle + why));
+                    cmd.Parameters.AddWithValue("@amt", expenseCents / 100m);
+                    cmd.Parameters.AddWithValue("@today", today);
+                    cmd.Parameters.AddWithValue("@iid", issueId);
+                    cmd.Parameters.AddWithValue("@by", userId);
+                    cmd.ExecuteNonQuery();
+                }
+                result.ExpenseRecorded = true;
+                result.ExpenseAmount = expenseCents / 100m;
+            }
+
+            result.SharePerTenant = share / 100m;
+            if (tenants.Count > 0) result.DueDate = due;
+        }
+
+        /// <summary>
+        /// NEW (Step 4): a tenant cannot be charged for an issue dated before
+        /// they first moved in (any room, any stay).
+        /// </summary>
+        private static void EnsureMovedInBy(SqlConnection conn, SqlTransaction tx, int tenantId, DateTime issueDate)
+        {
+            using (var cmd = new SqlCommand(
+                "SELECT MIN(MoveInDate) FROM Tenancies WHERE TenantId = @tid;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@tid", tenantId);
+                object o = cmd.ExecuteScalar();
+                if (o == null || o == DBNull.Value) return;   // the insert after this reports a missing tenant
+
+                DateTime firstMoveIn = Convert.ToDateTime(o);
+                if (firstMoveIn > issueDate.Date)
+                    throw new InvalidOperationException(
+                        AuditLogger.TenantName(conn, tx, tenantId) + " moved in on " + firstMoveIn.ToString("MMM d, yyyy") +
+                        ", after this issue's date (" + issueDate.ToString("MMM d, yyyy") + "). " +
+                        "They can't be charged for it. Remove them from Affected Tenants or check the issue date.");
+            }
+        }
+
+        // NOTE (Step 4): no longer called - CreateSharedCharge replaces it (bills by current room). Kept as is.
         /// <summary>
         /// One 'Maintenance' bill linked to the issue, with a frozen share per
         /// affected tenant. Equal split in centavos; the leftover centavo goes
@@ -1438,6 +1617,7 @@ namespace Capstoneszn
             }
         }
 
+        // NOTE (Step 4): no longer called - CreateSharedCharge replaces it. Kept as is.
         /// <summary>
         /// NEW (Maintenance v2): bills a BUILDING issue.
         ///   1. The total is split equally among ALL charged tenants

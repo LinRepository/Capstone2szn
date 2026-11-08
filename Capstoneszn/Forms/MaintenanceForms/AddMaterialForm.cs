@@ -68,9 +68,15 @@ namespace Capstoneszn.Forms
             }
 
             decimal unitPrice = nudUnitPrice.Value;
-            if (unitPrice <= 0m)
+            // ORIGINAL: if (unitPrice <= 0m)
+            // ORIGINAL: {
+            // ORIGINAL:     Warn("Unit price must be greater than zero.", nudUnitPrice);
+            // ORIGINAL:     return;
+            // ORIGINAL: }
+            // NEW (Step 4): ₱0.00 (free material) or at least ₱1.00.
+            if (unitPrice > 0m && unitPrice < 1m)
             {
-                Warn("Unit price must be greater than zero.", nudUnitPrice);
+                Warn("Unit price must be ₱0.00 (free) or at least ₱1.00.", nudUnitPrice);
                 return;
             }
 
