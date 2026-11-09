@@ -78,6 +78,13 @@ namespace Capstoneszn
         public decimal Payments { get; set; }
         public decimal Adjustments { get; set; }
 
+        /// <summary>
+        /// NEW (Step 5, decision B): filled when the tenant no longer lived in
+        /// the room on the statement date, e.g. "Transferred out on November 5, 2026".
+        /// Empty for someone still living here.
+        /// </summary>
+        public string LeftNote { get; set; } = "";
+
         public decimal AmountDue =>
             PreviousBalance + Rent + Water + Maintenance - Payments + Adjustments;
 
@@ -111,6 +118,8 @@ namespace Capstoneszn
 
         // NEW (statement shows the people living here): tenants left out
         // because they no longer lived in the room on the statement date.
+        // NEW (Step 5, decision B): now only tenants who did not live here at
+        // all during the statement, but still had activity on it (rare).
         public List<string> ExcludedNames { get; } = new List<string>();
 
         // NEW (All periods)
@@ -152,11 +161,36 @@ namespace Capstoneszn
             " AND (o.MoveOutDate IS NULL OR o.MoveOutDate >= @Dnext))";
 
         /// <summary>
+        /// NEW (Step 5, decision B): a tenant counts when they had a stay in
+        /// THIS room at any time from the statement's first day (@L) to the
+        /// statement date (@Dnext = the day after it).
+        ///
+        ///   Nov 1 - Nov 30 statement, Levi transferred out Nov 5  -> listed
+        ///   Nov 1 - Nov 30 statement, Eren moved out Oct 20       -> not listed
+        ///
+        /// Occupant() above is still used to tell who has LEFT, for the note.
+        /// </summary>
+        private static string Lived(string tenantColumn) =>
+            "EXISTS (SELECT 1 FROM Tenancies lv WHERE lv.TenantId = " + tenantColumn +
+            " AND lv.RoomId = @rid AND lv.MoveInDate < @Dnext" +
+            " AND (lv.MoveOutDate IS NULL OR lv.MoveOutDate >= @L))";
+
+        /// <summary>
         /// The room's rent periods, newest first. A period appears once its
         /// rent bill exists (generated 7 days before the due date); test bills
         /// further in the future are ignored.
         /// </summary>
         public static List<StatementPeriod> GetPeriods(int roomId)
+        {
+            // NEW (Step 5): the room's periods come from its Regular AND Closed
+            // rent bills. A Regular bill turns Closed when every share on it
+            // moved away (a transfer), but its period still happened, so it
+            // keeps its statement. See GetPeriodsWithClosed below.
+            return GetPeriodsWithClosed(roomId);
+        }
+
+        /// <summary>ORIGINAL GetPeriods body, kept as is (no longer called).</summary>
+        private static List<StatementPeriod> GetPeriodsRegularOnly(int roomId)
         {
             var list = new List<StatementPeriod>();
 
@@ -184,6 +218,75 @@ namespace Capstoneszn
                         {
                             Start = rd.GetDateTime(0),
                             End = rd.GetDateTime(1),
+                            DueDate = rd.GetDateTime(2)
+                        });
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// NEW (Step 5): the room's rent periods, newest first, from its
+        /// Regular and Closed rent bills.
+        ///
+        /// Three rules keep the list clean:
+        ///   1. A TransferGap / JoinerShare bill is never a period. If one
+        ///      turned Closed, it is skipped: it ends on the same day as its
+        ///      period's main bill but starts later (the NOT EXISTS below).
+        ///   2. One period per start date (a Regular bill wins over a Closed one).
+        ///   3. When a new cycle starts inside an older period (the room was
+        ///      emptied, then someone moved in on a new date), the older period
+        ///      is cut short so the two never overlap:
+        ///         Nov 1 - Nov 30 (Closed) + new cycle Nov 8 - Dec 7
+        ///         -> Nov 1 - Nov 7  and  Nov 8 - Dec 7
+        /// </summary>
+        private static List<StatementPeriod> GetPeriodsWithClosed(int roomId)
+        {
+            var list = new List<StatementPeriod>();
+
+            const string sql = @"
+                SELECT b.BillingPeriodStart, b.BillingPeriodEnd, b.DueDate
+                FROM   Bills b
+                WHERE  b.RoomId = @rid
+                  AND  b.BillCategory = 'Rent'
+                  AND  b.BillingPeriodStart <= DATEADD(DAY, 7, CAST(GETDATE() AS DATE))
+                  AND  b.BillKind IN (N'Regular', N'Closed')
+                  -- rule 1: a closed transfer/joiner bill is not a period
+                  AND  NOT EXISTS (SELECT 1 FROM Bills m
+                                   WHERE  m.RoomId = b.RoomId
+                                     AND  m.BillCategory = 'Rent'
+                                     AND  m.BillKind IN (N'Regular', N'Closed')
+                                     AND  m.BillingPeriodEnd = b.BillingPeriodEnd
+                                     AND  m.BillingPeriodStart < b.BillingPeriodStart)
+                ORDER BY b.BillingPeriodStart DESC,
+                         CASE WHEN b.BillKind = N'Regular' THEN 0 ELSE 1 END;";
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                conn.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        DateTime start = rd.GetDateTime(0);
+                        DateTime end = rd.GetDateTime(1);
+
+                        // rule 2: same start as the one just added -> skip
+                        if (list.Count > 0 && list[list.Count - 1].Start == start) continue;
+
+                        // rule 3: the newer period (added just before) starts
+                        // before this one ends -> this one ends there
+                        if (list.Count > 0 && list[list.Count - 1].Start < end)
+                            end = list[list.Count - 1].Start;
+
+                        list.Add(new StatementPeriod
+                        {
+                            Start = start,
+                            End = end,
                             DueDate = rd.GetDateTime(2)
                         });
                     }
@@ -290,21 +393,43 @@ namespace Capstoneszn
                         SELECT TenantId FROM charges
                         UNION SELECT TenantId FROM paid
                         UNION SELECT TenantId FROM adjs
+                        -- NEW (Step 5, decision B): everyone who lived here during the
+                        -- statement, even with nothing on it (a share that moved away on
+                        -- a transfer, or a joiner not billed yet)
+                        UNION SELECT lv.TenantId FROM Tenancies lv
+                              WHERE  lv.RoomId = @rid AND lv.MoveInDate < @Dnext
+                                AND  (lv.MoveOutDate IS NULL OR lv.MoveOutDate >= @L)
                     )
-                    SELECT te.FirstName + ' ' + te.LastName AS TenantName,
+                    SELECT te.FirstName
+                         + ISNULL(' ' + LEFT(NULLIF(LTRIM(te.MiddleName), N''), 1) + '.', '')
+                         + ' ' + te.LastName AS TenantName,
                            ISNULL(c.PrevCharges, 0) - ISNULL(pd.PrevPaid, 0) + ISNULL(ad.PrevAdj, 0) AS PreviousBalance,
                            ISNULL(c.Rent, 0)          AS Rent,
                            ISNULL(c.Water, 0)         AS Water,
                            ISNULL(c.Maint, 0)         AS Maintenance,
                            ISNULL(pd.PaidInPeriod, 0) AS Payments,
                            ISNULL(ad.AdjInPeriod, 0)  AS Adjustments,
-                           CASE WHEN " + Occupant("ids.TenantId") + @" THEN 1 ELSE 0 END AS IsOccupant
+                           CASE WHEN " + Occupant("ids.TenantId") + @" THEN 1 ELSE 0 END AS IsOccupant,
+                           -- NEW (Step 5, decision B): lived here during the statement,
+                           -- and for someone who left, their last move-out from this room
+                           CASE WHEN " + Lived("ids.TenantId") + @" THEN 1 ELSE 0 END AS IsLived,
+                           lo.MoveOutDate,
+                           lo.MoveOutReason
                     FROM   ids
                     JOIN   Tenants te     ON te.TenantId = ids.TenantId
                     LEFT JOIN charges c   ON c.TenantId  = ids.TenantId
                     LEFT JOIN paid pd     ON pd.TenantId = ids.TenantId
                     LEFT JOIN adjs ad     ON ad.TenantId = ids.TenantId
-                    ORDER BY te.LastName, te.FirstName;";
+                    OUTER APPLY (SELECT TOP 1 o.MoveOutDate, o.MoveOutReason
+                                 FROM   Tenancies o
+                                 WHERE  o.TenantId = ids.TenantId
+                                   AND  o.RoomId = @rid
+                                   AND  o.MoveOutDate IS NOT NULL
+                                   AND  o.MoveOutDate < @Dnext
+                                 ORDER BY o.MoveOutDate DESC, o.TenancyId DESC) lo   -- NEW (Step 5)
+                    -- ORIGINAL: ORDER BY te.LastName, te.FirstName;
+                    -- NEW (Step 5): people living here first, then those who left
+                    ORDER BY IsOccupant DESC, te.LastName, te.FirstName;";
 
                 using (SqlCommand cmd = new SqlCommand(ledgerSql, conn))
                 {
@@ -330,8 +455,30 @@ namespace Capstoneszn
 
                             // NEW: only the people living here on the statement date;
                             // anyone else with activity is named in the notes instead.
-                            if (rd.GetInt32(7) == 1) st.Tenants.Add(line);
-                            else if (!line.IsEmpty) st.ExcludedNames.Add(line.TenantName);
+                            // ORIGINAL (NEW earlier): if (rd.GetInt32(7) == 1) st.Tenants.Add(line);
+                            // ORIGINAL (NEW earlier): else if (!line.IsEmpty) st.ExcludedNames.Add(line.TenantName);
+
+                            // NEW (Step 5, decision B): everyone who lived here during
+                            // the statement is listed. Someone who has left gets a note
+                            // under their line saying when and how they left.
+                            bool isOccupant = rd.GetInt32(7) == 1;
+                            bool isLived = rd.GetInt32(8) == 1;
+
+                            if (isLived)
+                            {
+                                if (!isOccupant && !rd.IsDBNull(9))
+                                {
+                                    string how = !rd.IsDBNull(10) && rd.GetString(10) == "Transferred"
+                                        ? "Transferred out"
+                                        : "Moved out";
+                                    line.LeftNote = how + " on " + rd.GetDateTime(9).ToString("MMMM d, yyyy");
+                                }
+                                st.Tenants.Add(line);
+                            }
+                            else if (!line.IsEmpty)
+                            {
+                                st.ExcludedNames.Add(line.TenantName);
+                            }
                         }
                     }
                 }
@@ -342,7 +489,9 @@ namespace Capstoneszn
                 // ORIGINAL: const string paySql = @"   (NEW: only payments for the people living here)
                 string paySql = @"
                     SELECT p.PaymentDate, p.ReceiptNo,
-                           te.FirstName + ' ' + te.LastName AS PaidBy,
+                           te.FirstName
+                         + ISNULL(' ' + LEFT(NULLIF(LTRIM(te.MiddleName), N''), 1) + '.', '')
+                         + ' ' + te.LastName AS PaidBy,
                            p.PaymentMethod, SUM(a.Amount) AS Amount
                     FROM   Payments p
                     JOIN   PaymentAllocations a ON a.PaymentId = p.PaymentId
@@ -352,9 +501,9 @@ namespace Capstoneszn
                       AND  p.PaymentDate <  @Dnext
                       AND  (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)
                       AND  (b.RoomId = @rid OR (a.BillId IS NULL AND p.RoomId = @rid))
-                      AND  " + Occupant("a.TenantId") + @"
+                      AND  " + Lived("a.TenantId") + @"   -- NEW (Step 5, decision B); ORIGINAL used Occupant(""a.TenantId"")
                     GROUP BY p.PaymentId, p.PaymentDate, p.ReceiptNo,
-                             te.FirstName, te.LastName, p.PaymentMethod
+                             te.FirstName, te.MiddleName, te.LastName, p.PaymentMethod
                     ORDER BY p.PaymentDate, p.PaymentId;";
 
                 using (SqlCommand cmd = new SqlCommand(paySql, conn))
@@ -386,6 +535,9 @@ namespace Capstoneszn
 
         /// <summary>
         /// NEW (All periods): totals per period for the people living here.
+        /// NEW (Step 5, decision B): "living here" = lived in the room at any
+        /// time during the whole statement (Lived, @L = the first period's
+        /// start), the same people as the PER-TENANT BREAKDOWN.
         /// The windows run back to back (each ends where the next starts), so
         /// the rows always add up to the summary, and the last row's running
         /// balance equals the TOTAL AMOUNT DUE.
@@ -398,29 +550,29 @@ namespace Capstoneszn
                           WHERE b.RoomId = @rid AND b.BillCategory = 'Rent'
                             AND b.DueDate >= @S AND b.DueDate < @E
                             AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
-                            AND " + Occupant("bt.TenantId") + @"), 0),
+                            AND " + Lived("bt.TenantId") + @"), 0),   -- NEW (Step 5): was Occupant
                   ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
                           WHERE b.RoomId = @rid AND b.BillCategory = 'Water'
                             AND b.DueDate >= @S AND b.DueDate < @E
                             AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
-                            AND " + Occupant("bt.TenantId") + @"), 0),
+                            AND " + Lived("bt.TenantId") + @"), 0),   -- NEW (Step 5): was Occupant
                   ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
                           WHERE b.RoomId = @rid AND b.BillCategory = 'Maintenance'
                             AND b.DueDate >= @S AND b.DueDate < @E
                             AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
-                            AND " + Occupant("bt.TenantId") + @"), 0),
+                            AND " + Lived("bt.TenantId") + @"), 0),   -- NEW (Step 5): was Occupant
                   ISNULL((SELECT SUM(a.Amount) FROM PaymentAllocations a
                           JOIN Payments p ON p.PaymentId = a.PaymentId
                           LEFT JOIN Bills b ON b.BillId = a.BillId
                           WHERE p.PaymentDate >= @S AND p.PaymentDate < @E AND p.PaymentDate < @Dnext
                             AND (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)
                             AND (b.RoomId = @rid OR (a.BillId IS NULL AND p.RoomId = @rid))
-                            AND " + Occupant("a.TenantId") + @"), 0),
+                            AND " + Lived("a.TenantId") + @"), 0),   -- NEW (Step 5): was Occupant
                   ISNULL((SELECT SUM(CASE WHEN ta.AdjustmentType = 'WriteOff' THEN -ta.Amount ELSE ta.Amount END)
                           FROM TenantAdjustments ta JOIN Tenancies tn ON tn.TenancyId = ta.TenancyId
                           WHERE tn.RoomId = @rid
                             AND ta.AdjustmentDate >= @S AND ta.AdjustmentDate < @E AND ta.AdjustmentDate < @Dnext
-                            AND " + Occupant("ta.TenantId") + @"), 0);";
+                            AND " + Lived("ta.TenantId") + @"), 0);   -- NEW (Step 5): was Occupant";
 
             List<StatementPeriod> parts = st.Period.Parts;
             decimal running = st.TotalPrevious;
@@ -436,6 +588,7 @@ namespace Capstoneszn
                     cmd.Parameters.Add("@S", SqlDbType.Date).Value = s;
                     cmd.Parameters.Add("@E", SqlDbType.Date).Value = e;
                     cmd.Parameters.Add("@Dnext", SqlDbType.Date).Value = dayAfterAsOf;
+                    cmd.Parameters.Add("@L", SqlDbType.Date).Value = st.Period.Start;   // NEW (Step 5)
 
                     using (SqlDataReader rd = cmd.ExecuteReader())
                     {
@@ -488,6 +641,7 @@ namespace Capstoneszn
             cmd.Parameters.Add("@S", SqlDbType.Date).Value = period.Start;
             cmd.Parameters.Add("@E", SqlDbType.Date).Value = period.End;
             cmd.Parameters.Add("@Dnext", SqlDbType.Date).Value = dayAfterAsOf;
+            cmd.Parameters.Add("@L", SqlDbType.Date).Value = period.Start;   // NEW (Step 5): first day for Lived()
         }
     }
 
@@ -731,7 +885,8 @@ namespace Capstoneszn
             b.Add(tHead);
             if (st.Tenants.Count == 0)
                 // ORIGINAL (NEW earlier): b.Add(TextLine("No tenants living in this room on the statement date.", f.Body));
-                b.Add(TextLine("No current tenants.", f.Body));
+                // ORIGINAL (NEW earlier): b.Add(TextLine("No current tenants.", f.Body));
+                b.Add(TextLine("No tenants during this period.", f.Body));   // NEW (Step 5, decision B)
             foreach (StatementTenantLine t in st.Tenants)
             {
                 Block row = TableRow(ts, new[] { t.TenantName, Money(t.PreviousBalance), Money(t.Rent),
@@ -739,6 +894,11 @@ namespace Capstoneszn
                         Money(t.Adjustments), Money(t.AmountDue) }, f.Body, false);
                 row.RepeatHeader = tHead;
                 b.Add(row);
+
+                // NEW (Step 5, decision B): a small line under someone who has
+                // left, e.g. "Transferred out on November 5, 2026".
+                if (t.LeftNote.Length > 0)
+                    b.Add(TextLine("      " + t.LeftNote, f.Small));
             }
             b.Add(TableRow(ts, new[] { "Room total", Money(st.TotalPrevious), Money(st.TotalRent),
                     Money(st.TotalWater), Money(st.TotalMaintenance), Money(st.TotalPayments),
@@ -796,8 +956,10 @@ namespace Capstoneszn
             else if (due < 0m)
                 b.Add(TextLine("You have an advance credit of " + Peso(-due) +
                                ". It will be applied to your next bill.", f.Small));
-            else
+            else if (st.Payments.Count > 0)
                 b.Add(TextLine("No amount is due. Thank you for your payment.", f.Small));
+            else
+                b.Add(TextLine("No amount is due.", f.Small));
 
             // 2. How to pay.
             b.Add(TextLine("Payments are accepted in cash at the office or through GCash. " +

@@ -182,9 +182,15 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
 
                         // A shared room with no capacity set yet has nothing
                         // to show as a denominator.
-                        string occupancy = capacity.HasValue
-                            ? $"{tenantCount}/{capacity.Value} tenants"
-                            : $"{tenantCount} tenant(s)";
+
+                        // NEW (Step 5): occupants = payers + dependents, the same
+                        // count as Room Information's "3 / 4 (2 dependents)".
+                        int dependentCount = reader.GetInt32(6);
+                        int occupants = tenantCount + dependentCount;
+                        string count = capacity.HasValue ? $"{occupants}/{capacity.Value}" : $"{occupants}";
+                        string occupancy = dependentCount > 0
+                            ? $"{count} ({dependentCount} dependent{(dependentCount == 1 ? "" : "s")})"
+                            : $"{count} occupants";
 
                         BillingRoomItemControl card = new BillingRoomItemControl();
                         card.Bind(roomId, roomNumber, occupancy,
@@ -239,8 +245,20 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                    r.Capacity,
                    ISNULL(occ.ActiveTenants, 0) AS TenantCount,
                    ISNULL(money.Outstanding, 0) AS Outstanding,
-                   ISNULL(money.Overdue, 0)     AS Overdue
+                   ISNULL(money.Overdue, 0)     AS Overdue,
+                   ISNULL(dep.Dependents, 0)    AS DependentCount   -- NEW (Step 5)
             FROM   Rooms r
+
+
+            -- NEW (Step 5): active dependents of the people living here
+            OUTER APPLY (
+                SELECT COUNT(*) AS Dependents
+                FROM   Dependents d
+                JOIN   Tenancies tnd ON tnd.TenancyId = d.TenancyId
+                WHERE  tnd.RoomId = r.RoomId
+                  AND  tnd.Status = 'Active'
+                  AND  d.Status   = 'Active'
+            ) dep
 
             OUTER APPLY (
                 SELECT COUNT(*) AS ActiveTenants

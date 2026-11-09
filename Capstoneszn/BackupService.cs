@@ -30,7 +30,7 @@ namespace Capstoneszn
         // Ayano18 laptop = @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;"
         //@"Server=LAPTOP-1LRDH7J7\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
         private static string ConnStr =>
-           @"Server=LAPTOP-1LRDH7J7\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
+           @"Server=LAPTOP-TRR0U4GS\SQLEXPRESS;Database=ApartmentDB;Integrated Security=True;TrustServerCertificate=True;";
 
         // Backup/restore commands run from the "master" database, not ApartmentDB.
         private static string MasterConnStr =>

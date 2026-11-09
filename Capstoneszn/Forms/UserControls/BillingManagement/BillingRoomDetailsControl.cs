@@ -39,8 +39,15 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         private readonly int _roomId;
 
         private int _currentBillId = -1;
+
         private DateTime? _currentDueDate;
         private DataTable _tenants;
+
+        // NEW (Step 5): the dates of "this period". Every rent bill of the room
+        // inside these dates counts in This Period (the main bill, plus a
+        // transfer share or joiner share added during the period).
+        private DateTime? _currentPeriodStart;
+        private DateTime? _currentPeriodEnd;      // stored end = the next period's start
 
         // NEW (fix 2): when the room has no rent bill yet, the date and price
         // of its first one, so the screen says "First bill: Dec 1, 2026 · ₱3,000.00"
@@ -144,6 +151,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         {
             _currentBillId = -1;
             _currentDueDate = null;
+            _currentPeriodStart = null;   // NEW (Step 5)
+            _currentPeriodEnd = null;     // NEW (Step 5)
             _firstBillDate = null;   // NEW (fix 2)
             _firstBillPrice = 0m;    // NEW (fix 2)
             lblPeriodValue.Text = "No bill yet";
@@ -159,13 +168,19 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             // NEW (fix 2): the room's latest REGULAR rent bill. Difference bills
             // are extra charges for one tenant, not the room's period.
             using (SqlCommand cmd = new SqlCommand(@"
-                SELECT TOP 1 BillId, BillingPeriodStart, BillingPeriodEnd, DueDate
-                FROM   Bills
-                WHERE  RoomId = @rid
-                  AND  BillCategory = @cat
-                  -- ORIGINAL: AND  (Remarks IS NULL OR Remarks NOT LIKE N'Price difference%')
-                  AND  BillKind = N'Regular'   -- NEW (BillKind)
-                ORDER BY BillingPeriodStart DESC;", conn))
+                SELECT TOP 1 b.BillId, b.BillingPeriodStart, b.BillingPeriodEnd, b.DueDate
+                FROM   Bills b
+                WHERE  b.RoomId = @rid
+                  AND  b.BillCategory = @cat
+                  AND  b.BillKind IN (N'Regular', N'Closed')
+                  AND  NOT EXISTS (SELECT 1 FROM Bills m
+                                   WHERE  m.RoomId = b.RoomId
+                                     AND  m.BillCategory = b.BillCategory
+                                     AND  m.BillKind IN (N'Regular', N'Closed')
+                                     AND  m.BillingPeriodEnd = b.BillingPeriodEnd
+                                     AND  m.BillingPeriodStart < b.BillingPeriodStart)
+                ORDER BY b.BillingPeriodStart DESC,
+                         CASE WHEN b.BillKind = N'Regular' THEN 0 ELSE 1 END;", conn))
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;
                 cmd.Parameters.Add("@cat", SqlDbType.VarChar, 30).Value = RentCategory;
@@ -178,6 +193,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                         DateTime start = rd.GetDateTime(1);
                         DateTime end = rd.GetDateTime(2);
                         _currentDueDate = rd.GetDateTime(3);
+                        _currentPeriodStart = start;   // NEW (Step 5)
+                        _currentPeriodEnd = end;       // NEW (Step 5)
 
                         // ORIGINAL: lblPeriodValue.Text = $"{start:MMM d} - {end:MMM d, yyyy}";
                         // NEW (fix 3): BillingPeriodEnd is the day the NEXT period starts
@@ -268,9 +285,13 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         {
             const string sql = @"
                 SELECT t.TenantId,
-                       t.FirstName + ' ' + t.LastName AS TenantName,
+                       t.FirstName
+                     + ISNULL(' ' + LEFT(NULLIF(LTRIM(t.MiddleName), N''), 1) + '.', '')
+                     + ' ' + t.LastName AS TenantName,
                        cur.Share                       AS PeriodShare,
                        cur.Paid                        AS PeriodPaid,
+                        ISNULL(cur.LateUnpaid, 0)       AS PeriodOverdue,   -- NEW (Step 5 fix)
+                        cur.NextDue                     AS PeriodNextDue,   -- NEW (Step 5 fix)
                        ISNULL(debt.Outstanding, 0)     AS Outstanding,
                        ISNULL(debt.Overdue, 0)         AS Overdue,
                        ISNULL(debt.MaintOwed, 0)       AS MaintenanceOwed,
@@ -281,18 +302,33 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 FROM   Tenancies tn
                 JOIN   Tenants t ON t.TenantId = tn.TenantId
 
-                OUTER APPLY (
-                    SELECT bt.Share,
-                           ISNULL((SELECT SUM(a.Amount)
-                                   FROM   PaymentAllocations a
-                                   JOIN   Payments p ON p.PaymentId = a.PaymentId
-                                   WHERE  a.BillId   = bt.BillId
-                                     AND  a.TenantId = bt.TenantId
-                                     AND  a.IsVoided = 0
-                                     AND  p.IsVoided = 0), 0) AS Paid
-                    FROM   BillTenants bt
-                    WHERE  bt.BillId   = @bid
-                      AND  bt.TenantId = t.TenantId
+                -- NEW (Step 5): every rent bill of this room inside this period
+                                OUTER APPLY (
+                    SELECT SUM(s.Share) AS Share,
+                           SUM(s.Paid)  AS Paid,
+                           -- NEW (Step 5 fix): unpaid on bills already past their due date,
+                           -- and the earliest due date still unpaid
+                           SUM(CASE WHEN s.DueDate < CAST(GETDATE() AS DATE)
+                                    THEN s.Share - s.Paid ELSE 0 END) AS LateUnpaid,
+                           MIN(CASE WHEN s.Share > s.Paid THEN s.DueDate END) AS NextDue
+                    FROM (
+                        SELECT bt.Share, b.DueDate,
+                               ISNULL((SELECT SUM(a.Amount)
+                                       FROM   PaymentAllocations a
+                                       JOIN   Payments p ON p.PaymentId = a.PaymentId
+                                       WHERE  a.BillId   = bt.BillId
+                                         AND  a.TenantId = bt.TenantId
+                                         AND  a.IsVoided = 0
+                                         AND  p.IsVoided = 0), 0) AS Paid
+                        FROM   BillTenants bt
+                        JOIN   Bills b ON b.BillId = bt.BillId
+                        WHERE  bt.TenantId = t.TenantId
+                          AND  b.RoomId = @rid
+                          AND  b.BillCategory = 'Rent'
+                          AND  b.BillingPeriodStart >= @ps
+                          AND  b.BillingPeriodStart <  @pe
+                          AND  b.BillingPeriodStart >= tn.MoveInDate
+                    ) s
                 ) cur
 
                 OUTER APPLY (
@@ -347,7 +383,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             using (SqlCommand cmd = new SqlCommand(sql, conn))
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;
-                cmd.Parameters.Add("@bid", SqlDbType.Int).Value = _currentBillId;
+                cmd.Parameters.Add("@ps", SqlDbType.Date).Value =
+                    _currentPeriodStart.HasValue ? (object)_currentPeriodStart.Value : DBNull.Value;
+                cmd.Parameters.Add("@pe", SqlDbType.Date).Value =
+                    _currentPeriodEnd.HasValue ? (object)_currentPeriodEnd.Value : DBNull.Value;
 
                 DataTable dt = new DataTable();
                 using (SqlDataAdapter da = new SqlDataAdapter(cmd)) da.Fill(dt);
@@ -475,6 +514,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             decimal periodBill = 0m, periodPaid = 0m, outstanding = 0m, overdue = 0m;
             int tenantCount = 0;
 
+            // NEW (Step 5 fix): this period's late amount and earliest unpaid due date
+            decimal periodLate = 0m;
+            DateTime? periodNextDue = null;
+
             if (_tenants != null)
             {
                 foreach (DataRow r in _tenants.Rows)
@@ -485,6 +528,14 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                     {
                         periodBill += ToDec(r["PeriodShare"]);
                         periodPaid += ToDec(r["PeriodPaid"]);
+
+                        // NEW (Step 5 fix)
+                        periodLate += ToDec(r["PeriodOverdue"]);
+                        if (r["PeriodNextDue"] != DBNull.Value)
+                        {
+                            DateTime d = Convert.ToDateTime(r["PeriodNextDue"]);
+                            if (!periodNextDue.HasValue || d < periodNextDue.Value) periodNextDue = d;
+                        }
                     }
 
                     outstanding += ToDec(r["Outstanding"]);
@@ -530,9 +581,13 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                 return;
             }
 
-            string status = BillStatus(periodBill - periodPaid, periodPaid, _currentDueDate.Value);
+            string status = periodBill - periodPaid <= 0m ? "Paid"
+                          : periodLate > 0m ? "Overdue"
+                          : periodPaid > 0m ? "Partial"
+                          : "Unpaid";
+            DateTime dueShown = periodNextDue ?? _currentDueDate.Value;
 
-            lblBillStatusValue.Text = $"Due {_currentDueDate.Value:MMM d, yyyy}   |   {status}";
+            lblBillStatusValue.Text = $"Due {dueShown:MMM d, yyyy}   |   {status}";
             lblBillStatusValue.ForeColor = StatusColor(status);
         }
 
