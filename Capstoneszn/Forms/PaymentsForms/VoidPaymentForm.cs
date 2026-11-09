@@ -81,6 +81,25 @@ namespace Capstoneszn.Forms.PaymentsForms
                 Close();
                 return;
             }
+            // NEW (Step 6): a receipt for someone who has moved out can't be voided
+            string? blocked;
+            try
+            {
+                blocked = PaymentHistoryService.VoidBlockedReason(_paymentId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to check the payment.\n\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+                return;
+            }
+            if (blocked != null)
+            {
+                MessageBox.Show(blocked, "Cannot Void", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+                return;
+            }
 
             PaymentHistoryRow p = _receipt.Payment;
 
