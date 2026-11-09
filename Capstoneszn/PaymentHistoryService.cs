@@ -43,6 +43,10 @@ namespace Capstoneszn
         public string AppliedTo { get; set; } = "";   // "Rent Oct 15 - Nov 15, 2026", "Maintenance: Leaking faucet", "Advance credit"
         public decimal Amount { get; set; }
         public bool IsCredit { get; set; }
+
+        // NEW (Step 6): for the void preview
+        public string Category { get; set; } = "";     // Rent / Water / Maintenance
+        public string RoomNumber { get; set; } = "";   // the room of the bill it paid; "" for credit
     }
 
     /// <summary>Everything the receipt and the void form show about one payment.</summary>
@@ -64,6 +68,11 @@ namespace Capstoneszn
     ///     balances correct themselves.
     ///   - Voiding is landlord-only; checked here against the Users table,
     ///     not only by hiding the button.
+    ///     NEW (Step 6, rule B): a caretaker may void only a receipt they
+    ///     recorded themselves, on the same day.
+    ///   - NEW (Step 6): a receipt cannot be voided if anyone it paid for
+    ///     has MOVED OUT since (their account was closed at move-out).
+    ///     A transfer is not a move-out: that money moved with the tenant.
     ///   - The Tag is derived, never stored:
     ///       Advance  - some money became credit, or paid a period that had
     ///                  not started on the payment date
@@ -281,10 +290,12 @@ namespace Capstoneszn
                            b.BillCategory, b.BillingPeriodStart, b.BillingPeriodEnd,
                            mi.IssueTitle, a.Amount,
                            CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END AS IsCredit,
-                           a.Category                                   -- NEW (Billing v2), column 7
+                           a.Category,                                  -- NEW (Billing v2), column 7
+                           br.RoomNumber AS BillRoom                    -- NEW (Step 6), column 8
                     FROM   PaymentAllocations a
                     JOIN   Tenants t ON t.TenantId = a.TenantId
                     LEFT JOIN Bills b ON b.BillId = a.BillId
+                    LEFT JOIN Rooms br ON br.RoomId = b.RoomId              -- NEW (Step 6)
                     LEFT JOIN MaintenanceIssues mi ON mi.IssueId = b.MaintenanceIssueId
                     WHERE  a.PaymentId = @pid
                     ORDER BY t.LastName, t.FirstName, b.BillingPeriodStart, a.AllocationId;";
@@ -314,7 +325,9 @@ namespace Capstoneszn
                                 TenantName = rd.GetString(0),
                                 AppliedTo = appliedTo,
                                 Amount = rd.GetDecimal(5),
-                                IsCredit = isCredit
+                                IsCredit = isCredit,
+                                Category = rd.GetString(7),                                      // NEW (Step 6)
+                                RoomNumber = rd.IsDBNull(8) ? "" : Convert.ToString(rd.GetValue(8)) ?? ""   // NEW (Step 6)
                             });
                         }
                     }
@@ -343,10 +356,104 @@ namespace Capstoneszn
            ================================================================= */
 
         /// <summary>
+        /// NEW (Step 6, rule B): why this user may NOT void this receipt, or null if they may.
+        ///   Landlord  -> always allowed
+        ///   Caretaker -> only a receipt they recorded themselves, dated today
+        /// </summary>
+        public static string? VoidNotAllowedReason(int paymentId, int userId)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                return VoidNotAllowedReason(conn, null, paymentId, userId);
+            }
+        }
+
+        /// <summary>NEW (Step 6, rule B): the same check inside the void's own transaction.</summary>
+        private static string? VoidNotAllowedReason(SqlConnection conn, SqlTransaction? tx, int paymentId, int userId)
+        {
+            using (var cmd = new SqlCommand(@"
+                SELECT u.Role,
+                       CASE WHEN p.RecordedBy = u.UserId
+                             AND CAST(p.PaymentDate AS DATE) = CAST(GETDATE() AS DATE)
+                            THEN 1 ELSE 0 END AS OwnToday
+                FROM   Users u
+                CROSS JOIN Payments p
+                WHERE  u.UserId    = @uid
+                  AND  p.PaymentId = @pid;", conn, tx))
+            {
+                cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+
+                using (var rd = cmd.ExecuteReader())
+                {
+                    if (!rd.Read()) return "Only the landlord can void a payment.";
+
+                    string role = rd.GetString(0);
+                    bool ownToday = rd.GetInt32(1) == 1;
+
+                    if (role == "Landlord") return null;
+                    if (role == "Caretaker" && ownToday) return null;
+
+                    return "Only the landlord can void this receipt.\n\n" +
+                           "Caretakers can void only receipts they recorded themselves, on the same day.";
+                }
+            }
+        }
+
+        /// <summary>
+        /// NEW (Step 6): why this receipt can't be voided, or null if it can.
+        /// Blocked when anyone it paid for has MOVED OUT (or Abandoned) on or
+        /// after the payment date. A transfer does not count: the money moved
+        /// with the tenant and is owed in their new room.
+        ///   "This receipt can't be voided: it paid for Hange Zoe, who moved out
+        ///    on Nov 9, 2026. Accounts of tenants who have moved out are closed."
+        /// </summary>
+        public static string? VoidBlockedReason(int paymentId)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                return VoidBlockedReason(conn, null, paymentId);
+            }
+        }
+
+        /// <summary>NEW (Step 6): the same check inside the void's own transaction.</summary>
+        private static string? VoidBlockedReason(SqlConnection conn, SqlTransaction? tx, int paymentId)
+        {
+            using (var cmd = new SqlCommand(@"
+                SELECT TOP 1 t.FirstName + ' ' + t.LastName AS TenantName, mo.MoveOutDate
+                FROM   (SELECT DISTINCT a.TenantId
+                        FROM   PaymentAllocations a
+                        WHERE  a.PaymentId = @pid) x
+                JOIN   Tenants  t ON t.TenantId  = x.TenantId
+                JOIN   Payments p ON p.PaymentId = @pid
+                CROSS APPLY (SELECT TOP 1 tn.MoveOutDate
+                             FROM   Tenancies tn
+                             WHERE  tn.TenantId = x.TenantId
+                               AND  tn.MoveOutDate IS NOT NULL
+                               AND  tn.MoveOutDate >= p.PaymentDate
+                               AND  ISNULL(tn.MoveOutReason, 'Moved Out') <> 'Transferred'
+                             ORDER BY tn.MoveOutDate) mo
+                ORDER BY mo.MoveOutDate;", conn, tx))
+            {
+                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                using (var rd = cmd.ExecuteReader())
+                {
+                    if (!rd.Read()) return null;
+                    return "This receipt can't be voided: it paid for " + rd.GetString(0) +
+                           ", who moved out on " + rd.GetDateTime(1).ToString("MMM d, yyyy") + ".\n\n" +
+                           "Accounts of tenants who have moved out are closed.";
+                }
+            }
+        }
+
+        /// <summary>
         /// Voids a payment: the payment and all of its allocations are
         /// flagged in one transaction. Cannot be undone.
-        /// Throws InvalidOperationException if the user is not the landlord,
-        /// the reason is empty, or the payment is already voided / missing.
+        /// Throws InvalidOperationException if the user may not void it (rule B),
+        /// someone it paid for has moved out, the reason is empty, or the
+        /// payment is already voided / missing.
         /// </summary>
         public static void VoidPayment(int paymentId, string reason, int userId)
         {
@@ -363,14 +470,16 @@ namespace Capstoneszn
                 {
                     try
                     {
-                        // Landlord-only, checked in the database, not just the UI.
-                        using (var cmd = new SqlCommand(
-                            "SELECT COUNT(*) FROM Users WHERE UserId = @uid AND Role = 'Landlord';", conn, tx))
-                        {
-                            cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
-                            if ((int)cmd.ExecuteScalar() == 0)
-                                throw new InvalidOperationException("Only the landlord can void a payment.");
-                        }
+                        // NEW (Step 6, rule B): landlord = any receipt; caretaker = own receipt,
+                        // recorded today. Checked in the database, not just the UI.
+                        string? notAllowed = VoidNotAllowedReason(conn, tx, paymentId, userId);
+                        if (notAllowed != null)
+                            throw new InvalidOperationException(notAllowed);
+
+                        // NEW (Step 6): no void after a move-out
+                        string? blocked = VoidBlockedReason(conn, tx, paymentId);
+                        if (blocked != null)
+                            throw new InvalidOperationException(blocked);
 
                         // The IsVoided = 0 test makes a double void impossible,
                         // even from two screens at once.

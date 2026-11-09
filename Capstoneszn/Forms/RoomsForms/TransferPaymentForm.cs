@@ -151,6 +151,17 @@ namespace Capstoneszn.Forms.RoomsForms
 
             if (!CheckReferences()) return;
 
+            // NEW (Step 6): warn when someone's ADVANCE is more than 3 months
+            foreach (PayerCardControl card in _cards)
+            {
+                TransferMover m = MoverOf(card);
+                if (!AdvanceGuard.Confirm(this, m.Name, (card.AmountPaid ?? 0m) - card.AmountDue, m.NewShare))
+                {
+                    card.FocusAmount();
+                    return;
+                }
+            }
+
             // Put the cards into the plan - this is what TransferService saves.
             foreach (PayerCardControl card in _cards)
             {

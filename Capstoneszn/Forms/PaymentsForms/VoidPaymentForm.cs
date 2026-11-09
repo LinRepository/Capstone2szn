@@ -41,13 +41,6 @@ namespace Capstoneszn.Forms.PaymentsForms
 
         private void VoidPaymentForm_Load(object sender, EventArgs e)
         {
-            if (!Session.IsLandlord)
-            {
-                MessageBox.Show("Only the landlord can void a payment.", "Not Allowed",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Close();
-                return;
-            }
 
             try
             {
@@ -65,6 +58,26 @@ namespace Capstoneszn.Forms.PaymentsForms
             {
                 MessageBox.Show("This payment no longer exists or is already voided.",
                     "Cannot Void", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+                return;
+            }
+
+            // NEW (Step 6, rule B): landlord = any receipt; caretaker = own receipt, recorded today
+            string? notAllowed;
+            try
+            {
+                notAllowed = PaymentHistoryService.VoidNotAllowedReason(_paymentId, Session.UserId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to check the payment.\n\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+                return;
+            }
+            if (notAllowed != null)
+            {
+                MessageBox.Show(notAllowed, "Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 Close();
                 return;
             }
@@ -94,17 +107,27 @@ namespace Capstoneszn.Forms.PaymentsForms
 
             var sb = new StringBuilder("Voiding this payment will:\n");
 
-            foreach (var group in _receipt.Lines.GroupBy(l => l.TenantName))
+            foreach (var group in _receipt.Lines.GroupBy(l => new { l.TenantName, l.RoomNumber }))
             {
                 decimal owesAgain = group.Where(l => !l.IsCredit).Sum(l => l.Amount);
                 decimal creditLost = group.Where(l => l.IsCredit).Sum(l => l.Amount);
+                string categories = string.Join(", ",
+                    group.Where(l => !l.IsCredit).Select(l => l.Category.ToLower()).Distinct());
 
                 if (owesAgain > 0)
-                    sb.Append("  • ").Append(group.Key).Append(" will owe ₱")
+                {
+                    sb.Append("  • ").Append(group.Key.TenantName).Append(" will owe ₱")
                       .Append(owesAgain.ToString("N2")).Append(" ")
-                      .Append(_receipt.Payment.Category.ToLower()).Append(" again\n");
+                      .Append(categories).Append(" again");
+
+                    // a bill in another room = the money moved there with a transfer
+                    if (group.Key.RoomNumber.Length > 0 && group.Key.RoomNumber != _receipt.Payment.RoomNumber)
+                        sb.Append(" in Room ").Append(group.Key.RoomNumber);
+
+                    sb.Append("\n");
+                }
                 if (creditLost > 0)
-                    sb.Append("  • ").Append(group.Key).Append(" loses ₱")
+                    sb.Append("  • ").Append(group.Key.TenantName).Append(" loses ₱")
                       .Append(creditLost.ToString("N2")).Append(" advance credit\n");
             }
 

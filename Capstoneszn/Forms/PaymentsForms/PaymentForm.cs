@@ -937,13 +937,8 @@ namespace Capstoneszn.Forms
                 decimal monthly = _join == null ? card.AmountDue
                     : _roomPrice / Math.Max(_join.PayersAfter, 1) * (_data.WholeRoom ? _data.Payers.Count : 1);
                 if (monthly <= 0m) continue;
-                decimal months = Math.Floor(paid / monthly);   // decimal: no overflow on a huge typo
-                if (months <= 12) continue;
-
-                if (MessageBox.Show(PayerName(card) + " is paying " + Peso(paid) + ", about " + months.ToString("N0") +
-                                    " months of rent." + Environment.NewLine + Environment.NewLine +
-                                    "Is this amount correct?",
-                        "Check Amount", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                // NEW (Step 6): only the advance counts, warning above 3 months
+                if (!AdvanceGuard.Confirm(this, PayerName(card), paid - card.AmountDue, monthly))
                 {
                     card.FocusAmount();
                     return false;

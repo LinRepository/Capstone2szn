@@ -181,16 +181,21 @@ namespace Capstoneszn.UserControls
                 UseColumnTextForButtonValue = true
             });
 
-            // Void: landlord only (settled rule). Checked again when saving.
-            if (Session.IsLandlord)
+            // ORIGINAL: // Void: landlord only (settled rule). Checked again when saving.
+            // ORIGINAL: if (Session.IsLandlord)
+            // ORIGINAL: {
+            // ORIGINAL:     grid.Columns.Add(new DataGridViewButtonColumn { Name = ColVoid, HeaderText = "Void", FillWeight = 7 });
+            // ORIGINAL: }
+
+            // NEW (Step 6, rule B): Void for both roles. A caretaker may void only a
+            // receipt they recorded today - checked when the void screen opens and
+            // again when saving (PaymentHistoryService.VoidNotAllowedReason).
+            grid.Columns.Add(new DataGridViewButtonColumn
             {
-                grid.Columns.Add(new DataGridViewButtonColumn
-                {
-                    Name = ColVoid,
-                    HeaderText = "Void",
-                    FillWeight = 7
-                });
-            }
+                Name = ColVoid,
+                HeaderText = "Void",
+                FillWeight = 7
+            });
 
             grid.CellContentClick += Grid_CellContentClick;
         }

@@ -257,6 +257,14 @@ namespace Capstoneszn.Forms.PaymentsForms
                 extraText = $"Extra ₱{extra:N2} credited to: " + (choice.TenantId.HasValue ? choice.Text : "split equally");
             }
 
+            if (rentPaid > 0m &&
+                !AdvanceGuard.Confirm(this, cboPayer.Text + (wholeRoom ? " (Whole Room)" : ""),
+                                      rentPaid - _rentOwed, MonthlyRent(wholeRoom)))
+            {
+                txtRentPay.Focus();
+                return;
+            }
+
             // ---- 3. Confirm --------------------------------------------------
             var sb = new StringBuilder();
             sb.AppendLine("Payer: " + cboPayer.Text + (wholeRoom ? "  (Whole Room)" : ""));
@@ -418,6 +426,42 @@ namespace Capstoneszn.Forms.PaymentsForms
         private static void Warn(string message)
         {
             MessageBox.Show(message, "Payment", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        /// <summary>
+        /// NEW (Step 6): one month of rent for the 3-month warning.
+        ///   Individual -> room price / paying tenants now  (6,000 / 3 = 2,000)
+        ///   Whole Room -> the room price                   (6,000)
+        /// If it can't be read, 0 = no warning (a warning must never stop a payment).
+        /// </summary>
+        private decimal MonthlyRent(bool wholeRoom)
+        {
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                using (SqlCommand cmd = new SqlCommand(@"
+                    SELECT r.RoomPrice,
+                           (SELECT COUNT(*) FROM Tenancies tn
+                            WHERE  tn.RoomId = r.RoomId AND tn.Status = 'Active') AS Payers
+                    FROM   Rooms r
+                    WHERE  r.RoomId = @rid;", conn))
+                {
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;
+                    conn.Open();
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        if (!rd.Read()) return 0m;
+                        decimal price = rd.GetDecimal(0);
+                        int payers = rd.GetInt32(1);
+                        return wholeRoom ? price : price / Math.Max(payers, 1);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return 0m;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
