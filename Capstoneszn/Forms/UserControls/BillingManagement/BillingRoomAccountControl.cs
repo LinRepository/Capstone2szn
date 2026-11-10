@@ -284,6 +284,7 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                     FROM   BillTenants bt
                     JOIN   Bills b ON b.BillId = bt.BillId
                     WHERE  b.RoomId = r.RoomId
+                      AND  b.BillKind <> N'Superseded'   -- NEW (item 4): an old stay's retired bill is not owed again
                       AND  EXISTS (SELECT 1
                                    FROM   Tenancies tn2
                                    WHERE  tn2.TenantId = bt.TenantId
@@ -360,4 +361,5 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         }
 
     }
+
 }

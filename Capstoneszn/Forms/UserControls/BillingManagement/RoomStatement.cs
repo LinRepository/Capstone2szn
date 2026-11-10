@@ -176,6 +176,21 @@ namespace Capstoneszn
             " AND (lv.MoveOutDate IS NULL OR lv.MoveOutDate >= @L))";
 
         /// <summary>
+        /// NEW (item 4): adds cd.ChargeDate - the date a bill's share counts on
+        /// the statement. Needs "b" (Bills) in the query.
+        ///   Superseded bill -> the day that tenant moved out of this room
+        ///                      (the same day as their write-off / forfeit)
+        ///   any other bill  -> its due date (unchanged)
+        /// </summary>
+        private static string ExitChargeDate(string tenantColumn) =>
+            "OUTER APPLY (SELECT TOP 1 xo.MoveOutDate FROM Tenancies xo" +
+            " WHERE xo.TenantId = " + tenantColumn + " AND xo.RoomId = b.RoomId" +
+            " AND xo.MoveOutDate IS NOT NULL AND xo.MoveOutDate <= b.BillingPeriodStart" +
+            " ORDER BY xo.MoveOutDate DESC) lastOut" +
+            " CROSS APPLY (SELECT CASE WHEN b.BillKind = N'Superseded'" +
+            " THEN ISNULL(lastOut.MoveOutDate, b.DueDate) ELSE b.DueDate END AS ChargeDate) cd";
+
+        /// <summary>
         /// The room's rent periods, newest first. A period appears once its
         /// rent bill exists (generated 7 days before the due date); test bills
         /// further in the future are ignored.
@@ -347,21 +362,33 @@ namespace Capstoneszn
                 //  adjs    : move-out write-offs (less owed) and forfeits
                 //            (credit given up) for stays in this room.
                 // ORIGINAL: const string ledgerSql = @"   (NEW: + the IsOccupant column at the end)
+                //
+                // NEW (item 4): a Superseded rent bill (a departed tenant's bill for a
+                // period a new tenant's cycle replaced) is NOT this room's rent. Its
+                // share is dated on the day that tenant moved out (ChargeDate) - the
+                // same day as their move-out write-off / forfeit - and shown in the
+                // Adjustments column, so the two always land in the same period and
+                // cancel out. Every other bill keeps its due date (ChargeDate = DueDate).
+                //   ORIGINAL: b.DueDate everywhere below, no ExitCharges column.
                 string ledgerSql = @"
                     WITH charges AS (
                         SELECT bt.TenantId,
-                               SUM(CASE WHEN b.DueDate < @S THEN bt.Share ELSE 0 END) AS PrevCharges,
+                               SUM(CASE WHEN cd.ChargeDate < @S THEN bt.Share ELSE 0 END) AS PrevCharges,
                                SUM(CASE WHEN b.DueDate >= @S AND b.BillCategory = 'Rent'
+                                         AND b.BillKind <> N'Superseded'   -- NEW (item 4)
                                         THEN bt.Share ELSE 0 END) AS Rent,
                                SUM(CASE WHEN b.DueDate >= @S AND b.BillCategory = 'Water'
                                         THEN bt.Share ELSE 0 END) AS Water,
                                SUM(CASE WHEN b.DueDate >= @S AND b.BillCategory = 'Maintenance'
-                                        THEN bt.Share ELSE 0 END) AS Maint
+                                        THEN bt.Share ELSE 0 END) AS Maint,
+                               SUM(CASE WHEN cd.ChargeDate >= @S AND b.BillKind = N'Superseded'   -- NEW (item 4)
+                                        THEN bt.Share ELSE 0 END) AS ExitCharges
                         FROM   BillTenants bt
                         JOIN   Bills b ON b.BillId = bt.BillId
+                        " + ExitChargeDate("bt.TenantId") + @"   -- NEW (item 4): adds cd.ChargeDate
                         WHERE  b.RoomId = @rid
                           AND  b.BillCategory IN ('Rent', 'Water', 'Maintenance')
-                          AND  b.DueDate < @E
+                          AND  cd.ChargeDate < @E   -- NEW (item 4); ORIGINAL: b.DueDate < @E
                           AND  ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
                         GROUP BY bt.TenantId
                     ),
@@ -408,7 +435,8 @@ namespace Capstoneszn
                            ISNULL(c.Water, 0)         AS Water,
                            ISNULL(c.Maint, 0)         AS Maintenance,
                            ISNULL(pd.PaidInPeriod, 0) AS Payments,
-                           ISNULL(ad.AdjInPeriod, 0)  AS Adjustments,
+                           ISNULL(ad.AdjInPeriod, 0)
+                         + ISNULL(c.ExitCharges, 0)  AS Adjustments,   -- NEW (item 4); ORIGINAL: ISNULL(ad.AdjInPeriod, 0) AS Adjustments
                            CASE WHEN " + Occupant("ids.TenantId") + @" THEN 1 ELSE 0 END AS IsOccupant,
                            -- NEW (Step 5, decision B): lived here during the statement,
                            -- and for someone who left, their last move-out from this room
@@ -548,6 +576,7 @@ namespace Capstoneszn
                 SELECT
                   ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
                           WHERE b.RoomId = @rid AND b.BillCategory = 'Rent'
+                            AND b.BillKind <> N'Superseded'   -- NEW (item 4): not this room's rent
                             AND b.DueDate >= @S AND b.DueDate < @E
                             AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
                             AND " + Lived("bt.TenantId") + @"), 0),   -- NEW (Step 5): was Occupant
@@ -572,7 +601,15 @@ namespace Capstoneszn
                           FROM TenantAdjustments ta JOIN Tenancies tn ON tn.TenancyId = ta.TenancyId
                           WHERE tn.RoomId = @rid
                             AND ta.AdjustmentDate >= @S AND ta.AdjustmentDate < @E AND ta.AdjustmentDate < @Dnext
-                            AND " + Lived("ta.TenantId") + @"), 0);   -- NEW (Step 5): was Occupant";
+                            AND " + Lived("ta.TenantId") + @"), 0)   -- NEW (Step 5): was Occupant
+                  -- NEW (item 4): + exit charges (Superseded shares), dated on the move-out day,
+                  -- the same as in the ledger above. ORIGINAL: the line above ended the query.
+                  + ISNULL((SELECT SUM(bt.Share) FROM BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                          " + ExitChargeDate("bt.TenantId") + @"
+                          WHERE b.RoomId = @rid AND b.BillKind = N'Superseded'
+                            AND cd.ChargeDate >= @S AND cd.ChargeDate < @E AND cd.ChargeDate < @Dnext
+                            AND ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
+                            AND " + Lived("bt.TenantId") + @"), 0);";
 
             List<StatementPeriod> parts = st.Period.Parts;
             decimal running = st.TotalPrevious;

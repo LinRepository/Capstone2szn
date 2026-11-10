@@ -1236,36 +1236,45 @@ namespace Capstoneszn.Forms.RoomsForms
         /// Same period shape BillGenerator uses, so the generator sees this
         /// period as already billed and continues from the next one.
         ///
-        /// Re-let on the same day (kept from the old PaymentForm): if the
-        /// previous occupants left on the day their bill started, a bill for
-        /// today already exists. The room is let twice in that period, so the
-        /// newcomers join THAT bill and its total rises by the room price.
-        /// Old shares and payments are not touched.
+        /// ORIGINAL (item 4) re-let rule, replaced: if the previous occupants
+        /// left on the day their bill started, the newcomers joined THAT bill
+        /// and its total rose by the room price (a 16,000 bill on an 8,000
+        /// room). It also matched gap/joiner/closed bills, which could bill a
+        /// newcomer twice.
+        ///
+        /// NEW (item 4): the previous occupants' bill for a period that has not
+        /// started yet is marked Superseded (still their charge, no longer a
+        /// room period), and the newcomers ALWAYS get their own fresh bill.
+        /// Called only for a VACANT room.
         /// </summary>
         private static int CreateFirstBill(
             SqlConnection conn, SqlTransaction tx, int roomId, DateTime today, decimal roomPrice)
         {
-            using (var cmd = new SqlCommand(@"
-                SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
-                WHERE  RoomId = @rid AND BillCategory = 'Rent' AND BillingPeriodStart = @start;", conn, tx))
-            {
-                cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
-                cmd.Parameters.Add("@start", SqlDbType.Date).Value = today;
-                object existing = cmd.ExecuteScalar();
+            // NEW (item 4): retire the previous occupants' not-started bill (frees today's slot).
+            RoomRentShares.SupersedeOldCycle(conn, tx, roomId, today);
 
-                if (existing != null && existing != DBNull.Value)
-                {
-                    int billId = Convert.ToInt32(existing);
-                    using (var up = new SqlCommand(
-                        "UPDATE Bills SET Amount = Amount + @amt WHERE BillId = @bid;", conn, tx))
-                    {
-                        AddMoney(up, "@amt", roomPrice);
-                        up.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
-                        up.ExecuteNonQuery();
-                    }
-                    return billId;
-                }
-            }
+            // ORIGINAL (item 4): merged the newcomers into an existing bill. Kept for reference:
+            //using (var cmd = new SqlCommand(@"
+            //    SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
+            //    WHERE  RoomId = @rid AND BillCategory = 'Rent' AND BillingPeriodStart = @start;", conn, tx))
+            //{
+            //    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+            //    cmd.Parameters.Add("@start", SqlDbType.Date).Value = today;
+            //    object existing = cmd.ExecuteScalar();
+            //
+            //    if (existing != null && existing != DBNull.Value)
+            //    {
+            //        int billId = Convert.ToInt32(existing);
+            //        using (var up = new SqlCommand(
+            //            "UPDATE Bills SET Amount = Amount + @amt WHERE BillId = @bid;", conn, tx))
+            //        {
+            //            AddMoney(up, "@amt", roomPrice);
+            //            up.Parameters.Add("@bid", SqlDbType.Int).Value = billId;
+            //            up.ExecuteNonQuery();
+            //        }
+            //        return billId;
+            //    }
+            //}
 
             using (var cmd = new SqlCommand(@"
                 INSERT INTO Bills (RoomId, BillCategory, BillingPeriodStart, BillingPeriodEnd, DueDate, Amount)
@@ -1517,4 +1526,6 @@ namespace Capstoneszn.Forms.RoomsForms
             return "A record already exists (" + m + ").";
         }
     }
+
+
 }

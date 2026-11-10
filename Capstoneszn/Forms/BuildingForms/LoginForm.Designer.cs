@@ -56,14 +56,14 @@
             // 
             // lblLoginFormTitle
             // 
-            lblLoginFormTitle.Dock = DockStyle.Bottom;
+            lblLoginFormTitle.Dock = DockStyle.Fill;
             lblLoginFormTitle.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblLoginFormTitle.ForeColor = Color.White;
-            lblLoginFormTitle.Location = new Point(0, 20);
+            lblLoginFormTitle.Location = new Point(0, 0);
             lblLoginFormTitle.Name = "lblLoginFormTitle";
-            lblLoginFormTitle.Size = new Size(682, 40);
+            lblLoginFormTitle.Size = new Size(682, 60);
             lblLoginFormTitle.TabIndex = 7;
-            lblLoginFormTitle.Text = "Billing Management System";
+            lblLoginFormTitle.Text = "KSU Apartment Billing Management System";
             lblLoginFormTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlLoginContent
@@ -170,7 +170,7 @@
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(227, 5);
+            pictureBox1.Location = new Point(230, 5);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(200, 200);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;

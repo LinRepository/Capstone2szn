@@ -166,7 +166,9 @@ namespace Capstoneszn
         SELECT b.RoomId, b.BillingPeriodStart
         FROM   Bills b
         WHERE  b.BillCategory = @cat
-          AND  b.BillKind NOT IN (N'TransferGap', N'JoinerShare');", conn))   // NEW (BillKind): gap and joiner bills are not rent periods
+          AND  b.BillKind NOT IN (N'TransferGap', N'JoinerShare', N'Superseded');", conn))   // NEW (BillKind): gap and joiner bills are not rent periods
+            // NEW (item 4): ORIGINAL list was (N'TransferGap', N'JoinerShare'). A Superseded
+            // bill (a previous occupant's bill replaced by a new cycle) is not a room period either.
             {
                 cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = RentCategory;
 
@@ -448,7 +450,8 @@ namespace Capstoneszn
                 using (SqlCommand cmd = new SqlCommand(@"
                     SELECT COUNT(*) FROM Bills
                     WHERE  RoomId = @rid AND BillCategory = @cat AND BillingPeriodStart = @start
-                      AND  BillKind NOT IN (N'TransferGap', N'JoinerShare');", conn, tx))   // NEW (BillKind): gap and joiner bills are not rent periods
+                      AND  BillKind NOT IN (N'TransferGap', N'JoinerShare', N'Superseded');", conn, tx))   // NEW (BillKind): gap and joiner bills are not rent periods
+                // NEW (item 4): ORIGINAL list was (N'TransferGap', N'JoinerShare'); Superseded added.
                 {
                     cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
                     cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = RentCategory;
@@ -626,4 +629,6 @@ namespace Capstoneszn
             }
         }
     }
+
+
 }

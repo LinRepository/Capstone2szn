@@ -126,6 +126,7 @@ namespace Capstoneszn
                   AND  r.BuildingId = @bid
                   AND  r.IsArchived = 0
                   AND  b.BillingPeriodStart >= tn.MoveInDate
+                  AND  b.BillKind <> N'Superseded'   -- NEW (item 4): an old stay's retired bill is not owed again
                   AND  b.DueDate <= @dueLimit
             )
             SELECT u.RoomId,
@@ -219,4 +220,5 @@ namespace Capstoneszn
                 .ToList();
         }
     }
+
 }

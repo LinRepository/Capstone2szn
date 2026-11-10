@@ -140,7 +140,7 @@ namespace Capstoneszn.Forms.RoomsForms
                                          AND tn.Status   = 'Active'
                 WHERE  b.RoomId = @rid
                   AND  b.BillCategory = @rent
-                  AND  b.BillKind <> N'Closed'
+                  AND  b.BillKind NOT IN (N'Closed', N'Superseded')   -- NEW (item 4): ORIGINAL b.BillKind <> N'Closed'
                   AND  b.BillingPeriodEnd > @today
                   AND  ((tn.TenancyId IS NOT NULL AND b.BillingPeriodStart >= tn.MoveInDate)" + returningSql + @")
                 ORDER BY b.BillingPeriodEnd, b.BillingPeriodStart, b.BillId,
@@ -242,7 +242,7 @@ namespace Capstoneszn.Forms.RoomsForms
                   AND  b.BillCategory = @rent
                   AND  a.IsVoided = 0
                   AND  p.IsVoided = 0
-                  AND  b.BillKind <> N'Closed'
+                  AND  b.BillKind NOT IN (N'Closed', N'Superseded')   -- NEW (item 4): ORIGINAL b.BillKind <> N'Closed'
                   AND  b.BillingPeriodEnd > @today
                   AND  b.BillingPeriodStart <= @today      -- a next bill already issued stays (option 2)
                   AND  b.BillingPeriodStart >= tn.MoveInDate
@@ -461,26 +461,74 @@ namespace Capstoneszn.Forms.RoomsForms
            ================================================================= */
 
         /// <summary>The bill for a tenant moving into a vacant room.</summary>
+        /// <remarks>
+        /// NEW (item 4): the previous occupants' bill for a period that has not
+        /// started yet is retired first (SupersedeOldCycle), and the newcomer
+        /// ALWAYS gets a fresh bill - never the old tenants' bill.
+        /// Its only caller is a transfer into an EMPTY room.
+        /// </remarks>
         internal static int FindOrInsertRegular(SqlConnection conn, SqlTransaction tx, int roomId,
                                                 DateTime start, DateTime end, decimal amount)
         {
-            // A Regular bill can already start today if the last tenant moved out today.
+            // NEW (item 4): retire the previous occupants' not-started bill (frees today's slot).
+            SupersedeOldCycle(conn, tx, roomId, start);
+
+            // ORIGINAL (item 4): reused the old tenants' bill when it started today, so
+            // the mover's share landed on a bill with THEIR period. Kept for reference:
+            //// A Regular bill can already start today if the last tenant moved out today.
+            //using (SqlCommand cmd = new SqlCommand(@"
+            //    SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
+            //    WHERE  RoomId = @rid AND BillCategory = @rent
+            //      AND  BillingPeriodStart = @start AND BillKind = N'Regular'
+            //      AND  MaintenanceIssueId IS NULL;", conn, tx))
+            //{
+            //    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+            //    cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
+            //    cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
+            //
+            //    object existing = cmd.ExecuteScalar();
+            //    if (existing != null && existing != DBNull.Value)
+            //        return Convert.ToInt32(existing);
+            //}
+
+            return InsertBill(conn, tx, roomId, "Regular", start, end, start, amount, null);
+        }
+
+        /// <summary>
+        /// NEW (item 4): a VACANT room is starting a new cycle (Move In or a
+        /// transfer into an empty room).
+        ///
+        /// Bills are created 7 days early, so the last tenants' NEXT bill may
+        /// already exist. They still owe it (an issued bill never changes - it
+        /// was written off at move-out), but nobody will live in that period.
+        /// That bill is marked Superseded:
+        ///   - it stays as their charge: shares, payments and write-off untouched
+        ///   - it is no longer a room period (screens, statement, generator,
+        ///     joiner and transfer checks all skip it)
+        ///   - it frees the one-Regular-bill-per-date slot for the new bill
+        ///
+        /// Only bills that start today or later. A bill already running is real
+        /// history (they lived in it); the statement cuts it at the new start.
+        ///
+        /// Call ONLY when the room had no active tenant before this save.
+        /// Returns how many bills were superseded (0 or 1 in practice).
+        /// </summary>
+        internal static int SupersedeOldCycle(SqlConnection conn, SqlTransaction tx, int roomId, DateTime today)
+        {
             using (SqlCommand cmd = new SqlCommand(@"
-                SELECT BillId FROM Bills WITH (UPDLOCK, HOLDLOCK)
-                WHERE  RoomId = @rid AND BillCategory = @rent
-                  AND  BillingPeriodStart = @start AND BillKind = N'Regular'
-                  AND  MaintenanceIssueId IS NULL;", conn, tx))
+                UPDATE Bills
+                   SET BillKind = N'Superseded'
+                 WHERE RoomId = @rid
+                   AND BillCategory = @rent
+                   AND BillKind = N'Regular'
+                   AND MaintenanceIssueId IS NULL
+                   AND BillingPeriodStart >= @today;", conn, tx))
             {
                 cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
                 cmd.Parameters.Add("@rent", SqlDbType.NVarChar, 20).Value = Rent;
-                cmd.Parameters.Add("@start", SqlDbType.Date).Value = start;
-
-                object existing = cmd.ExecuteScalar();
-                if (existing != null && existing != DBNull.Value)
-                    return Convert.ToInt32(existing);
+                cmd.Parameters.Add("@today", SqlDbType.Date).Value = today;
+                return cmd.ExecuteNonQuery();
             }
-
-            return InsertBill(conn, tx, roomId, "Regular", start, end, start, amount, null);
         }
 
         private static int InsertBill(SqlConnection conn, SqlTransaction tx, int roomId, string kind,
@@ -706,4 +754,6 @@ namespace Capstoneszn.Forms.RoomsForms
             p.Value = value;
         }
     }
+
+
 }
