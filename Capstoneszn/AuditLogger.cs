@@ -76,6 +76,38 @@ namespace Capstoneszn
             }
         }
 
+        /// <summary>
+        /// ADDED (Nov 10, 2026): log an event for an account when NOBODY is signed in -
+        /// a lockout at the login screen, a Forgot Password lockout, or a password reset
+        /// through security questions. Log(...) above skips these because Session.UserId
+        /// is 0 before login. The entry is filed under the account it happened to
+        /// (userId) with no building, like login entries, so it shows in every
+        /// building's Audit Logs. Never throws, same as Log(...).
+        /// </summary>
+        public static void LogForUser(int userId, string module, string action, string description)
+        {
+            if (userId <= 0) return;
+
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                using (var cmd = new SqlCommand(InsertSql, conn))
+                {
+                    cmd.Parameters.Add("@bid", SqlDbType.Int).Value = DBNull.Value;
+                    cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@module", SqlDbType.NVarChar, 30).Value = Cut(module, 30);
+                    cmd.Parameters.Add("@action", SqlDbType.NVarChar, 30).Value = Cut(action, 30);
+                    cmd.Parameters.Add("@desc", SqlDbType.NVarChar, 500).Value = Cut(description, 500);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Audit log failed: " + ex);
+            }
+        }
+
         private static void AddParameters(SqlCommand cmd, string module, string action, string description)
         {
             cmd.Parameters.Add("@bid", SqlDbType.Int).Value =

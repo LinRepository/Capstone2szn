@@ -82,24 +82,34 @@ namespace Capstoneszn
                 // was: "UPDATE Users SET Password = @Password WHERE Username = @Username"
                 // Login attempt limit: a completed reset also unlocks the account and
                 // clears the counters, in the same statement as the password change.
+                // ADDED (Nov 10, 2026): OUTPUT inserted.UserId returns the changed account's
+                // id in the same statement, so the reset can be audit-logged below.
                 using (SqlCommand cmd = new SqlCommand(
                     @"UPDATE Users
                       SET Password = @Password,
                           FailedLoginCount = 0, LockoutCount = 0, LockoutUntilUtc = NULL
+                      OUTPUT inserted.UserId
                       WHERE Username = @Username", conn))
                 {
                     cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 255).Value = hashed;
                     cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = _username;
                     conn.Open();
 
-                    int rows = cmd.ExecuteNonQuery();
+                    // was: int rows = cmd.ExecuteNonQuery();
+                    // was: if (rows == 0)
+                    object? changedUserId = cmd.ExecuteScalar();
 
-                    if (rows == 0)
+                    if (changedUserId == null || changedUserId == DBNull.Value)
                     {
                         MessageBox.Show("User not found. Password was not changed.", "Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
+
+                    // Audit log: lets the landlord see a password changed through
+                    // Forgot Password (nobody is signed in here, so LogForUser is used).
+                    AuditLogger.LogForUser(Convert.ToInt32(changedUserId), AuditLogger.ModuleLogin,
+                        "Password Reset", "Password reset through security questions (Forgot Password)");
                 }
 
                 txtResetPassword.Clear();

@@ -316,9 +316,27 @@ namespace Capstoneszn
                             else if (!rd.IsDBNull(4))
                                 appliedTo = "Maintenance: " + rd.GetString(4);
                             else
-                                appliedTo = rd.GetString(1) + "  " +
-                                            rd.GetDateTime(2).ToString("MMM dd") + " - " +
-                                            rd.GetDateTime(3).ToString("MMM dd, yyyy");
+                            {
+                                // ORIGINAL:
+                                // appliedTo = rd.GetString(1) + "  " +
+                                //             rd.GetDateTime(2).ToString("MMM dd") + " - " +
+                                //             rd.GetDateTime(3).ToString("MMM dd, yyyy");
+
+                                // NEW (item 2): a Rent bill stores its end as the NEXT period's start
+                                // (exclusive), so the receipt shows the day before:
+                                //   stored Nov 01 -> Dec 01   shown Nov 01 - Nov 30
+                                // Water already stores the last day of the month, so it keeps its end.
+                                string billCategory = rd.GetString(1);
+                                DateTime periodStart = rd.GetDateTime(2);
+                                DateTime periodEnd = rd.GetDateTime(3);
+
+                                if (billCategory == "Rent" && periodEnd > periodStart)
+                                    periodEnd = periodEnd.AddDays(-1);
+
+                                appliedTo = billCategory + "  " +
+                                            periodStart.ToString("MMM dd") + " - " +
+                                            periodEnd.ToString("MMM dd, yyyy");
+                            }
 
                             receipt.Lines.Add(new PaymentAllocationLine
                             {

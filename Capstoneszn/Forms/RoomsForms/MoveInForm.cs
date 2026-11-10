@@ -231,7 +231,9 @@ namespace Capstoneszn.UserControls
 
                 lblTotalDue.Text = Peso(_roomPrice);
                 lblShare.Text = payers.Count == 0 ? "—" : ShareText(_roomPrice, payers.Count);
-                lblCovers.Text = DateTime.Today.ToString("MMM d") + " – " + DateTime.Today.AddMonths(1).ToString("MMM d, yyyy");
+                // ORIGINAL: lblCovers.Text = DateTime.Today.ToString("MMM d") + " – " + DateTime.Today.AddMonths(1).ToString("MMM d, yyyy");
+                // NEW (item 2): covers through the day BEFORE the next due date (Nov 10 – Dec 9, next due Dec 10)
+                lblCovers.Text = DateTime.Today.ToString("MMM d") + " – " + DateTime.Today.AddMonths(1).AddDays(-1).ToString("MMM d, yyyy");
                 lblNextDue.Text = DateTime.Today.AddMonths(1).ToString("MMM d, yyyy");
 
                 bool whole = payers.Count > 1 && rdoWholeRoom.Checked;

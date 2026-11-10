@@ -806,7 +806,11 @@ namespace Capstoneszn.Forms
             decimal months = Math.Floor(paid / monthly);   // whole months only
             if (months > 120) return "≈ covers 10+ years";   // a typo-sized amount; avoids a date overflow
 
-            DateTime until = DateTime.Today.AddMonths((int)months);
+            // ORIGINAL: DateTime until = DateTime.Today.AddMonths((int)months);
+            // NEW (item 2): the last covered day is the day BEFORE the next due date,
+            // matching the joiner path above (CoversUntil = period end - 1 day).
+            //   1 month paid on Nov 10 -> covers until Dec 9 (next due Dec 10)
+            DateTime until = DateTime.Today.AddMonths((int)months).AddDays(-1);
             return (paid == monthly ? "Covers until " : "≈ covers until ") + until.ToString("MMM d, yyyy");
         }
 

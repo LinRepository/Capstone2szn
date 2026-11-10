@@ -32,22 +32,63 @@ namespace Capstoneszn
                 {
                     conn.Open();
 
-                    // 1. Resolve the username to a UserId
+                    // OLD (Nov 10, 2026) - "User not found." told anyone which usernames exist:
+                    // // 1. Resolve the username to a UserId
+                    // using (SqlCommand cmd = new SqlCommand(
+                    //     "SELECT UserId FROM Users WHERE Username = @Username", conn))
+                    // {
+                    //     cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = _username;
+                    //     object? result = cmd.ExecuteScalar();
+                    //
+                    //     if (result == null || result == DBNull.Value)
+                    //     {
+                    //         MessageBox.Show("User not found.", "Error",
+                    //             MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //         this.Close();
+                    //         return;
+                    //     }
+                    //
+                    //     _userId = (int)result;
+                    // }
+
+                    // 1. Resolve the username, with the same employee status the login
+                    //    screen reads. Only accounts that can log in can recover a password.
+                    string role;
+                    string? empStatus;
+                    bool isArchived;
+
                     using (SqlCommand cmd = new SqlCommand(
-                        "SELECT UserId FROM Users WHERE Username = @Username", conn))
+                        @"SELECT u.UserId, u.Role, e.EmploymentStatus, e.ArchivedAt
+                          FROM Users u
+                          LEFT JOIN Employees e ON e.EmployeeID = u.EmployeeID
+                          WHERE u.Username = @Username", conn))
                     {
                         cmd.Parameters.Add("@Username", SqlDbType.NVarChar, 50).Value = _username;
-                        object? result = cmd.ExecuteScalar();
 
-                        if (result == null || result == DBNull.Value)
+                        using (SqlDataReader r = cmd.ExecuteReader())
                         {
-                            MessageBox.Show("User not found.", "Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            this.Close();
-                            return;
-                        }
+                            // Unknown username -> the same generic message as every other
+                            // "can't recover" case, so nobody can test which usernames exist.
+                            if (!r.Read())
+                            {
+                                CloseRecoveryUnavailable();
+                                return;
+                            }
 
-                        _userId = (int)result;
+                            _userId = r.GetInt32(0);
+                            role = r.GetString(1);
+                            empStatus = r.IsDBNull(2) ? null : r.GetString(2);
+                            isArchived = !r.IsDBNull(3);
+                        }
+                    }
+
+                    // An archived or inactive caretaker cannot log in, so they cannot recover
+                    // either - same rule as the login screen. Same generic message, and it is
+                    // checked BEFORE the recovery lock so a locked account can't reveal itself.
+                    if (role == "Caretaker" && (isArchived || empStatus != "Active"))
+                    {
+                        CloseRecoveryUnavailable();
+                        return;
                     }
 
                     // FORGOT PASSWORD ATTEMPT LIMIT - if recovery is locked, say so now
@@ -80,10 +121,13 @@ namespace Capstoneszn
                     // Count == 3 does not guarantee the numbers are 1, 2 and 3.
                     if (!questions.ContainsKey(1) || !questions.ContainsKey(2) || !questions.ContainsKey(3))
                     {
-                        MessageBox.Show(
-                            "This account has no security questions set up, so the password cannot be reset here.",
-                            "Not available", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        this.Close();
+                        // was: "This account has no security questions set up, ..." - it
+                        // confirmed the account exists. Now the same generic message.
+                        // MessageBox.Show(
+                        //     "This account has no security questions set up, so the password cannot be reset here.",
+                        //     "Not available", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // this.Close();
+                        CloseRecoveryUnavailable();
                         return;
                     }
 
@@ -203,6 +247,11 @@ namespace Capstoneszn
                     }
                     if (lockMinutes > 0)
                     {
+                        // Audit log: lets the landlord see someone guessing security answers.
+                        AuditLogger.LogForUser(_userId, AuditLogger.ModuleLogin, "Lockout",
+                            "Forgot Password locked for " + lockMinutes + " min after " +
+                            LoginLockout.MaxFailedAttempts + " wrong security-answer attempts");
+
                         CloseForRecoveryLockout(lockMinutes * 60);
                         return;
                     }
@@ -252,6 +301,19 @@ namespace Capstoneszn
 
             MessageBox.Show(LoginLockout.RecoveryLockedMessage(secondsRemaining),
                 "Password Recovery Locked", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            this.Close();
+        }
+
+        // ADDED (Nov 10, 2026): the ONE message for every "recovery can't start" case -
+        // unknown username, archived/inactive caretaker, no security questions. Same text,
+        // title and icon every time: any difference would tell an attacker which case
+        // they hit, i.e. whether the username exists.
+        private void CloseRecoveryUnavailable()
+        {
+            MessageBox.Show(
+                "Password recovery can't be started for this username.\n\n" +
+                "Check the username and try again, or contact the landlord.",
+                "Password Recovery", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             this.Close();
         }
 

@@ -297,7 +297,9 @@ namespace Capstoneszn.Forms.RoomsForms
                     Type = paid == m.Due ? "Full" : "Advance",
                     Method = card.Method,
                     Reference = card.Method == MoveInService.GCash ? card.ReferenceNo : "—",
-                    Covers = _plan.FirstBill.HasValue ? "Until " + _plan.FirstBill.Value.ToString("MMM d, yyyy") : "-",
+                    // ORIGINAL: Covers = _plan.FirstBill.HasValue ? "Until " + _plan.FirstBill.Value.ToString("MMM d, yyyy") : "-",
+                    // NEW (item 2): FirstBill is the first bill in the new room, so the paid time ends the day before it
+                    Covers = _plan.FirstBill.HasValue ? "Until " + _plan.FirstBill.Value.AddDays(-1).ToString("MMM d, yyyy") : "-",
                     Amount = paid
                 });
                 info.Total += paid;

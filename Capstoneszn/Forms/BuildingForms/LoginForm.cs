@@ -114,6 +114,12 @@ namespace Capstoneszn
                         int lockMinutes = LoginLockout.RecordFailure(conn, userId);
                         if (lockMinutes > 0)
                         {
+                            // ADDED (Nov 10, 2026) audit log: lets the landlord see someone
+                            // guessing passwords. Nobody is signed in yet, so LogForUser.
+                            AuditLogger.LogForUser(userId, AuditLogger.ModuleLogin, "Lockout",
+                                "Login locked for " + lockMinutes + " min after " +
+                                LoginLockout.MaxFailedAttempts + " wrong passwords (login screen)");
+
                             ShowLockedOut(lockMinutes * 60);
                             return;
                         }
