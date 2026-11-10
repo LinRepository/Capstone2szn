@@ -329,7 +329,7 @@
             lblResponsibleTitle.Padding = new Padding(15, 0, 0, 0);
             lblResponsibleTitle.Size = new Size(131, 28);
             lblResponsibleTitle.TabIndex = 42;
-            lblResponsibleTitle.Text = "Responsible";
+            lblResponsibleTitle.Text = "Assigned To";
             lblResponsibleTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlIssue

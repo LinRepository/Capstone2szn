@@ -294,9 +294,9 @@ namespace Capstoneszn
             }
 
             return list;
-            
+
         }
-           
+
 
         /* =================================================================
            ADD ISSUE
@@ -550,7 +550,8 @@ namespace Capstoneszn
 
                         AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Add Issue",
                             "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle +
-                            " (" + affectedTenantIds.Count + " affected tenant(s))");
+                            // ORIGINAL: " (" + affectedTenantIds.Count + " affected tenant(s))");
+                            " (" + affectedTenantIds.Count + " charged tenant(s))");   // NEW (Nov 10): terminology
 
                         tx.Commit();
                         return issueId;
@@ -658,7 +659,8 @@ namespace Capstoneszn
                         }
 
                         AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Add Issue",
-                            "Building - " + issueTitle + " (" + affectedTenantIds.Count + " affected tenant(s))");
+                            // ORIGINAL: "Building - " + issueTitle + " (" + affectedTenantIds.Count + " affected tenant(s))");
+                            "Building - " + issueTitle + " (" + affectedTenantIds.Count + " charged tenant(s))");   // NEW (Nov 10): terminology
 
                         tx.Commit();
                         return issueId;
@@ -1172,7 +1174,9 @@ namespace Capstoneszn
             bool ownerResponsible,
             IList<int> responsibleEmployeeIds,
             bool markComplete,
-            int userId)
+            // ORIGINAL: int userId)
+            int userId,
+            bool ownerSharesCost = false)   // NEW (Nov 10): landlord ticked "Owner shares the cost" at Repair Done
         {
             var result = new IssueSaveResult();
             DateTime today = DateTime.Today;
@@ -1260,8 +1264,10 @@ namespace Capstoneszn
                                     previouslyAffected.Contains(tenantId) ? 1 : 0);
                                 if (cmd.ExecuteNonQuery() != 1)
                                     throw new InvalidOperationException(
-                                        "An affected tenant has moved out. " +
-                                        "Remove them from Affected Tenants first.");
+                                        // ORIGINAL: "An affected tenant has moved out. " +
+                                        // ORIGINAL: "Remove them from Affected Tenants first.");
+                                        "A charged tenant has moved out. " +
+                                        "Remove them from Charged Tenants first.");   // NEW (Nov 10): terminology
                             }
                         }
 
@@ -1326,7 +1332,9 @@ namespace Capstoneszn
                                 // NEW (Step 4): one rule for Room and Building issues -
                                 // responsible people share the cost, each tenant is billed
                                 // in the room they live in NOW, and rounding goes to the building.
-                                CreateSharedCharge(conn, tx, issueId, roomId, issueTitle, total, today, userId, result);
+                                // ORIGINAL (Step 4): CreateSharedCharge(conn, tx, issueId, roomId, issueTitle, total, today, userId, result);
+                                CreateSharedCharge(conn, tx, issueId, roomId, issueTitle, total, today, userId, result,
+                                                   ownerSharesCost);   // NEW (Nov 10)
                             }
                             else if (total > 0m)
                             {
@@ -1375,26 +1383,28 @@ namespace Capstoneszn
         /// <summary>
         /// NEW (Step 4): Repair Done with charged tenants, for Room and Building issues.
         ///
-        ///   1. Heads = charged tenants + every Responsible person ticked
-        ///      (the owner and each employee count as one head each).
+        ///   1. ORIGINAL (Step 4): Heads = charged tenants + every Responsible person ticked.
+        ///      NEW (Nov 10): Heads = charged tenants, + 1 for the owner only when the
+        ///      landlord ticks "Owner shares the cost". Assigned To never counts.
         ///   2. Each head's share = total / heads, rounded DOWN to the centavo,
         ///      so a tenant is never overcharged.
         ///   3. Each tenant is billed in the room they live in NOW
         ///      (a tenant who transferred is billed in their new room).
         ///      One bill per room (UX_Bills_MaintIssue_Room).
-        ///   4. Everything the tenants do not pay - the Responsible shares and
-        ///      any rounding centavos - is ONE building expense.
+        ///   4. Everything the tenants do not pay - the owner's share (if ticked)
+        ///      and any rounding centavos - is ONE building expense.
         ///   5. A share under PHP 1.00 is not allowed.
         ///
-        /// Example: PHP 600, 2 tenants + owner + 1 employee -> PHP 150 each;
-        ///          tenants billed PHP 150 each, PHP 300 building expense.
-        /// Example: PHP 1,000, 11 tenants + 2 responsible -> PHP 76.92 each;
-        ///          tenants billed PHP 846.12, PHP 153.88 building expense.
+        /// Example: PHP 1,200 door, Ben only, caretaker assigned -> Ben PHP 1,200, no expense.
+        /// Example: PHP 1,200, Ben + owner shares -> PHP 600 each; PHP 600 building expense.
+        /// Example: PHP 1,000, 3 tenants -> PHP 333.33 each; PHP 0.01 building expense (rounding).
         /// </summary>
         private static void CreateSharedCharge(
             SqlConnection conn, SqlTransaction tx,
             int issueId, int issueRoomId, string issueTitle, decimal total,
-            DateTime today, int userId, IssueSaveResult result)
+            // ORIGINAL (Step 4): DateTime today, int userId, IssueSaveResult result)
+            DateTime today, int userId, IssueSaveResult result,
+            bool ownerSharesCost)   // NEW (Nov 10)
         {
             DateTime due = today.AddDays(MaintenanceDueDays);
 
@@ -1412,23 +1422,31 @@ namespace Capstoneszn
                     while (rd.Read()) tenants.Add((rd.GetInt32(0), rd.GetInt32(1)));
             }
 
-            int responsible;
-            using (var cmd = new SqlCommand(
-                "SELECT COUNT(*) FROM MaintenanceResponsible WHERE IssueId = @iid;", conn, tx))
-            {
-                cmd.Parameters.AddWithValue("@iid", issueId);
-                responsible = (int)cmd.ExecuteScalar();
-            }
+            // ORIGINAL (Step 4): every ticked Responsible person was one more head.
+            // int responsible;
+            // using (var cmd = new SqlCommand(
+            //     "SELECT COUNT(*) FROM MaintenanceResponsible WHERE IssueId = @iid;", conn, tx))
+            // {
+            //     cmd.Parameters.AddWithValue("@iid", issueId);
+            //     responsible = (int)cmd.ExecuteScalar();
+            // }
+            // NEW (Nov 10): "Assigned To" (MaintenanceResponsible) is who handles the
+            // repair and never affects the split. Only the OWNER can be an extra head,
+            // and only when the landlord ticks "Owner shares the cost". An employee is
+            // never a head and nothing is deducted from any salary.
+            int ownerHeads = ownerSharesCost ? 1 : 0;
 
             long cents = (long)Math.Round(total * 100m);
-            int heads = tenants.Count + responsible;
+            // ORIGINAL (Step 4): int heads = tenants.Count + responsible;
+            int heads = tenants.Count + ownerHeads;   // NEW (Nov 10)
             long share = heads == 0 ? 0 : cents / heads;   // integer division = rounded down
 
             if (tenants.Count > 0 && share < 100)
                 throw new InvalidOperationException(
                     "Each person's share would be " + (share / 100m).ToString("N2") + " (" +
                     total.ToString("N2") + " split among " + heads + "). A share must be at least PHP 1.00. " +
-                    "Charge fewer people, or record it with no affected tenants as a building expense.");
+                    // ORIGINAL: "Charge fewer people, or record it with no affected tenants as a building expense.");
+                    "Charge fewer tenants, or record it with no charged tenants as a building expense.");   // NEW (Nov 10)
 
             // One bill per room the charged tenants live in now.
             foreach (var room in tenants.GroupBy(t => t.RoomId))
@@ -1482,7 +1500,8 @@ namespace Capstoneszn
                 {
                     string where = issueRoomId == 0 ? "Building" : "Room " + GetRoomNumber(conn, tx, issueRoomId);
                     string why = tenants.Count == 0 ? ""
-                               : responsible > 0 ? " (responsible shares)"
+                               // ORIGINAL (Step 4): : responsible > 0 ? " (responsible shares)"
+                               : ownerSharesCost ? " (owner's share)"   // NEW (Nov 10)
                                : " (rounding)";
                     cmd.Parameters.AddWithValue("@desc", Trim255(where + " - " + issueTitle + why));
                     cmd.Parameters.AddWithValue("@amt", expenseCents / 100m);
@@ -1517,7 +1536,8 @@ namespace Capstoneszn
                     throw new InvalidOperationException(
                         AuditLogger.TenantName(conn, tx, tenantId) + " moved in on " + firstMoveIn.ToString("MMM d, yyyy") +
                         ", after this issue's date (" + issueDate.ToString("MMM d, yyyy") + "). " +
-                        "They can't be charged for it. Remove them from Affected Tenants or check the issue date.");
+                        // ORIGINAL: "They can't be charged for it. Remove them from Affected Tenants or check the issue date.");
+                        "They can't be charged for it. Remove them from Charged Tenants or check the issue date.");   // NEW (Nov 10)
             }
         }
 

@@ -506,7 +506,7 @@
             lblTenantHint.Name = "lblTenantHint";
             lblTenantHint.Size = new Size(420, 22);
             lblTenantHint.TabIndex = 1;
-            lblTenantHint.Text = "Optional. Tenants of the selected room who will pay.";
+            lblTenantHint.Text = "Optional. They pay; the cost is split equally.";
             // 
             // lblAffectedTenants
             // 
@@ -517,7 +517,7 @@
             lblAffectedTenants.Name = "lblAffectedTenants";
             lblAffectedTenants.Size = new Size(420, 30);
             lblAffectedTenants.TabIndex = 0;
-            lblAffectedTenants.Text = "Affected Tenant(s)";
+            lblAffectedTenants.Text = "Charged Tenant(s)";
             lblAffectedTenants.TextAlign = ContentAlignment.BottomLeft;
             // 
             // pnlMaterialsNeeded
@@ -703,7 +703,7 @@
             lblResponsible.Name = "lblResponsible";
             lblResponsible.Size = new Size(420, 30);
             lblResponsible.TabIndex = 0;
-            lblResponsible.Text = "Responsible";
+            lblResponsible.Text = "Assigned To (does not affect who pays)";
             lblResponsible.TextAlign = ContentAlignment.BottomLeft;
             // 
             // lblPeopleHeading

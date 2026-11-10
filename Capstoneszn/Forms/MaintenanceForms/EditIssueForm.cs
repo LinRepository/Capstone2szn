@@ -112,7 +112,8 @@ namespace Capstoneszn.Forms
             lblRoomValue.Text = buildingIssue ? "Whole building" : "Room " + _issue.RoomNumber;
             lblIssueTypeValue.Text = buildingIssue ? "Building" : "Room";
             if (buildingIssue)
-                lblTenantHint.Text = "Optional. Building tenants who will pay (billed to their own room).";
+                // ORIGINAL: lblTenantHint.Text = "Optional. Building tenants who will pay (billed to their own room).";
+                lblTenantHint.Text = "Optional. Split equally; each billed in their own room.";   // NEW (Nov 10)
 
             UpdateMaterialsCount();
             txtIssue.Text = _issue.IssueTitle;
@@ -128,6 +129,10 @@ namespace Capstoneszn.Forms
 
             LoadTenantSection();
             LoadResponsibleSection();
+
+            // NEW (Nov 10): only the landlord decides whether the owner shares the cost.
+            chkOwnerSharesCost.Checked = false;
+            chkOwnerSharesCost.Visible = Session.IsLandlord;
         }
 
         /// <summary>
@@ -204,7 +209,8 @@ namespace Capstoneszn.Forms
                 tenants = clbAffectedTenants.CheckedItems.Cast<TenantChoice>().ToList();
                 if (tenants.Count == 0)
                 {
-                    Warn("Check at least one affected tenant, or choose None.", clbAffectedTenants);
+                    // ORIGINAL: Warn("Check at least one affected tenant, or choose None.", clbAffectedTenants);
+                    Warn("Check at least one tenant to charge, or choose None.", clbAffectedTenants);   // NEW (Nov 10)
                     return;
                 }
             }
@@ -212,7 +218,8 @@ namespace Capstoneszn.Forms
                 tenants = new List<TenantChoice>();
             else
             {
-                Warn("Choose who is affected: All, Specify, or None.", rdoTenantAll);
+                // ORIGINAL: Warn("Choose who is affected: All, Specify, or None.", rdoTenantAll);
+                Warn("Choose who to charge: All, Specify, or None.", rdoTenantAll);   // NEW (Nov 10)
                 return;
             }
 
@@ -220,7 +227,8 @@ namespace Capstoneszn.Forms
             TenantChoice gone = tenants.FirstOrDefault(t => !t.IsCurrent);
             if (gone != null)
             {
-                Warn(gone.Name + " is no longer in the room. Uncheck them in Affected Tenants first.",
+                // ORIGINAL: Warn(gone.Name + " is no longer in the room. Uncheck them in Affected Tenants first.",
+                Warn(gone.Name + " is no longer in the room. Uncheck them in Charged Tenants first.",   // NEW (Nov 10)
                      clbAffectedTenants);
                 return;
             }
@@ -234,7 +242,8 @@ namespace Capstoneszn.Forms
                 responsible = clbResponsible.CheckedItems.Cast<ResponsibleChoice>().ToList();
                 if (responsible.Count == 0)
                 {
-                    Warn("Check at least one responsible person, or choose None.", clbResponsible);
+                    // ORIGINAL: Warn("Check at least one responsible person, or choose None.", clbResponsible);
+                    Warn("Check at least one person to assign, or choose None.", clbResponsible);   // NEW (Nov 10)
                     return;
                 }
             }
@@ -242,7 +251,8 @@ namespace Capstoneszn.Forms
                 responsible = new List<ResponsibleChoice>();
             else
             {
-                Warn("Choose who is responsible: All, Specify, or None.", rdoResponsibleAll);
+                // ORIGINAL: Warn("Choose who is responsible: All, Specify, or None.", rdoResponsibleAll);
+                Warn("Choose who is assigned: All, Specify, or None.", rdoResponsibleAll);   // NEW (Nov 10)
                 return;
             }
 
@@ -257,7 +267,10 @@ namespace Capstoneszn.Forms
 
             // ---- Completing is final: show exactly what will happen -------
             // ORIGINAL: if (markComplete && !ConfirmComplete(tenants.Count))
-            if (markComplete && !ConfirmComplete(tenants.Count, responsible.Count))   // NEW (Step 4): responsible people share the cost
+            // ORIGINAL (Step 4): if (markComplete && !ConfirmComplete(tenants.Count, responsible.Count))
+            // NEW (Nov 10): Assigned To never shares the cost; only the owner can, when ticked.
+            bool ownerShares = Session.IsLandlord && chkOwnerSharesCost.Checked;
+            if (markComplete && !ConfirmComplete(tenants.Count, ownerShares))
                 return;
 
             IssueSaveResult result;
@@ -273,7 +286,9 @@ namespace Capstoneszn.Forms
                     responsible.Where(r => !r.IsOwner && r.EmployeeId.HasValue)
                                .Select(r => r.EmployeeId.Value).ToList(),
                     markComplete,
-                    Session.UserId);
+                    // ORIGINAL: Session.UserId);
+                    Session.UserId,
+                    markComplete && ownerShares);   // NEW (Nov 10)
             }
             catch (InvalidOperationException ex)
             {
@@ -312,7 +327,8 @@ namespace Capstoneszn.Forms
         /// create. Returns true only on Yes.
         /// </summary>
         ///  // ORIGINAL: private bool ConfirmComplete(int tenantCount)
-        private bool ConfirmComplete(int tenantCount, int responsibleCount) // NEW (Step 4)
+        // ORIGINAL (Step 4): private bool ConfirmComplete(int tenantCount, int responsibleCount)
+        private bool ConfirmComplete(int tenantCount, bool ownerShares)   // NEW (Nov 10)
         {
             decimal total;
             try
@@ -339,7 +355,8 @@ namespace Capstoneszn.Forms
             {
                 // NEW (Step 4): tenants + responsible people share equally, rounded down;
                 // the responsible shares and any rounding are a building expense.
-                int heads = tenantCount + responsibleCount;
+                // ORIGINAL (Step 4): int heads = tenantCount + responsibleCount;
+                int heads = tenantCount + (ownerShares ? 1 : 0);   // NEW (Nov 10)
                 decimal share = Math.Floor(total / heads * 100m) / 100m;
                 decimal expense = total - share * tenantCount;
 
@@ -347,7 +364,8 @@ namespace Capstoneszn.Forms
                 {
                     MessageBox.Show("Each person's share would be " + Peso(share) + " (" + Peso(total) + " split among " +
                                     heads + "). A share must be at least ₱1.00.\n\n" +
-                                    "Charge fewer people, or choose None under Affected Tenants to record it as a building expense.",
+                                    // ORIGINAL: "Charge fewer people, or choose None under Affected Tenants to record it as a building expense.",
+                                    "Charge fewer tenants, or choose None under Charged Tenants to record it as a building expense.",   // NEW (Nov 10)
                         "Share Too Small", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
@@ -357,12 +375,17 @@ namespace Capstoneszn.Forms
                         + ", in the room each lives in now."
                         + (expense > 0m
                             ? "\n" + Peso(expense) + " is recorded as a building expense"
-                              + (responsibleCount > 0 ? " (the " + responsibleCount + " responsible share(s))." : " (rounding).")
+                              // ORIGINAL (Step 4): + (responsibleCount > 0 ? " (the " + responsibleCount + " responsible share(s))." : " (rounding).")
+                              + (ownerShares ? " (the owner's share)." : " (rounding).")   // NEW (Nov 10)
                             : "")
                         + "\nThey pay it in Bill Management. The issue becomes Complete once all have paid.";
             }
             else
                 outcome = Peso(total) + " will be recorded as a building expense.";
+
+            // NEW (Nov 10): the owner share only applies when tenants are charged.
+            if (ownerShares && tenantCount == 0 && total > 0m)
+                outcome += "\n(\"Owner shares the cost\" has no effect: nobody is charged, so the owner pays it all.)";
 
             return MessageBox.Show(
                        // ORIGINAL: outcome + "\n\nOnce completed, this issue can no longer be edited or deleted. Continue?",
@@ -397,7 +420,10 @@ namespace Capstoneszn.Forms
         {
             MessageBox.Show(message, "Missing Information",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            focus.Focus();
+            // focus.Focus();
+            // Focusing a RadioButton checks it automatically (WinForms behaviour),
+            // which picked "All" for the user. Only focus non-radio controls.
+            if (!(focus is RadioButton)) focus.Focus();
         }
 
         private void btnCancelEditIssue_Click(object sender, EventArgs e)

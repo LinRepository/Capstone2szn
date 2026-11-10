@@ -164,9 +164,12 @@ namespace Capstoneszn.Forms
             bool building = rdoIssueTypeBuilding.Checked;
 
             pnlRoomSelection.Visible = !building;
-            lblTenantHint.Text = building
-                ? "Optional. Building tenants who will pay (billed to their own room)."
-                : "Optional. Tenants of the selected room who will pay.";
+            // ORIGINAL: lblTenantHint.Text = building
+            // ORIGINAL:     ? "Optional. Building tenants who will pay (billed to their own room)."
+            // ORIGINAL:     : "Optional. Tenants of the selected room who will pay.";
+            lblTenantHint.Text = building   // NEW (Nov 10): short enough to fit on one line
+                ? "Optional. Split equally; each billed in their own room."
+                : "Optional. They pay; the cost is split equally.";
 
             if (building)
                 LoadBuildingTenants();
@@ -262,7 +265,8 @@ namespace Capstoneszn.Forms
                 tenantIds = clbAffectedTenants.CheckedItems.Cast<LookupItem>().Select(t => t.Id).ToList();
                 if (tenantIds.Count == 0)
                 {
-                    Warn("Check at least one affected tenant, or choose None.", clbAffectedTenants);
+                    // ORIGINAL: Warn("Check at least one affected tenant, or choose None.", clbAffectedTenants);
+                    Warn("Check at least one tenant to charge, or choose None.", clbAffectedTenants);   // NEW (Nov 10)
                     return;
                 }
             }
@@ -272,7 +276,8 @@ namespace Capstoneszn.Forms
             }
             else
             {
-                Warn("Choose who is affected: All, Specify, or None.", rdoTenantAll);
+                // ORIGINAL: Warn("Choose who is affected: All, Specify, or None.", rdoTenantAll);
+                Warn("Choose who to charge: All, Specify, or None.", rdoTenantAll);   // NEW (Nov 10)
                 return;
             }
 
@@ -287,7 +292,8 @@ namespace Capstoneszn.Forms
                 responsible = clbResponsible.CheckedItems.Cast<ResponsibleOption>().ToList();
                 if (responsible.Count == 0)
                 {
-                    Warn("Check at least one responsible person, or choose None.", clbResponsible);
+                    // ORIGINAL: Warn("Check at least one responsible person, or choose None.", clbResponsible);
+                    Warn("Check at least one person to assign, or choose None.", clbResponsible);   // NEW (Nov 10)
                     return;
                 }
             }
@@ -297,7 +303,8 @@ namespace Capstoneszn.Forms
             }
             else
             {
-                Warn("Choose who is responsible: All, Specify, or None.", rdoResponsibleAll);
+                // ORIGINAL: Warn("Choose who is responsible: All, Specify, or None.", rdoResponsibleAll);
+                Warn("Choose who is assigned: All, Specify, or None.", rdoResponsibleAll);   // NEW (Nov 10)
                 return;
             }
 

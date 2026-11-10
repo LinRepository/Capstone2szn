@@ -35,6 +35,7 @@
             lblIssueType = new Label();
             lblEditIssueTitle = new Label();
             pnlEditIssueActions = new Panel();
+            chkOwnerSharesCost = new CheckBox();
             btnRepairDone = new Button();
             btnSaveIssueChanges = new Button();
             btnCancelEditIssue = new Button();
@@ -173,6 +174,7 @@
             // pnlEditIssueActions
             // 
             pnlEditIssueActions.BorderStyle = BorderStyle.FixedSingle;
+            pnlEditIssueActions.Controls.Add(chkOwnerSharesCost);
             pnlEditIssueActions.Controls.Add(btnRepairDone);
             pnlEditIssueActions.Controls.Add(btnSaveIssueChanges);
             pnlEditIssueActions.Controls.Add(btnCancelEditIssue);
@@ -182,12 +184,25 @@
             pnlEditIssueActions.Size = new Size(900, 64);
             pnlEditIssueActions.TabIndex = 2;
             // 
+            // chkOwnerSharesCost
+            // 
+            chkOwnerSharesCost.AutoSize = true;
+            chkOwnerSharesCost.Cursor = Cursors.Hand;
+            chkOwnerSharesCost.ForeColor = Color.White;
+            chkOwnerSharesCost.Location = new Point(155, 21);
+            chkOwnerSharesCost.Name = "chkOwnerSharesCost";
+            chkOwnerSharesCost.Size = new Size(308, 24);
+            chkOwnerSharesCost.TabIndex = 3;
+            chkOwnerSharesCost.Text = "Owner shares the cost (as one more head)";
+            chkOwnerSharesCost.UseVisualStyleBackColor = true;
+            // 
             // btnRepairDone
             // 
             btnRepairDone.Cursor = Cursors.Hand;
-            btnRepairDone.Location = new Point(20, 18);
+            btnRepairDone.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnRepairDone.Location = new Point(14, 13);
             btnRepairDone.Name = "btnRepairDone";
-            btnRepairDone.Size = new Size(120, 29);
+            btnRepairDone.Size = new Size(122, 35);
             btnRepairDone.TabIndex = 2;
             btnRepairDone.Text = "Repair Done";
             btnRepairDone.UseVisualStyleBackColor = true;
@@ -196,10 +211,10 @@
             // 
             btnSaveIssueChanges.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSaveIssueChanges.Cursor = Cursors.Hand;
-            btnSaveIssueChanges.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnSaveIssueChanges.Location = new Point(743, 14);
+            btnSaveIssueChanges.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSaveIssueChanges.Location = new Point(746, 13);
             btnSaveIssueChanges.Name = "btnSaveIssueChanges";
-            btnSaveIssueChanges.Size = new Size(135, 34);
+            btnSaveIssueChanges.Size = new Size(141, 35);
             btnSaveIssueChanges.TabIndex = 1;
             btnSaveIssueChanges.Text = "Save Changes";
             btnSaveIssueChanges.UseVisualStyleBackColor = true;
@@ -210,9 +225,9 @@
             btnCancelEditIssue.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnCancelEditIssue.Cursor = Cursors.Hand;
             btnCancelEditIssue.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCancelEditIssue.Location = new Point(618, 14);
+            btnCancelEditIssue.Location = new Point(634, 13);
             btnCancelEditIssue.Name = "btnCancelEditIssue";
-            btnCancelEditIssue.Size = new Size(115, 34);
+            btnCancelEditIssue.Size = new Size(99, 35);
             btnCancelEditIssue.TabIndex = 0;
             btnCancelEditIssue.Text = "Cancel";
             btnCancelEditIssue.UseVisualStyleBackColor = true;
@@ -551,7 +566,7 @@
             lblTenantHint.Name = "lblTenantHint";
             lblTenantHint.Size = new Size(420, 22);
             lblTenantHint.TabIndex = 1;
-            lblTenantHint.Text = "Optional. Tenants of this room who will pay.";
+            lblTenantHint.Text = "Optional. They pay; the cost is split equally.";
             // 
             // lblAffectedTenants
             // 
@@ -562,7 +577,7 @@
             lblAffectedTenants.Name = "lblAffectedTenants";
             lblAffectedTenants.Size = new Size(420, 30);
             lblAffectedTenants.TabIndex = 0;
-            lblAffectedTenants.Text = "Affected Tenant(s)";
+            lblAffectedTenants.Text = "Charged Tenant(s)";
             lblAffectedTenants.TextAlign = ContentAlignment.BottomLeft;
             // 
             // pnlMaterials
@@ -726,7 +741,7 @@
             lblResponsible.Name = "lblResponsible";
             lblResponsible.Size = new Size(420, 30);
             lblResponsible.TabIndex = 0;
-            lblResponsible.Text = "Responsible";
+            lblResponsible.Text = "Assigned To (does not affect who pays)";
             lblResponsible.TextAlign = ContentAlignment.BottomLeft;
             // 
             // lblPeopleHeading
@@ -761,6 +776,7 @@
             pnlIssueTypeInfo.ResumeLayout(false);
             pnlIssueTypeInfo.PerformLayout();
             pnlEditIssueActions.ResumeLayout(false);
+            pnlEditIssueActions.PerformLayout();
             pnlEditIssueContent.ResumeLayout(false);
             tlpEditIssue.ResumeLayout(false);
             pnlIssueDetailsColumn.ResumeLayout(false);
@@ -846,5 +862,6 @@
         private Button btnViewMaterials;
         private Label lblMaterialsCount;
         private Button btnRepairDone;
+        private CheckBox chkOwnerSharesCost;
     }
 }

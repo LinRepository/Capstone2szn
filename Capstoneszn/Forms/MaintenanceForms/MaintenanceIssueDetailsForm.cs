@@ -90,7 +90,11 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            lblUnitValue.Text = "Room " + d.RoomNumber;
+            // ORIGINAL: lblUnitValue.Text = "Room " + d.RoomNumber;
+            // NEW (Nov 10): a Building issue has no room (GetIssueDetails returns "Building").
+            bool buildingIssue = d.RoomNumber == "Building";
+            lblUnitTitle.Text = buildingIssue ? "Type" : "Room";
+            lblUnitValue.Text = buildingIssue ? "Building issue" : "Room " + d.RoomNumber;
             lblDateValue.Text = d.DateReported.ToString("MMM dd, yyyy");
 
             // Affected tenants are now a grid (Tenant | Room) instead of one label.
@@ -106,7 +110,11 @@ namespace Capstoneszn.Forms
             //     ? d.Status
             //     : d.Status + " (" + d.CompletedAt.Value.ToString("MMM dd, yyyy") + ")";
             lblStatusValue.Text = d.Status;
-            lblStatusValue.ForeColor = d.IsPending ? Color.Orange : Color.LightGreen;
+            // ORIGINAL: lblStatusValue.ForeColor = d.IsPending ? Color.Orange : Color.LightGreen;
+            // NEW (Nov 10): For Payment gets its own colour; only Complete is green.
+            lblStatusValue.ForeColor = d.IsPending ? Color.Orange
+                                     : d.Status == MaintenanceService.StatusForPayment ? Color.Gold
+                                     : Color.LightGreen;
 
             lblCompletedValue.Text = d.CompletedAt.HasValue
                 ? d.CompletedAt.Value.ToString("MMM dd, yyyy")
@@ -142,8 +150,10 @@ namespace Capstoneszn.Forms
             dgvAffectedTenants.AutoGenerateColumns = false;
             dgvAffectedTenants.DataSource = tenants;
             lblAffectedTenantsTitle.Text = tenants.Count == 0
-                ? "Affected Tenants - none (building expense)"
-                : "Affected Tenants";
+                // ORIGINAL: ? "Affected Tenants - none (building expense)"
+                // ORIGINAL: : "Affected Tenants";
+                ? "Charged Tenants - none (building expense)"   // NEW (Nov 10): terminology
+                : "Charged Tenants";
 
             dgvMaterials.AutoGenerateColumns = false;
             dgvMaterials.DataSource = materials;
