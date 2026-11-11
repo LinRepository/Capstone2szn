@@ -177,6 +177,10 @@ namespace Capstoneszn
                 // ORIGINAL: AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value, category);
                 AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value, category, paymentType); // NEW (Billing v2)
 
+            // NEW (Nov 11, Payment History): decide the rent Tag ONCE, now, and save it
+            // on the payment (Payments.RentTag). It never changes after this.
+            PaymentHistoryService.SetRentTag(conn, tx, paymentId);
+
             // ---- 4. Audit trail - same transaction, so the log and the
             //         payment are saved together or not at all. ------------
             AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Record Payment",
@@ -337,6 +341,10 @@ namespace Capstoneszn
                     AllocateToTenant(conn, tx, paymentId, credit.Key, credit.Value,
                                      line.Category, line.PaymentType);
             }
+
+            // NEW (Nov 11, Payment History): decide the rent Tag ONCE, now, and save it
+            // on the payment (Payments.RentTag). It never changes after this.
+            PaymentHistoryService.SetRentTag(conn, tx, paymentId);
 
             // ---- 3. Audit trail, same transaction ----------------------------
             string detail = string.Join(", ", lines.Select(l =>

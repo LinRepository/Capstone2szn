@@ -12,7 +12,8 @@ namespace Capstoneszn.Forms.PaymentsForms
 {
 
     /// <summary>
-    /// Voids one payment (settled rule: landlord only, reason required,
+    /// Voids one payment (settled rule: reason required - NEW (Step 6, rule B):
+    /// landlord any receipt, caretaker only their own receipt of today;
     /// cannot be undone; the payment stays visible, struck through, and the
     /// correct payment is recorded again as a new receipt).
     ///
@@ -41,6 +42,79 @@ namespace Capstoneszn.Forms.PaymentsForms
 
         private void VoidPaymentForm_Load(object sender, EventArgs e)
         {
+
+            //try
+            //{
+            //    _receipt = PaymentHistoryService.GetReceipt(_paymentId);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Unable to load the payment.\n\n" + ex.Message,
+            //        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    Close();
+            //    return;
+            //}
+
+            //if (_receipt == null || _receipt.Payment.IsVoided)
+            //{
+            //    MessageBox.Show("This payment no longer exists or is already voided.",
+            //        "Cannot Void", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    Close();
+            //    return;
+            //}
+
+            //// NEW (Step 6, rule B): landlord = any receipt; caretaker = own receipt, recorded today
+            //string? notAllowed;
+            //try
+            //{
+            //    notAllowed = PaymentHistoryService.VoidNotAllowedReason(_paymentId, Session.UserId);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Unable to check the payment.\n\n" + ex.Message,
+            //        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    Close();
+            //    return;
+            //}
+            //if (notAllowed != null)
+            //{
+            //    MessageBox.Show(notAllowed, "Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    Close();
+            //    return;
+            //}
+            //// NEW (Step 6): a receipt for someone who has moved out can't be voided
+            //string? blocked;
+            //try
+            //{
+            //    blocked = PaymentHistoryService.VoidBlockedReason(_paymentId);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Unable to check the payment.\n\n" + ex.Message,
+            //        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    Close();
+            //    return;
+            //}
+            //if (blocked != null)
+            //{
+            //    MessageBox.Show(blocked, "Cannot Void", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    Close();
+            //    return;
+            //}
+
+            //PaymentHistoryRow p = _receipt.Payment;
+
+            //lblVoidDetails.Text =
+            //    "Receipt No.:  " + p.ReceiptNo + "\n" +
+            //    "Date:  " + p.PaymentDate.ToString("MMM dd, yyyy") + "\n" +
+            //    "Paid by:  " + p.TenantName + "  (Room " + p.RoomNumber + ")" +
+            //    (p.CoversRoom ? "  - Whole Room" : "") + "\n" +
+            //    "Category:  " + p.Category + "   Type: " + p.PaymentType + "\n" +
+            //    "Amount:  ₱" + p.Amount.ToString("N2") + "  (" + p.Method +
+            //    (p.ReferenceNo.Length > 0 ? " ref " + p.ReferenceNo : "") + ")";
+
+            //lblVoidImpact.Text = BuildImpactText();
+            //ActiveControl = txtVoidReason;
 
             try
             {
@@ -199,7 +273,9 @@ namespace Capstoneszn.Forms.PaymentsForms
 
         private void btnCancelVoid_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
+            // ORIGINAL: this.DialogResult = DialogResult.OK;
+            // NEW (Nov 11): nothing changed, so Payment History does not need to reload
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
     }

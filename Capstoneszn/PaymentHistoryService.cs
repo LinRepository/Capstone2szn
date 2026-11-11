@@ -1,4 +1,569 @@
-﻿using System;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Data;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using Microsoft.Data.SqlClient;
+
+//namespace Capstoneszn
+//{
+
+//    /// <summary>One payment as shown in Payment History.</summary>
+//    public class PaymentHistoryRow
+//    {
+//        public int PaymentId { get; set; }
+//        public DateTime PaymentDate { get; set; }   // the date entered on the payment form
+//        public DateTime RecordedAt { get; set; }    // when it was saved (gives the Time column)
+//        public string ReceiptNo { get; set; } = "";
+//        public string TenantName { get; set; } = "";
+//        public string RoomNumber { get; set; } = "";
+//        public string Category { get; set; } = "";  // Rent / Maintenance / Water / Electricity / Other
+//        public string PaymentType { get; set; } = ""; // Full / Partial / Advance
+//        public string Method { get; set; } = "";
+//        public string ReferenceNo { get; set; } = "";
+//        public decimal Amount { get; set; }
+//        public bool CoversRoom { get; set; }
+//        public string Tag { get; set; } = "";       // On-time / Overdue / Advance
+//        public string Issues { get; set; } = "";    // maintenance issue title(s)
+
+//        public bool IsVoided { get; set; }
+//        public string VoidReason { get; set; } = "";
+//        public DateTime? VoidedAt { get; set; }
+//        public string VoidedBy { get; set; } = "";
+
+//        public bool IsUtility =>
+//            Category == "Water" || Category == "Electricity" || Category == "Other";
+//    }
+
+//    /// <summary>One line of what a payment settled (receipt / void preview).</summary>
+//    public class PaymentAllocationLine
+//    {
+//        public string TenantName { get; set; } = "";
+//        public string AppliedTo { get; set; } = "";   // "Rent Oct 15 - Nov 15, 2026", "Maintenance: Leaking faucet", "Advance credit"
+//        public decimal Amount { get; set; }
+//        public bool IsCredit { get; set; }
+
+//        // NEW (Step 6): for the void preview
+//        public string Category { get; set; } = "";     // Rent / Water / Maintenance
+//        public string RoomNumber { get; set; } = "";   // the room of the bill it paid; "" for credit
+//    }
+
+//    /// <summary>Everything the receipt and the void form show about one payment.</summary>
+//    public class PaymentReceipt
+//    {
+//        public PaymentHistoryRow Payment { get; set; } = new PaymentHistoryRow();
+//        public string BuildingName { get; set; } = "";
+//        public string RecordedBy { get; set; } = "";
+//        public List<PaymentAllocationLine> Lines { get; } = new List<PaymentAllocationLine>();
+//    }
+
+//    /// <summary>
+//    /// Payment History: reading payments, building receipts, and voiding.
+//    ///
+//    /// Rules this class follows:
+//    ///   - Payments are never deleted. A void sets Payments.IsVoided and
+//    ///     every PaymentAllocations row of that payment to voided, in one
+//    ///     transaction. Every balance query already skips voided rows, so
+//    ///     balances correct themselves.
+//    ///   - Voiding is landlord-only; checked here against the Users table,
+//    ///     not only by hiding the button.
+//    ///     NEW (Step 6, rule B): a caretaker may void only a receipt they
+//    ///     recorded themselves, on the same day.
+//    ///   - NEW (Step 6): a receipt cannot be voided if anyone it paid for
+//    ///     has MOVED OUT since (their account was closed at move-out).
+//    ///     A transfer is not a move-out: that money moved with the tenant.
+//    ///   - The Tag is derived, never stored:
+//    ///       Advance  - some money became credit, or paid a period that had
+//    ///                  not started on the payment date
+//    ///       Overdue  - paid after the due date of the oldest bill it settled
+//    ///       On-time  - otherwise
+//    ///     It is read from all of the payment's allocations, voided or not,
+//    ///     so a voided row still shows what it originally was.
+//    /// </summary>
+//    public static class PaymentHistoryService
+//    {
+//        public const string TagOnTime = "On-time";
+//        public const string TagOverdue = "Overdue";
+//        public const string TagAdvance = "Advance";
+
+//        /* =================================================================
+//           LIST
+//           ================================================================= */
+
+//        /// <summary>
+//        /// One building's payments, newest first. fromDate inclusive,
+//        /// toDate exclusive; null = no limit.
+//        /// </summary>
+//        public static List<PaymentHistoryRow> GetPayments(int buildingId, DateTime? fromDate, DateTime? toDate)
+//        {
+//            var list = new List<PaymentHistoryRow>();
+
+//            string sql = @"
+//                SELECT p.PaymentId, p.PaymentDate, p.RecordedAt, p.ReceiptNo,
+//                       t.FirstName + ' ' + t.LastName AS TenantName,
+//                       -- ORIGINAL: r.RoomNumber, p.PaymentCategory, p.PaymentType,
+//                       r.RoomNumber,
+//                       COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+//                       COALESCE(p.PaymentType,     cat.PaymentTypes) AS PaymentType,
+//                       p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
+//                       p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
+//                       tag.HasCredit, tag.LatestStart, tag.OldestDue,
+//                       iss.Issues
+//                                FROM   Payments p
+//                JOIN   Tenants t  ON t.TenantId = p.TenantId
+//                JOIN   Rooms   r  ON r.RoomId   = p.RoomId
+//                LEFT JOIN Users vu ON vu.UserId = p.VoidedBy
+//                OUTER APPLY (   -- NEW (Billing v2): what the payment's lines paid
+//                    SELECT
+//                        (SELECT STRING_AGG(c.Category, ', ')
+//                         FROM (SELECT DISTINCT a.Category
+//                               FROM PaymentAllocations a
+//                               WHERE a.PaymentId = p.PaymentId) c) AS Categories,
+//                        (SELECT CASE WHEN COUNT(DISTINCT a.PaymentType) = 1
+//                                     THEN MAX(a.PaymentType) ELSE N'Mixed' END
+//                         FROM PaymentAllocations a
+//                         WHERE a.PaymentId = p.PaymentId) AS PaymentTypes
+//                ) cat
+//                OUTER APPLY (
+//                    SELECT MAX(CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END) AS HasCredit,
+//                           MAX(b.BillingPeriodStart) AS LatestStart,
+//                           MIN(b.DueDate) AS OldestDue
+//                    FROM   PaymentAllocations a
+//                    LEFT JOIN Bills b ON b.BillId = a.BillId
+//                    WHERE  a.PaymentId = p.PaymentId
+//                ) tag
+//                OUTER APPLY (
+//                    SELECT STRING_AGG(x.IssueTitle, ', ') AS Issues
+//                    FROM (
+//                        SELECT DISTINCT mi.IssueTitle
+//                        FROM   PaymentAllocations a
+//                        JOIN   Bills b              ON b.BillId  = a.BillId
+//                        JOIN   MaintenanceIssues mi ON mi.IssueId = b.MaintenanceIssueId
+//                        WHERE  a.PaymentId = p.PaymentId
+//                    ) x
+//                ) iss
+//                WHERE  r.BuildingId = @bid
+//                  AND  (@from IS NULL OR p.PaymentDate >= @from)
+//                  AND  (@to   IS NULL OR p.PaymentDate <  @to)
+//                ORDER BY p.PaymentDate DESC, p.PaymentId DESC;";
+
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            using (var cmd = new SqlCommand(sql, conn))
+//            {
+//                cmd.Parameters.Add("@bid", SqlDbType.Int).Value = buildingId;
+//                cmd.Parameters.Add("@from", SqlDbType.Date).Value =
+//                    fromDate.HasValue ? (object)fromDate.Value.Date : DBNull.Value;
+//                cmd.Parameters.Add("@to", SqlDbType.Date).Value =
+//                    toDate.HasValue ? (object)toDate.Value.Date : DBNull.Value;
+
+//                conn.Open();
+//                using (var rd = cmd.ExecuteReader())
+//                {
+//                    while (rd.Read())
+//                        list.Add(ReadRow(rd));
+//                }
+//            }
+
+//            return list;
+//        }
+
+//        private static PaymentHistoryRow ReadRow(SqlDataReader rd)
+//        {
+//            var row = new PaymentHistoryRow
+//            {
+//                PaymentId = rd.GetInt32(0),
+//                PaymentDate = rd.GetDateTime(1),
+//                RecordedAt = rd.GetDateTime(2),
+//                ReceiptNo = rd.GetString(3),
+//                TenantName = rd.GetString(4),
+//                // ORIGINAL: RoomNumber = rd.GetString(5),
+//                // ORIGINAL (Billing v2 first try): RoomNumber = rd.GetInt32(5).ToString(),
+//                RoomNumber = Convert.ToString(rd.GetValue(5)) ?? "",    // NEW: works for text or INT                 // NEW: RoomNumber is INT
+//                // ORIGINAL: Category = rd.GetString(6),
+//                Category = rd.IsDBNull(6) ? "" : rd.GetString(6),       // NEW (Billing v2)
+//                // ORIGINAL: PaymentType = rd.GetString(7),
+//                PaymentType = rd.IsDBNull(7) ? "" : rd.GetString(7),    // NEW (Billing v2)
+//                Method = rd.GetString(8),
+//                ReferenceNo = rd.IsDBNull(9) ? "" : rd.GetString(9),
+//                Amount = rd.GetDecimal(10),
+//                CoversRoom = rd.GetBoolean(11),
+//                IsVoided = rd.GetBoolean(12),
+//                VoidReason = rd.IsDBNull(13) ? "" : rd.GetString(13),
+//                VoidedAt = rd.IsDBNull(14) ? (DateTime?)null : rd.GetDateTime(14),
+//                VoidedBy = rd.IsDBNull(15) ? "" : rd.GetString(15),
+//                Issues = rd.IsDBNull(19) ? "" : rd.GetString(19)
+//            };
+
+//            // Worked out here, not in SQL: SQL Server does not allow an
+//            // aggregate that mixes the outer p.PaymentDate with inner columns.
+//            bool hasCredit = !rd.IsDBNull(16) && rd.GetInt32(16) == 1;
+//            DateTime? latestStart = rd.IsDBNull(17) ? (DateTime?)null : rd.GetDateTime(17);
+//            DateTime? oldestDue = rd.IsDBNull(18) ? (DateTime?)null : rd.GetDateTime(18);
+
+//            bool hasAdvance = hasCredit ||
+//                              (latestStart.HasValue && latestStart.Value.Date > row.PaymentDate.Date);
+
+//            if (hasAdvance)
+//                row.Tag = TagAdvance;
+//            else if (oldestDue.HasValue && row.PaymentDate.Date > oldestDue.Value.Date)
+//                row.Tag = TagOverdue;      // overdue starts the day after the due date
+//            else
+//                row.Tag = TagOnTime;
+
+//            return row;
+//        }
+
+//        /* =================================================================
+//           RECEIPT / VOID PREVIEW
+//           ================================================================= */
+
+//        /// <summary>
+//        /// The payment plus what each peso of it settled. Returns null if the
+//        /// payment does not exist.
+//        /// </summary>
+//        public static PaymentReceipt? GetReceipt(int paymentId)
+//        {
+//            var receipt = new PaymentReceipt();
+
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            {
+//                conn.Open();
+
+//                // ---- Header: same row shape as the list -------------------
+//                string headSql = @"
+//                    SELECT p.PaymentId, p.PaymentDate, p.RecordedAt, p.ReceiptNo,
+//                           t.FirstName + ' ' + t.LastName AS TenantName,
+//                           -- ORIGINAL: r.RoomNumber, p.PaymentCategory, p.PaymentType,
+//                           r.RoomNumber,
+//                           COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+//                           COALESCE(p.PaymentType,     cat.PaymentTypes) AS PaymentType,
+//                           p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
+//                           p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
+//                           tag.HasCredit, tag.LatestStart, tag.OldestDue,
+//                           CAST(NULL AS NVARCHAR(MAX)) AS Issues,
+//                           bl.BuildingName, ru.Name AS RecordedByName
+//                    FROM   Payments p
+//                    JOIN   Tenants t   ON t.TenantId   = p.TenantId
+//                    JOIN   Rooms   r   ON r.RoomId     = p.RoomId
+//                    JOIN   Buildings bl ON bl.BuildingId = r.BuildingId
+//                    LEFT JOIN Users vu ON vu.UserId = p.VoidedBy
+
+//                OUTER APPLY (   -- NEW (Billing v2): what the payment's lines paid
+//                    SELECT
+//                        (SELECT STRING_AGG(c.Category, ', ')
+//                         FROM (SELECT DISTINCT a.Category
+//                               FROM PaymentAllocations a
+//                               WHERE a.PaymentId = p.PaymentId) c) AS Categories,
+//                        (SELECT CASE WHEN COUNT(DISTINCT a.PaymentType) = 1
+//                                     THEN MAX(a.PaymentType) ELSE N'Mixed' END
+//                         FROM PaymentAllocations a
+//                         WHERE a.PaymentId = p.PaymentId) AS PaymentTypes
+//                ) cat
+
+//                    LEFT JOIN Users ru ON ru.UserId = p.RecordedBy
+//                    OUTER APPLY (
+//                        SELECT MAX(CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END) AS HasCredit,
+//                               MAX(b.BillingPeriodStart) AS LatestStart,
+//                               MIN(b.DueDate) AS OldestDue
+//                        FROM   PaymentAllocations a
+//                        LEFT JOIN Bills b ON b.BillId = a.BillId
+//                        WHERE  a.PaymentId = p.PaymentId
+//                    ) tag
+//                    WHERE  p.PaymentId = @pid;";
+
+//                using (var cmd = new SqlCommand(headSql, conn))
+//                {
+//                    cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+//                    using (var rd = cmd.ExecuteReader())
+//                    {
+//                        if (!rd.Read()) return null;
+//                        receipt.Payment = ReadRow(rd);
+//                        receipt.BuildingName = rd.GetString(20);
+//                        receipt.RecordedBy = rd.IsDBNull(21) ? "" : rd.GetString(21);
+//                    }
+//                }
+
+//                // ---- Lines: every allocation of the payment ----------------
+//                string lineSql = @"
+//                    SELECT t.FirstName + ' ' + t.LastName AS TenantName,
+//                           b.BillCategory, b.BillingPeriodStart, b.BillingPeriodEnd,
+//                           mi.IssueTitle, a.Amount,
+//                           CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END AS IsCredit,
+//                           a.Category,                                  -- NEW (Billing v2), column 7
+//                           br.RoomNumber AS BillRoom                    -- NEW (Step 6), column 8
+//                    FROM   PaymentAllocations a
+//                    JOIN   Tenants t ON t.TenantId = a.TenantId
+//                    LEFT JOIN Bills b ON b.BillId = a.BillId
+//                    LEFT JOIN Rooms br ON br.RoomId = b.RoomId              -- NEW (Step 6)
+//                    LEFT JOIN MaintenanceIssues mi ON mi.IssueId = b.MaintenanceIssueId
+//                    WHERE  a.PaymentId = @pid
+//                    ORDER BY t.LastName, t.FirstName, b.BillingPeriodStart, a.AllocationId;";
+
+//                using (var cmd = new SqlCommand(lineSql, conn))
+//                {
+//                    cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+//                    using (var rd = cmd.ExecuteReader())
+//                    {
+//                        while (rd.Read())
+//                        {
+//                            bool isCredit = rd.GetInt32(6) == 1;
+//                            string appliedTo;
+
+//                            if (isCredit)
+//                                // ORIGINAL: appliedTo = "Advance credit (for future bills)";
+//                                appliedTo = rd.GetString(7) + " advance credit (for future bills)";   // NEW (Billing v2)
+//                            else if (!rd.IsDBNull(4))
+//                                appliedTo = "Maintenance: " + rd.GetString(4);
+//                            else
+//                            {
+//                                // ORIGINAL:
+//                                // appliedTo = rd.GetString(1) + "  " +
+//                                //             rd.GetDateTime(2).ToString("MMM dd") + " - " +
+//                                //             rd.GetDateTime(3).ToString("MMM dd, yyyy");
+
+//                                // NEW (item 2): a Rent bill stores its end as the NEXT period's start
+//                                // (exclusive), so the receipt shows the day before:
+//                                //   stored Nov 01 -> Dec 01   shown Nov 01 - Nov 30
+//                                // Water already stores the last day of the month, so it keeps its end.
+//                                string billCategory = rd.GetString(1);
+//                                DateTime periodStart = rd.GetDateTime(2);
+//                                DateTime periodEnd = rd.GetDateTime(3);
+
+//                                if (billCategory == "Rent" && periodEnd > periodStart)
+//                                    periodEnd = periodEnd.AddDays(-1);
+
+//                                appliedTo = billCategory + "  " +
+//                                            periodStart.ToString("MMM dd") + " - " +
+//                                            periodEnd.ToString("MMM dd, yyyy");
+//                            }
+
+//                            receipt.Lines.Add(new PaymentAllocationLine
+//                            {
+//                                TenantName = rd.GetString(0),
+//                                AppliedTo = appliedTo,
+//                                Amount = rd.GetDecimal(5),
+//                                IsCredit = isCredit,
+//                                Category = rd.GetString(7),                                      // NEW (Step 6)
+//                                RoomNumber = rd.IsDBNull(8) ? "" : Convert.ToString(rd.GetValue(8)) ?? ""   // NEW (Step 6)
+//                            });
+//                        }
+//                    }
+//                }
+//            }
+
+//            return receipt;
+//        }
+
+//        /// <summary>The PaymentId for a receipt number, or null if none.</summary>
+//        public static int? GetPaymentIdByReceipt(string receiptNo)
+//        {
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            using (var cmd = new SqlCommand(
+//                "SELECT PaymentId FROM Payments WHERE ReceiptNo = @r;", conn))
+//            {
+//                cmd.Parameters.Add("@r", SqlDbType.NVarChar, 50).Value = receiptNo ?? "";
+//                conn.Open();
+//                object result = cmd.ExecuteScalar();
+//                return result == null ? (int?)null : (int)result;
+//            }
+//        }
+
+//        /* =================================================================
+//           VOID
+//           ================================================================= */
+
+//        /// <summary>
+//        /// NEW (Step 6, rule B): why this user may NOT void this receipt, or null if they may.
+//        ///   Landlord  -> always allowed
+//        ///   Caretaker -> only a receipt they recorded themselves, dated today
+//        /// </summary>
+//        public static string? VoidNotAllowedReason(int paymentId, int userId)
+//        {
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            {
+//                conn.Open();
+//                return VoidNotAllowedReason(conn, null, paymentId, userId);
+//            }
+//        }
+
+//        /// <summary>NEW (Step 6, rule B): the same check inside the void's own transaction.</summary>
+//        private static string? VoidNotAllowedReason(SqlConnection conn, SqlTransaction? tx, int paymentId, int userId)
+//        {
+//            using (var cmd = new SqlCommand(@"
+//                SELECT u.Role,
+//                       CASE WHEN p.RecordedBy = u.UserId
+//                             AND CAST(p.PaymentDate AS DATE) = CAST(GETDATE() AS DATE)
+//                            THEN 1 ELSE 0 END AS OwnToday
+//                FROM   Users u
+//                CROSS JOIN Payments p
+//                WHERE  u.UserId    = @uid
+//                  AND  p.PaymentId = @pid;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
+//                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+
+//                using (var rd = cmd.ExecuteReader())
+//                {
+//                    if (!rd.Read()) return "Only the landlord can void a payment.";
+
+//                    string role = rd.GetString(0);
+//                    bool ownToday = rd.GetInt32(1) == 1;
+
+//                    if (role == "Landlord") return null;
+//                    if (role == "Caretaker" && ownToday) return null;
+
+//                    return "Only the landlord can void this receipt.\n\n" +
+//                           "Caretakers can void only receipts they recorded themselves, on the same day.";
+//                }
+//            }
+//        }
+
+//        /// <summary>
+//        /// NEW (Step 6): why this receipt can't be voided, or null if it can.
+//        /// Blocked when anyone it paid for has MOVED OUT (or Abandoned) on or
+//        /// after the payment date. A transfer does not count: the money moved
+//        /// with the tenant and is owed in their new room.
+//        ///   "This receipt can't be voided: it paid for Hange Zoe, who moved out
+//        ///    on Nov 9, 2026. Accounts of tenants who have moved out are closed."
+//        /// </summary>
+//        public static string? VoidBlockedReason(int paymentId)
+//        {
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            {
+//                conn.Open();
+//                return VoidBlockedReason(conn, null, paymentId);
+//            }
+//        }
+
+//        /// <summary>NEW (Step 6): the same check inside the void's own transaction.</summary>
+//        private static string? VoidBlockedReason(SqlConnection conn, SqlTransaction? tx, int paymentId)
+//        {
+//            using (var cmd = new SqlCommand(@"
+//                SELECT TOP 1 t.FirstName + ' ' + t.LastName AS TenantName, mo.MoveOutDate
+//                FROM   (SELECT DISTINCT a.TenantId
+//                        FROM   PaymentAllocations a
+//                        WHERE  a.PaymentId = @pid) x
+//                JOIN   Tenants  t ON t.TenantId  = x.TenantId
+//                JOIN   Payments p ON p.PaymentId = @pid
+//                CROSS APPLY (SELECT TOP 1 tn.MoveOutDate
+//                             FROM   Tenancies tn
+//                             WHERE  tn.TenantId = x.TenantId
+//                               AND  tn.MoveOutDate IS NOT NULL
+//                               AND  tn.MoveOutDate >= p.PaymentDate
+//                               AND  ISNULL(tn.MoveOutReason, 'Moved Out') <> 'Transferred'
+//                             ORDER BY tn.MoveOutDate) mo
+//                ORDER BY mo.MoveOutDate;", conn, tx))
+//            {
+//                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+//                using (var rd = cmd.ExecuteReader())
+//                {
+//                    if (!rd.Read()) return null;
+//                    return "This receipt can't be voided: it paid for " + rd.GetString(0) +
+//                           ", who moved out on " + rd.GetDateTime(1).ToString("MMM d, yyyy") + ".\n\n" +
+//                           "Accounts of tenants who have moved out are closed.";
+//                }
+//            }
+//        }
+
+//        /// <summary>
+//        /// Voids a payment: the payment and all of its allocations are
+//        /// flagged in one transaction. Cannot be undone.
+//        /// Throws InvalidOperationException if the user may not void it (rule B),
+//        /// someone it paid for has moved out, the reason is empty, or the
+//        /// payment is already voided / missing.
+//        /// </summary>
+//        public static void VoidPayment(int paymentId, string reason, int userId)
+//        {
+//            reason = (reason ?? "").Trim();
+//            if (reason.Length == 0)
+//                throw new InvalidOperationException("A reason is required to void a payment.");
+//            if (reason.Length > 255)
+//                reason = reason.Substring(0, 255);
+
+//            using (SqlConnection conn = DatabaseHelper.GetConnection())
+//            {
+//                conn.Open();
+//                using (SqlTransaction tx = conn.BeginTransaction())
+//                {
+//                    try
+//                    {
+//                        // NEW (Step 6, rule B): landlord = any receipt; caretaker = own receipt,
+//                        // recorded today. Checked in the database, not just the UI.
+//                        string? notAllowed = VoidNotAllowedReason(conn, tx, paymentId, userId);
+//                        if (notAllowed != null)
+//                            throw new InvalidOperationException(notAllowed);
+
+//                        // NEW (Step 6): no void after a move-out
+//                        string? blocked = VoidBlockedReason(conn, tx, paymentId);
+//                        if (blocked != null)
+//                            throw new InvalidOperationException(blocked);
+
+//                        // The IsVoided = 0 test makes a double void impossible,
+//                        // even from two screens at once.
+//                        using (var cmd = new SqlCommand(@"
+//                            UPDATE Payments
+//                            SET    IsVoided = 1, VoidedAt = SYSDATETIME(),
+//                                   VoidedBy = @uid, VoidReason = @reason
+//                            WHERE  PaymentId = @pid AND IsVoided = 0;", conn, tx))
+//                        {
+//                            cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
+//                            cmd.Parameters.Add("@reason", SqlDbType.NVarChar, 255).Value = reason;
+//                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+
+//                            if (cmd.ExecuteNonQuery() != 1)
+//                                throw new InvalidOperationException("This payment is already voided or no longer exists.");
+//                        }
+
+//                        // Every allocation of the payment - including credit that
+//                        // BillGenerator later moved onto a newer bill (it keeps
+//                        // the same PaymentId), so no peso of it counts anywhere.
+//                        using (var cmd = new SqlCommand(
+//                            "UPDATE PaymentAllocations SET IsVoided = 1 WHERE PaymentId = @pid;", conn, tx))
+//                        {
+//                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+//                            cmd.ExecuteNonQuery();
+//                        }
+
+//                        // Audit trail, inside the same transaction.
+//                        string what = "Payment #" + paymentId;
+//                        using (var cmd = new SqlCommand(@"
+//                                                        SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
+//                                   -- ORIGINAL: p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
+//                                   -- ORIGINAL: ', Room ' + r.RoomNumber
+//                                   COALESCE(p.PaymentCategory,
+//                                            (SELECT STRING_AGG(c.Category, ', ')
+//                                             FROM (SELECT DISTINCT a.Category
+//                                                   FROM PaymentAllocations a
+//                                                   WHERE a.PaymentId = p.PaymentId) c))
+//                                   + ' from ' + t.FirstName + ' ' + t.LastName +
+//                                   ', Room ' + CAST(r.RoomNumber AS NVARCHAR(10))
+//                            FROM   Payments p
+//                            JOIN   Tenants t ON t.TenantId = p.TenantId
+//                            JOIN   Rooms   r ON r.RoomId   = p.RoomId
+//                            WHERE  p.PaymentId = @pid;", conn, tx))
+//                        {
+//                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+//                            what = cmd.ExecuteScalar()?.ToString() ?? what;
+//                        }
+//                        AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Void Payment",
+//                                        what + ". Reason: " + reason);
+
+//                        tx.Commit();
+//                    }
+//                    catch
+//                    {
+//                        try { tx.Rollback(); } catch { /* keep the original error */ }
+//                        throw;
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+//}
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -18,13 +583,13 @@ namespace Capstoneszn
         public string ReceiptNo { get; set; } = "";
         public string TenantName { get; set; } = "";
         public string RoomNumber { get; set; } = "";
-        public string Category { get; set; } = "";  // Rent / Maintenance / Water / Electricity / Other
-        public string PaymentType { get; set; } = ""; // Full / Partial / Advance
+        public string Category { get; set; } = "";  // Rent / Maintenance / Water, or "Rent, Water" for one receipt that paid both
+        public string PaymentType { get; set; } = ""; // Full / Partial / Advance (Mixed = several categories with different types)
         public string Method { get; set; } = "";
         public string ReferenceNo { get; set; } = "";
         public decimal Amount { get; set; }
         public bool CoversRoom { get; set; }
-        public string Tag { get; set; } = "";       // On-time / Overdue / Advance
+        public string Tag { get; set; } = "";       // On-time / Overdue / Advance - NEW (Nov 11): read from Payments.RentTag, saved once at payment time
         public string Issues { get; set; } = "";    // maintenance issue title(s)
 
         public bool IsVoided { get; set; }
@@ -32,8 +597,20 @@ namespace Capstoneszn
         public DateTime? VoidedAt { get; set; }
         public string VoidedBy { get; set; } = "";
 
-        public bool IsUtility =>
-            Category == "Water" || Category == "Electricity" || Category == "Other";
+        // NEW (Nov 11): how much of this receipt went to each category.
+        // One receipt can pay several categories, so each tab shows only its part.
+        public decimal RentAmount { get; set; }
+        public decimal WaterAmount { get; set; }
+        public decimal MaintenanceAmount { get; set; }
+        public string RentType { get; set; } = "";  // Full / Partial / Advance of the RENT part only
+
+        // NEW (Nov 11): who recorded it - a caretaker sees [Void] only on their own receipts of today
+        public int? RecordedById { get; set; }
+
+        // ORIGINAL: public bool IsUtility =>
+        // ORIGINAL:     Category == "Water" || Category == "Electricity" || Category == "Other";
+        // NEW (Nov 11): only water money goes through Payments (electricity is paid to AKELCO directly)
+        public bool IsUtility => WaterAmount > 0m;
     }
 
     /// <summary>One line of what a payment settled (receipt / void preview).</summary>
@@ -73,13 +650,16 @@ namespace Capstoneszn
     ///   - NEW (Step 6): a receipt cannot be voided if anyone it paid for
     ///     has MOVED OUT since (their account was closed at move-out).
     ///     A transfer is not a move-out: that money moved with the tenant.
-    ///   - The Tag is derived, never stored:
-    ///       Advance  - some money became credit, or paid a period that had
-    ///                  not started on the payment date
-    ///       Overdue  - paid after the due date of the oldest bill it settled
-    ///       On-time  - otherwise
-    ///     It is read from all of the payment's allocations, voided or not,
-    ///     so a voided row still shows what it originally was.
+    ///   - ORIGINAL: The Tag is derived, never stored.
+    ///     NEW (Nov 11): the Tag is decided ONCE, when the payment is saved,
+    ///     and stored in Payments.RentTag (see SetRentTag). Money can move
+    ///     later (transfers, credit used by a new bill), and the Tag must
+    ///     still show what happened on the day of payment. Rent lines only:
+    ///       Advance  - some rent money was left after every issued rent
+    ///                  bill was paid (it became credit)
+    ///       Overdue  - paid after the due date of the oldest rent bill it paid
+    ///       On-time  - otherwise (paying an issued bill early is On-time)
+    ///       (none)   - the receipt has no rent
     /// </summary>
     public static class PaymentHistoryService
     {
@@ -87,9 +667,530 @@ namespace Capstoneszn
         public const string TagOverdue = "Overdue";
         public const string TagAdvance = "Advance";
 
+        /// <summary>
+        /// NEW (Nov 11): "First M. Last" in SQL - same format as Billing Management
+        /// (middle initial only when there is a middle name).
+        /// </summary>
+        private static string NameSql(string alias) =>
+            alias + ".FirstName + ISNULL(' ' + LEFT(NULLIF(LTRIM(" + alias + ".MiddleName), N''), 1) + '.', '') + ' ' + " +
+            alias + ".LastName";
+
+        /* =================================================================
+           SHARED ROW QUERY (NEW, Nov 11)
+           The list and the receipt read a payment the same way, so the
+           columns are written once here.
+           ================================================================= */
+
+        private static readonly string RowColumns = @"
+                p.PaymentId, p.PaymentDate, p.RecordedAt, p.ReceiptNo,
+                " + NameSql("t") + @" AS TenantName,
+                r.RoomNumber,
+                COALESCE(cat.Categories, p.PaymentCategory) AS Categories,
+                COALESCE(p.PaymentType, cat.LineTypes)      AS PaymentType,
+                p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
+                p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
+                p.RentTag, p.RecordedBy,
+                amt.RentAmount, amt.WaterAmount, amt.MaintAmount, amt.RentTypeRank,
+                iss.Issues";
+
+        private const string RowFrom = @"
+            FROM   Payments p
+            JOIN   Tenants t  ON t.TenantId = p.TenantId
+            JOIN   Rooms   r  ON r.RoomId   = p.RoomId
+            LEFT JOIN Users vu ON vu.UserId = p.VoidedBy
+            OUTER APPLY (   -- what the receipt's lines paid, always in the order Rent, Water, Maintenance
+                SELECT
+                    (SELECT STRING_AGG(c.Category, ', ') WITHIN GROUP (ORDER BY c.SortKey)
+                     FROM (SELECT DISTINCT a.Category,
+                                  CASE a.Category WHEN N'Rent' THEN 1 WHEN N'Water' THEN 2 ELSE 3 END AS SortKey
+                           FROM   PaymentAllocations a
+                           WHERE  a.PaymentId = p.PaymentId) c) AS Categories,
+                    (SELECT CASE WHEN COUNT(DISTINCT a.PaymentType) = 1
+                                 THEN MAX(a.PaymentType) ELSE N'Mixed' END
+                     FROM   PaymentAllocations a
+                     WHERE  a.PaymentId = p.PaymentId) AS LineTypes
+            ) cat
+            OUTER APPLY (   -- how much of the receipt went to each category
+                -- Voided rows are counted too, so a voided receipt still shows
+                -- what it originally was (the totals leave voided receipts out).
+                -- RentTypeRank: the rent line's original type. Later moves only
+                -- ever ADD 'Advance' rows, so the lowest rank is the original.
+                SELECT SUM(CASE WHEN a.Category = N'Rent'        THEN a.Amount ELSE 0 END) AS RentAmount,
+                       SUM(CASE WHEN a.Category = N'Water'       THEN a.Amount ELSE 0 END) AS WaterAmount,
+                       SUM(CASE WHEN a.Category = N'Maintenance' THEN a.Amount ELSE 0 END) AS MaintAmount,
+                       MIN(CASE WHEN a.Category = N'Rent' THEN
+                                CASE a.PaymentType WHEN N'Partial' THEN 1 WHEN N'Full' THEN 2 ELSE 3 END
+                           END) AS RentTypeRank
+                FROM   PaymentAllocations a
+                WHERE  a.PaymentId = p.PaymentId
+            ) amt
+            OUTER APPLY (   -- maintenance issue title(s) the receipt paid
+                SELECT STRING_AGG(x.IssueTitle, ', ') AS Issues
+                FROM (
+                    SELECT DISTINCT mi.IssueTitle
+                    FROM   PaymentAllocations a
+                    JOIN   Bills b              ON b.BillId  = a.BillId
+                    JOIN   MaintenanceIssues mi ON mi.IssueId = b.MaintenanceIssueId
+                    WHERE  a.PaymentId = p.PaymentId
+                ) x
+            ) iss";
+
         /* =================================================================
            LIST
            ================================================================= */
+
+        /// <summary>
+        /// One building's payments, newest first. fromDate inclusive,
+        /// toDate exclusive; null = no limit.
+        /// </summary>
+        public static List<PaymentHistoryRow> GetPayments(int buildingId, DateTime? fromDate, DateTime? toDate)
+        {
+            var list = new List<PaymentHistoryRow>();
+
+            string sql = "SELECT " + RowColumns + RowFrom + @"
+                WHERE  r.BuildingId = @bid
+                  AND  (@from IS NULL OR p.PaymentDate >= @from)
+                  AND  (@to   IS NULL OR p.PaymentDate <  @to)
+                ORDER BY p.PaymentDate DESC, p.PaymentId DESC;";
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (var cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.Add("@bid", SqlDbType.Int).Value = buildingId;
+                cmd.Parameters.Add("@from", SqlDbType.Date).Value =
+                    fromDate.HasValue ? (object)fromDate.Value.Date : DBNull.Value;
+                cmd.Parameters.Add("@to", SqlDbType.Date).Value =
+                    toDate.HasValue ? (object)toDate.Value.Date : DBNull.Value;
+
+                conn.Open();
+                using (var rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                        list.Add(ReadRow(rd));
+                }
+            }
+
+            return list;
+        }
+
+        // Small readers so a column is found by its name, not its position.
+        private static string Str(SqlDataReader rd, string col) =>
+            rd.IsDBNull(rd.GetOrdinal(col)) ? "" : Convert.ToString(rd.GetValue(rd.GetOrdinal(col))) ?? "";
+        private static decimal Dec(SqlDataReader rd, string col) =>
+            rd.IsDBNull(rd.GetOrdinal(col)) ? 0m : rd.GetDecimal(rd.GetOrdinal(col));
+        private static DateTime? Date(SqlDataReader rd, string col) =>
+            rd.IsDBNull(rd.GetOrdinal(col)) ? (DateTime?)null : rd.GetDateTime(rd.GetOrdinal(col));
+
+        private static PaymentHistoryRow ReadRow(SqlDataReader rd)
+        {
+            int rankCol = rd.GetOrdinal("RentTypeRank");
+            int byCol = rd.GetOrdinal("RecordedBy");
+
+            return new PaymentHistoryRow
+            {
+                PaymentId = rd.GetInt32(rd.GetOrdinal("PaymentId")),
+                PaymentDate = rd.GetDateTime(rd.GetOrdinal("PaymentDate")),
+                RecordedAt = rd.GetDateTime(rd.GetOrdinal("RecordedAt")),
+                ReceiptNo = Str(rd, "ReceiptNo"),
+                TenantName = Str(rd, "TenantName"),
+                RoomNumber = Str(rd, "RoomNumber"),      // works for text or INT
+                Category = Str(rd, "Categories"),
+                PaymentType = Str(rd, "PaymentType"),
+                Method = Str(rd, "PaymentMethod"),
+                ReferenceNo = Str(rd, "ReferenceNo"),
+                Amount = Dec(rd, "Amount"),
+                CoversRoom = rd.GetBoolean(rd.GetOrdinal("CoversRoom")),
+                IsVoided = rd.GetBoolean(rd.GetOrdinal("IsVoided")),
+                VoidReason = Str(rd, "VoidReason"),
+                VoidedAt = Date(rd, "VoidedAt"),
+                VoidedBy = Str(rd, "VoidedByName"),
+                Issues = Str(rd, "Issues"),
+
+                // NEW (Nov 11)
+                Tag = Str(rd, "RentTag"),               // saved at payment time, never worked out again
+                RentAmount = Dec(rd, "RentAmount"),
+                WaterAmount = Dec(rd, "WaterAmount"),
+                MaintenanceAmount = Dec(rd, "MaintAmount"),
+                RentType = rd.IsDBNull(rankCol) ? "" :
+                           rd.GetInt32(rankCol) == 1 ? "Partial" :
+                           rd.GetInt32(rankCol) == 2 ? "Full" : "Advance",
+                RecordedById = rd.IsDBNull(byCol) ? (int?)null : rd.GetInt32(byCol)
+            };
+        }
+
+        /* =================================================================
+           RENT TAG (NEW, Nov 11)
+           ================================================================= */
+
+        /// <summary>
+        /// Decides the rent Tag of one payment and saves it in Payments.RentTag.
+        /// Call ONCE, right after the payment and its lines are inserted, inside
+        /// the same transaction (BillingHelper.RecordReceipt / RecordPayment do).
+        /// Never call it again later: the point is that the Tag does not change.
+        ///
+        /// The same query fills old payments in the migration script.
+        /// At save time every bill already exists, so the "created after the
+        /// payment date" parts never apply - they only matter for old payments.
+        /// </summary>
+        public static void SetRentTag(SqlConnection conn, SqlTransaction tx, int paymentId)
+        {
+            const string sql = @"
+                UPDATE p
+                SET    RentTag = CASE
+                                     WHEN r.RentLines = 0             THEN NULL          -- no rent on this receipt
+                                     WHEN r.HasAdvance = 1            THEN N'Advance'    -- money left over became credit
+                                     WHEN p.PaymentDate > r.OldestDue THEN N'Overdue'    -- paid after the due date
+                                     ELSE                                  N'On-time'
+                                 END
+                FROM   Payments p
+                CROSS APPLY (
+                    SELECT COUNT(*)           AS RentLines,
+                           MAX(x.IsAhead)     AS HasAdvance,
+                           MIN(x.DueIfIssued) AS OldestDue
+                    FROM (
+                        SELECT CASE WHEN a.BillId IS NULL THEN 1
+                                    WHEN b.BillKind = N'Regular'
+                                     AND CAST(b.GeneratedDate AS DATE) > p.PaymentDate THEN 1
+                                    ELSE 0 END AS IsAhead,
+                               CASE WHEN CAST(b.GeneratedDate AS DATE) <= p.PaymentDate
+                                    THEN b.DueDate END AS DueIfIssued
+                        FROM   PaymentAllocations a
+                        LEFT JOIN Bills b ON b.BillId = a.BillId
+                        WHERE  a.PaymentId = p.PaymentId
+                          AND  a.Category  = N'Rent'
+                    ) x
+                ) r
+                WHERE  p.PaymentId = @pid;";
+
+            using (var cmd = new SqlCommand(sql, conn, tx))
+            {
+                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /* =================================================================
+           RECEIPT / VOID PREVIEW
+           ================================================================= */
+
+        /// <summary>
+        /// The payment plus what each peso of it settled. Returns null if the
+        /// payment does not exist.
+        /// </summary>
+        public static PaymentReceipt? GetReceipt(int paymentId)
+        {
+            var receipt = new PaymentReceipt();
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+
+                // ---- Header: same row as the list, plus building and cashier ----
+                string headSql = "SELECT " + RowColumns + @",
+                           bl.BuildingName, ru.Name AS RecordedByName" + RowFrom + @"
+                    JOIN   Buildings bl ON bl.BuildingId = r.BuildingId
+                    LEFT JOIN Users ru  ON ru.UserId     = p.RecordedBy
+                    WHERE  p.PaymentId = @pid;";
+
+                using (var cmd = new SqlCommand(headSql, conn))
+                {
+                    cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                    using (var rd = cmd.ExecuteReader())
+                    {
+                        if (!rd.Read()) return null;
+                        receipt.Payment = ReadRow(rd);
+                        receipt.BuildingName = Str(rd, "BuildingName");
+                        receipt.RecordedBy = Str(rd, "RecordedByName");
+                    }
+                }
+
+                // ---- Lines: every allocation of the payment ----------------
+                string lineSql = @"
+                    SELECT " + NameSql("t") + @" AS TenantName,
+                           b.BillCategory, b.BillingPeriodStart, b.BillingPeriodEnd,
+                           mi.IssueTitle, a.Amount,
+                           CASE WHEN a.BillId IS NULL THEN 1 ELSE 0 END AS IsCredit,
+                           a.Category,
+                           br.RoomNumber AS BillRoom
+                    FROM   PaymentAllocations a
+                    JOIN   Tenants t ON t.TenantId = a.TenantId
+                    LEFT JOIN Bills b ON b.BillId = a.BillId
+                    LEFT JOIN Rooms br ON br.RoomId = b.RoomId
+                    LEFT JOIN MaintenanceIssues mi ON mi.IssueId = b.MaintenanceIssueId
+                    WHERE  a.PaymentId = @pid
+                    ORDER BY t.LastName, t.FirstName,
+                             CASE a.Category WHEN N'Rent' THEN 1 WHEN N'Water' THEN 2 ELSE 3 END,
+                             b.BillingPeriodStart, a.AllocationId;";
+
+                using (var cmd = new SqlCommand(lineSql, conn))
+                {
+                    cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                    using (var rd = cmd.ExecuteReader())
+                    {
+                        while (rd.Read())
+                        {
+                            bool isCredit = rd.GetInt32(6) == 1;
+                            string billRoom = rd.IsDBNull(8) ? "" : Convert.ToString(rd.GetValue(8)) ?? "";
+                            string appliedTo;
+
+                            if (isCredit)
+                                appliedTo = rd.GetString(7) + " advance credit (for future bills)";
+                            else if (!rd.IsDBNull(4))
+                                appliedTo = "Maintenance: " + rd.GetString(4);
+                            else
+                            {
+                                // A Rent bill stores its end as the NEXT period's start
+                                // (exclusive), so the receipt shows the day before:
+                                //   stored Nov 01 -> Dec 01   shown Nov 01 - Nov 30
+                                // Water already stores the last day of the month, so it keeps its end.
+                                string billCategory = rd.GetString(1);
+                                DateTime periodStart = rd.GetDateTime(2);
+                                DateTime periodEnd = rd.GetDateTime(3);
+
+                                if (billCategory == "Rent" && periodEnd > periodStart)
+                                    periodEnd = periodEnd.AddDays(-1);
+
+                                appliedTo = billCategory + "  " +
+                                            periodStart.ToString("MMM dd") + " - " +
+                                            periodEnd.ToString("MMM dd, yyyy");
+                            }
+
+                            // NEW (Nov 11): money that moved to another room with a
+                            // transfer says so, so a reprint explains itself.
+                            if (!isCredit && billRoom.Length > 0 && billRoom != receipt.Payment.RoomNumber)
+                                appliedTo += "  · Room " + billRoom;
+
+                            receipt.Lines.Add(new PaymentAllocationLine
+                            {
+                                TenantName = rd.GetString(0),
+                                AppliedTo = appliedTo,
+                                Amount = rd.GetDecimal(5),
+                                IsCredit = isCredit,
+                                Category = rd.GetString(7),
+                                RoomNumber = billRoom
+                            });
+                        }
+                    }
+                }
+            }
+
+            return receipt;
+        }
+
+        /// <summary>The PaymentId for a receipt number, or null if none.</summary>
+        public static int? GetPaymentIdByReceipt(string receiptNo)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (var cmd = new SqlCommand(
+                "SELECT PaymentId FROM Payments WHERE ReceiptNo = @r;", conn))
+            {
+                cmd.Parameters.Add("@r", SqlDbType.NVarChar, 50).Value = receiptNo ?? "";
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result == null ? (int?)null : (int)result;
+            }
+        }
+
+        /* =================================================================
+           VOID
+           ================================================================= */
+
+        /// <summary>
+        /// NEW (Step 6, rule B): why this user may NOT void this receipt, or null if they may.
+        ///   Landlord  -> always allowed
+        ///   Caretaker -> only a receipt they recorded themselves, dated today
+        /// </summary>
+        public static string? VoidNotAllowedReason(int paymentId, int userId)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                return VoidNotAllowedReason(conn, null, paymentId, userId);
+            }
+        }
+
+        /// <summary>NEW (Step 6, rule B): the same check inside the void's own transaction.</summary>
+        private static string? VoidNotAllowedReason(SqlConnection conn, SqlTransaction? tx, int paymentId, int userId)
+        {
+            using (var cmd = new SqlCommand(@"
+                SELECT u.Role,
+                       CASE WHEN p.RecordedBy = u.UserId
+                             AND CAST(p.PaymentDate AS DATE) = CAST(GETDATE() AS DATE)
+                            THEN 1 ELSE 0 END AS OwnToday
+                FROM   Users u
+                CROSS JOIN Payments p
+                WHERE  u.UserId    = @uid
+                  AND  p.PaymentId = @pid;", conn, tx))
+            {
+                cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+
+                using (var rd = cmd.ExecuteReader())
+                {
+                    if (!rd.Read()) return "Only the landlord can void a payment.";
+
+                    string role = rd.GetString(0);
+                    bool ownToday = rd.GetInt32(1) == 1;
+
+                    if (role == "Landlord") return null;
+                    if (role == "Caretaker" && ownToday) return null;
+
+                    return "Only the landlord can void this receipt.\n\n" +
+                           "Caretakers can void only receipts they recorded themselves, on the same day.";
+                }
+            }
+        }
+
+        /// <summary>
+        /// NEW (Step 6): why this receipt can't be voided, or null if it can.
+        /// Blocked when anyone it paid for has MOVED OUT (or Abandoned) on or
+        /// after the payment date. A transfer does not count: the money moved
+        /// with the tenant and is owed in their new room.
+        ///   "This receipt can't be voided: it paid for Hange Zoe, who moved out
+        ///    on Nov 9, 2026. Accounts of tenants who have moved out are closed."
+        /// </summary>
+        public static string? VoidBlockedReason(int paymentId)
+        {
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                return VoidBlockedReason(conn, null, paymentId);
+            }
+        }
+
+        /// <summary>NEW (Step 6): the same check inside the void's own transaction.</summary>
+        private static string? VoidBlockedReason(SqlConnection conn, SqlTransaction? tx, int paymentId)
+        {
+            using (var cmd = new SqlCommand(@"
+                -- ORIGINAL: SELECT TOP 1 t.FirstName + ' ' + t.LastName AS TenantName, mo.MoveOutDate
+                SELECT TOP 1 t.FirstName + ISNULL(' ' + LEFT(NULLIF(LTRIM(t.MiddleName), N''), 1) + '.', '') + ' ' + t.LastName AS TenantName,
+                       mo.MoveOutDate   -- NEW (Nov 11): middle initial, like the rest of Payment History
+                FROM   (SELECT DISTINCT a.TenantId
+                        FROM   PaymentAllocations a
+                        WHERE  a.PaymentId = @pid) x
+                JOIN   Tenants  t ON t.TenantId  = x.TenantId
+                JOIN   Payments p ON p.PaymentId = @pid
+                CROSS APPLY (SELECT TOP 1 tn.MoveOutDate
+                             FROM   Tenancies tn
+                             WHERE  tn.TenantId = x.TenantId
+                               AND  tn.MoveOutDate IS NOT NULL
+                               AND  tn.MoveOutDate >= p.PaymentDate
+                               AND  ISNULL(tn.MoveOutReason, 'Moved Out') <> 'Transferred'
+                             ORDER BY tn.MoveOutDate) mo
+                ORDER BY mo.MoveOutDate;", conn, tx))
+            {
+                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                using (var rd = cmd.ExecuteReader())
+                {
+                    if (!rd.Read()) return null;
+                    return "This receipt can't be voided: it paid for " + rd.GetString(0) +
+                           ", who moved out on " + rd.GetDateTime(1).ToString("MMM d, yyyy") + ".\n\n" +
+                           "Accounts of tenants who have moved out are closed.";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Voids a payment: the payment and all of its allocations are
+        /// flagged in one transaction. Cannot be undone.
+        /// Throws InvalidOperationException if the user may not void it (rule B),
+        /// someone it paid for has moved out, the reason is empty, or the
+        /// payment is already voided / missing.
+        /// </summary>
+        public static void VoidPayment(int paymentId, string reason, int userId)
+        {
+            reason = (reason ?? "").Trim();
+            if (reason.Length == 0)
+                throw new InvalidOperationException("A reason is required to void a payment.");
+            if (reason.Length > 255)
+                reason = reason.Substring(0, 255);
+
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // NEW (Step 6, rule B): landlord = any receipt; caretaker = own receipt,
+                        // recorded today. Checked in the database, not just the UI.
+                        string? notAllowed = VoidNotAllowedReason(conn, tx, paymentId, userId);
+                        if (notAllowed != null)
+                            throw new InvalidOperationException(notAllowed);
+
+                        // NEW (Step 6): no void after a move-out
+                        string? blocked = VoidBlockedReason(conn, tx, paymentId);
+                        if (blocked != null)
+                            throw new InvalidOperationException(blocked);
+
+                        // The IsVoided = 0 test makes a double void impossible,
+                        // even from two screens at once.
+                        using (var cmd = new SqlCommand(@"
+                            UPDATE Payments
+                            SET    IsVoided = 1, VoidedAt = SYSDATETIME(),
+                                   VoidedBy = @uid, VoidReason = @reason
+                            WHERE  PaymentId = @pid AND IsVoided = 0;", conn, tx))
+                        {
+                            cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
+                            cmd.Parameters.Add("@reason", SqlDbType.NVarChar, 255).Value = reason;
+                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+
+                            if (cmd.ExecuteNonQuery() != 1)
+                                throw new InvalidOperationException("This payment is already voided or no longer exists.");
+                        }
+
+                        // Every allocation of the payment - including credit that
+                        // BillGenerator later moved onto a newer bill (it keeps
+                        // the same PaymentId), so no peso of it counts anywhere.
+                        using (var cmd = new SqlCommand(
+                            "UPDATE PaymentAllocations SET IsVoided = 1 WHERE PaymentId = @pid;", conn, tx))
+                        {
+                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // Audit trail, inside the same transaction.
+                        string what = "Payment #" + paymentId;
+                        using (var cmd = new SqlCommand(@"
+                                                        SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
+                                   -- ORIGINAL: p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
+                                   -- ORIGINAL: ', Room ' + r.RoomNumber
+                                   COALESCE(p.PaymentCategory,
+                                            (SELECT STRING_AGG(c.Category, ', ')
+                                             FROM (SELECT DISTINCT a.Category
+                                                   FROM PaymentAllocations a
+                                                   WHERE a.PaymentId = p.PaymentId) c))
+                                   + ' from ' + t.FirstName + ' ' + t.LastName +
+                                   ', Room ' + CAST(r.RoomNumber AS NVARCHAR(10))
+                            FROM   Payments p
+                            JOIN   Tenants t ON t.TenantId = p.TenantId
+                            JOIN   Rooms   r ON r.RoomId   = p.RoomId
+                            WHERE  p.PaymentId = @pid;", conn, tx))
+                        {
+                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                            what = cmd.ExecuteScalar()?.ToString() ?? what;
+                        }
+                        AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Void Payment",
+                                        what + ". Reason: " + reason);
+
+                        tx.Commit();
+                    }
+                    catch
+                    {
+                        try { tx.Rollback(); } catch { /* keep the original error */ }
+                        throw;
+                    }
+                }
+            }
+        }
+
+        /* =================================================================
+           ORIGINAL (before the Nov 11 Payment History fixes) - kept as
+           comments per the team rule. Replaced because:
+             - a receipt that paid several categories was missing from
+               the Rent / Maintenance / Utilities tabs
+             - the Tag mixed rent with water/maintenance and changed
+               after a transfer (now saved once in Payments.RentTag)
 
         /// <summary>
         /// One building's payments, newest first. fromDate inclusive,
@@ -214,9 +1315,7 @@ namespace Capstoneszn
             return row;
         }
 
-        /* =================================================================
-           RECEIPT / VOID PREVIEW
-           ================================================================= */
+
 
         /// <summary>
         /// The payment plus what each peso of it settled. Returns null if the
@@ -354,211 +1453,7 @@ namespace Capstoneszn
 
             return receipt;
         }
-
-        /// <summary>The PaymentId for a receipt number, or null if none.</summary>
-        public static int? GetPaymentIdByReceipt(string receiptNo)
-        {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            using (var cmd = new SqlCommand(
-                "SELECT PaymentId FROM Payments WHERE ReceiptNo = @r;", conn))
-            {
-                cmd.Parameters.Add("@r", SqlDbType.NVarChar, 50).Value = receiptNo ?? "";
-                conn.Open();
-                object result = cmd.ExecuteScalar();
-                return result == null ? (int?)null : (int)result;
-            }
-        }
-
-        /* =================================================================
-           VOID
-           ================================================================= */
-
-        /// <summary>
-        /// NEW (Step 6, rule B): why this user may NOT void this receipt, or null if they may.
-        ///   Landlord  -> always allowed
-        ///   Caretaker -> only a receipt they recorded themselves, dated today
-        /// </summary>
-        public static string? VoidNotAllowedReason(int paymentId, int userId)
-        {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                conn.Open();
-                return VoidNotAllowedReason(conn, null, paymentId, userId);
-            }
-        }
-
-        /// <summary>NEW (Step 6, rule B): the same check inside the void's own transaction.</summary>
-        private static string? VoidNotAllowedReason(SqlConnection conn, SqlTransaction? tx, int paymentId, int userId)
-        {
-            using (var cmd = new SqlCommand(@"
-                SELECT u.Role,
-                       CASE WHEN p.RecordedBy = u.UserId
-                             AND CAST(p.PaymentDate AS DATE) = CAST(GETDATE() AS DATE)
-                            THEN 1 ELSE 0 END AS OwnToday
-                FROM   Users u
-                CROSS JOIN Payments p
-                WHERE  u.UserId    = @uid
-                  AND  p.PaymentId = @pid;", conn, tx))
-            {
-                cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
-
-                using (var rd = cmd.ExecuteReader())
-                {
-                    if (!rd.Read()) return "Only the landlord can void a payment.";
-
-                    string role = rd.GetString(0);
-                    bool ownToday = rd.GetInt32(1) == 1;
-
-                    if (role == "Landlord") return null;
-                    if (role == "Caretaker" && ownToday) return null;
-
-                    return "Only the landlord can void this receipt.\n\n" +
-                           "Caretakers can void only receipts they recorded themselves, on the same day.";
-                }
-            }
-        }
-
-        /// <summary>
-        /// NEW (Step 6): why this receipt can't be voided, or null if it can.
-        /// Blocked when anyone it paid for has MOVED OUT (or Abandoned) on or
-        /// after the payment date. A transfer does not count: the money moved
-        /// with the tenant and is owed in their new room.
-        ///   "This receipt can't be voided: it paid for Hange Zoe, who moved out
-        ///    on Nov 9, 2026. Accounts of tenants who have moved out are closed."
-        /// </summary>
-        public static string? VoidBlockedReason(int paymentId)
-        {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                conn.Open();
-                return VoidBlockedReason(conn, null, paymentId);
-            }
-        }
-
-        /// <summary>NEW (Step 6): the same check inside the void's own transaction.</summary>
-        private static string? VoidBlockedReason(SqlConnection conn, SqlTransaction? tx, int paymentId)
-        {
-            using (var cmd = new SqlCommand(@"
-                SELECT TOP 1 t.FirstName + ' ' + t.LastName AS TenantName, mo.MoveOutDate
-                FROM   (SELECT DISTINCT a.TenantId
-                        FROM   PaymentAllocations a
-                        WHERE  a.PaymentId = @pid) x
-                JOIN   Tenants  t ON t.TenantId  = x.TenantId
-                JOIN   Payments p ON p.PaymentId = @pid
-                CROSS APPLY (SELECT TOP 1 tn.MoveOutDate
-                             FROM   Tenancies tn
-                             WHERE  tn.TenantId = x.TenantId
-                               AND  tn.MoveOutDate IS NOT NULL
-                               AND  tn.MoveOutDate >= p.PaymentDate
-                               AND  ISNULL(tn.MoveOutReason, 'Moved Out') <> 'Transferred'
-                             ORDER BY tn.MoveOutDate) mo
-                ORDER BY mo.MoveOutDate;", conn, tx))
-            {
-                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
-                using (var rd = cmd.ExecuteReader())
-                {
-                    if (!rd.Read()) return null;
-                    return "This receipt can't be voided: it paid for " + rd.GetString(0) +
-                           ", who moved out on " + rd.GetDateTime(1).ToString("MMM d, yyyy") + ".\n\n" +
-                           "Accounts of tenants who have moved out are closed.";
-                }
-            }
-        }
-
-        /// <summary>
-        /// Voids a payment: the payment and all of its allocations are
-        /// flagged in one transaction. Cannot be undone.
-        /// Throws InvalidOperationException if the user may not void it (rule B),
-        /// someone it paid for has moved out, the reason is empty, or the
-        /// payment is already voided / missing.
-        /// </summary>
-        public static void VoidPayment(int paymentId, string reason, int userId)
-        {
-            reason = (reason ?? "").Trim();
-            if (reason.Length == 0)
-                throw new InvalidOperationException("A reason is required to void a payment.");
-            if (reason.Length > 255)
-                reason = reason.Substring(0, 255);
-
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                conn.Open();
-                using (SqlTransaction tx = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        // NEW (Step 6, rule B): landlord = any receipt; caretaker = own receipt,
-                        // recorded today. Checked in the database, not just the UI.
-                        string? notAllowed = VoidNotAllowedReason(conn, tx, paymentId, userId);
-                        if (notAllowed != null)
-                            throw new InvalidOperationException(notAllowed);
-
-                        // NEW (Step 6): no void after a move-out
-                        string? blocked = VoidBlockedReason(conn, tx, paymentId);
-                        if (blocked != null)
-                            throw new InvalidOperationException(blocked);
-
-                        // The IsVoided = 0 test makes a double void impossible,
-                        // even from two screens at once.
-                        using (var cmd = new SqlCommand(@"
-                            UPDATE Payments
-                            SET    IsVoided = 1, VoidedAt = SYSDATETIME(),
-                                   VoidedBy = @uid, VoidReason = @reason
-                            WHERE  PaymentId = @pid AND IsVoided = 0;", conn, tx))
-                        {
-                            cmd.Parameters.Add("@uid", SqlDbType.Int).Value = userId;
-                            cmd.Parameters.Add("@reason", SqlDbType.NVarChar, 255).Value = reason;
-                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
-
-                            if (cmd.ExecuteNonQuery() != 1)
-                                throw new InvalidOperationException("This payment is already voided or no longer exists.");
-                        }
-
-                        // Every allocation of the payment - including credit that
-                        // BillGenerator later moved onto a newer bill (it keeps
-                        // the same PaymentId), so no peso of it counts anywhere.
-                        using (var cmd = new SqlCommand(
-                            "UPDATE PaymentAllocations SET IsVoided = 1 WHERE PaymentId = @pid;", conn, tx))
-                        {
-                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        // Audit trail, inside the same transaction.
-                        string what = "Payment #" + paymentId;
-                        using (var cmd = new SqlCommand(@"
-                                                        SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
-                                   -- ORIGINAL: p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
-                                   -- ORIGINAL: ', Room ' + r.RoomNumber
-                                   COALESCE(p.PaymentCategory,
-                                            (SELECT STRING_AGG(c.Category, ', ')
-                                             FROM (SELECT DISTINCT a.Category
-                                                   FROM PaymentAllocations a
-                                                   WHERE a.PaymentId = p.PaymentId) c))
-                                   + ' from ' + t.FirstName + ' ' + t.LastName +
-                                   ', Room ' + CAST(r.RoomNumber AS NVARCHAR(10))
-                            FROM   Payments p
-                            JOIN   Tenants t ON t.TenantId = p.TenantId
-                            JOIN   Rooms   r ON r.RoomId   = p.RoomId
-                            WHERE  p.PaymentId = @pid;", conn, tx))
-                        {
-                            cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
-                            what = cmd.ExecuteScalar()?.ToString() ?? what;
-                        }
-                        AuditLogger.Log(conn, tx, AuditLogger.ModulePayments, "Void Payment",
-                                        what + ". Reason: " + reason);
-
-                        tx.Commit();
-                    }
-                    catch
-                    {
-                        try { tx.Rollback(); } catch { /* keep the original error */ }
-                        throw;
-                    }
-                }
-            }
-        }
+        ================================================================= */
     }
 
 }

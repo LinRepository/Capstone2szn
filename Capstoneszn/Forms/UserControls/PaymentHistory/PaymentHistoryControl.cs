@@ -15,25 +15,35 @@ namespace Capstoneszn.UserControls
 {
     /// <summary>
     /// Payment History. Read-only list of the building's payments, with:
-    ///   - tabs All / Rent / Maintenance / Utilities (each tab has its own columns)
-    ///   - search (tenant, room, receipt no.) and a period filter
+    ///   - ORIGINAL: tabs All / Rent / Maintenance / Utilities (each tab has its own columns)
+    ///     NEW (Nov 11): tabs All / Rent / Maintenance / Water. One receipt can pay
+    ///     several categories; it shows on every tab it paid, and each tab shows
+    ///     only its own part of the money (All shows the whole receipt).
+    ///     The open tab is blue with a gold underline (same look as Utilities).
+    ///   - ORIGINAL: search (tenant, room, receipt no.) and a period filter
+    ///     NEW (Nov 11): search (tenant, room, receipt no., GCash ref no.) and a
+    ///     Date From / Date To range with a Clear button
     ///   - a total of the visible tab that leaves voided payments out
-    ///   - [Receipt] on every row; [Void] for the landlord only
+    ///   - [Receipt] on every row
+    ///   - ORIGINAL: [Void] for the landlord only
+    ///     NEW (Nov 11): [Void] on every row for the landlord; a caretaker sees it
+    ///     only on receipts they recorded themselves today (rule B)
     ///
     /// Voided payments stay in the list, greyed and struck through, with the
     /// reason as a tooltip (settled rule: never deleted, never hidden).
     /// Columns are created in code (see the column specs below), so the
     /// designer only holds the empty grids.
     /// </summary>
-    /// 
+    ///
 
     public partial class PaymentHistoryControl : UserControl
     {
 
-        private const string PeriodThisMonth = "This Month";
-        private const string PeriodLastMonth = "Last Month";
-        private const string PeriodThisYear = "This Year";
-        private const string PeriodAllTime = "All Time";
+        // ORIGINAL (period combo box, removed Nov 11 - replaced by Date From / Date To):
+        // private const string PeriodThisMonth = "This Month";
+        // private const string PeriodLastMonth = "Last Month";
+        // private const string PeriodThisYear = "This Year";
+        // private const string PeriodAllTime = "All Time";
 
         private const string ColReceipt = "colReceipt";
         private const string ColVoid = "colVoid";
@@ -52,20 +62,44 @@ namespace Capstoneszn.UserControls
         private readonly Dictionary<DataGridView, List<ColumnSpec>> _specs =
             new Dictionary<DataGridView, List<ColumnSpec>>();
 
+        // NEW (Nov 11): one font for every voided row (it used to create a new
+        // Font per row and never free it).
+        private static readonly Font VoidedRowFont = new Font("Segoe UI", 9.5F, FontStyle.Strikeout);
+
+        // NEW (Nov 11): tab indicator colours - the same as the Utilities tabs
+        private static readonly Color TabSelectedBack = Color.FromArgb(39, 111, 227);
+        private static readonly Color TabNormalBack = Color.FromArgb(35, 35, 90);
+        private static readonly Color TabNormalText = Color.FromArgb(180, 185, 210);
+        private static readonly Color TabUnderline = Color.FromArgb(250, 204, 21);
+        private Font? _tabFont;
+        private Font? _tabFontBold;
+
+        // NEW (Nov 11): true while the date pickers are being set in code,
+        // so they don't reload the list twice.
+        private bool _settingDates;
+
 
         public PaymentHistoryControl()
         {
             InitializeComponent();
 
-            cboPaymentPeriod.Items.Clear();
-            cboPaymentPeriod.Items.AddRange(new object[]
-                { PeriodThisMonth, PeriodLastMonth, PeriodThisYear, PeriodAllTime });
-            cboPaymentPeriod.SelectedIndex = 0;   // before subscribing: loads once, in OnLoad
+            // ORIGINAL: cboPaymentPeriod.Items.Clear();
+            // ORIGINAL: cboPaymentPeriod.Items.AddRange(new object[]
+            // ORIGINAL:     { PeriodThisMonth, PeriodLastMonth, PeriodThisYear, PeriodAllTime });
+            // ORIGINAL: cboPaymentPeriod.SelectedIndex = 0;   // before subscribing: loads once, in OnLoad
+            // ORIGINAL: cboPaymentPeriod.SelectedIndexChanged += (s, e) => LoadPayments();
 
-            cboPaymentPeriod.SelectedIndexChanged += (s, e) => LoadPayments();
+            // NEW (Nov 11): Date From / Date To + Clear.
+            // Wired here only - do not double-click these in the designer.
+            ResetDates();   // before subscribing: the list loads once, in OnLoad
+            dtpPaymentFrom.ValueChanged += (s, e) => { if (!_settingDates) LoadPayments(); };
+            dtpPaymentTo.ValueChanged += (s, e) => { if (!_settingDates) LoadPayments(); };
+            btnPaymentClear.Click += (s, e) => ClearFilters();
+
             txtSearch.TextChanged += (s, e) => FillGrids();
             tabPaymentHistory.SelectedIndexChanged += (s, e) => UpdateTotal();
 
+            SetUpTabIndicator();   // NEW (Nov 11)
             SetUpGrids();
         }
 
@@ -74,6 +108,65 @@ namespace Capstoneszn.UserControls
             base.OnLoad(e);
             if (DesignMode) return;
             LoadPayments();
+        }
+
+        /* ==================================================================
+           FILTERS (NEW, Nov 11)
+           ================================================================== */
+
+        /// <summary>Default range: the 1st of this month up to today.</summary>
+        private void ResetDates()
+        {
+            _settingDates = true;
+            DateTime today = DateTime.Today;
+            dtpPaymentFrom.Value = new DateTime(today.Year, today.Month, 1);
+            dtpPaymentTo.Value = today;
+            _settingDates = false;
+        }
+
+        /// <summary>Clear: empty search, default dates, reload once.</summary>
+        private void ClearFilters()
+        {
+            txtSearch.Clear();   // refills the grids from the rows already loaded (no database call)
+            ResetDates();        // does not reload by itself (_settingDates)
+            LoadPayments();      // one fresh load for the default dates
+        }
+
+        /* ==================================================================
+           TAB INDICATOR (NEW, Nov 11)
+           ================================================================== */
+
+        /// <summary>
+        /// The tabs are drawn by hand so the open tab is obvious: blue fill,
+        /// bold white text and a gold underline. Same look as the Utilities tabs.
+        /// </summary>
+        private void SetUpTabIndicator()
+        {
+            tabPaymentHistory.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabPaymentHistory.SizeMode = TabSizeMode.Fixed;
+            tabPaymentHistory.ItemSize = new Size(180, 40);
+            tabPaymentHistory.DrawItem += TabPaymentHistory_DrawItem;
+
+            _tabFont = new Font(tabPaymentHistory.Font, FontStyle.Regular);
+            _tabFontBold = new Font(tabPaymentHistory.Font, FontStyle.Bold);
+        }
+
+        private void TabPaymentHistory_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            bool selected = e.Index == tabPaymentHistory.SelectedIndex;
+            Rectangle r = tabPaymentHistory.GetTabRect(e.Index);
+
+            using (var back = new SolidBrush(selected ? TabSelectedBack : TabNormalBack))
+                e.Graphics.FillRectangle(back, r);
+
+            if (selected)   // gold underline on the open tab
+                using (var line = new SolidBrush(TabUnderline))
+                    e.Graphics.FillRectangle(line, r.X, r.Bottom - 4, r.Width, 4);
+
+            TextRenderer.DrawText(e.Graphics, tabPaymentHistory.TabPages[e.Index].Text,
+                selected ? _tabFontBold : _tabFont, r,
+                selected ? Color.White : TabNormalText,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
 
         /* ==================================================================
@@ -95,38 +188,60 @@ namespace Capstoneszn.UserControls
             ColumnSpec tenant = C("colTenant", "Tenant", 13, r => r.TenantName);
             ColumnSpec room = C("colRoom", "Room", 6, r => r.RoomNumber);
             ColumnSpec method = C("colMethod", "Method", 7, r => r.Method);
-            ColumnSpec amount = C("colAmount", "Amount", 9, r => Peso(r.Amount), right: true);
+            // ORIGINAL: ColumnSpec amount = C("colAmount", "Amount", 9, r => Peso(r.Amount), right: true);
             ColumnSpec status = C("colStatus", "Status", 7, r => r.IsVoided ? "Voided" : "Valid");
-            ColumnSpec type = C("colType", "Type", 7, r => r.PaymentType);
+            // ORIGINAL: ColumnSpec type = C("colType", "Type", 7, r => r.PaymentType);
+
+            // NEW (Nov 11): each tab shows only its own part of the receipt.
+            // Example: one receipt of ₱2,300 = ₱2,000 rent + ₱300 water
+            //   All tab ₱2,300   Rent tab ₱2,000   Water tab ₱300
+            ColumnSpec amountAll = C("colAmount", "Amount", 9, r => Peso(r.Amount), right: true);
+            ColumnSpec amountRent = C("colAmount", "Rent Paid", 9, r => Peso(r.RentAmount), right: true);
+            ColumnSpec amountMaint = C("colAmount", "Maintenance Paid", 10, r => Peso(r.MaintenanceAmount), right: true);
+            ColumnSpec amountWater = C("colAmount", "Water Paid", 9, r => Peso(r.WaterAmount), right: true);
 
             _specs[dgvAll] = new List<ColumnSpec>
             {
                 date, time, rcpt, tenant, room,
-                C("colCategory", "Category", 9, r => r.Category),
-                amount, method, status
+                C("colCategory", "Category", 11, r => r.Category),
+                // ORIGINAL: amount, method, status
+                amountAll, method, status
             };
 
             _specs[dgvRent] = new List<ColumnSpec>
             {
                 date, time, rcpt, tenant, room,
                 C("colPaidAs", "Paid As", 9, r => r.CoversRoom ? "Whole Room" : "Individual"),
-                type,
-                C("colTag", "Tag", 7, r => r.Tag),
-                method, amount, status
+                // ORIGINAL: type,
+                C("colType", "Type", 7, r => r.RentType),      // NEW: type of the rent part only
+                C("colTag", "Tag", 7, r => r.Tag),             // NEW: saved at payment time (Payments.RentTag)
+                // ORIGINAL: method, amount, status
+                method, amountRent, status
             };
 
             _specs[dgvMaintenance] = new List<ColumnSpec>
             {
                 date, time, rcpt, tenant, room,
                 C("colIssues", "Issue(s)", 18, r => r.Issues),
-                method, amount, status
+                // ORIGINAL: method, amount, status
+                method, amountMaint, status
             };
 
+            // ORIGINAL (Utilities tab):
+            // _specs[dgvUtilities] = new List<ColumnSpec>
+            // {
+            //     date, time, rcpt, tenant, room,
+            //     C("colUtility", "Utility", 8, r => r.Category),
+            //     type, method, amount, status
+            // };
+
+            // NEW (Nov 11): the tab is now "Water" - only water money goes through
+            // Payments (electricity is paid to AKELCO directly). No Type column:
+            // water is always paid in full.
             _specs[dgvUtilities] = new List<ColumnSpec>
             {
                 date, time, rcpt, tenant, room,
-                C("colUtility", "Utility", 8, r => r.Category),
-                type, method, amount, status
+                method, amountWater, status
             };
 
             foreach (var pair in _specs)
@@ -206,11 +321,25 @@ namespace Capstoneszn.UserControls
 
         private void LoadPayments()
         {
-            GetPeriod(out DateTime? from, out DateTime? to);
+            // ORIGINAL: GetPeriod(out DateTime? from, out DateTime? to);
+
+            // NEW (Nov 11): Date From / Date To, both days included
+            DateTime from = dtpPaymentFrom.Value.Date;
+            DateTime to = dtpPaymentTo.Value.Date;
+
+            if (from > to)
+            {
+                _rows = new List<PaymentHistoryRow>();
+                FillGrids();
+                lblPaymentCount.Text = "Date From cannot be later than Date To.";
+                return;
+            }
 
             try
             {
-                _rows = PaymentHistoryService.GetPayments(Session.BuildingId, from, to);
+                // ORIGINAL: _rows = PaymentHistoryService.GetPayments(Session.BuildingId, from, to);
+                // NEW: the query's "to" is exclusive, so pass the day after Date To
+                _rows = PaymentHistoryService.GetPayments(Session.BuildingId, from, to.AddDays(1));
             }
             catch (Exception ex)
             {
@@ -222,7 +351,7 @@ namespace Capstoneszn.UserControls
             FillGrids();
         }
 
-        /// <summary>Rows that pass the search box (tenant, room, receipt no.).</summary>
+        /// <summary>Rows that pass the search box (tenant, room, receipt no., GCash ref no.).</summary>
         private IEnumerable<PaymentHistoryRow> Searched()
         {
             string q = txtSearch.Text.Trim();
@@ -231,16 +360,46 @@ namespace Capstoneszn.UserControls
             return _rows.Where(r =>
                 r.TenantName.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0 ||
                 r.RoomNumber.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                r.ReceiptNo.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0);
+                // ORIGINAL: r.ReceiptNo.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0);
+                r.ReceiptNo.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                r.ReferenceNo.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0);   // NEW (Nov 11): GCash ref no.
         }
 
         /// <summary>Which rows belong on which tab.</summary>
         private IEnumerable<PaymentHistoryRow> RowsFor(DataGridView grid, IEnumerable<PaymentHistoryRow> rows)
         {
-            if (grid == dgvRent) return rows.Where(r => r.Category == "Rent");
-            if (grid == dgvMaintenance) return rows.Where(r => r.Category == "Maintenance");
-            if (grid == dgvUtilities) return rows.Where(r => r.IsUtility);
+            // ORIGINAL: if (grid == dgvRent) return rows.Where(r => r.Category == "Rent");
+            // ORIGINAL: if (grid == dgvMaintenance) return rows.Where(r => r.Category == "Maintenance");
+            // ORIGINAL: if (grid == dgvUtilities) return rows.Where(r => r.IsUtility);
+
+            // NEW (Nov 11): a receipt belongs on every tab it paid something on.
+            // ("Rent, Water" never matched == "Rent", so mixed receipts were missing.)
+            if (grid == dgvRent) return rows.Where(r => r.RentAmount > 0m);
+            if (grid == dgvMaintenance) return rows.Where(r => r.MaintenanceAmount > 0m);
+            if (grid == dgvUtilities) return rows.Where(r => r.WaterAmount > 0m);
             return rows;   // All
+        }
+
+        /// <summary>NEW (Nov 11): the part of a receipt that counts on this tab.</summary>
+        private decimal AmountOn(DataGridView grid, PaymentHistoryRow r)
+        {
+            if (grid == dgvRent) return r.RentAmount;
+            if (grid == dgvMaintenance) return r.MaintenanceAmount;
+            if (grid == dgvUtilities) return r.WaterAmount;
+            return r.Amount;   // All = the whole receipt
+        }
+
+        /// <summary>
+        /// NEW (Nov 11, rule B): may the logged-in user void this receipt?
+        ///   Landlord  -> any receipt
+        ///   Caretaker -> only one they recorded themselves, today
+        /// This only decides whether the button is shown. The real check is
+        /// done again in the database when the void is saved.
+        /// </summary>
+        private static bool CanVoid(PaymentHistoryRow r)
+        {
+            if (Session.IsLandlord) return true;
+            return r.RecordedById == Session.UserId && r.PaymentDate.Date == DateTime.Today;
         }
 
         private void FillGrids()
@@ -266,10 +425,16 @@ namespace Capstoneszn.UserControls
                     DataGridViewRow row = grid.Rows[i];
                     row.Tag = r;
 
+                    // NEW (Nov 11): no [Void] button where this user can't void.
+                    // A plain cell replaces the button (voided rows still say "Voided").
+                    if (!CanVoid(r))
+                        row.Cells[ColVoid] = new DataGridViewTextBoxCell { Value = r.IsVoided ? "Voided" : "" };
+
                     if (r.IsVoided)
                     {
                         row.DefaultCellStyle.ForeColor = Color.Gray;
-                        row.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Strikeout);
+                        // ORIGINAL: row.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Strikeout);
+                        row.DefaultCellStyle.Font = VoidedRowFont;   // NEW: one shared font
 
                         string tip = "VOIDED" +
                             (r.VoidedAt.HasValue ? " on " + r.VoidedAt.Value.ToString("MMM dd, yyyy hh:mm tt") : "") +
@@ -292,12 +457,26 @@ namespace Capstoneszn.UserControls
             DataGridView grid = SelectedGrid();
             var shown = RowsFor(grid, Searched()).ToList();
 
-            decimal total = shown.Where(r => !r.IsVoided).Sum(r => r.Amount);
+            // ORIGINAL: decimal total = shown.Where(r => !r.IsVoided).Sum(r => r.Amount);
+            decimal total = shown.Where(r => !r.IsVoided).Sum(r => AmountOn(grid, r));   // NEW: this tab's part only
             int voided = shown.Count(r => r.IsVoided);
 
-            lblPaymentTotal.Text =
-                "Total (" + tabPaymentHistory.SelectedTab?.Text + ", " + cboPaymentPeriod.Text + "): " +
-                Peso(total) + "   •   " + shown.Count + " payment(s)" +
+            // ORIGINAL:
+            // lblPaymentTotal.Text =
+            //     "Total (" + tabPaymentHistory.SelectedTab?.Text + ", " + cboPaymentPeriod.Text + "): " +
+            //     Peso(total) + "   •   " + shown.Count + " payment(s)" +
+            //     (voided > 0 ? ", " + voided + " voided (not counted)" : "");
+
+            // NEW (Nov 11): three labels
+            //   [Rent total:] [₱25,500.00]
+            //   [8 payment(s), 1 voided (not counted)]
+            lblPaymentTotalCaption.Text = (tabPaymentHistory.SelectedTab?.Text ?? "All") + " total:";
+            lblPaymentTotalAmount.Text = Peso(total);
+            // "Maintenance total:" is wider than "All total:", so the amount
+            // moves to sit right after the caption instead of overlapping it.
+            lblPaymentTotalAmount.Left = lblPaymentTotalCaption.Right + 6;
+
+            lblPaymentCount.Text = shown.Count + " payment(s)" +
                 (voided > 0 ? ", " + voided + " voided (not counted)" : "");
         }
 
@@ -310,19 +489,20 @@ namespace Capstoneszn.UserControls
             return dgvAll;
         }
 
-        private void GetPeriod(out DateTime? from, out DateTime? to)
-        {
-            DateTime today = DateTime.Today;
-            DateTime monthStart = new DateTime(today.Year, today.Month, 1);
-
-            switch (cboPaymentPeriod.SelectedItem as string)
-            {
-                case PeriodThisMonth: from = monthStart; to = monthStart.AddMonths(1); break;
-                case PeriodLastMonth: from = monthStart.AddMonths(-1); to = monthStart; break;
-                case PeriodThisYear: from = new DateTime(today.Year, 1, 1); to = new DateTime(today.Year + 1, 1, 1); break;
-                default: from = null; to = null; break;   // All Time
-            }
-        }
+        // ORIGINAL (replaced by Date From / Date To on Nov 11):
+        // private void GetPeriod(out DateTime? from, out DateTime? to)
+        // {
+        //     DateTime today = DateTime.Today;
+        //     DateTime monthStart = new DateTime(today.Year, today.Month, 1);
+        //
+        //     switch (cboPaymentPeriod.SelectedItem as string)
+        //     {
+        //         case PeriodThisMonth: from = monthStart; to = monthStart.AddMonths(1); break;
+        //         case PeriodLastMonth: from = monthStart.AddMonths(-1); to = monthStart; break;
+        //         case PeriodThisYear: from = new DateTime(today.Year, 1, 1); to = new DateTime(today.Year + 1, 1, 1); break;
+        //         default: from = null; to = null; break;   // All Time
+        //     }
+        // }
 
         /* ==================================================================
            ROW BUTTONS
@@ -342,6 +522,9 @@ namespace Capstoneszn.UserControls
             }
             else if (colName == ColVoid)
             {
+                // NEW (Nov 11): rows where this user can't void have no button - ignore clicks there
+                if (grid.Rows[e.RowIndex].Cells[e.ColumnIndex] is not DataGridViewButtonCell) return;
+
                 if (row.IsVoided)
                 {
                     MessageBox.Show("This payment is already voided.\n\nReason: " + row.VoidReason,
