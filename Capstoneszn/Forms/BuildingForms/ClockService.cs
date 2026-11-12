@@ -194,7 +194,12 @@ namespace Capstoneszn.Forms.BuildingForms
             const string sql = @"
                 SELECT MAX(t) FROM (
                     SELECT MAX(CheckedAt) FROM SystemClockChecks WHERE Result <> 'Rejected'
+                    -- was: UNION ALL SELECT MAX(LoggedAt)   FROM AuditLogs
+                    -- CHANGED (Nov 12, 2026): skip entries written BEFORE a clock check:
+                    --   Login module (failed-login lockouts, Forgot Password lockouts/resets)
+                    --   'Clock Changed' (written under the changed, unchecked time)
                     UNION ALL SELECT MAX(LoggedAt)   FROM AuditLogs
+                              WHERE Module <> 'Login' AND Action <> 'Clock Changed'
                     UNION ALL SELECT MAX(RecordedAt) FROM Payments
                     UNION ALL SELECT MAX(RecordedAt) FROM Expenses
                 ) AS x(t);";

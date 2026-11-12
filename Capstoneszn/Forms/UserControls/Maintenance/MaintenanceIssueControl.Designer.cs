@@ -175,6 +175,7 @@
             // 
             // btnDeleteIssue
             // 
+            btnDeleteIssue.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnDeleteIssue.Location = new Point(396, 13);
             btnDeleteIssue.Name = "btnDeleteIssue";
             btnDeleteIssue.Size = new Size(111, 29);
@@ -184,6 +185,7 @@
             // 
             // btnEditIssue
             // 
+            btnEditIssue.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnEditIssue.Location = new Point(267, 13);
             btnEditIssue.Name = "btnEditIssue";
             btnEditIssue.Size = new Size(111, 29);

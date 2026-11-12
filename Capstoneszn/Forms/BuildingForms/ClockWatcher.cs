@@ -55,6 +55,16 @@ namespace Capstoneszn.Forms.BuildingForms
             sinceBaseline.Restart();
         }
 
+        /// <summary>
+        /// ADDED (Nov 12, 2026): called when a SystemClockForm is confirmed (for example
+        /// the clock check at login). Accepts the current PC time as correct, so a clock
+        /// change made inside that form doesn't trigger a false alarm later.
+        /// </summary>
+        public static void AcknowledgeCurrentTime()
+        {
+            if (started) ResetBaseline();
+        }
+
         private static void OnTimeChanged(object? sender, EventArgs e)
         {
             uiContext?.Post(_ => HandleTimeChanged(), null);

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Security.Policy;
 using System.Windows.Forms;
 using Capstoneszn.Forms.BuildingForms;
 using Capstoneszn.Forms.SettingsForms;
@@ -189,6 +190,24 @@ namespace Capstoneszn
                     "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            // ADDED (System Clock - login-first flow, Nov 12, 2026):
+            // The password is verified. Now the PC clock is checked BEFORE anything is
+            // written with today's date: the security questions setup, the "Login"
+            // audit entry, BillGenerator, and (later, in MainForm) salary recording.
+            // "Back to Login" (or closing the window) cancels this login.
+
+            using (var clockForm = new SystemClockForm(afterLogin: true))
+            {
+                if (clockForm.ShowDialog(this) != DialogResult.OK)
+                {
+                    Session.Clear();
+                    txtLoginPassword.Clear();
+                    txtLoginPassword.Focus();
+                    return;
+                }
+            }
+
 
             // An account with no security questions cannot recover a forgotten
             // password, and nothing would ever prompt the user to fix that. So the

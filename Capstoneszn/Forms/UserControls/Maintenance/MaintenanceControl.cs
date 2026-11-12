@@ -15,6 +15,9 @@ namespace Capstoneszn.UserControls
     public partial class MaintenanceControl : UserControl
     {
         private const string FilterAll = "All";
+        // NEW (Nov 12): below this width a card is too cramped, so the list
+        // shows one card per row instead of two.
+        private const int MinCardWidth = 760;
 
         public MaintenanceControl()
         {
@@ -35,6 +38,10 @@ namespace Capstoneszn.UserControls
             cboMaintenanceStatus.SelectedIndexChanged += (s, e) => LoadIssues();
 
             flpMaintenanceIssues.AutoScroll = true;
+
+            // NEW (Nov 12): re-fit the cards whenever the list changes size
+            // (maximize, restore, sidebar toggle).
+            flpMaintenanceIssues.ClientSizeChanged += (s, e) => ResizeCards();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -96,6 +103,10 @@ namespace Capstoneszn.UserControls
 
                     flpMaintenanceIssues.Controls.Add(card);
                 }
+
+                // NEW (Nov 12): fit the new cards to the list's width.
+                ResizeCards();
+
             }
             finally
             {
@@ -115,6 +126,30 @@ namespace Capstoneszn.UserControls
                 flpMaintenanceIssues.Controls.RemoveAt(0);
                 c.Dispose();
             }
+        }
+
+        /// <summary>
+        /// NEW (Nov 12): two cards per row when there is room, otherwise one.
+        /// Each card stretches so the row fills the list's width.
+        /// </summary>
+        private void ResizeCards()
+        {
+            // Always reserve the vertical scrollbar's width, so the cards
+            // don't jump (or loop) when the scrollbar appears or disappears.
+            int available = flpMaintenanceIssues.ClientSize.Width
+                          - (flpMaintenanceIssues.VerticalScroll.Visible ? 0 : SystemInformation.VerticalScrollBarWidth)
+                          - 2;
+            if (available <= 0) return;
+
+            const int margin = 20;   // card.Margin = 10 on each side
+            int columns = available >= 2 * (MinCardWidth + margin) ? 2 : 1;
+            int cardWidth = Math.Max(available / columns - margin, MinCardWidth);
+
+            flpMaintenanceIssues.SuspendLayout();
+            foreach (Control c in flpMaintenanceIssues.Controls)
+                if (c is MaintenanceIssueControl)
+                    c.Width = cardWidth;
+            flpMaintenanceIssues.ResumeLayout();
         }
 
         private void btnAddIssue_Click(object sender, EventArgs e)

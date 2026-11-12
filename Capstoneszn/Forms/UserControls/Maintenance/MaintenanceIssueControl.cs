@@ -91,6 +91,25 @@ namespace Capstoneszn.Forms.UserControls
             btnDeleteIssue.Visible = issue.IsPending;
         }
 
+        /// <summary>
+        /// NEW (Nov 12): the list now sets each card's width (two per row),
+        /// so the header halves and the date box follow the card's width
+        /// instead of the designer's fixed 425 / 225 / 200 / 325 px.
+        /// The ratios match the original 850 px design.
+        /// </summary>
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            if (pnlUnit == null) return;   // called once before InitializeComponent
+
+            int half = Width / 2;
+            pnlUnit.Width = half;
+            pnlStatus.Width = Width - half;
+            lblUnitTitle.Width = pnlUnit.Width * 225 / 425;
+            lblStatusTitle.Width = pnlStatus.Width * 200 / 425;
+            pnlIssueDate.Width = Width * 325 / 850;
+        }
+
         private void btnEditIssue_Click(object sender, EventArgs e)
         {
 

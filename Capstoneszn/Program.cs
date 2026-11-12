@@ -28,21 +28,28 @@ namespace Capstoneszn
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            // ADDED (System Clock STEP 4): the clock check runs FIRST, before Login.
-            // Everything after this point (login lockout timer, BillGenerator at
-            // login, audit log times, salary recording) depends on a correct clock.
-            // If the user exits or closes the clock window, the app does not open.
-            using (var clockForm = new SystemClockForm())
-            {
-                if (clockForm.ShowDialog() != DialogResult.OK)
-                    return 0;
-            }
+            // CHANGED (System Clock, login-first flow - Nov 12, 2026):
+            // the app now opens on Login. The clock check runs in LoginForm right after
+            // the password is verified, before Building Selection.
+            // Old startup check kept here commented out per team rule:
+            //
+            // // ADDED (System Clock STEP 4): the clock check runs FIRST, before Login.
+            // using (var clockForm = new SystemClockForm())
+            // {
+            //     if (clockForm.ShowDialog() != DialogResult.OK)
+            //         return 0;
+            // }
 
-            // ADDED (System Clock STEP 6): from here on, a clock or time zone change
-            // made while the app is open reopens the clock check (any screen).
+            // Login is created first: creating a form sets up the UI thread context
+            // that ClockWatcher needs to show its warning and the clock window.
+            var loginForm = new Login();
+
+            // ADDED (System Clock STEP 6), now started BEFORE Login is shown, so a clock
+            // or time zone change made on the Login screen is also caught.
             ClockWatcher.Start();
 
-            Application.Run(new Login());
+            // was: Application.Run(new Login());
+            Application.Run(loginForm);
             return 0;   // ADDED (System Clock STEP 4): Main now returns an exit code
         }
     }

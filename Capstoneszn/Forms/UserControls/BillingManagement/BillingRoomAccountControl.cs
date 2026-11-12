@@ -25,6 +25,25 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
     /// occupancy. RoomCardControl is not used here and is not affected.
     /// </summary>
     /// 
+
+    // =============================================================================
+    // GENERATE STATEMENT FOR ALL ROOMS (Bill Management > Rooms). Nov 12, 2026
+    // This is a guide file. Do NOT add it to the project.
+    //
+    // Settled rules:
+    //   - An ADDITION. The Generate Statement button in Room Details stays as is.
+    //   - Occupied rooms only (at least one active tenant), floor by floor.
+    //   - Each room's CURRENT period only (today is inside it).
+    //   - One print preview; every room starts on a new page, "Page 1" again.
+    //   - Landlord and caretaker can both use it.
+    //   - Rooms that can't be printed (no current bill yet) are skipped and
+    //     listed in a message before the preview opens.
+    //
+    // 2 files, 2 inserts. No database change. Nothing existing is replaced.
+    // Works with or without CardFill_Edits.cs applied.
+    // =============================================================================
+
+
     public partial class BillingRoomAccountControl : UserControl
     {
 
@@ -48,6 +67,9 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         {
             base.OnLoad(e);
             LoadRooms();
+
+            // NEW (card fill): re-fit the cards whenever the list changes width
+            flpFloors.SizeChanged += (s, a) => ApplyCardLayout();
         }
 
         /* =================================================================
@@ -147,7 +169,12 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             // ClientSize excludes the vertical scrollbar, so the cards do not
             // wrap one column too wide once the list gets long enough to
             // scroll. The floor stops it going negative before layout.
-            int wrapWidth = Math.Max(240, flpFloors.ClientSize.Width - 40);
+
+            // ORIGINAL: int wrapWidth = Math.Max(240, flpFloors.ClientSize.Width - 40);
+
+            // NEW (card fill): the full row width, split into equal columns
+            int wrapWidth = RowWidth();
+            int cardWidth = CardWidth(wrapWidth);
 
             FlowLayoutPanel flpFloorRooms = new FlowLayoutPanel
             {
@@ -197,6 +224,8 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                                   BillingState(tenantCount, outstanding, overdue),
                                   outstanding, overdue);
 
+                        card.Width = cardWidth;   // NEW (card fill)
+
                         card.CardClicked += RoomCard_Clicked;
 
                         flpFloorRooms.Controls.Add(card);
@@ -218,6 +247,64 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             }
 
             flpFloors.Controls.Add(flpFloorRooms);
+        }
+
+        // ----- REPLACE WITH THIS -----
+        /* =================================================================
+           NEW (card fill): CARD SIZE
+
+           The row is split into equal columns, each at least MinCardWidth.
+             row 1,600 px -> 5 columns -> cards of 308 px
+             row 1,200 px -> 3 columns -> cards of 388 px
+           ================================================================= */
+
+        private const int MinCardWidth = 300;   // a card is never narrower than this
+        private const int CardMarginX = 12;     // the card's Margin: 6 left + 6 right
+
+        /// <summary>The width a floor's row of cards can use.</summary>
+        private int RowWidth()
+        {
+            int client = flpFloors.ClientSize.Width;
+
+            // Always keep room for the scrollbar. Without this the cards are
+            // sized one way before the scrollbar appears and another way after.
+            if (!flpFloors.VerticalScroll.Visible)
+                client -= SystemInformation.VerticalScrollBarWidth;
+
+            // flpFloors' padding (5 + 5) and each row's margin (10 + 10)
+            int width = client - flpFloors.Padding.Horizontal - 20;
+
+            return Math.Max(MinCardWidth + CardMarginX, width);
+        }
+
+        /// <summary>One card's width so that the columns fill the row exactly.</summary>
+        private static int CardWidth(int rowWidth)
+        {
+            int columns = Math.Max(1, rowWidth / (MinCardWidth + CardMarginX));
+            return rowWidth / columns - CardMarginX;
+        }
+
+        /// <summary>
+        /// Re-fits the cards already on screen (window resized, sidebar
+        /// toggled). No database call: only the widths change.
+        /// </summary>
+        private void ApplyCardLayout()
+        {
+            int rowWidth = RowWidth();
+            int cardWidth = CardWidth(rowWidth);
+
+            flpFloors.SuspendLayout();
+            foreach (Control c in flpFloors.Controls)
+            {
+                if (c is FlowLayoutPanel row)
+                {
+                    row.MaximumSize = new Size(rowWidth, 0);
+                    foreach (Control card in row.Controls)
+                        if (card is BillingRoomItemControl)
+                            card.Width = cardWidth;
+                }
+            }
+            flpFloors.ResumeLayout(true);
         }
 
 
@@ -340,6 +427,16 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
         }
 
 
+        /* =================================================================
+           NEW (all rooms): GENERATE STATEMENT FOR ALL ROOMS
+
+           One print preview with the CURRENT statement of every occupied
+           room, floor by floor. The per-room button in Room Details is
+           unchanged. Landlord and caretaker can both use it.
+           ================================================================= */
+
+
+
 
         private void btnBackRoomAccount_Click(object sender, EventArgs e)
         {
@@ -360,6 +457,116 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             this.Dispose();
         }
 
+        private void btnRoomsGenerateStatement_Click(object sender, EventArgs e)
+        {
+            // 1. The occupied rooms of this building, in floor and room order
+            var rooms = new List<(int RoomId, string RoomNumber)>();
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                using (SqlCommand cmd = new SqlCommand(@"
+                    SELECT r.RoomId, r.RoomNumber
+                    FROM   Rooms r
+                    JOIN   Floors f ON f.FloorId = r.FloorId
+                    WHERE  r.BuildingId = @bId
+                      AND  r.IsArchived = 0
+                      AND  EXISTS (SELECT 1 FROM Tenancies tn
+                                   WHERE  tn.RoomId = r.RoomId
+                                     AND  tn.Status = 'Active')
+                    ORDER BY f.FloorNumber, r.RoomNumber;", conn))
+                {
+                    cmd.Parameters.Add("@bId", SqlDbType.Int).Value = _buildingId;
+                    conn.Open();
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        while (rd.Read())
+                            rooms.Add((rd.GetInt32(0), Convert.ToString(rd.GetValue(1)) ?? ""));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not load the rooms of this building.", "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (rooms.Count == 0)
+            {
+                MessageBox.Show("No room is occupied right now, so there are no statements to generate.",
+                    "Statements", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 2. Each room's current statement - the same data as the
+            //    per-room button, so the numbers always match Room Details
+            DateTime today = DateTime.Today;
+            var statements = new List<RoomStatement>();
+            var skipped = new List<string>();
+
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                foreach (var room in rooms)
+                {
+                    try
+                    {
+                        // current = today is inside the period (an upcoming bill issued
+                        // 7 days early is not current yet)
+                        StatementPeriod current = RoomStatementService.GetPeriods(room.RoomId)
+                            .FirstOrDefault(p => p.Start <= today && today < p.End);
+
+                        if (current == null)
+                        {
+                            skipped.Add("Room " + room.RoomNumber + " - no bill for the current period yet");
+                            continue;
+                        }
+
+                        statements.Add(RoomStatementService.Load(room.RoomId, current));
+                    }
+                    catch (Exception ex)
+                    {
+                        // one bad room must not stop the others
+                        Debug.WriteLine(ex);
+                        skipped.Add("Room " + room.RoomNumber + " - could not be loaded");
+                    }
+                }
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+
+            if (statements.Count == 0)
+            {
+                MessageBox.Show("No statement could be generated.\n\n" + string.Join("\n", skipped),
+                    "Statements", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 3. Say which rooms are missing before the preview opens
+            if (skipped.Count > 0)
+            {
+                MessageBox.Show(statements.Count + " statement(s) are ready. These rooms were skipped:\n\n" +
+                                string.Join("\n", skipped),
+                    "Statements", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            // 4. One preview, one room per page set
+            try
+            {
+                string building = statements[0].BuildingName;
+                RoomStatementPrinter.ShowPreviewAll(this.FindForm(), statements,
+                    "Statements of Account - " + building + " (" + statements.Count + " rooms)");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show("Could not open the statements.\n\n" + ex.Message, "Statements",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 
 }

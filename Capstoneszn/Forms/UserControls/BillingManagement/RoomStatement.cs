@@ -767,6 +767,95 @@ namespace Capstoneszn
             }
         }
 
+        /// <summary>
+        /// NEW (all rooms): several statements in ONE print preview.
+        /// Same layout and page splitting as ShowPreview above, but each
+        /// statement starts on a new page and its page numbers restart at 1.
+        /// </summary>
+        public static void ShowPreviewAll(IWin32Window owner, List<RoomStatement> statements, string title)
+        {
+            if (statements == null || statements.Count == 0) return;
+
+            using (var doc = new PrintDocument())
+            using (var preview = new PrintPreviewDialog())
+            using (var fonts = new StatementFonts())
+            {
+                doc.DocumentName = title;
+                // A4, half-inch margins - same as the single statement
+                doc.DefaultPageSettings.PaperSize = new PaperSize("A4", 827, 1169);
+                doc.DefaultPageSettings.Margins = new Margins(50, 50, 50, 50);
+
+                // Every room's printable blocks, built once
+                var allBlocks = new List<List<Block>>();
+                foreach (RoomStatement st in statements)
+                    allBlocks.Add(BuildBlocks(st, fonts));
+
+                int room = 0;   // which statement is printing
+                int page = 0;   // page number inside that statement
+                int next = 0;   // next block of that statement
+
+                doc.BeginPrint += (s, e) => { room = 0; page = 0; next = 0; };   // printing again starts over
+                doc.PrintPage += (s, e) =>
+                {
+                    RoomStatement st = statements[room];
+                    List<Block> blocks = allBlocks[room];
+
+                    page++;
+                    Graphics g = e.Graphics;
+                    Rectangle area = e.MarginBounds;
+                    float x = area.Left, w = area.Width, y = area.Top;
+                    float bottom = area.Bottom - fonts.Small.GetHeight(g) - 6;   // room for "Page n"
+
+                    if (page > 1)
+                    {
+                        y = Line(g, st.StatementNo + "  (continued)", fonts.Small, x, y);
+                        y = Rule(g, x, w, y);
+                    }
+
+                    int placed = 0;
+                    while (next < blocks.Count)
+                    {
+                        Block b = blocks[next];
+                        bool repeat = placed == 0 && page > 1 && b.RepeatHeader != null;
+                        float h = b.Height(g) + (repeat ? b.RepeatHeader.Height(g) : 0f);
+
+                        if (y + h > bottom && placed > 0) break;   // full: continue on the next page
+
+                        if (repeat)
+                        {
+                            b.RepeatHeader.Paint(g, x, w, y);
+                            y += b.RepeatHeader.Height(g);
+                        }
+                        b.Paint(g, x, w, y);
+                        y += b.Height(g);
+                        placed++;
+                        next++;
+                    }
+
+                    using (var right = new StringFormat { Alignment = StringAlignment.Far })
+                        g.DrawString("Room " + st.RoomNumber + "  -  Page " + page, fonts.Small, Brushes.Black,
+                            new RectangleF(x, area.Bottom - fonts.Small.GetHeight(g), w, fonts.Small.GetHeight(g) + 2), right);
+
+                    // This room is finished -> the next room starts on a fresh page
+                    if (next >= blocks.Count)
+                    {
+                        room++;
+                        page = 0;
+                        next = 0;
+                    }
+
+                    e.HasMorePages = room < statements.Count;
+                };
+
+                preview.Document = doc;
+                preview.Text = title;
+                preview.Width = 900;
+                preview.Height = 1000;
+                preview.StartPosition = FormStartPosition.CenterScreen;
+                preview.ShowDialog(owner);
+            }
+        }
+
         /* =================================================================
            NEW (All periods): page-splitting printer
            ================================================================= */

@@ -30,6 +30,8 @@
         {
             pnlRoomAccountHeader = new Panel();
             lblRoomAccountTitle = new Label();
+            pnlALLRoomStatement = new Panel();
+            btnRoomsGenerateStatement = new Button();
             btnBackRoomAccount = new Button();
             pnlRoomAccountContent = new Panel();
             flpFloors = new FlowLayoutPanel();
@@ -40,6 +42,7 @@
             flpFloorRooms2 = new FlowLayoutPanel();
             lblFloorTitle2 = new Label();
             pnlRoomAccountHeader.SuspendLayout();
+            pnlALLRoomStatement.SuspendLayout();
             pnlRoomAccountContent.SuspendLayout();
             flpFloors.SuspendLayout();
             pnlFloorSection1.SuspendLayout();
@@ -50,6 +53,7 @@
             // 
             pnlRoomAccountHeader.BorderStyle = BorderStyle.FixedSingle;
             pnlRoomAccountHeader.Controls.Add(lblRoomAccountTitle);
+            pnlRoomAccountHeader.Controls.Add(pnlALLRoomStatement);
             pnlRoomAccountHeader.Controls.Add(btnBackRoomAccount);
             pnlRoomAccountHeader.Dock = DockStyle.Top;
             pnlRoomAccountHeader.Location = new Point(0, 0);
@@ -65,10 +69,33 @@
             lblRoomAccountTitle.ImageAlign = ContentAlignment.MiddleRight;
             lblRoomAccountTitle.Location = new Point(140, 0);
             lblRoomAccountTitle.Name = "lblRoomAccountTitle";
-            lblRoomAccountTitle.Size = new Size(1158, 88);
+            lblRoomAccountTitle.Size = new Size(1023, 88);
             lblRoomAccountTitle.TabIndex = 5;
             lblRoomAccountTitle.Text = "Rooms";
             lblRoomAccountTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlALLRoomStatement
+            // 
+            pnlALLRoomStatement.Controls.Add(btnRoomsGenerateStatement);
+            pnlALLRoomStatement.Dock = DockStyle.Right;
+            pnlALLRoomStatement.Location = new Point(1163, 0);
+            pnlALLRoomStatement.Name = "pnlALLRoomStatement";
+            pnlALLRoomStatement.Padding = new Padding(10);
+            pnlALLRoomStatement.Size = new Size(135, 88);
+            pnlALLRoomStatement.TabIndex = 6;
+            // 
+            // btnRoomsGenerateStatement
+            // 
+            btnRoomsGenerateStatement.Cursor = Cursors.Hand;
+            btnRoomsGenerateStatement.Dock = DockStyle.Fill;
+            btnRoomsGenerateStatement.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnRoomsGenerateStatement.Location = new Point(10, 10);
+            btnRoomsGenerateStatement.Name = "btnRoomsGenerateStatement";
+            btnRoomsGenerateStatement.Size = new Size(115, 68);
+            btnRoomsGenerateStatement.TabIndex = 0;
+            btnRoomsGenerateStatement.Text = "Generate Statement";
+            btnRoomsGenerateStatement.UseVisualStyleBackColor = true;
+            btnRoomsGenerateStatement.Click += btnRoomsGenerateStatement_Click;
             // 
             // btnBackRoomAccount
             // 
@@ -196,6 +223,7 @@
             Name = "BillingRoomAccountControl";
             Size = new Size(1300, 750);
             pnlRoomAccountHeader.ResumeLayout(false);
+            pnlALLRoomStatement.ResumeLayout(false);
             pnlRoomAccountContent.ResumeLayout(false);
             flpFloors.ResumeLayout(false);
             pnlFloorSection1.ResumeLayout(false);
@@ -216,5 +244,7 @@
         private Panel pnlFloorSection2;
         private FlowLayoutPanel flpFloorRooms2;
         private Label lblFloorTitle2;
+        private Panel pnlALLRoomStatement;
+        private Button btnRoomsGenerateStatement;
     }
 }

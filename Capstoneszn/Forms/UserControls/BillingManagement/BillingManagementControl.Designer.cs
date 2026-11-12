@@ -33,10 +33,8 @@
             pnlBillingContent = new Panel();
             tblBillingOptions = new TableLayoutPanel();
             pnlRoomAccount = new Panel();
-            label1 = new Label();
             lblRoomAccount = new Label();
             pnlExpenses = new Panel();
-            label2 = new Label();
             lblExpenses = new Label();
             pnlBillingHeader.SuspendLayout();
             pnlBillingContent.SuspendLayout();
@@ -98,7 +96,6 @@
             // pnlRoomAccount
             // 
             pnlRoomAccount.BorderStyle = BorderStyle.FixedSingle;
-            pnlRoomAccount.Controls.Add(label1);
             pnlRoomAccount.Controls.Add(lblRoomAccount);
             pnlRoomAccount.Cursor = Cursors.Hand;
             pnlRoomAccount.Dock = DockStyle.Fill;
@@ -107,19 +104,6 @@
             pnlRoomAccount.Name = "pnlRoomAccount";
             pnlRoomAccount.Size = new Size(1507, 354);
             pnlRoomAccount.TabIndex = 0;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.FromArgb(25, 25, 75);
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(551, 12);
-            label1.Name = "label1";
-            label1.Size = new Size(381, 28);
-            label1.TabIndex = 6;
-            label1.Text = "\"Bills, payments and statements per room\"";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblRoomAccount
             // 
@@ -139,7 +123,6 @@
             // pnlExpenses
             // 
             pnlExpenses.BorderStyle = BorderStyle.FixedSingle;
-            pnlExpenses.Controls.Add(label2);
             pnlExpenses.Controls.Add(lblExpenses);
             pnlExpenses.Cursor = Cursors.Hand;
             pnlExpenses.Dock = DockStyle.Fill;
@@ -148,18 +131,6 @@
             pnlExpenses.Name = "pnlExpenses";
             pnlExpenses.Size = new Size(1507, 354);
             pnlExpenses.TabIndex = 1;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.BackColor = Color.FromArgb(25, 25, 75);
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(529, 22);
-            label2.Name = "label2";
-            label2.Size = new Size(442, 28);
-            label2.TabIndex = 6;
-            label2.Text = "“Building expenses (maintenance, utilities, salary)”";
             // 
             // lblExpenses
             // 
@@ -190,9 +161,7 @@
             pnlBillingContent.ResumeLayout(false);
             tblBillingOptions.ResumeLayout(false);
             pnlRoomAccount.ResumeLayout(false);
-            pnlRoomAccount.PerformLayout();
             pnlExpenses.ResumeLayout(false);
-            pnlExpenses.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -206,7 +175,5 @@
         private Panel pnlExpenses;
         private Label lblRoomAccount;
         private Label lblExpenses;
-        private Label label1;
-        private Label label2;
     }
 }

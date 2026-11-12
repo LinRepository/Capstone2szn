@@ -111,12 +111,10 @@
             // flpMaintenanceIssues
             // 
             flpMaintenanceIssues.Dock = DockStyle.Fill;
-            flpMaintenanceIssues.FlowDirection = FlowDirection.TopDown;
             flpMaintenanceIssues.Location = new Point(0, 0);
             flpMaintenanceIssues.Name = "flpMaintenanceIssues";
             flpMaintenanceIssues.Size = new Size(1278, 593);
             flpMaintenanceIssues.TabIndex = 0;
-            flpMaintenanceIssues.WrapContents = false;
             // 
             // MaintenanceControl
             // 

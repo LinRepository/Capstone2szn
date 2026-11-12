@@ -68,6 +68,20 @@ namespace Capstoneszn.Forms.BuildingForms
             InitializeComponent();
         }
 
+        // ADDED (login-first flow, Nov 12, 2026): LoginForm opens the clock check
+        // after the password is verified. There, closing it returns to the login
+        // screen (the app stays open), so the button reads "Back to Login".
+        // The ClockWatcher still uses the old constructor, where "Exit" closes the app.
+        public SystemClockForm(bool afterLogin) : this()
+        {
+            if (afterLogin)
+            {
+                btnGoBack.Text = "Back to Login";
+                btnGoBack.Width = 130;                                   // wider for the longer text
+                btnGoBack.Left = btnConfirm.Left - btnGoBack.Width - 6;  // keep it beside Confirm
+            }
+        }
+
         // ───────────────────────── Start ─────────────────────────
 
         private async void SystemClockForm_Load(object sender, EventArgs e)
@@ -77,6 +91,12 @@ namespace Capstoneszn.Forms.BuildingForms
             {
                 IsShowing = false;
                 clockTimer?.Stop();
+
+                // ADDED (Nov 12, 2026): a confirmed clock is the new correct time, so the
+                // watcher must not treat a change made here (Fix Automatically /
+                // Set Manually) as a "clock changed" alarm later.
+                if (this.DialogResult == DialogResult.OK)
+                    ClockWatcher.AcknowledgeCurrentTime();
             };
 
             // Wrap long messages instead of running off the form
