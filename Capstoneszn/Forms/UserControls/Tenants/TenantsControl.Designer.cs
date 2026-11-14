@@ -137,10 +137,10 @@
             pnlSearchContainer.BackColor = Color.Transparent;
             pnlSearchContainer.BorderStyle = BorderStyle.FixedSingle;
             pnlSearchContainer.Controls.Add(txtSearch);
-            pnlSearchContainer.Dock = DockStyle.Left;
-            pnlSearchContainer.Location = new Point(10, 0);
+            pnlSearchContainer.Dock = DockStyle.Right;
+            pnlSearchContainer.Location = new Point(903, 0);
             pnlSearchContainer.Name = "pnlSearchContainer";
-            pnlSearchContainer.Size = new Size(434, 42);
+            pnlSearchContainer.Size = new Size(387, 42);
             pnlSearchContainer.TabIndex = 3;
             // 
             // txtSearch
@@ -151,7 +151,7 @@
             txtSearch.Location = new Point(0, 0);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "🔍Search Tenant ";
-            txtSearch.Size = new Size(432, 38);
+            txtSearch.Size = new Size(385, 38);
             txtSearch.TabIndex = 0;
             txtSearch.TextAlign = HorizontalAlignment.Center;
             txtSearch.TextChanged += txtSearch_TextChanged;

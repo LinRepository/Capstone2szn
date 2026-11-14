@@ -22,6 +22,16 @@ namespace Capstoneszn.Forms.TenantForms
     /// </summary>
     /// 
 
+
+    ///
+    /// NEW (Nov 12) validation rules:
+    ///   - First / Last name required; Middle name optional
+    ///   - Names: letters (ñ, accents), spaces, period, hyphen, apostrophe only
+    ///   - Contact: required, 11 digits starting with 09, unique among tenants
+    ///   - Input is trimmed and repeated spaces collapsed before saving
+    ///   - No UPDATE runs when nothing changed
+    ///   
+
     public partial class EditTenant : Form
     {
 
@@ -75,6 +85,8 @@ namespace Capstoneszn.Forms.TenantForms
             this.StartPosition = FormStartPosition.CenterParent;
 
             LoadTenant();
+            // NEW (Nov 13): start in First Name when the form opens
+            this.ActiveControl = txtEditTenantFName;
         }
 
         private void NumericOnly_KeyPress(object sender, KeyPressEventArgs e)
@@ -82,7 +94,7 @@ namespace Capstoneszn.Forms.TenantForms
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                 e.Handled = true;
         }
-        // NEW: name fields accept letters, space, period, apostrophe and hyphen only
+        // name fields accept letters, space, period, apostrophe and hyphen only
         private void LettersOnly_KeyPress(object sender, KeyPressEventArgs e)
         {
             char c = e.KeyChar;
@@ -288,7 +300,11 @@ namespace Capstoneszn.Forms.TenantForms
             return true;
         }
 
-        /// 
+        /// <summary>
+        /// NEW (Nov 12): unique contact rule. Returns false and shows the name of the
+        /// tenant who already uses this number, so the save is blocked (no override).
+        /// Runs only when the contact number was actually changed.
+        /// </summary>
         private bool ConfirmSharedContact(SqlConnection conn, string contact)
         {
             using (var cmd = new SqlCommand(@"

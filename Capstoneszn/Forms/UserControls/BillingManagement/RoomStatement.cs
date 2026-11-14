@@ -65,6 +65,13 @@ namespace Capstoneszn
         public decimal Paid { get; set; }
         public decimal Adjustments { get; set; }
         public decimal Balance { get; set; }      // running balance at the end of this period
+
+        // NEW (Nov 13): per-category rule - what is owed and what is credit are
+        // kept apart (a rent credit never pays water or maintenance, and one
+        // tenant's credit never reduces another tenant's debt).
+        // Printed instead of the single Balance above.
+        public decimal Due { get; set; }
+        public decimal Credit { get; set; }
     }
 
     /// <summary>One tenant's line in the per-tenant breakdown.</summary>
@@ -78,6 +85,23 @@ namespace Capstoneszn
         public decimal Payments { get; set; }
         public decimal Adjustments { get; set; }
 
+        // NEW (Nov 13): the same figures PER CATEGORY, so each category keeps its
+        // own balance. The combined columns above stay for display only.
+        public int TenantId { get; set; }
+        public decimal PrevRent { get; set; }
+        public decimal PrevWater { get; set; }
+        public decimal PrevMaint { get; set; }
+        public decimal PaidRent { get; set; }
+        public decimal PaidWater { get; set; }
+        public decimal PaidMaint { get; set; }
+        public decimal AdjRent { get; set; }
+        public decimal AdjWater { get; set; }
+        public decimal AdjMaint { get; set; }
+
+        public decimal RentBalance => PrevRent + Rent - PaidRent + AdjRent;            // negative = rent credit
+        public decimal WaterBalance => PrevWater + Water - PaidWater + AdjWater;       // negative = water credit
+        public decimal MaintBalance => PrevMaint + Maintenance - PaidMaint + AdjMaint; // negative = maint. credit
+
         /// <summary>
         /// NEW (Step 5, decision B): filled when the tenant no longer lived in
         /// the room on the statement date, e.g. "Transferred out on November 5, 2026".
@@ -85,8 +109,17 @@ namespace Capstoneszn
         /// </summary>
         public string LeftNote { get; set; } = "";
 
+        // OLD: one combined balance - a rent credit silently paid water / maintenance
+        // public decimal AmountDue =>
+        //     PreviousBalance + Rent + Water + Maintenance - Payments + Adjustments;
+
+        // NEW (Nov 13): only what is owed, category by category
         public decimal AmountDue =>
-            PreviousBalance + Rent + Water + Maintenance - Payments + Adjustments;
+            Math.Max(0m, RentBalance) + Math.Max(0m, WaterBalance) + Math.Max(0m, MaintBalance);
+
+        // NEW (Nov 13): advance credit, kept apart - never deducted from another category
+        public decimal Credit =>
+            Math.Max(0m, -RentBalance) + Math.Max(0m, -WaterBalance) + Math.Max(0m, -MaintBalance);
 
         public bool IsEmpty =>
             PreviousBalance == 0m && Rent == 0m && Water == 0m && Maintenance == 0m &&
@@ -140,6 +173,19 @@ namespace Capstoneszn
         public decimal TotalPayments => Tenants.Sum(t => t.Payments);
         public decimal TotalAdjustments => Tenants.Sum(t => t.Adjustments);
         public decimal TotalDue => Tenants.Sum(t => t.AmountDue);
+
+        // NEW (Nov 13): TotalDue now adds only what each tenant OWES, so no
+        // category pays another and no tenant's credit hides another's debt.
+        // Credit is totalled separately, per category.
+        public decimal TotalCredit => Tenants.Sum(t => t.Credit);
+        public decimal TotalRentCredit => Tenants.Sum(t => Math.Max(0m, -t.RentBalance));
+        public decimal TotalWaterCredit => Tenants.Sum(t => Math.Max(0m, -t.WaterBalance));
+        public decimal TotalMaintCredit => Tenants.Sum(t => Math.Max(0m, -t.MaintBalance));
+
+        // NEW (Nov 13): oldest due date among the unpaid shares of the people
+        // living here (as of the statement date) - used for the "pay on or
+        // before" line instead of the rent due date.
+        public DateTime? OldestUnpaidDue { get; set; }
     }
 
     /* ======================================================================
@@ -382,7 +428,14 @@ namespace Capstoneszn
                                SUM(CASE WHEN b.DueDate >= @S AND b.BillCategory = 'Maintenance'
                                         THEN bt.Share ELSE 0 END) AS Maint,
                                SUM(CASE WHEN cd.ChargeDate >= @S AND b.BillKind = N'Superseded'   -- NEW (item 4)
-                                        THEN bt.Share ELSE 0 END) AS ExitCharges
+                                        THEN bt.Share ELSE 0 END) AS ExitCharges,
+                               -- NEW (Nov 13): previous charges per category
+                               SUM(CASE WHEN cd.ChargeDate < @S AND b.BillCategory = 'Rent'
+                                        THEN bt.Share ELSE 0 END) AS PrevRent,
+                               SUM(CASE WHEN cd.ChargeDate < @S AND b.BillCategory = 'Water'
+                                        THEN bt.Share ELSE 0 END) AS PrevWater,
+                               SUM(CASE WHEN cd.ChargeDate < @S AND b.BillCategory = 'Maintenance'
+                                        THEN bt.Share ELSE 0 END) AS PrevMaint
                         FROM   BillTenants bt
                         JOIN   Bills b ON b.BillId = bt.BillId
                         " + ExitChargeDate("bt.TenantId") + @"   -- NEW (item 4): adds cd.ChargeDate
@@ -395,7 +448,14 @@ namespace Capstoneszn
                     paid AS (
                         SELECT a.TenantId,
                                SUM(CASE WHEN p.PaymentDate <  @S THEN a.Amount ELSE 0 END) AS PrevPaid,
-                               SUM(CASE WHEN p.PaymentDate >= @S THEN a.Amount ELSE 0 END) AS PaidInPeriod
+                               SUM(CASE WHEN p.PaymentDate >= @S THEN a.Amount ELSE 0 END) AS PaidInPeriod,
+                               -- NEW (Nov 13): payments per category (by allocation category)
+                               SUM(CASE WHEN p.PaymentDate <  @S AND a.Category = 'Rent'        THEN a.Amount ELSE 0 END) AS PrevPaidRent,
+                               SUM(CASE WHEN p.PaymentDate <  @S AND a.Category = 'Water'       THEN a.Amount ELSE 0 END) AS PrevPaidWater,
+                               SUM(CASE WHEN p.PaymentDate <  @S AND a.Category = 'Maintenance' THEN a.Amount ELSE 0 END) AS PrevPaidMaint,
+                               SUM(CASE WHEN p.PaymentDate >= @S AND a.Category = 'Rent'        THEN a.Amount ELSE 0 END) AS PaidRent,
+                               SUM(CASE WHEN p.PaymentDate >= @S AND a.Category = 'Water'       THEN a.Amount ELSE 0 END) AS PaidWater,
+                               SUM(CASE WHEN p.PaymentDate >= @S AND a.Category = 'Maintenance' THEN a.Amount ELSE 0 END) AS PaidMaint
                         FROM   PaymentAllocations a
                         JOIN   Payments p ON p.PaymentId = a.PaymentId
                         LEFT JOIN Bills b ON b.BillId = a.BillId
@@ -407,7 +467,14 @@ namespace Capstoneszn
                     adjs AS (
                         SELECT ta.TenantId,
                                SUM(CASE WHEN ta.AdjustmentDate <  @S THEN x.Signed ELSE 0 END) AS PrevAdj,
-                               SUM(CASE WHEN ta.AdjustmentDate >= @S THEN x.Signed ELSE 0 END) AS AdjInPeriod
+                               SUM(CASE WHEN ta.AdjustmentDate >= @S THEN x.Signed ELSE 0 END) AS AdjInPeriod,
+                               -- NEW (Nov 13): adjustments per category
+                               SUM(CASE WHEN ta.AdjustmentDate <  @S AND ta.BillCategory = 'Rent'        THEN x.Signed ELSE 0 END) AS PrevAdjRent,
+                               SUM(CASE WHEN ta.AdjustmentDate <  @S AND ta.BillCategory = 'Water'       THEN x.Signed ELSE 0 END) AS PrevAdjWater,
+                               SUM(CASE WHEN ta.AdjustmentDate <  @S AND ta.BillCategory = 'Maintenance' THEN x.Signed ELSE 0 END) AS PrevAdjMaint,
+                               SUM(CASE WHEN ta.AdjustmentDate >= @S AND ta.BillCategory = 'Rent'        THEN x.Signed ELSE 0 END) AS AdjRent,
+                               SUM(CASE WHEN ta.AdjustmentDate >= @S AND ta.BillCategory = 'Water'       THEN x.Signed ELSE 0 END) AS AdjWater,
+                               SUM(CASE WHEN ta.AdjustmentDate >= @S AND ta.BillCategory = 'Maintenance' THEN x.Signed ELSE 0 END) AS AdjMaint
                         FROM   TenantAdjustments ta
                         JOIN   Tenancies tn ON tn.TenancyId = ta.TenancyId
                         CROSS APPLY (SELECT CASE WHEN ta.AdjustmentType = 'WriteOff'
@@ -442,7 +509,18 @@ namespace Capstoneszn
                            -- and for someone who left, their last move-out from this room
                            CASE WHEN " + Lived("ids.TenantId") + @" THEN 1 ELSE 0 END AS IsLived,
                            lo.MoveOutDate,
-                           lo.MoveOutReason
+                           lo.MoveOutReason,
+                           -- NEW (Nov 13): per-category figures (reader index 11 onwards)
+                           ids.TenantId,
+                           ISNULL(c.PrevRent, 0)  - ISNULL(pd.PrevPaidRent, 0)  + ISNULL(ad.PrevAdjRent, 0)  AS PrevRent,
+                           ISNULL(c.PrevWater, 0) - ISNULL(pd.PrevPaidWater, 0) + ISNULL(ad.PrevAdjWater, 0) AS PrevWater,
+                           ISNULL(c.PrevMaint, 0) - ISNULL(pd.PrevPaidMaint, 0) + ISNULL(ad.PrevAdjMaint, 0) AS PrevMaint,
+                           ISNULL(pd.PaidRent, 0)  AS PaidRent,
+                           ISNULL(pd.PaidWater, 0) AS PaidWater,
+                           ISNULL(pd.PaidMaint, 0) AS PaidMaint,
+                           ISNULL(ad.AdjRent, 0) + ISNULL(c.ExitCharges, 0) AS AdjRent,   -- exit charges are rent
+                           ISNULL(ad.AdjWater, 0) AS AdjWater,
+                           ISNULL(ad.AdjMaint, 0) AS AdjMaint
                     FROM   ids
                     JOIN   Tenants te     ON te.TenantId = ids.TenantId
                     LEFT JOIN charges c   ON c.TenantId  = ids.TenantId
@@ -474,7 +552,19 @@ namespace Capstoneszn
                                 Water = rd.GetDecimal(3),
                                 Maintenance = rd.GetDecimal(4),
                                 Payments = rd.GetDecimal(5),
-                                Adjustments = rd.GetDecimal(6)
+                                Adjustments = rd.GetDecimal(6),
+
+                                // NEW (Nov 13): per category
+                                TenantId = rd.GetInt32(11),
+                                PrevRent = rd.GetDecimal(12),
+                                PrevWater = rd.GetDecimal(13),
+                                PrevMaint = rd.GetDecimal(14),
+                                PaidRent = rd.GetDecimal(15),
+                                PaidWater = rd.GetDecimal(16),
+                                PaidMaint = rd.GetDecimal(17),
+                                AdjRent = rd.GetDecimal(18),
+                                AdjWater = rd.GetDecimal(19),
+                                AdjMaint = rd.GetDecimal(20)
                             };
 
                             // ORIGINAL: // A former tenant whose account was already settled
@@ -553,6 +643,33 @@ namespace Capstoneszn
                     }
                 }
 
+                // ---- NEW (Nov 13): oldest unpaid due date (pay-by line) -----------
+                //  Shares of this room's bills, current stay only, not written off
+                //  (same rule as BillingHelper), paid as of the statement date.
+                using (SqlCommand cmd = new SqlCommand(@"
+                    SELECT MIN(b.DueDate)
+                    FROM   BillTenants bt
+                    JOIN   Bills b      ON b.BillId    = bt.BillId
+                    JOIN   Tenancies tn ON tn.TenantId = bt.TenantId AND tn.Status = 'Active'
+                                       AND tn.RoomId   = b.RoomId
+                    WHERE  b.RoomId = @rid
+                      AND  b.BillCategory IN ('Rent', 'Water', 'Maintenance')
+                      AND  b.BillKind <> N'Superseded'
+                      AND  b.BillingPeriodStart >= tn.MoveInDate
+                      AND  ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
+                      AND  bt.Share > ISNULL((SELECT SUM(a.Amount)
+                                              FROM   PaymentAllocations a
+                                              JOIN   Payments p ON p.PaymentId = a.PaymentId
+                                              WHERE  a.BillId = bt.BillId AND a.TenantId = bt.TenantId
+                                                AND  p.PaymentDate < @Dnext
+                                                AND  (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)), 0);", conn))
+                {
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                    cmd.Parameters.Add("@Dnext", SqlDbType.Date).Value = dayAfterAsOf;
+                    object? v = cmd.ExecuteScalar();
+                    if (v != null && v != DBNull.Value) st.OldestUnpaidDue = Convert.ToDateTime(v).Date;
+                }
+
                 // ---- 4. NEW (All periods): one row per period -----------------
                 if (period.IsAll)
                     LoadPeriodRows(conn, roomId, st, dayAfterAsOf);
@@ -614,6 +731,52 @@ namespace Capstoneszn
             List<StatementPeriod> parts = st.Period.Parts;
             decimal running = st.TotalPrevious;
 
+            // NEW (Nov 13): running balance per (tenant, category), so each row's
+            // Due / Credit never lets one category or one tenant pay another.
+            // Starts from each tenant's previous balance per category.
+            var run = new Dictionary<(int TenantId, string Cat), decimal>();
+            foreach (StatementTenantLine t in st.Tenants)
+            {
+                run[(t.TenantId, "Rent")] = t.PrevRent;
+                run[(t.TenantId, "Water")] = t.PrevWater;
+                run[(t.TenantId, "Maintenance")] = t.PrevMaint;
+            }
+
+            // Same filters as the totals query below, grouped by tenant and category.
+            string changeSql = @"
+                SELECT x.TenantId, x.Cat, SUM(x.Amt) AS Amt
+                FROM (
+                    SELECT bt.TenantId, b.BillCategory AS Cat, bt.Share AS Amt
+                    FROM   BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                    WHERE  b.RoomId = @rid AND b.BillKind <> N'Superseded'
+                      AND  b.DueDate >= @S AND b.DueDate < @E
+                      AND  ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
+                    UNION ALL
+                    SELECT bt.TenantId, b.BillCategory, bt.Share
+                    FROM   BillTenants bt JOIN Bills b ON b.BillId = bt.BillId
+                    " + ExitChargeDate("bt.TenantId") + @"
+                    WHERE  b.RoomId = @rid AND b.BillKind = N'Superseded'
+                      AND  cd.ChargeDate >= @S AND cd.ChargeDate < @E AND cd.ChargeDate < @Dnext
+                      AND  ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
+                    UNION ALL
+                    SELECT a.TenantId, a.Category, -a.Amount
+                    FROM   PaymentAllocations a
+                    JOIN   Payments p ON p.PaymentId = a.PaymentId
+                    LEFT JOIN Bills b ON b.BillId = a.BillId
+                    WHERE  p.PaymentDate >= @S AND p.PaymentDate < @E AND p.PaymentDate < @Dnext
+                      AND  (p.IsVoided = 0 OR p.VoidedAt >= @Dnext)
+                      AND  (b.RoomId = @rid OR (a.BillId IS NULL AND p.RoomId = @rid))
+                    UNION ALL
+                    SELECT ta.TenantId, ta.BillCategory,
+                           CASE WHEN ta.AdjustmentType = 'WriteOff' THEN -ta.Amount ELSE ta.Amount END
+                    FROM   TenantAdjustments ta JOIN Tenancies tn ON tn.TenancyId = ta.TenancyId
+                    WHERE  tn.RoomId = @rid
+                      AND  ta.AdjustmentDate >= @S AND ta.AdjustmentDate < @E AND ta.AdjustmentDate < @Dnext
+                ) x
+                WHERE  x.Cat IN ('Rent', 'Water', 'Maintenance')
+                  AND  " + Lived("x.TenantId") + @"
+                GROUP BY x.TenantId, x.Cat;";
+
             for (int i = 0; i < parts.Count; i++)
             {
                 DateTime s = i == 0 ? st.Period.Start : parts[i].Start;
@@ -645,6 +808,31 @@ namespace Capstoneszn
                         st.PeriodRows.Add(row);
                     }
                 }
+
+                // NEW (Nov 13): move each (tenant, category) balance by this window,
+                // then Due = what is owed, Credit = what is paid ahead - kept apart.
+                using (SqlCommand cmd = new SqlCommand(changeSql, conn))
+                {
+                    cmd.Parameters.Add("@rid", SqlDbType.Int).Value = roomId;
+                    cmd.Parameters.Add("@S", SqlDbType.Date).Value = s;
+                    cmd.Parameters.Add("@E", SqlDbType.Date).Value = e;
+                    cmd.Parameters.Add("@Dnext", SqlDbType.Date).Value = dayAfterAsOf;
+                    cmd.Parameters.Add("@L", SqlDbType.Date).Value = st.Period.Start;
+
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        while (rd.Read())
+                        {
+                            var key = (rd.GetInt32(0), rd.GetString(1));
+                            run.TryGetValue(key, out decimal before);
+                            run[key] = before + rd.GetDecimal(2);
+                        }
+                    }
+                }
+
+                StatementPeriodRow last = st.PeriodRows[st.PeriodRows.Count - 1];
+                last.Due = run.Values.Sum(v => Math.Max(0m, v));
+                last.Credit = run.Values.Sum(v => Math.Max(0m, -v));
             }
         }
 
@@ -978,23 +1166,36 @@ namespace Capstoneszn
                 Paint = (g, x, w, y) =>
                 {
                     g.DrawLine(Pens.Black, x + w - 200, y, x + w, y);
-                    Amount(g, due >= 0m ? "TOTAL AMOUNT DUE" : "CREDIT BALANCE (paid ahead)", Math.Abs(due), f.Head, x, w, y + 2);
+                    // OLD: Amount(g, due >= 0m ? "TOTAL AMOUNT DUE" : "CREDIT BALANCE (paid ahead)", Math.Abs(due), f.Head, x, w, y + 2);
+                    // NEW (Nov 13): due is never negative now - credit is shown below, apart
+                    Amount(g, "TOTAL AMOUNT DUE", due, f.Head, x, w, y + 2);
                 }
             });
+
+            // NEW (Nov 13): advance credit per category - shown, never deducted from other charges
+            if (st.TotalRentCredit > 0m)
+                b.Add(AmountLine("Advance credit - Rent (applied to rent only)", st.TotalRentCredit, f.Bold));
+            if (st.TotalWaterCredit > 0m)
+                b.Add(AmountLine("Advance credit - Water (applied to water only)", st.TotalWaterCredit, f.Bold));
+            if (st.TotalMaintCredit > 0m)
+                b.Add(AmountLine("Advance credit - Maintenance (applied to maintenance only)", st.TotalMaintCredit, f.Bold));
             b.Add(Gap(12));
 
             // ---- 4. NEW: period breakdown (All periods only) ----
             if (st.IsAll && st.PeriodRows.Count > 0)
             {
-                float[] ps = Shares(0.28f, 6);
+                // OLD: float[] ps = Shares(0.28f, 6);
+                float[] ps = Shares(0.24f, 7);   // NEW (Nov 13): Due + Credit instead of Balance
                 b.Add(TextLine("PERIOD BREAKDOWN", f.Head));
-                Block head = TableRow(ps, new[] { "Period", "Rent", "Water", "Maint.", "Paid", "Adjust.", "Balance" }, f.Bold, true);
+                // OLD: Block head = TableRow(ps, new[] { "Period", "Rent", "Water", "Maint.", "Paid", "Adjust.", "Balance" }, f.Bold, true);
+                Block head = TableRow(ps, new[] { "Period", "Rent", "Water", "Maint.", "Paid", "Adjust.", "Due", "Credit" }, f.Bold, true);
                 b.Add(head);
                 foreach (StatementPeriodRow r in st.PeriodRows)
                 {
                     Block row = TableRow(ps, new[] { r.Start.ToString("MMM d") + " - " + r.LastDay.ToString("MMM d, yyyy"),
                         Money(r.Rent), Money(r.Water), Money(r.Maintenance), Money(r.Paid), Money(r.Adjustments),
-                        Money(r.Balance) }, f.Body, false);
+                        // OLD: Money(r.Balance) }, f.Body, false);
+                        Money(r.Due), Money(r.Credit) }, f.Body, false);   // NEW (Nov 13)
                     row.RepeatHeader = head;
                     b.Add(row);
                 }
@@ -1005,9 +1206,13 @@ namespace Capstoneszn
             b.Add(TextLine("PER-TENANT BREAKDOWN", f.Head));
             // ORIGINAL (NEW earlier): float[] ts = Shares(0.20f, 7);
             // NEW: "Amount Due" was cut off ("Amount..."), so the last column is wider.
-            float[] ts = { 0.18f, 0.115f, 0.115f, 0.115f, 0.115f, 0.115f, 0.115f, 0.13f };   // adds up to 1
+            // OLD: float[] ts = { 0.18f, 0.115f, 0.115f, 0.115f, 0.115f, 0.115f, 0.115f, 0.13f };   // adds up to 1
+            // OLD: Block tHead = TableRow(ts, new[] { "Tenant", "Prev. Bal.", "Rent", "Water", "Maint.",
+            // OLD:                                    "Payments", "Adjust.", "Amount Due" }, f.Bold, true);
+            // NEW (Nov 13): + Credit column (kept apart from Amount Due)
+            float[] ts = { 0.16f, 0.10f, 0.10f, 0.09f, 0.09f, 0.10f, 0.10f, 0.13f, 0.13f };   // adds up to 1
             Block tHead = TableRow(ts, new[] { "Tenant", "Prev. Bal.", "Rent", "Water", "Maint.",
-                                               "Payments", "Adjust.", "Amount Due" }, f.Bold, true);
+                                               "Payments", "Adjust.", "Amount Due", "Credit" }, f.Bold, true);
             b.Add(tHead);
             if (st.Tenants.Count == 0)
                 // ORIGINAL (NEW earlier): b.Add(TextLine("No tenants living in this room on the statement date.", f.Body));
@@ -1017,7 +1222,8 @@ namespace Capstoneszn
             {
                 Block row = TableRow(ts, new[] { t.TenantName, Money(t.PreviousBalance), Money(t.Rent),
                         Money(t.Water), Money(t.Maintenance), Money(t.Payments),
-                        Money(t.Adjustments), Money(t.AmountDue) }, f.Body, false);
+                        // OLD: Money(t.Adjustments), Money(t.AmountDue) }, f.Body, false);
+                        Money(t.Adjustments), Money(t.AmountDue), Money(t.Credit) }, f.Body, false);   // NEW (Nov 13)
                 row.RepeatHeader = tHead;
                 b.Add(row);
 
@@ -1028,7 +1234,8 @@ namespace Capstoneszn
             }
             b.Add(TableRow(ts, new[] { "Room total", Money(st.TotalPrevious), Money(st.TotalRent),
                     Money(st.TotalWater), Money(st.TotalMaintenance), Money(st.TotalPayments),
-                    Money(st.TotalAdjustments), Money(st.TotalDue) }, f.Bold, true));
+                    // OLD: Money(st.TotalAdjustments), Money(st.TotalDue) }, f.Bold, true));
+                    Money(st.TotalAdjustments), Money(st.TotalDue), Money(st.TotalCredit) }, f.Bold, true));   // NEW (Nov 13)
             b.Add(Gap(12));
 
             // ---- 6. Payments received (every one - no "+ n more" cut-off now) ----
@@ -1076,16 +1283,40 @@ namespace Capstoneszn
             b.Add(RuleBlock());
 
             // 1. What to do: pay, nothing due, or credit carried forward.
-            if (due > 0m)
+            // OLD:
+            // if (due > 0m)
+            //     b.Add(TextLine("Please pay the total amount due of " + Peso(due) + " on or before " +
+            //                    st.Period.DueDate.ToString("MMMM d, yyyy") + ".", f.Small));
+            // else if (due < 0m)
+            //     b.Add(TextLine("You have an advance credit of " + Peso(-due) +
+            //                    ". It will be applied to your next bill.", f.Small));
+            // else if (st.Payments.Count > 0)
+            //     b.Add(TextLine("No amount is due. Thank you for your payment.", f.Small));
+            // else
+            //     b.Add(TextLine("No amount is due.", f.Small));
+
+            // NEW (Nov 13): due and credit are separate; the pay-by date is the
+            // oldest unpaid bill's due date (not always the rent due date).
+            DateTime payBy = st.OldestUnpaidDue ?? st.Period.DueDate;
+            if (due > 0m && payBy < st.AsOf)
+                b.Add(TextLine("The total amount due of " + Peso(due) + " includes overdue amounts. " +
+                               "Please pay immediately.", f.Small));
+            else if (due > 0m)
                 b.Add(TextLine("Please pay the total amount due of " + Peso(due) + " on or before " +
-                               st.Period.DueDate.ToString("MMMM d, yyyy") + ".", f.Small));
-            else if (due < 0m)
-                b.Add(TextLine("You have an advance credit of " + Peso(-due) +
-                               ". It will be applied to your next bill.", f.Small));
+                               payBy.ToString("MMMM d, yyyy") + ".", f.Small));
             else if (st.Payments.Count > 0)
                 b.Add(TextLine("No amount is due. Thank you for your payment.", f.Small));
             else
                 b.Add(TextLine("No amount is due.", f.Small));
+
+            if (st.TotalCredit > 0m)
+            {
+                // OLD: one long line - ran past the right edge of the page
+                // NEW (Nov 14): split into two lines
+                b.Add(TextLine("Advance credit of " + Peso(st.TotalCredit) + " is applied automatically to the next bills " +
+                               "of the SAME category only.", f.Small));
+                b.Add(TextLine("Rent credit pays rent only; it does not reduce water, maintenance or other charges.", f.Small));
+            }
 
             // 2. How to pay.
             b.Add(TextLine("Payments are accepted in cash at the office or through GCash. " +

@@ -240,7 +240,7 @@
             pnlEditTenantContent.Location = new Point(0, 75);
             pnlEditTenantContent.Name = "pnlEditTenantContent";
             pnlEditTenantContent.Size = new Size(582, 309);
-            pnlEditTenantContent.TabIndex = 5;
+            pnlEditTenantContent.TabIndex = 4;
             // 
             // pnlContactNumber
             // 
@@ -264,7 +264,7 @@
             pnlEditTenantActions.Margin = new Padding(0);
             pnlEditTenantActions.Name = "pnlEditTenantActions";
             pnlEditTenantActions.Size = new Size(582, 50);
-            pnlEditTenantActions.TabIndex = 4;
+            pnlEditTenantActions.TabIndex = 5;
             // 
             // btnEditConfirm
             // 
@@ -272,7 +272,7 @@
             btnEditConfirm.Location = new Point(475, 10);
             btnEditConfirm.Name = "btnEditConfirm";
             btnEditConfirm.Size = new Size(94, 29);
-            btnEditConfirm.TabIndex = 2;
+            btnEditConfirm.TabIndex = 0;
             btnEditConfirm.Text = "Confirm";
             btnEditConfirm.UseVisualStyleBackColor = true;
             btnEditConfirm.Click += btnEditConfirm_Click;
@@ -283,7 +283,7 @@
             btnEditCancel.Location = new Point(375, 10);
             btnEditCancel.Name = "btnEditCancel";
             btnEditCancel.Size = new Size(94, 29);
-            btnEditCancel.TabIndex = 2;
+            btnEditCancel.TabIndex = 1;
             btnEditCancel.Text = "Cancel";
             btnEditCancel.UseVisualStyleBackColor = true;
             btnEditCancel.Click += btnEditCancel_Click;
