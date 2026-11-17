@@ -47,6 +47,7 @@ namespace Capstoneszn.UserControls
         private const string SingleRoom = "Single Room";
         private const string SharedRoom = "Shared Room";
         private const int MaxSharedCapacity = 10;
+        private const int MinSharedCapacity = 2;   // ADDED (C11 retest): same rule as Add Room
         private const decimal MaxRoomPrice = 999999.99m;
         private const decimal MinRoomPrice = 1.00m;     // NEW: at least ₱1.00 (matches CK_Rooms_Price)
 
@@ -87,6 +88,9 @@ namespace Capstoneszn.UserControls
             // txtRoomPrice.KeyPress += NumericOnly_KeyPress;    // OLD: blocked the decimal point
             txtRoomPrice.KeyPress += Decimal_KeyPress;           // REVISION: price is a decimal
             txtSetElecNumber.KeyPress += NumericOnly_KeyPress;   // REVISION: account number digits only
+
+            // ADDED (C11 retest): capacity box takes digits only (no "-", no ".")
+            nudSetCapacity.KeyPress += NumericOnly_KeyPress;
 
             // REVISION: occupants grid uses the designer columns only
             dgvCurrentTenants.AutoGenerateColumns = false;
@@ -548,14 +552,19 @@ namespace Capstoneszn.UserControls
         /// <summary>Single = 1. Shared = 2..10 (the database CHECK).</summary>
         private void ApplyCapacityLimits()
         {
+            // REVISION (C11 retest): the box keeps what is typed (0-99).
+            // btnSave_Click checks the real rule and refuses with a message.
+            nudSetCapacity.Minimum = 0;
+            nudSetCapacity.Maximum = 99;
+
             if (cboRoomType.Text == SharedRoom)
             {
-                nudSetCapacity.Maximum = MaxSharedCapacity;
-                nudSetCapacity.Minimum = 2;         // raises a lower value to 2 by itself
+                // Starting value when switching Single -> Shared (1 is not valid for Shared)
+                if (nudSetCapacity.Value < MinSharedCapacity)
+                    nudSetCapacity.Value = MinSharedCapacity;
             }
             else
             {
-                nudSetCapacity.Minimum = 1;
                 nudSetCapacity.Value = 1;
             }
         }
@@ -589,6 +598,16 @@ namespace Capstoneszn.UserControls
 
             int newCapacity = newType == SingleRoom ? 1 : (int)nudSetCapacity.Value;
 
+            // ADDED (C11 retest): same rule and message as Add Room
+            if (newType == SharedRoom &&
+                (nudSetCapacity.Value < MinSharedCapacity || nudSetCapacity.Value > MaxSharedCapacity))
+            {
+                MessageBox.Show("A shared room needs a capacity from 2 to 10.", "Invalid Capacity",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                nudSetCapacity.Focus();
+                return;
+            }
+
             if (newType == SingleRoom && _occupants > 1)
             {
                 MessageBox.Show($"Room {_roomNumber} has {_occupants} occupants. Move out or transfer " +
@@ -611,7 +630,7 @@ namespace Capstoneszn.UserControls
                 || enteredPrice < MinRoomPrice || enteredPrice > MaxRoomPrice
                 || decimal.Round(enteredPrice, 2) != enteredPrice)
             {
-                MessageBox.Show("Room Price must be greater than 1 and at most 999,999.99, with up to 2 decimal places.",
+                MessageBox.Show("Room Price must be from ₱1.00 to ₱999,999.99, with up to 2 decimal places.",
                     "Invalid Room Price", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtRoomPrice.Focus();
                 return;

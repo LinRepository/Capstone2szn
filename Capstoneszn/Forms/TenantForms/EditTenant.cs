@@ -13,15 +13,6 @@ using System.Windows.Forms;
 
 namespace Capstoneszn.Forms.TenantForms
 {
-    /// <summary>
-    /// Edits a current tenant's personal details.
-    ///
-    /// Settled rule: a moved-out tenant cannot be edited. That rule is
-    /// enforced inside the UPDATE itself, not only by hiding the button,
-    /// so no other screen that opens this form can get around it.
-    /// </summary>
-    /// 
-
 
     ///
     /// NEW (Nov 12) validation rules:

@@ -1885,7 +1885,7 @@ namespace Capstoneszn.UserControls
             Add("section", isAll ? "ACCOUNT SUMMARY (ALL PERIODS)" : "SUMMARY");
             Add("sh", "", "Rent", "Water", "Maintenance");
             Add("sr", isAll ? "Balance before " + period.Start.ToString("MMM d, yyyy") : "Previous balance",
-                P(prev[0]), P(prev[1]), P(prev[2]));
+                Cr(prev[0]), Cr(prev[1]), Cr(prev[2]));
             Add("sr", "Charges", P(chg[0]), P(chg[1]), P(chg[2]));
             Add("sr", "Payments received", P(paid[0]), P(paid[1]), P(paid[2]));
             if (adj.Any(v => v != 0m))

@@ -278,7 +278,7 @@ namespace Capstoneszn.Forms
                 || roomPrice < MinRoomPrice || roomPrice > MaxRoomPrice
                 || decimal.Round(roomPrice, 2) != roomPrice)
             {
-                MessageBox.Show("Room Price must be greater than 1 and at most 999,999.99, with up to 2 decimal places.",
+                MessageBox.Show("Room Price must be from ₱1.00 to ₱999,999.99, with up to 2 decimal places.",
                     "Invalid Room Price", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtRoomPrice.Focus();
                 return;
