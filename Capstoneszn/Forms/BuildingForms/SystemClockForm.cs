@@ -265,6 +265,13 @@ namespace Capstoneszn.Forms.BuildingForms
 
                 ClockService.LogCheck(ClockService.ResultAutoFixed, onlineUtc: CurrentOnlineUtc(),
                                       oldTime: oldTime, newTime: DateTime.Now);
+
+                // NEW (Nov 18, Audit Logs coverage): SystemClockChecks keeps the times but
+                // not WHO changed the clock - the audit entry adds that. Skipped
+                // automatically when nobody is signed in. Never throws.
+                AuditLogger.Log(AuditLogger.ModuleSettings, "Set Clock",
+                    "PC clock fixed automatically (online time): " +
+                    oldTime.ToString("MMM dd, yyyy hh:mm tt") + " → " + DateTime.Now.ToString("MMM dd, yyyy hh:mm tt"));
             }
             finally
             {
@@ -342,6 +349,11 @@ namespace Capstoneszn.Forms.BuildingForms
 
                 ClockService.LogCheck(ClockService.ResultManualSet, oldTime: oldTime, newTime: picked,
                                       details: "Set manually from SystemClockForm (offline)");
+
+                // NEW (Nov 18, Audit Logs coverage): who set the clock by hand, and to what.
+                AuditLogger.Log(AuditLogger.ModuleSettings, "Set Clock",
+                    "PC clock set manually (offline): " +
+                    oldTime.ToString("MMM dd, yyyy hh:mm tt") + " → " + picked.ToString("MMM dd, yyyy hh:mm tt"));
 
                 HideManualPicker();
                 MarkCheckedNow();

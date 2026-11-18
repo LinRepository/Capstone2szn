@@ -192,6 +192,23 @@ namespace Capstoneszn.Forms.SettingsForms
                                 }
                             }
 
+                            // NEW (Nov 18, Audit Logs coverage): same transaction, so the
+                            // questions and the log entry save together or not at all.
+                            // Never the question text or answers - the text hints at the answers.
+                            // Module = where it was done: the forced setup is part of the
+                            // login screen flow, a later change is done in Settings.
+                            // (Session is set before this form opens in both places; the
+                            // check only keeps a missing session from blocking the save.)
+                            if (Session.UserId > 0)
+                            {
+                                if (_mandatorySetup)
+                                    AuditLogger.Log(conn, tx, AuditLogger.ModuleLogin, "Set Security Questions",
+                                        "Set up 3 security questions (required at first login)");
+                                else
+                                    AuditLogger.Log(conn, tx, AuditLogger.ModuleSettings, "Change Security Questions",
+                                        "Changed own security questions");
+                            }
+
                             tx.Commit();
                         }
                         catch

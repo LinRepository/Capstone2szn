@@ -21,7 +21,7 @@ namespace Capstoneszn.Forms.TenantForms
     ///   - Contact: required, 11 digits starting with 09, unique among tenants
     ///   - Input is trimmed and repeated spaces collapsed before saving
     ///   - No UPDATE runs when nothing changed
-    ///   
+    ///    
 
     public partial class EditTenant : Form
     {
@@ -78,6 +78,68 @@ namespace Capstoneszn.Forms.TenantForms
             LoadTenant();
             // NEW (Nov 13): start in First Name when the form opens
             this.ActiveControl = txtEditTenantFName;
+        }
+
+        /* =================================================================
+           NEW (Nov 18, Audit Logs coverage): Edit Tenant entry
+           ================================================================= */
+
+        /// <summary>
+        /// Writes the Edit Tenant audit entry, e.g.
+        /// "Juan Dela Cruz (Room 202): Contact 09171234567 → 09181234567; Address Bacolod → Iloilo".
+        /// Called only after the UPDATE saved.
+        /// </summary>
+        private void LogEdit(SqlConnection conn, string fname, string mname, string lname,
+                             string addr, string contact)
+        {
+            var changes = new List<string>();
+            AddChange(changes, "First name", _originalFName, fname);
+            AddChange(changes, "Middle name", _originalMName, mname);
+            AddChange(changes, "Last name", _originalLName, lname);
+            AddChange(changes, "Contact", _originalContact, contact);
+            AddChange(changes, "Address", _originalAddress, addr);
+            if (changes.Count == 0) return;   // the Save button already stops "no changes"
+
+            // The tenant as they were known before the edit, plus their current room.
+            string oldName = (_originalFName + " " +
+                              (_originalMName.Length > 0 ? _originalMName + " " : "") +
+                              _originalLName).Trim();
+
+            // The room is only extra detail: if this lookup fails, log without it
+            // instead of showing an error for a save that already worked.
+            string room = "";
+            try
+            {
+                using (var cmd = new SqlCommand(@"
+                    SELECT TOP 1 r.RoomNumber
+                    FROM   Tenancies tn
+                    JOIN   Rooms r ON r.RoomId = tn.RoomId
+                    WHERE  tn.TenantId = @tid AND tn.Status = 'Active';", conn))
+                {
+                    cmd.Parameters.Add("@tid", SqlDbType.Int).Value = _tenantId;
+                    object? value = cmd.ExecuteScalar();
+                    if (value != null && value != DBNull.Value)
+                        room = " (Room " + value + ")";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            AuditLogger.Log(AuditLogger.ModuleTenants, "Edit Tenant",
+                oldName + room + ": " + string.Join("; ", changes));
+        }
+
+        /// <summary>Adds "Label old → new" when the value changed; blanks show as (blank).</summary>
+        private static void AddChange(List<string> changes, string label, string oldValue, string newValue)
+        {
+            oldValue = oldValue ?? "";
+            newValue = newValue ?? "";
+            if (string.Equals(oldValue, newValue, StringComparison.Ordinal)) return;
+
+            changes.Add(label + " " + (oldValue.Length == 0 ? "(blank)" : oldValue) +
+                        " → " + (newValue.Length == 0 ? "(blank)" : newValue));
         }
 
         private void NumericOnly_KeyPress(object sender, KeyPressEventArgs e)
@@ -207,7 +269,7 @@ namespace Capstoneszn.Forms.TenantForms
                 {
                     conn.Open();
 
-                    
+
                     if (contact != _originalContact && !ConfirmSharedContact(conn, contact))
                     {
                         txtEditTenantContactNumber.Focus();
@@ -253,6 +315,11 @@ namespace Capstoneszn.Forms.TenantForms
                             return;
                         }
                     }
+
+                    // NEW (Nov 18, Audit Logs coverage): the update saved (rows > 0).
+                    // Only the changed fields, full old → new values. Logged after success
+                    // (this save has no transaction); AuditLogger never throws here.
+                    LogEdit(conn, fname, mname, lname, addr, contact);
 
                     MessageBox.Show("Tenant details updated.", "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);

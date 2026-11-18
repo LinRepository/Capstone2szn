@@ -94,6 +94,10 @@ namespace Capstoneszn.Forms
                     " - " + p.VoidReason;
 
             lblReceiptInfo.Text = InfoText(p);
+            // ADDED (receipt fix): grow the title and info blocks to fit their text.
+            // The title was a fixed 60 px, so "OFFICIAL RECEIPT" was cut in half.
+            FitHeight(lblReceiptTitle, 12);
+            FitHeight(lblReceiptInfo, 0);
 
             foreach (PaymentAllocationLine line in _receipt.Lines)
                 dgvReceiptLines.Rows.Add(line.TenantName, line.AppliedTo, "₱" + line.Amount.ToString("N2"));
@@ -104,18 +108,37 @@ namespace Capstoneszn.Forms
         /// <summary>The header block, shared by the screen and the printout.</summary>
         private string InfoText(PaymentHistoryRow p)
         {
+            // NEW (receipt fix): every label padded the same way, so all colons line up
             var sb = new StringBuilder();
-            sb.AppendLine("Receipt No. : " + p.ReceiptNo);
-            sb.AppendLine("Date        : " + p.PaymentDate.ToString("MMMM dd, yyyy") +
-                          "   (recorded " + p.RecordedAt.ToString("hh:mm tt") + ")");
-            sb.AppendLine("Received from: " + p.TenantName);
-            sb.AppendLine("Room        : " + p.RoomNumber + (p.CoversRoom ? "  (Whole Room payment)" : ""));
-            sb.AppendLine("Category    : " + p.Category);
-            sb.AppendLine("Type        : " + p.PaymentType);
-            sb.AppendLine("Method      : " + p.Method + (p.ReferenceNo.Length > 0 ? "  Ref: " + p.ReferenceNo : ""));
+            sb.AppendLine(InfoRow("Receipt No.", p.ReceiptNo));
+            sb.AppendLine(InfoRow("Date", p.PaymentDate.ToString("MMMM dd, yyyy") +
+                                          "  (recorded " + p.RecordedAt.ToString("hh:mm tt") + ")"));
+            sb.AppendLine(InfoRow("Received from", p.TenantName));
+            sb.AppendLine(InfoRow("Room", p.RoomNumber + (p.CoversRoom ? "  (Whole Room payment)" : "")));
+            sb.AppendLine(InfoRow("Category", p.Category));
+            sb.AppendLine(InfoRow("Type", p.PaymentType));
+            sb.AppendLine(InfoRow("Method", p.Method + (p.ReferenceNo.Length > 0 ? "  Ref: " + p.ReferenceNo : "")));
             if (_receipt != null && _receipt.RecordedBy.Length > 0)
-                sb.AppendLine("Received by : " + _receipt.RecordedBy);
+                sb.AppendLine(InfoRow("Received by", _receipt.RecordedBy));
             return sb.ToString();
+        }
+
+        /// <summary>ADDED (receipt fix): "Received from : Tenant I" - label padded to 13 (the longest).</summary>
+        private static string InfoRow(string label, string value)
+        {
+            return label.PadRight(13) + " : " + value;
+        }
+
+        /// <summary>
+        /// ADDED (receipt fix): sets a docked label's height to fit its text,
+        /// so nothing is clipped at any display scaling.
+        /// </summary>
+        private static void FitHeight(Label lbl, int extra)
+        {
+            Size needed = TextRenderer.MeasureText(lbl.Text.TrimEnd(), lbl.Font,
+                new Size(lbl.Width - lbl.Padding.Horizontal, int.MaxValue),
+                TextFormatFlags.WordBreak);
+            lbl.Height = needed.Height + lbl.Padding.Vertical + extra;
         }
 
         /* ------------------------------------------------------------------

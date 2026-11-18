@@ -139,6 +139,11 @@ namespace Capstoneszn.Forms.SettingsForms
                     }
                 }
 
+                // NEW (Nov 18, Audit Logs coverage): the password was changed (every
+                // failure path above returns before this line). Only the fact is
+                // recorded - never the password. Logged after success, never throws.
+                AuditLogger.Log(AuditLogger.ModuleSettings, "Change Password", "Changed own password");
+
                 txtCurrentPassword.Clear();
                 txtNewPassword.Clear();
                 txtConfirmNewPassword.Clear();

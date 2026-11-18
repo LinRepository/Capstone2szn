@@ -235,10 +235,11 @@ namespace Capstoneszn.UserControls
                 // 6a. Warn (do not block) about pending maintenance issues
                 int pending = EmployeeHelper.CountPendingIssues(employeeId);
                 if (pending > 0 &&
-                    MessageBox.Show(
-                        $"{name} is responsible for {pending} pending maintenance issue(s).\n\nArchive anyway?",
-                        "Pending Maintenance", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                    != DialogResult.Yes)
+                MessageBox.Show(
+                    // ORIGINAL: $"{name} is responsible for {pending} pending maintenance issue(s).\n\nArchive anyway?",
+                    $"{name} is assigned to {pending} pending maintenance issue(s).\n\nArchive anyway?",   // NEW (Nov 18): terminology
+                    "Pending Maintenance", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                != DialogResult.Yes)
                     return;
 
                 // 6b. Confirm

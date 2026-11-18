@@ -153,6 +153,18 @@ namespace Capstoneszn
                     if (elecGiven)
                         ElectricityAccountHelper.Save(conn, transaction, newBuildingId, elecName, elecNumber);
 
+                    // NEW (Nov 18, Audit Logs coverage): same transaction - the building,
+                    // its floors, its accounts and the log entry save together or not at all.
+                    // Filed under the NEW building (newBuildingId), since none is selected yet.
+                    string accounts =
+                        waterGiven && elecGiven ? "water account " + waterNumber + ", electricity account " + elecNumber
+                      : waterGiven ? "water account " + waterNumber + "; electricity account set up later"
+                      : elecGiven ? "electricity account " + elecNumber + "; water account set up later"
+                      : "water and electricity accounts set up later";
+                    AuditLogger.Log(conn, transaction, newBuildingId, AuditLogger.ModuleBuildings, "Add Building",
+                        "Added building \"" + buildingName + "\" with " + numberOfFloors +
+                        (numberOfFloors == 1 ? " floor" : " floors") + " (" + accounts + ")");
+
                     transaction.Commit();
 
                     // 3. Signal Success and Close
@@ -185,7 +197,7 @@ namespace Capstoneszn
                 {
                     transaction?.Rollback();
                     MessageBox.Show("Error saving building: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                } 
+                }
             }
         }
 

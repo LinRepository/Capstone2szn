@@ -37,6 +37,7 @@ namespace Capstoneszn.UserControls
             {
                 AllModules,
                 AuditLogger.ModuleLogin,
+                AuditLogger.ModuleBuildings,   // NEW (Nov 18): Add Building entries
                 AuditLogger.ModuleRooms,
                 AuditLogger.ModuleTenants,
                 AuditLogger.ModulePayments,

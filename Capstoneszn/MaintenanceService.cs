@@ -893,6 +893,13 @@ namespace Capstoneszn
                 if (cmd.ExecuteNonQuery() != 1)
                     throw new InvalidOperationException(
                         "This issue is no longer pending, so its materials can't be changed.");
+
+                // NEW (Nov 18, Audit Logs coverage): the material was saved. Materials set
+                // the bill amount, so each one is recorded. Logged after success (this
+                // save has no transaction); the label lookup and the log never throw.
+                AuditLogger.Log(AuditLogger.ModuleMaintenance, "Add Material",
+                    SafeIssueLabel(conn, issueId) + ": added " +
+                    MaterialText(materialName, quantity, unitPrice));
             }
         }
 
@@ -904,8 +911,33 @@ namespace Capstoneszn
         /// </summary>
         public static void RemoveMaterial(int materialId)
         {
+            // ORIGINAL (Nov 18): the DELETE returned nothing, so the removed material's
+            // name, quantity and price were gone before they could be logged.
+            // string sql = @"
+            //     DELETE mm
+            //     FROM   MaintenanceMaterials mm
+            //     JOIN   MaintenanceIssues mi ON mi.IssueId = mm.IssueId
+            //     WHERE  mm.MaterialId = @mid
+            //       AND  mi.Status = 'Pending'
+            //       AND  mi.IsDeleted = 0;";
+            //
+            // using (SqlConnection conn = DatabaseHelper.GetConnection())
+            // using (var cmd = new SqlCommand(sql, conn))
+            // {
+            //     cmd.Parameters.AddWithValue("@mid", materialId);
+            //     conn.Open();
+            //
+            //     if (cmd.ExecuteNonQuery() != 1)
+            //         throw new InvalidOperationException(
+            //             "This material can't be removed. The issue may no longer be pending.");
+            // }
+
+            // NEW (Nov 18, Audit Logs coverage): same DELETE, same rules, plus OUTPUT -
+            // SQL Server hands back the deleted row in the same statement, so the log
+            // can say what was removed. Still one database call.
             string sql = @"
                 DELETE mm
+                OUTPUT deleted.IssueId, deleted.MaterialName, deleted.Quantity, deleted.UnitPrice
                 FROM   MaintenanceMaterials mm
                 JOIN   MaintenanceIssues mi ON mi.IssueId = mm.IssueId
                 WHERE  mm.MaterialId = @mid
@@ -913,14 +945,33 @@ namespace Capstoneszn
                   AND  mi.IsDeleted = 0;";
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
             {
-                cmd.Parameters.AddWithValue("@mid", materialId);
                 conn.Open();
 
-                if (cmd.ExecuteNonQuery() != 1)
-                    throw new InvalidOperationException(
-                        "This material can't be removed. The issue may no longer be pending.");
+                int issueId;
+                string name;
+                int quantity;
+                decimal unitPrice;
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@mid", materialId);
+                    using (var rd = cmd.ExecuteReader())
+                    {
+                        if (!rd.Read())   // nothing deleted - same rule as before
+                            throw new InvalidOperationException(
+                                "This material can't be removed. The issue may no longer be pending.");
+
+                        issueId = rd.GetInt32(0);
+                        name = rd.GetString(1);
+                        quantity = Convert.ToInt32(rd.GetValue(2));
+                        unitPrice = Convert.ToDecimal(rd.GetValue(3));
+                    }
+                }
+
+                // Logged after success; the label lookup and the log never throw.
+                AuditLogger.Log(AuditLogger.ModuleMaintenance, "Remove Material",
+                    SafeIssueLabel(conn, issueId) + ": removed " + MaterialText(name, quantity, unitPrice));
             }
         }
 
@@ -963,16 +1014,19 @@ namespace Capstoneszn
                         }
 
                         // What was deleted, for the audit trail.
-                        string what = "Issue #" + issueId;
-                        using (var cmd = new SqlCommand(@"
-                            -- ORIGINAL: SELECT 'Room ' + r.RoomNumber + ' - ' + mi.IssueTitle
-                            SELECT 'Room ' + CAST(r.RoomNumber AS NVARCHAR(10)) + ' - ' + mi.IssueTitle   -- NEW: INT -> text
-                            FROM   MaintenanceIssues mi JOIN Rooms r ON r.RoomId = mi.RoomId
-                            WHERE  mi.IssueId = @iid;", conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@iid", issueId);
-                            what = cmd.ExecuteScalar()?.ToString() ?? what;
-                        }
+                        // ORIGINAL (Nov 18): the inner JOIN to Rooms found nothing for a
+                        // Building issue (RoomId NULL), so the log only said "Issue #7".
+                        // string what = "Issue #" + issueId;
+                        // using (var cmd = new SqlCommand(@"
+                        //     -- ORIGINAL: SELECT 'Room ' + r.RoomNumber + ' - ' + mi.IssueTitle
+                        //     SELECT 'Room ' + CAST(r.RoomNumber AS NVARCHAR(10)) + ' - ' + mi.IssueTitle   -- NEW: INT -> text
+                        //     FROM   MaintenanceIssues mi JOIN Rooms r ON r.RoomId = mi.RoomId
+                        //     WHERE  mi.IssueId = @iid;", conn, tx))
+                        // {
+                        //     cmd.Parameters.AddWithValue("@iid", issueId);
+                        //     what = cmd.ExecuteScalar()?.ToString() ?? what;
+                        // }
+                        string what = IssueLabel(conn, tx, issueId);   // NEW (Nov 18): Room and Building issues
 
                         AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Delete Issue", what);
                         tx.Commit();
@@ -1300,6 +1354,26 @@ namespace Capstoneszn
                             }
                         }
 
+                        // NEW (Nov 18, Audit Logs coverage): a plain edit (not Repair Done).
+                        // Records the issue as SAVED - title, date, charged tenants, assigned
+                        // to - in this same transaction. Repair Done logs its own entry below.
+                        if (!markComplete)
+                        {
+                            var charged = affectedTenantIds
+                                .Select(id => AuditLogger.TenantName(conn, tx, id)).ToList();
+                            var assigned = new List<string>();
+                            if (ownerResponsible) assigned.Add("Owner");
+                            foreach (int employeeId in responsibleEmployeeIds)
+                                assigned.Add(EmployeeName(conn, tx, employeeId));
+
+                            AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Edit Issue",
+                                (roomId == 0 ? "Building" : "Room " + GetRoomNumber(conn, tx, roomId)) +
+                                " - " + issueTitle +
+                                ": reported " + dateReported.ToString("MMM dd, yyyy") +
+                                "; charged: " + (charged.Count == 0 ? "none" : string.Join(", ", charged)) +
+                                "; assigned to: " + (assigned.Count == 0 ? "none" : string.Join(", ", assigned)));
+                        }
+
                         // ---- 5. Complete -----------------------------------
                         if (markComplete)
                         {
@@ -1358,8 +1432,9 @@ namespace Capstoneszn
                                       (result.ExpenseAmount > 0m ? ", PHP " + result.ExpenseAmount.ToString("N2") + " building expense" : "")
                                 : "PHP " + total.ToString("N2") + " recorded as building expense";
 
-                            AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Complete Issue",
-                                // ORIGINAL: "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle + ": " + outcome);
+                            // ORIGINAL (Nov 18): AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Complete Issue",
+                            AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Repair Done",   // NEW: matches the button/UI
+                                                                                                      // ORIGINAL: "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle + ": " + outcome);
                                 (roomId == 0 ? "Building" : "Room " + GetRoomNumber(conn, tx, roomId))
                                 + " - " + issueTitle + ": " + outcome);   // NEW
                         }
@@ -1753,6 +1828,61 @@ namespace Capstoneszn
                 cmd.Parameters.AddWithValue("@rid", roomId);
                 return Convert.ToString(cmd.ExecuteScalar());
             }
+        }
+
+        /* ---- NEW (Nov 18, Audit Logs coverage): readable names for log entries ---- */
+
+        /// <summary>
+        /// "Room 202 - CR door" or "Building - Roof leak", the same label Add Issue
+        /// uses. LEFT JOIN, so a Building issue (RoomId NULL) is found too.
+        /// tx may be null (a save that has no transaction).
+        /// </summary>
+        private static string IssueLabel(SqlConnection conn, SqlTransaction? tx, int issueId)
+        {
+            using (var cmd = new SqlCommand(@"
+                SELECT CASE WHEN mi.RoomId IS NULL THEN 'Building'
+                            ELSE 'Room ' + CAST(r.RoomNumber AS NVARCHAR(10)) END
+                       + ' - ' + mi.IssueTitle
+                FROM   MaintenanceIssues mi
+                LEFT JOIN Rooms r ON r.RoomId = mi.RoomId
+                WHERE  mi.IssueId = @iid;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@iid", issueId);
+                return cmd.ExecuteScalar()?.ToString() ?? "Issue #" + issueId;
+            }
+        }
+
+        /// <summary>
+        /// IssueLabel for a log written AFTER a save already succeeded: a failed
+        /// lookup falls back to "Issue #id" instead of reporting an error for a
+        /// save that worked.
+        /// </summary>
+        private static string SafeIssueLabel(SqlConnection conn, int issueId)
+        {
+            try { return IssueLabel(conn, null, issueId); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return "Issue #" + issueId;
+            }
+        }
+
+        /// <summary>Employee's full name for the "assigned to" part of a log entry.</summary>
+        private static string EmployeeName(SqlConnection conn, SqlTransaction tx, int employeeId)
+        {
+            using (var cmd = new SqlCommand(
+                "SELECT FullName FROM Employees WHERE EmployeeId = @eid;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@eid", employeeId);
+                return cmd.ExecuteScalar()?.ToString() ?? "Employee #" + employeeId;
+            }
+        }
+
+        /// <summary>"Hinge x2 @ PHP 150.00 (PHP 300.00)"</summary>
+        private static string MaterialText(string name, int quantity, decimal unitPrice)
+        {
+            return name + " x" + quantity + " @ PHP " + unitPrice.ToString("N2") +
+                   " (PHP " + (quantity * unitPrice).ToString("N2") + ")";
         }
 
         private static void Exec(SqlConnection conn, SqlTransaction tx, string sql, string param, object value)

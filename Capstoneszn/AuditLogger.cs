@@ -36,6 +36,7 @@ namespace Capstoneszn
         public const string ModuleMaintenance = "Maintenance";
         public const string ModuleEmployee = "Employee";
         public const string ModuleSettings = "Settings";
+        public const string ModuleBuildings = "Buildings";   // NEW (Nov 18): Add Building
 
         private const string InsertSql = @"
             INSERT INTO AuditLogs (BuildingId, UserId, Module, Action, Description)
@@ -72,6 +73,32 @@ namespace Capstoneszn
             using (var cmd = new SqlCommand(InsertSql, conn, tx))
             {
                 AddParameters(cmd, module, action, description);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// NEW (Nov 18, 2026): same as the transaction version above, but files the
+        /// entry under the building given here instead of Session.BuildingId.
+        /// Used by Add Building: on the Building Selection screen no building is
+        /// selected yet (Session.BuildingId is 0), so the normal version would save
+        /// the entry with no building and it would show in every building's logs.
+        /// Throws on failure, so the action rolls back with it - same as above.
+        /// </summary>
+        public static void Log(SqlConnection conn, SqlTransaction tx, int buildingId,
+                               string module, string action, string description)
+        {
+            if (Session.UserId <= 0)
+                throw new InvalidOperationException("No signed-in user to record in the audit log.");
+
+            using (var cmd = new SqlCommand(InsertSql, conn, tx))
+            {
+                cmd.Parameters.Add("@bid", SqlDbType.Int).Value =
+                    buildingId > 0 ? (object)buildingId : DBNull.Value;
+                cmd.Parameters.Add("@uid", SqlDbType.Int).Value = Session.UserId;
+                cmd.Parameters.Add("@module", SqlDbType.NVarChar, 30).Value = Cut(module, 30);
+                cmd.Parameters.Add("@action", SqlDbType.NVarChar, 30).Value = Cut(action, 30);
+                cmd.Parameters.Add("@desc", SqlDbType.NVarChar, 500).Value = Cut(description, 500);
                 cmd.ExecuteNonQuery();
             }
         }

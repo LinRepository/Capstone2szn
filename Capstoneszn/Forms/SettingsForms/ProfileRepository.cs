@@ -210,6 +210,18 @@ namespace Capstoneszn.Forms.SettingsForms
                             }
                         }
 
+                        // NEW (Nov 18, Audit Logs coverage): same transaction as the update.
+                        // Lists only what changed, old → new (profile still holds the old values).
+                        var changes = new List<string>();
+                        if (!string.Equals(profile.Username, newUsername, StringComparison.Ordinal))
+                            changes.Add("Username: " + profile.Username + " → " + newUsername);
+                        if (!string.Equals(profile.Name, newName, StringComparison.Ordinal))
+                            changes.Add("Name: " + profile.Name + " → " + newName +
+                                        (profile.Role == "Caretaker" ? " (employee record updated too)" : ""));
+                        if (changes.Count > 0)
+                            AuditLogger.Log(conn, tx, AuditLogger.ModuleSettings, "Edit Profile",
+                                string.Join("; ", changes));
+
                         tx.Commit();
                         return true;
                     }

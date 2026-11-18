@@ -225,6 +225,18 @@ namespace Capstoneszn.Forms.UserControls.Settings
                 return;
             }
 
+            // NEW (Nov 18, Audit Logs coverage): record the restore.
+            // Written AFTER the restore, so it lands in the restored data (the data now
+            // in use). The restore also brought AuditLogs back to the backup's point in
+            // time, so this entry is the first one after the gap and says why entries
+            // are missing. LogForUser = no building: a restore replaces every building,
+            // and a building from the old data may not exist in the backup.
+            // Never throws - if this account doesn't exist in the backup, nothing is logged.
+            AuditLogger.LogForUser(Session.UserId, AuditLogger.ModuleSettings, "Restore",
+                "Restored the backup from " + info.BackupDate.ToString("MMM dd, yyyy hh:mm tt") +
+                " (" + Path.GetFileName(restoreFile) + "); entries made after that backup were replaced. " +
+                "Safety backup of the replaced data: " + safetyFile + ". Signed out automatically.");
+
             // ----- 7. Done -> automatic logout -----
             MessageBox.Show("Restore complete.\n\nThe data now matches the backup from " +
                             info.BackupDate.ToString("MMMM d, yyyy h:mm tt") + ".\n" +
@@ -284,6 +296,12 @@ namespace Capstoneszn.Forms.UserControls.Settings
             // TODO (audit): add a backup entry to Audit Logs, using the same pattern as your
             // other modules, e.g.:
             // AuditLogger.Log(AuditLogger.ModuleSettings, "Backup", "Database backed up to " + filePath);
+
+            // NEW (Nov 18, Audit Logs coverage): the backup finished, so record it.
+            // Logged after success (BACKUP DATABASE cannot run inside a transaction);
+            // AuditLogger never throws here, so a logging problem can't spoil the backup.
+            AuditLogger.Log(AuditLogger.ModuleSettings, "Backup",
+                "Database backed up to " + filePath);
 
             SetBusy(false);
             await RefreshStatusAsync();
@@ -353,6 +371,12 @@ namespace Capstoneszn.Forms.UserControls.Settings
             try
             {
                 string dest = await BackupService.CopyBackupAsync(backupFile, folder);
+
+                // NEW (Nov 18, Audit Logs coverage): a copy of all the data left the PC
+                // on a flash drive - worth a separate entry.
+                AuditLogger.Log(AuditLogger.ModuleSettings, "Copy Backup",
+                    "Backup " + Path.GetFileName(backupFile) + " copied to " + dest);
+
                 MessageBox.Show("Backup copied to:\n" + dest, "Copy Complete",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

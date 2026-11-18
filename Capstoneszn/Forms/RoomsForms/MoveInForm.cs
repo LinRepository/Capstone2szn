@@ -60,6 +60,9 @@ namespace Capstoneszn.UserControls
         private DateTime? _anchor;
         private DateTime? _firstUnbilled;       // NEW (option 1): the first rent bill not created yet (a joiner's first bill)
         private bool _vacant;
+        // ADDED (D17 retest): the room's scheduled price, if any
+        private decimal? _pendingPrice;
+        private DateTime? _pendingFrom;
         private JoinQuote? _join;   // NEW (Step 3): what joiners owe now (occupied room only)
         private bool JoinPays => !_vacant && _join != null && _join.Total > 0m;   // NEW (Step 3)
         private readonly List<HeadChoice> _currentTenants = new List<HeadChoice>();
@@ -112,6 +115,26 @@ namespace Capstoneszn.UserControls
                     _firstUnbilled = _anchor.HasValue
                         ? BillGenerator.NextUnbilledPeriod(conn, null, _roomId, _anchor.Value, DateTime.Today)
                         : (DateTime?)null;
+
+                    // ADDED (D17 retest): read the scheduled price, so "Share from next bill"
+                    // uses the price that bill will really have.
+                    using (var cmd = new SqlCommand(@"
+                        SELECT PendingRoomPrice, PendingPriceFrom
+                        FROM   Rooms
+                        WHERE  RoomId = @rid;", conn))
+                    {
+                        cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _roomId;
+                        using (var rd = cmd.ExecuteReader())
+                        {
+                            _pendingPrice = null;
+                            _pendingFrom = null;
+                            if (rd.Read())
+                            {
+                                _pendingPrice = rd.IsDBNull(0) ? (decimal?)null : rd.GetDecimal(0);
+                                _pendingFrom = rd.IsDBNull(1) ? (DateTime?)null : rd.GetDateTime(1);
+                            }
+                        }
+                    }
 
                     _currentTenants.Clear();
                     using (var cmd = new SqlCommand(@"
@@ -225,7 +248,7 @@ namespace Capstoneszn.UserControls
             if (_vacant)
             {
                 lblTotalDueCaption.Text = "Total due today";
-                lblShareCaption.Text = "Share per paying tenant";
+                lblShareCaption.Text = "Share per payer";
                 lblCoversCaption.Text = "Covers";
                 lblNextDueCaption.Text = "Next due";
 
@@ -233,7 +256,7 @@ namespace Capstoneszn.UserControls
                 lblShare.Text = payers.Count == 0 ? "—" : ShareText(_roomPrice, payers.Count);
                 // ORIGINAL: lblCovers.Text = DateTime.Today.ToString("MMM d") + " – " + DateTime.Today.AddMonths(1).ToString("MMM d, yyyy");
                 // NEW (item 2): covers through the day BEFORE the next due date (Nov 10 – Dec 9, next due Dec 10)
-                lblCovers.Text = DateTime.Today.ToString("MMM d") + " – " + DateTime.Today.AddMonths(1).AddDays(-1).ToString("MMM d, yyyy");
+                lblCovers.Text = DateTime.Today.ToString("MMM d") + " – " + DateTime.Today.AddMonths(1).AddDays(-1).ToString("MMM d");
                 lblNextDue.Text = DateTime.Today.AddMonths(1).ToString("MMM d, yyyy");
 
                 bool whole = payers.Count > 1 && rdoWholeRoom.Checked;
@@ -252,7 +275,9 @@ namespace Capstoneszn.UserControls
 
                 // ORIGINAL: lblTotalDue.Text = Peso(0m);
                 lblTotalDue.Text = Peso(_join?.Total ?? 0m);   // NEW (Step 3)
-                lblShare.Text = ShareText(_roomPrice, Math.Max(payingAfter, 1));
+                // OLD: used the current price even when a scheduled price starts on that bill
+                // lblShare.Text = ShareText(_roomPrice, Math.Max(payingAfter, 1));
+                lblShare.Text = ShareText(NextBillPrice(), Math.Max(payingAfter, 1));   // D17 retest
                 // ORIGINAL: lblCovers.Text = "Joins the room's cycle";
                 lblCovers.Text = "Room's cycle";   // NEW: shorter, fits the label
                 lblNextDue.Text = next.ToString("MMM d, yyyy");
@@ -288,6 +313,17 @@ namespace Capstoneszn.UserControls
             int n = 0;
             while (_anchor.Value.AddMonths(n) <= DateTime.Today) n++;
             return _anchor.Value.AddMonths(n);
+        }
+
+        /// <summary>
+        /// ADDED (D17 retest): the price of the joiner's first bill - the scheduled
+        /// price when it starts on or before that bill, otherwise the current price.
+        /// </summary>
+        private decimal NextBillPrice()
+        {
+            if (_pendingPrice.HasValue && _pendingFrom.HasValue && NextDueDate() >= _pendingFrom.Value)
+                return _pendingPrice.Value;
+            return _roomPrice;
         }
 
         private void ReselectHead(object previous)

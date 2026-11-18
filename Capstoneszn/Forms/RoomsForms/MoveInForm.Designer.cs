@@ -127,7 +127,7 @@
             pnlMoveInHeader.Location = new Point(0, 0);
             pnlMoveInHeader.Margin = new Padding(0);
             pnlMoveInHeader.Name = "pnlMoveInHeader";
-            pnlMoveInHeader.Size = new Size(1180, 76);
+            pnlMoveInHeader.Size = new Size(1202, 76);
             pnlMoveInHeader.TabIndex = 0;
             // 
             // lblRoomInfo
@@ -139,7 +139,7 @@
             lblRoomInfo.Margin = new Padding(0);
             lblRoomInfo.Name = "lblRoomInfo";
             lblRoomInfo.Padding = new Padding(180, 0, 0, 0);
-            lblRoomInfo.Size = new Size(998, 36);
+            lblRoomInfo.Size = new Size(1020, 36);
             lblRoomInfo.TabIndex = 2;
             lblRoomInfo.Text = "Room ### · Room Type · ₱0.00 / month · Capacity 0";
             lblRoomInfo.TextAlign = ContentAlignment.MiddleCenter;
@@ -149,7 +149,7 @@
             lblSlotsLeft.Dock = DockStyle.Right;
             lblSlotsLeft.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold);
             lblSlotsLeft.ForeColor = Color.FromArgb(147, 197, 253);
-            lblSlotsLeft.Location = new Point(998, 38);
+            lblSlotsLeft.Location = new Point(1020, 38);
             lblSlotsLeft.Margin = new Padding(0);
             lblSlotsLeft.Name = "lblSlotsLeft";
             lblSlotsLeft.Size = new Size(180, 36);
@@ -166,7 +166,7 @@
             lblMoveInTitle.Location = new Point(0, 0);
             lblMoveInTitle.Margin = new Padding(0);
             lblMoveInTitle.Name = "lblMoveInTitle";
-            lblMoveInTitle.Size = new Size(1178, 38);
+            lblMoveInTitle.Size = new Size(1200, 38);
             lblMoveInTitle.TabIndex = 0;
             lblMoveInTitle.Text = "Move In";
             lblMoveInTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -180,7 +180,7 @@
             pnlMoveInActions.Location = new Point(0, 664);
             pnlMoveInActions.Margin = new Padding(0);
             pnlMoveInActions.Name = "pnlMoveInActions";
-            pnlMoveInActions.Size = new Size(1180, 56);
+            pnlMoveInActions.Size = new Size(1202, 56);
             pnlMoveInActions.TabIndex = 2;
             // 
             // btnConfirmMoveIn
@@ -188,7 +188,7 @@
             btnConfirmMoveIn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnConfirmMoveIn.Cursor = Cursors.Hand;
             btnConfirmMoveIn.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold);
-            btnConfirmMoveIn.Location = new Point(966, 9);
+            btnConfirmMoveIn.Location = new Point(988, 9);
             btnConfirmMoveIn.Name = "btnConfirmMoveIn";
             btnConfirmMoveIn.Size = new Size(200, 36);
             btnConfirmMoveIn.TabIndex = 1;
@@ -201,7 +201,7 @@
             btnCancelMoveIn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnCancelMoveIn.Cursor = Cursors.Hand;
             btnCancelMoveIn.Font = new Font("Segoe UI", 10.8F);
-            btnCancelMoveIn.Location = new Point(830, 9);
+            btnCancelMoveIn.Location = new Point(852, 9);
             btnCancelMoveIn.Name = "btnCancelMoveIn";
             btnCancelMoveIn.Size = new Size(120, 36);
             btnCancelMoveIn.TabIndex = 0;
@@ -218,7 +218,7 @@
             pnlMoveInContent.Location = new Point(0, 76);
             pnlMoveInContent.Name = "pnlMoveInContent";
             pnlMoveInContent.Padding = new Padding(12);
-            pnlMoveInContent.Size = new Size(1180, 588);
+            pnlMoveInContent.Size = new Size(1202, 588);
             pnlMoveInContent.TabIndex = 1;
             // 
             // pnlListArea
@@ -230,7 +230,7 @@
             pnlListArea.Location = new Point(442, 12);
             pnlListArea.Name = "pnlListArea";
             pnlListArea.Padding = new Padding(14, 0, 0, 0);
-            pnlListArea.Size = new Size(724, 562);
+            pnlListArea.Size = new Size(746, 562);
             pnlListArea.TabIndex = 1;
             // 
             // dgvMoveInList
@@ -270,7 +270,7 @@
             dgvMoveInList.RowHeadersWidth = 51;
             dgvMoveInList.RowTemplate.Height = 36;
             dgvMoveInList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMoveInList.Size = new Size(710, 342);
+            dgvMoveInList.Size = new Size(732, 342);
             dgvMoveInList.TabIndex = 1;
             dgvMoveInList.CellContentClick += dgvMoveInList_CellContentClick;
             // 
@@ -325,7 +325,7 @@
             pnlListHeader.Dock = DockStyle.Top;
             pnlListHeader.Location = new Point(14, 0);
             pnlListHeader.Name = "pnlListHeader";
-            pnlListHeader.Size = new Size(710, 40);
+            pnlListHeader.Size = new Size(732, 40);
             pnlListHeader.TabIndex = 0;
             // 
             // lblOccupantCount
@@ -333,7 +333,7 @@
             lblOccupantCount.Dock = DockStyle.Right;
             lblOccupantCount.Font = new Font("Segoe UI", 10.8F);
             lblOccupantCount.ForeColor = Color.FromArgb(200, 205, 240);
-            lblOccupantCount.Location = new Point(410, 0);
+            lblOccupantCount.Location = new Point(432, 0);
             lblOccupantCount.Name = "lblOccupantCount";
             lblOccupantCount.Size = new Size(300, 40);
             lblOccupantCount.TabIndex = 1;
@@ -360,7 +360,7 @@
             pnlListBottom.Location = new Point(14, 382);
             pnlListBottom.Name = "pnlListBottom";
             pnlListBottom.Padding = new Padding(0, 12, 0, 0);
-            pnlListBottom.Size = new Size(710, 180);
+            pnlListBottom.Size = new Size(732, 180);
             pnlListBottom.TabIndex = 2;
             // 
             // pnlSummary
@@ -372,7 +372,7 @@
             pnlSummary.Location = new Point(366, 12);
             pnlSummary.Name = "pnlSummary";
             pnlSummary.Padding = new Padding(12, 6, 12, 6);
-            pnlSummary.Size = new Size(344, 168);
+            pnlSummary.Size = new Size(366, 168);
             pnlSummary.TabIndex = 1;
             // 
             // lblSummaryNote
@@ -382,7 +382,7 @@
             lblSummaryNote.ForeColor = Color.FromArgb(147, 197, 253);
             lblSummaryNote.Location = new Point(12, 122);
             lblSummaryNote.Name = "lblSummaryNote";
-            lblSummaryNote.Size = new Size(318, 38);
+            lblSummaryNote.Size = new Size(340, 38);
             lblSummaryNote.TabIndex = 1;
             lblSummaryNote.Text = "Add at least one paying tenant.";
             lblSummaryNote.TextAlign = ContentAlignment.MiddleLeft;
@@ -390,8 +390,8 @@
             // tlpSummary
             // 
             tlpSummary.ColumnCount = 2;
-            tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
             tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+            tlpSummary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
             tlpSummary.Controls.Add(lblTotalDueCaption, 0, 0);
             tlpSummary.Controls.Add(lblTotalDue, 1, 0);
             tlpSummary.Controls.Add(lblShareCaption, 0, 1);
@@ -408,7 +408,7 @@
             tlpSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tlpSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tlpSummary.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tlpSummary.Size = new Size(318, 116);
+            tlpSummary.Size = new Size(340, 116);
             tlpSummary.TabIndex = 0;
             // 
             // lblTotalDueCaption
@@ -418,7 +418,7 @@
             lblTotalDueCaption.ForeColor = Color.FromArgb(200, 205, 240);
             lblTotalDueCaption.Location = new Point(3, 0);
             lblTotalDueCaption.Name = "lblTotalDueCaption";
-            lblTotalDueCaption.Size = new Size(168, 29);
+            lblTotalDueCaption.Size = new Size(147, 29);
             lblTotalDueCaption.TabIndex = 0;
             lblTotalDueCaption.Text = "Total due today";
             lblTotalDueCaption.TextAlign = ContentAlignment.MiddleLeft;
@@ -428,9 +428,9 @@
             lblTotalDue.Dock = DockStyle.Fill;
             lblTotalDue.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
             lblTotalDue.ForeColor = Color.White;
-            lblTotalDue.Location = new Point(177, 0);
+            lblTotalDue.Location = new Point(156, 0);
             lblTotalDue.Name = "lblTotalDue";
-            lblTotalDue.Size = new Size(138, 29);
+            lblTotalDue.Size = new Size(181, 29);
             lblTotalDue.TabIndex = 1;
             lblTotalDue.Text = "₱0.00";
             lblTotalDue.TextAlign = ContentAlignment.MiddleRight;
@@ -442,7 +442,7 @@
             lblShareCaption.ForeColor = Color.FromArgb(200, 205, 240);
             lblShareCaption.Location = new Point(3, 29);
             lblShareCaption.Name = "lblShareCaption";
-            lblShareCaption.Size = new Size(168, 29);
+            lblShareCaption.Size = new Size(147, 29);
             lblShareCaption.TabIndex = 2;
             lblShareCaption.Text = "Share per paying tenant";
             lblShareCaption.TextAlign = ContentAlignment.MiddleLeft;
@@ -452,9 +452,9 @@
             lblShare.Dock = DockStyle.Fill;
             lblShare.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
             lblShare.ForeColor = Color.White;
-            lblShare.Location = new Point(177, 29);
+            lblShare.Location = new Point(156, 29);
             lblShare.Name = "lblShare";
-            lblShare.Size = new Size(138, 29);
+            lblShare.Size = new Size(181, 29);
             lblShare.TabIndex = 3;
             lblShare.Text = "—";
             lblShare.TextAlign = ContentAlignment.MiddleRight;
@@ -466,7 +466,7 @@
             lblCoversCaption.ForeColor = Color.FromArgb(200, 205, 240);
             lblCoversCaption.Location = new Point(3, 58);
             lblCoversCaption.Name = "lblCoversCaption";
-            lblCoversCaption.Size = new Size(168, 29);
+            lblCoversCaption.Size = new Size(147, 29);
             lblCoversCaption.TabIndex = 4;
             lblCoversCaption.Text = "Covers";
             lblCoversCaption.TextAlign = ContentAlignment.MiddleLeft;
@@ -474,11 +474,11 @@
             // lblCovers
             // 
             lblCovers.Dock = DockStyle.Fill;
-            lblCovers.Font = new Font("Segoe UI", 10.2F);
+            lblCovers.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblCovers.ForeColor = Color.White;
-            lblCovers.Location = new Point(177, 58);
+            lblCovers.Location = new Point(156, 58);
             lblCovers.Name = "lblCovers";
-            lblCovers.Size = new Size(138, 29);
+            lblCovers.Size = new Size(181, 29);
             lblCovers.TabIndex = 5;
             lblCovers.Text = "—";
             lblCovers.TextAlign = ContentAlignment.MiddleRight;
@@ -490,7 +490,7 @@
             lblNextDueCaption.ForeColor = Color.FromArgb(200, 205, 240);
             lblNextDueCaption.Location = new Point(3, 87);
             lblNextDueCaption.Name = "lblNextDueCaption";
-            lblNextDueCaption.Size = new Size(168, 29);
+            lblNextDueCaption.Size = new Size(147, 29);
             lblNextDueCaption.TabIndex = 6;
             lblNextDueCaption.Text = "Next due";
             lblNextDueCaption.TextAlign = ContentAlignment.MiddleLeft;
@@ -500,9 +500,9 @@
             lblNextDue.Dock = DockStyle.Fill;
             lblNextDue.Font = new Font("Segoe UI", 10.2F);
             lblNextDue.ForeColor = Color.White;
-            lblNextDue.Location = new Point(177, 87);
+            lblNextDue.Location = new Point(156, 87);
             lblNextDue.Name = "lblNextDue";
-            lblNextDue.Size = new Size(138, 29);
+            lblNextDue.Size = new Size(181, 29);
             lblNextDue.TabIndex = 7;
             lblNextDue.Text = "—";
             lblNextDue.TextAlign = ContentAlignment.MiddleRight;
@@ -939,7 +939,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(25, 25, 70);
-            ClientSize = new Size(1180, 720);
+            ClientSize = new Size(1202, 720);
             Controls.Add(pnlMoveInContent);
             Controls.Add(pnlMoveInActions);
             Controls.Add(pnlMoveInHeader);
