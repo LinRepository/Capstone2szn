@@ -106,7 +106,10 @@ namespace Capstoneszn
                 -- so each total (Rent / Utilities / Maintenance) gets exactly its
                 -- own money. Advance credit lines count too (they are rent received).
                 SELECT p.PaymentDate, p.ReceiptNo,
-                       t.FirstName + ' ' + t.LastName AS TenantName,
+                       -- ORIGINAL: t.FirstName + ' ' + t.LastName AS TenantName,
+                       -- NEW: middle initial, same format as Payment History (""Juan D. Cruz"")
+                       t.FirstName + ISNULL(' ' + LEFT(NULLIF(LTRIM(t.MiddleName), N''), 1) + '.', '')
+                                   + ' ' + t.LastName AS TenantName,
                        r.RoomNumber, a.Category, p.PaymentMethod,
                        SUM(a.Amount) AS Amount
                 FROM   Payments p
@@ -119,7 +122,8 @@ namespace Capstoneszn
                   AND  p.PaymentDate <  @to
                   AND  (@rid IS NULL OR p.RoomId = @rid)
                 GROUP BY p.PaymentId, p.PaymentDate, p.ReceiptNo,
-                         t.FirstName, t.LastName, r.RoomNumber,
+                         -- ORIGINAL: t.FirstName, t.LastName, r.RoomNumber,
+                         t.FirstName, t.MiddleName, t.LastName, r.RoomNumber,   -- NEW: MiddleName added
                          a.Category, p.PaymentMethod
                 ORDER BY p.PaymentDate ASC, p.PaymentId ASC, a.Category ASC;";
 

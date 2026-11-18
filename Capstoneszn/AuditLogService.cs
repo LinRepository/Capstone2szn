@@ -23,6 +23,28 @@ namespace Capstoneszn
     /// <summary>Read-only access to the audit trail.</summary>
     public static class AuditLogService
     {
+        /* =================================================================
+           NEW (Nov 18, building scoping) - which entries belong to a building
+           =================================================================
+           1. Entries WITH a building (payments, move in, maintenance, rooms...)
+              -> only that building's own entries (unchanged).
+           2. Entries WITHOUT a building (login, lockout, password reset,
+              first-login security questions, clock set at login, restore)
+              -> shown only when BOTH are true:
+                 a. made by the landlord (owns every building) OR by a
+                    caretaker assigned to THIS building
+                    (Users.EmployeeId -> Employees.BuildingId), and
+                 b. made after this building was created (Buildings.CreatedDate),
+                    so a new building starts with a clean log.
+           Used by both the Audit Logs grid and Home > Recent Activities.
+           Needs: JOIN Users u, LEFT JOIN Employees e, parameter @bid. */
+        private const string ScopeFilter = @"
+                (a.BuildingId = @bid
+                 OR (a.BuildingId IS NULL
+                     AND (u.Role = 'Landlord' OR e.BuildingId = @bid)
+                     AND a.LoggedAt >= (SELECT b.CreatedDate FROM Buildings b
+                                        WHERE b.BuildingId = @bid)))";
+
         /// <summary>
         /// This building's entries plus building-independent ones (login),
         /// newest first. fromDate inclusive, toDateExclusive exclusive.
@@ -31,13 +53,27 @@ namespace Capstoneszn
         {
             var list = new List<AuditLogRow>();
 
+            // ORIGINAL (Nov 18): every entry without a building showed in every building.
+            // string sql = @"
+            //     SELECT a.LoggedAt,
+            //            ISNULL(NULLIF(u.Name, ''), u.Username) AS UserName,
+            //            u.Role, a.Module, a.Action, a.Description
+            //     FROM   AuditLogs a
+            //     JOIN   Users u ON u.UserId = a.UserId
+            //     WHERE  (a.BuildingId = @bid OR a.BuildingId IS NULL)
+            //       AND  a.LoggedAt >= @from
+            //       AND  a.LoggedAt <  @to
+            //     ORDER BY a.LoggedAt DESC, a.AuditId DESC;";
+
+            // NEW (Nov 18): building scoping - see ScopeFilter at the top of the class.
             string sql = @"
                 SELECT a.LoggedAt,
                        ISNULL(NULLIF(u.Name, ''), u.Username) AS UserName,
                        u.Role, a.Module, a.Action, a.Description
                 FROM   AuditLogs a
                 JOIN   Users u ON u.UserId = a.UserId
-                WHERE  (a.BuildingId = @bid OR a.BuildingId IS NULL)
+                LEFT JOIN Employees e ON e.EmployeeId = u.EmployeeId
+                WHERE  " + ScopeFilter + @"
                   AND  a.LoggedAt >= @from
                   AND  a.LoggedAt <  @to
                 ORDER BY a.LoggedAt DESC, a.AuditId DESC;";
@@ -78,13 +114,25 @@ namespace Capstoneszn
         {
             var list = new List<AuditLogRow>();
 
+            // ORIGINAL (Nov 18): every entry without a building showed in every building.
+            // string sql = @"
+            //     SELECT TOP (@n) a.LoggedAt,
+            //            ISNULL(NULLIF(u.Name, ''), u.Username) AS UserName,
+            //            u.Role, a.Module, a.Action, a.Description
+            //     FROM   AuditLogs a
+            //     JOIN   Users u ON u.UserId = a.UserId
+            //     WHERE  a.BuildingId = @bid OR a.BuildingId IS NULL
+            //     ORDER BY a.LoggedAt DESC, a.AuditId DESC;";
+
+            // NEW (Nov 18): same building scoping as the Audit Logs grid.
             string sql = @"
                 SELECT TOP (@n) a.LoggedAt,
                        ISNULL(NULLIF(u.Name, ''), u.Username) AS UserName,
                        u.Role, a.Module, a.Action, a.Description
                 FROM   AuditLogs a
                 JOIN   Users u ON u.UserId = a.UserId
-                WHERE  a.BuildingId = @bid OR a.BuildingId IS NULL
+                LEFT JOIN Employees e ON e.EmployeeId = u.EmployeeId
+                WHERE  " + ScopeFilter + @"
                 ORDER BY a.LoggedAt DESC, a.AuditId DESC;";
 
             using (SqlConnection conn = DatabaseHelper.GetConnection())

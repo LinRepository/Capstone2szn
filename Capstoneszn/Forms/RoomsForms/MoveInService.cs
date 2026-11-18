@@ -439,7 +439,7 @@ namespace Capstoneszn.Forms.RoomsForms
             // ---- 7. Audit, same transaction ----------------------------------
             string who = string.Join(", ", data.Payers.Select(p => p.FullName));
             if (data.Dependents.Count > 0)
-                who += (who.Length > 0 ? " + " : "") + "dependents " +
+                who += (who.Length > 0 ? " + dependents " : "Dependents ") +
                        string.Join(", ", data.Dependents.Select(d => d.FullName));
 
             // ORIGINAL: string how = !vacant ? " (joined, no payment)"

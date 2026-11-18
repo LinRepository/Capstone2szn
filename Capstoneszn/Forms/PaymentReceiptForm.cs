@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
 
 namespace Capstoneszn.Forms
 {
@@ -27,6 +28,7 @@ namespace Capstoneszn.Forms
 
         private readonly int _paymentId;
         private PaymentReceipt? _receipt;
+        private List<string> _transferNotes = new List<string>();   // ADDED (receipt note, option B)
 
         public PaymentReceiptForm(int paymentId)
         {
@@ -84,6 +86,11 @@ namespace Capstoneszn.Forms
 
             PaymentHistoryRow p = _receipt.Payment;
 
+            // ADDED (receipt note, option B): where a transfer later moved this payment's money.
+            // A failed lookup must not stop the receipt from opening.
+            try { _transferNotes = LoadTransferNotes(_paymentId); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex); _transferNotes.Clear(); }
+
             Text = "Receipt " + p.ReceiptNo;
             lblReceiptTitle.Text = _receipt.BuildingName + "\r\nOFFICIAL RECEIPT";
 
@@ -120,6 +127,17 @@ namespace Capstoneszn.Forms
             sb.AppendLine(InfoRow("Method", p.Method + (p.ReferenceNo.Length > 0 ? "  Ref: " + p.ReferenceNo : "")));
             if (_receipt != null && _receipt.RecordedBy.Length > 0)
                 sb.AppendLine(InfoRow("Received by", _receipt.RecordedBy));
+
+            // ADDED (receipt note, option B): the paid total never changes, but a transfer can move
+            // where the money is applied - say so, so a reprint matches the tenant's original copy.
+            foreach (string note in _transferNotes)
+            {
+                string[] parts = note.Split('\n');
+                sb.AppendLine(InfoRow("Transferred", parts[0]));
+                for (int i = 1; i < parts.Length; i++)
+                    sb.AppendLine(new string(' ', 16) + parts[i]);   // 16 = 13 (label) + " : "
+            }
+
             return sb.ToString();
         }
 
@@ -139,6 +157,37 @@ namespace Capstoneszn.Forms
                 new Size(lbl.Width - lbl.Padding.Horizontal, int.MaxValue),
                 TextFormatFlags.WordBreak);
             lbl.Height = needed.Height + lbl.Padding.Vertical + extra;
+        }
+
+        /// <summary>
+        /// ADDED (receipt note, option B): one line per transfer that moved money
+        /// from this payment, read from TransferMoves (written by every transfer).
+        /// </summary>
+        private static List<string> LoadTransferNotes(int paymentId)
+        {
+            var notes = new List<string>();
+            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT rf.RoomNumber, rt.RoomNumber, CAST(m.MovedAt AS date), SUM(m.Amount)
+                FROM   TransferMoves m
+                JOIN   Tenancies tf ON tf.TenancyId = m.FromTenancyId
+                JOIN   Rooms     rf ON rf.RoomId    = tf.RoomId
+                JOIN   Tenancies tt ON tt.TenancyId = m.ToTenancyId
+                JOIN   Rooms     rt ON rt.RoomId    = tt.RoomId
+                WHERE  m.SourcePaymentId = @pid
+                GROUP BY m.FromTenancyId, m.ToTenancyId, rf.RoomNumber, rt.RoomNumber, CAST(m.MovedAt AS date)
+                ORDER BY MIN(m.TransferMoveId);", conn))
+            {
+                cmd.Parameters.Add("@pid", SqlDbType.Int).Value = paymentId;
+                conn.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                        notes.Add($"Room {rd.GetInt32(0)} to Room {rd.GetInt32(1)}" +
+                                  $"\nPHP {rd.GetDecimal(3):N2} on {rd.GetDateTime(2):MMM d, yyyy}");
+                }
+            }
+            return notes;
         }
 
         /* ------------------------------------------------------------------

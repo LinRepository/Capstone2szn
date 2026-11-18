@@ -70,6 +70,8 @@ namespace Capstoneszn.Forms.RoomsForms
         public int TenantId;
         public string Name = "";
         public decimal Amount;
+
+        public decimal Credit;   // ADDED (F6 retest): the stayer's advance credit when the plan was made
     }
 
     /// <summary>NEW: what joiners take over in one period.</summary>

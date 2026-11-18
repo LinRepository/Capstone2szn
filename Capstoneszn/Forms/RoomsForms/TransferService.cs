@@ -1574,7 +1574,11 @@ namespace Capstoneszn.Forms.RoomsForms
             plan.StayerCharges = RoomRentShares.PlanLeave(plan.SourcePeriods, moverIds, stayers);
 
             foreach (StayerCharge charge in plan.StayerCharges)
+            {
                 charge.Name = AuditLogger.TenantName(conn, tx, charge.TenantId);
+                // ADDED (F6 retest): the save uses this credit first, so the preview can say so
+                charge.Credit = BillingHelper.GetAvailableCredit(conn, charge.TenantId, "Rent", tx);
+            }
 
             // ---- The room they join: what they must cover ----
             int count = plan.Movers.Count;
@@ -1701,12 +1705,32 @@ namespace Capstoneszn.Forms.RoomsForms
         {
             DateTime today = DateTime.Today;
 
-            // ORIGINAL (first Step 2 file): return plan.StayerCharges.Select(c => c.Period.HasStarted(today)
-            // NEW (Nov 7): the new room's next bill first, then those who stay.
-            return plan.NextBillLines.Concat(plan.StayerCharges.Select(c => c.Period.HasStarted(today)
-                    ? $"{c.Name} will owe {c.Amount:N2} now, unless someone joins Room {plan.SourceRoomNumber} and takes it over."
-                    : $"{c.Name}'s {c.Period.FirstStart:MMM d} bill rises by {c.Amount:N2}. The due date stays the same."))
-                .ToList();
+            // OLD (Nov 7): did not mention the stayer's credit, so "will owe 6,500.00 now"
+            //              did not match the balance shown afterwards (-3,500.00).
+            // return plan.NextBillLines.Concat(plan.StayerCharges.Select(c => c.Period.HasStarted(today)
+            //         ? $"{c.Name} will owe {c.Amount:N2} now, unless someone joins Room {plan.SourceRoomNumber} and takes it over."
+            //         : $"{c.Name}'s {c.Period.FirstStart:MMM d} bill rises by {c.Amount:N2}. The due date stays the same."))
+            //     .ToList();
+
+            // NEW (F6 retest): the save uses the stayer's advance credit first - say how much.
+            var creditLeft = new Dictionary<int, decimal>();
+            var lines = new List<string>(plan.NextBillLines);
+
+            foreach (StayerCharge c in plan.StayerCharges)
+            {
+                if (!creditLeft.ContainsKey(c.TenantId)) creditLeft[c.TenantId] = c.Credit;
+                decimal used = Math.Min(creditLeft[c.TenantId], c.Amount);
+                creditLeft[c.TenantId] -= used;
+
+                string credit = used <= 0m ? ""
+                    : used == c.Amount ? " (all covered by credit, nothing to pay)"
+                    : $" ({used:N2} covered by credit, {c.Amount - used:N2} to pay)";
+
+                lines.Add(c.Period.HasStarted(today)
+                    ? $"{c.Name} will owe {c.Amount:N2} now{credit}, unless someone joins Room {plan.SourceRoomNumber} and takes it over."
+                    : $"{c.Name}'s {c.Period.FirstStart:MMM d} bill rises by {c.Amount:N2}{credit}. The due date stays the same.");
+            }
+            return lines;
         }
 
         /// <summary>
