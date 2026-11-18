@@ -393,7 +393,10 @@ namespace Capstoneszn
                                        AND tn.Status   = 'Active'
                     WHERE  bt.TenantId = @tid
                       AND  b.BillCategory = @cat
-                      AND  b.BillingPeriodStart >= tn.MoveInDate
+                      -- AND  b.BillingPeriodStart >= tn.MoveInDate   -- ORIGINAL: hid a water bill whose month began before move-in
+                      -- NEW (7-day water rule): a month's water bill belongs to this stay if the tenant moved in on or before that month's end
+                      AND  (b.BillingPeriodStart >= tn.MoveInDate
+                            OR (b.BillCategory = 'Water' AND b.BillingPeriodEnd >= tn.MoveInDate))
                 ) x
                 WHERE x.Owing > 0
                 ORDER BY x.BillingPeriodStart ASC, x.BillId ASC;";
@@ -620,7 +623,10 @@ namespace Capstoneszn
                                        AND tn.Status   = 'Active'
                     WHERE  bt.TenantId = @tid
                       AND  b.BillCategory = @cat
-                      AND  b.BillingPeriodStart >= tn.MoveInDate
+                      -- AND  b.BillingPeriodStart >= tn.MoveInDate   -- ORIGINAL: hid a water bill whose month began before move-in
+                      -- NEW (7-day water rule): a month's water bill belongs to this stay if the tenant moved in on or before that month's end
+                      AND  (b.BillingPeriodStart >= tn.MoveInDate
+                            OR (b.BillCategory = 'Water' AND b.BillingPeriodEnd >= tn.MoveInDate))
                 ) x
                 WHERE x.Owing > 0;";
 
@@ -692,7 +698,10 @@ namespace Capstoneszn
                                        AND tn.Status   = 'Active'
                     WHERE  bt.TenantId = @tid
                       AND  b.BillCategory = @cat
-                      AND  b.BillingPeriodStart >= tn.MoveInDate
+                      -- AND  b.BillingPeriodStart >= tn.MoveInDate   -- ORIGINAL: hid a water bill whose month began before move-in
+                      -- NEW (7-day water rule): a month's water bill belongs to this stay if the tenant moved in on or before that month's end
+                      AND  (b.BillingPeriodStart >= tn.MoveInDate
+                            OR (b.BillCategory = 'Water' AND b.BillingPeriodEnd >= tn.MoveInDate))
                 ) x
                 WHERE x.Share - x.Paid > 0
                 ORDER BY x.BillingPeriodStart ASC, x.BillId ASC;";

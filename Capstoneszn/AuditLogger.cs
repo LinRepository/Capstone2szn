@@ -37,6 +37,7 @@ namespace Capstoneszn
         public const string ModuleEmployee = "Employee";
         public const string ModuleSettings = "Settings";
         public const string ModuleBuildings = "Buildings";   // NEW (Nov 18): Add Building
+        public const string ModuleUtilities = "Utilities";   // NEW (Nov 18, 2026): water bills, electricity, utility accounts
 
         private const string InsertSql = @"
             INSERT INTO AuditLogs (BuildingId, UserId, Module, Action, Description)

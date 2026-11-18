@@ -19,6 +19,7 @@ namespace Capstoneszn.Forms.UtilityForms
     public static class WaterBillHelper
     {
         public const string Category = "Water";
+        public const int WaterFreeDays = 7;   // NEW: tenants here 7 days or fewer aren't charged
 
         // Default: admin is one more head (n + 1). Custom: tenants split what's left (n).
         // Either way the leftover centavos land on the admin.
@@ -39,6 +40,12 @@ namespace Capstoneszn.Forms.UtilityForms
         public static List<PreviewRow> LoadActiveTenants(SqlConnection conn, SqlTransaction? tran, DateTime monthStart)
         {
             const string sql = @"
+                -- NEW: count days up to the day this month's bill was added; before it exists, today
+                DECLARE @AsOf DATE = COALESCE(
+                    (SELECT CAST(RecordedAt AS DATE) FROM dbo.WaterBills
+                     WHERE BuildingId = @BuildingId AND BillingMonth = @MonthStart),
+                    @Today);
+
                 SELECT tn.TenantId, tn.RoomId, r.RoomNumber,
                        t.LastName + ', ' + t.FirstName AS TenantName
                 FROM   dbo.Tenancies tn
@@ -47,13 +54,17 @@ namespace Capstoneszn.Forms.UtilityForms
                 INNER JOIN dbo.Floors  f ON f.FloorId  = r.FloorId
                 WHERE  f.BuildingId  = @BuildingId
                   AND  tn.Status     = 'Active'
-                  AND  tn.MoveInDate <= @MonthStart          -- billing cutoff (same as the grid)
+                  -- AND  tn.MoveInDate <= @MonthStart          -- old rule: in by the 1st
+                  AND  tn.MoveInDate <= @MonthEnd                                  -- NEW: lived here during/before the month
+                  AND  DATEDIFF(DAY, tn.MoveInDate, @AsOf) + 1 > @FreeDays         -- NEW: more than 7 days as of @AsOf
                 ORDER BY r.RoomNumber, t.LastName, t.FirstName;";
 
             var rows = new List<PreviewRow>();
             using var cmd = new SqlCommand(sql, conn, tran);
             AddScope(cmd, monthStart);
             cmd.Parameters.Add("@MonthEnd", SqlDbType.Date).Value = monthStart.AddMonths(1).AddDays(-1);
+            cmd.Parameters.Add("@Today", SqlDbType.Date).Value = DateTime.Today;        // NEW
+            cmd.Parameters.Add("@FreeDays", SqlDbType.Int).Value = WaterFreeDays;      // NEW
 
             using SqlDataReader rd = cmd.ExecuteReader();
             while (rd.Read())

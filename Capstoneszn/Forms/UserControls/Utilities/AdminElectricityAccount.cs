@@ -136,6 +136,14 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                 if (result == -1)
                     MessageBox.Show("The owner's bill is already paid and can't be edited.", "Bill locked",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // NEW (Nov 18, 2026, Audit Logs): after a successful save (never throws).
+                // -1 = locked (nothing saved), 0 = nothing to save. _amount is still the old value here.
+                if (result > 0)
+                    AuditLogger.Log(AuditLogger.ModuleUtilities, "Set Electricity Amount",
+                        "Owner's account (" + lblAccountNumber.Text + "), " + BillMonth.ToString("MMMM yyyy") + ": " +
+                        (_amount.HasValue ? "PHP " + _amount.Value.ToString("N2") : "no amount") + " → " +
+                        (value.HasValue ? "PHP " + value.Value.ToString("N2") : "no amount"));
             }
             catch (SqlException ex)
             {

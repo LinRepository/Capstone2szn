@@ -135,6 +135,27 @@ namespace Capstoneszn.Forms.UtilityForms
                 WaterBillHelper.DeleteTenantBills(conn, tran, _monthStart);
                 WaterBillHelper.InsertTenantBills(conn, tran, _monthStart, dtpDueDate.Value.Date, current);
 
+                // NEW (Nov 18, 2026, Audit Logs): the bill as saved BEFORE this edit,
+                // read inside the same transaction so the log shows old -> new exactly.
+                decimal oldTotal = 0m, oldAdmin = 0m;
+                DateTime oldDue = DateTime.MinValue;
+                string oldMode = "";
+                using (var cmd = new SqlCommand(@"
+                    SELECT TotalAmount, AdminAmount, DueDate, AdminShareMode
+                    FROM   dbo.WaterBills
+                    WHERE  WaterBillId = @Id;", conn, tran))
+                {
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = _waterBillId;
+                    using SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.Read())
+                    {
+                        oldTotal = dr.GetDecimal(0);
+                        oldAdmin = dr.GetDecimal(1);
+                        oldDue = dr.GetDateTime(2);
+                        oldMode = dr.GetString(3);
+                    }
+                }
+
                 // NEW: same update. The bill keeps the account it was recorded under;
                 // a legacy bill with no account is linked to the building's current one.
                 WaterAccountInfo? activeAccount =
@@ -158,6 +179,23 @@ namespace Capstoneszn.Forms.UtilityForms
                     cmd.Parameters.Add("@Id", SqlDbType.Int).Value = _waterBillId;
                     cmd.ExecuteNonQuery();
                 }
+
+                // NEW (Nov 18, 2026, Audit Logs): same transaction. Only the fields that
+                // changed are listed as old -> new; the new tenant split is always shown.
+                string newMode = isDefault ? "Default" : "Custom";
+                var changes = new List<string>();
+                if (oldTotal != total)
+                    changes.Add("total PHP " + oldTotal.ToString("N2") + " → PHP " + total.ToString("N2"));
+                if (oldAdmin != _adminAmount || oldMode != newMode)
+                    changes.Add("owner PHP " + oldAdmin.ToString("N2") + " (" + ShareText(oldMode) + ") → PHP " +
+                                _adminAmount.ToString("N2") + " (" + ShareText(newMode) + ")");
+                if (oldDue.Date != dtpDueDate.Value.Date)
+                    changes.Add("due " + oldDue.ToString("MMM dd, yyyy") + " → " + dtpDueDate.Value.ToString("MMM dd, yyyy"));
+
+                AuditLogger.Log(conn, tran, AuditLogger.ModuleUtilities, "Edit Water Bill",
+                    _monthStart.ToString("MMMM yyyy") + " water bill: " +
+                    (changes.Count > 0 ? string.Join("; ", changes) : "saved with no changes") +
+                    "; now " + current.Count + " tenant(s) x PHP " + _perTenant.ToString("N2"));
 
                 tran.Commit();
 
@@ -295,5 +333,9 @@ namespace Capstoneszn.Forms.UtilityForms
         }
         private static void Warn(string msg) =>
             MessageBox.Show(msg, "Edit Bill", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+        // NEW (Nov 18, 2026, Audit Logs): "Default"/"Custom" in words for the log
+        private static string ShareText(string mode) =>
+            mode == "Custom" ? "custom amount" : "equal share";
     }
 }

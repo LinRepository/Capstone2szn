@@ -21,6 +21,9 @@ namespace Capstoneszn.Forms.UserControls.Settings
         {
             InitializeComponent();
             Load += (s, e) => { LoadElectricityAccount(); LoadWaterAccount(); };   // NEW
+                                                                                   // ADDED (caretaker restrictions): utility accounts are view-only for caretakers
+            btnEditElectAccount.Visible = Session.IsLandlord;
+            btnEditWaterAccount.Visible = Session.IsLandlord;
         }
         // NEW: fills the Water card from the database
         private void LoadWaterAccount()
@@ -86,6 +89,8 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
         private void btnEditElectAccount_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED (caretaker restrictions): landlord only
+
             // NEW: pass the building, refresh the card only if something was saved
             using var editElectricityAccount = new EditElectricityAccount(Session.BuildingId);
             if (editElectricityAccount.ShowDialog(this) == DialogResult.OK)
@@ -94,6 +99,8 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
         private void btnEditWaterAccount_Click(object sender, EventArgs e)
         {
+            if (!Session.IsLandlord) return;   // ADDED (caretaker restrictions): landlord only
+
             // NEW: pass the building, refresh the card only if something was saved
             using var editWaterAccount = new EditWaterAccount(Session.BuildingId);
             if (editWaterAccount.ShowDialog(this) == DialogResult.OK)

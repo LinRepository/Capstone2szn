@@ -110,6 +110,16 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
             // TODO (audit logs): record the change here once the AuditLogs format is confirmed
 
+            // NEW (Nov 18, 2026, Audit Logs): done - logged after the save succeeded (never throws).
+            // The owner's electricity account is edited in place (no history), so the log
+            // entry is the only record of the old details.
+            if (_current == null)
+                AuditLogger.Log(AuditLogger.ModuleUtilities, "Set Up Electricity Account",
+                    "Set up the owner's electricity account: " + name + " (" + number + ")");
+            else
+                AuditLogger.Log(AuditLogger.ModuleUtilities, "Edit Electricity Account",
+                    _current.AccountName + " (" + _current.AccountNumber + ") → " + name + " (" + number + ")");
+
             MessageBox.Show("Electricity account saved.", "Saved",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             DialogResult = DialogResult.OK;

@@ -169,7 +169,12 @@ namespace Capstoneszn.UserControls
             const string tenantSql = @"
                     SELECT r.RoomNumber,
                             t.LastName + ', ' + t.FirstName AS Tenant,
-                            CASE WHEN tn.MoveInDate <= @MonthStart THEN 1 ELSE 0 END AS Eligible,
+                            -- CASE WHEN tn.MoveInDate <= @MonthStart THEN 1 ELSE 0 END AS Eligible,
+                            CASE WHEN DATEDIFF(DAY, tn.MoveInDate,
+                                     COALESCE((SELECT CAST(w.RecordedAt AS DATE) FROM dbo.WaterBills w
+                                               WHERE w.BuildingId = @BuildingId AND w.BillingMonth = @MonthStart),
+                                              @Today)) + 1 > @FreeDays
+                                 THEN 1 ELSE 0 END AS Eligible,
                             wb.DueDate, wb.Share, wb.PaidAmount
                     FROM   dbo.Tenancies tn
                     INNER JOIN dbo.Tenants t ON t.TenantId = tn.TenantId
@@ -213,6 +218,9 @@ namespace Capstoneszn.UserControls
                     cmd.Parameters.Add("@BuildingId", SqlDbType.Int).Value = Session.BuildingId;
                     cmd.Parameters.Add("@MonthStart", SqlDbType.Date).Value = monthStart;
                     cmd.Parameters.Add("@MonthEnd", SqlDbType.Date).Value = monthEnd;
+                    //cmd.Parameters.Add("@MonthEnd", SqlDbType.Date).Value = monthEnd;
+                    cmd.Parameters.Add("@Today", SqlDbType.Date).Value = DateTime.Today;                  // NEW
+                    cmd.Parameters.Add("@FreeDays", SqlDbType.Int).Value = WaterBillHelper.WaterFreeDays;  // NEW
 
                     using SqlDataReader rd = cmd.ExecuteReader();
                     while (rd.Read())

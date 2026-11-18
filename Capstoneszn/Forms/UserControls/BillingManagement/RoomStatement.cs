@@ -655,7 +655,10 @@ namespace Capstoneszn
                     WHERE  b.RoomId = @rid
                       AND  b.BillCategory IN ('Rent', 'Water', 'Maintenance')
                       AND  b.BillKind <> N'Superseded'
-                      AND  b.BillingPeriodStart >= tn.MoveInDate
+                      -- AND  b.BillingPeriodStart >= tn.MoveInDate   -- ORIGINAL: hid a water bill whose month began before move-in
+                      -- NEW (7-day water rule): a month's water bill belongs to this stay if the tenant moved in on or before that month's end
+                      AND  (b.BillingPeriodStart >= tn.MoveInDate
+                            OR (b.BillCategory = 'Water' AND b.BillingPeriodEnd >= tn.MoveInDate))
                       AND  ISNULL(b.GeneratedDate, b.BillingPeriodStart) < @Dnext
                       AND  bt.Share > ISNULL((SELECT SUM(a.Amount)
                                               FROM   PaymentAllocations a
