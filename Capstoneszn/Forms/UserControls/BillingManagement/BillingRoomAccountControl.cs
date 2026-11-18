@@ -377,7 +377,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                                    WHERE  tn2.TenantId = bt.TenantId
                                      AND  tn2.RoomId   = r.RoomId
                                      AND  tn2.Status   = 'Active'
-                                     AND  b.BillingPeriodStart >= tn2.MoveInDate)
+                                     -- AND  b.BillingPeriodStart >= tn2.MoveInDate)   -- ORIGINAL: hid a water bill whose month began before move-in
+                                     -- NEW (7-day water rule): a month's water bill belongs to this stay if the tenant moved in on or before that month's end
+                                     AND  (b.BillingPeriodStart >= tn2.MoveInDate
+                                           OR (b.BillCategory = 'Water' AND b.BillingPeriodEnd >= tn2.MoveInDate)))
                 ) unpaid
                 WHERE unpaid.Amount > 0
             ) money

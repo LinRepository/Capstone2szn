@@ -45,6 +45,16 @@ namespace Capstoneszn
         public string Description =>
             $"₱{AmountUnpaid:N2} unpaid · Tenants owing: {TenantsOwing} of {TotalTenants} · Due {KeyDueDate:MMM d, yyyy}";
 
+        // NEW (UI improvement): the redesigned card shows the amount on its
+        // own on the right, and the rest on the line under the room number.
+
+        /// <summary>"₱4,000.00"</summary>
+        public string AmountText => $"₱{AmountUnpaid:N2}";
+
+        /// <summary>"Tenants owing: 2 of 3 · Due Oct 28, 2026"</summary>
+        public string CardDetail =>
+            $"Tenants owing: {TenantsOwing} of {TotalTenants} · Due {KeyDueDate:MMM d, yyyy}";
+
         /// <summary>"5 days overdue" / "Due in 3 days" / "Due today".</summary>
         public string DaysText
         {

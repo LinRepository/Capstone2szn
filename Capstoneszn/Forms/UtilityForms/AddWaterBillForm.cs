@@ -237,6 +237,17 @@ namespace Capstoneszn.Forms.UtilityForms
 
                 WaterBillHelper.InsertTenantBills(conn, tran, _billingMonth, dtpDueDate.Value.Date, _previewRows);
 
+                // NEW (Nov 18, 2026, Audit Logs): same transaction - the bill and its log
+                // save together or not at all. Lists who was charged (the 7-day rule decides that).
+                AuditLogger.Log(conn, tran, AuditLogger.ModuleUtilities, "Add Water Bill",
+                    _billingMonth.ToString("MMMM yyyy") + " water bill: total PHP " + _totalAmount.ToString("N2") +
+                    ", " + _activeTenantCount + " tenant(s) x PHP " + _perTenantAmount.ToString("N2") +
+                    ", owner PHP " + _adminAmount.ToString("N2") +
+                    (rdoDefaultShare.Checked ? " (equal share)" : " (custom amount)") +
+                    ", due " + dtpDueDate.Value.ToString("MMM dd, yyyy") +
+                    ", account " + waterAccount.AccountNumber +
+                    ". Charged: " + string.Join(", ", _previewRows.Select(r => "Room " + r.RoomNumber + " " + r.TenantName)));
+
                 tran.Commit();
                 return true;
             }

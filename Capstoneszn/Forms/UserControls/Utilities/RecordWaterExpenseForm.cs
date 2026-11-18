@@ -154,6 +154,12 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                     cmd.ExecuteNonQuery();
                 }
 
+                // NEW (Nov 18, 2026, Audit Logs): same transaction - expense, lock and log together
+                AuditLogger.Log(conn, tran, AuditLogger.ModuleUtilities, "Record Water Expense",
+                    "Owner's share of the " + _billingMonth.ToString("MMMM yyyy") + " water bill: PHP " +
+                    amount.ToString("N2") + ", paid " + paidDate.ToString("MMM dd, yyyy") +
+                    " (recorded as a Utilities expense; bill now locked)");
+
                 tran.Commit();
 
                 MessageBox.Show($"Expense recorded: {amount:₱#,##0.00}", "Saved",

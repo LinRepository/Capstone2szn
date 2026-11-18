@@ -27,6 +27,9 @@ namespace Capstoneszn.Forms.UserControls
         {
             InitializeComponent();
 
+            // NEW (UI improvement): the new look - see Notification.Theme.cs.
+            ApplyNotificationTheme();
+
             // Moved to NotificationControl_Load: in the constructor the flow
             // panel still has the designer's width, so the cards would be
             // sized wrong.
@@ -76,6 +79,7 @@ namespace Capstoneszn.Forms.UserControls
                     "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+            UpdateCounts();   // NEW (UI improvement): "3 overdue  4 due soon" in the header
             ShowCards();
         }
 
@@ -122,13 +126,26 @@ namespace Capstoneszn.Forms.UserControls
             {
                 int cardWidth = CardWidth();
 
+                // NEW (UI improvement): a small heading before each group.
+                // The list is already sorted Overdue first, so a heading is
+                // added each time the status changes.
+                bool? lastGroup = null;
+
                 foreach (RoomNotification n in shown)
                 {
+                    if (lastGroup != n.IsOverdue)
+                    {
+                        int groupCount = shown.Count(x => x.IsOverdue == n.IsOverdue);
+                        flpNotifications.Controls.Add(MakeSectionLabel(n.IsOverdue, groupCount));
+                        lastGroup = n.IsOverdue;
+                    }
+
                     NotificationItem item = new NotificationItem
                     {
                         Width = cardWidth,
-                        Margin = new Padding(0, 0, 0, 10)
-                        // Height and colours come from the designer.
+                        // ORIGINAL: Margin = new Padding(0, 0, 0, 10)
+                        Margin = new Padding(0, 0, 0, 6)   // NEW: tighter, the headings separate the groups
+                        // Height and colours come from NotificationItem.Theme.cs.
                     };
 
                     item.Bind(n);

@@ -141,6 +141,20 @@ namespace Capstoneszn.Forms.UserControls.Settings
 
             // TODO (audit logs): record the change here once the AuditLogs format is confirmed
 
+            // NEW (Nov 18, 2026, Audit Logs): done - logged after the save succeeded (never throws).
+            //   Created  -> first-time setup
+            //   Updated  -> fixed in place (no bills used the old details yet)
+            //   Replaced -> new account; the old one is kept for the bills recorded under it
+            if (result == WaterAccountSaveResult.Created)
+                AuditLogger.Log(AuditLogger.ModuleUtilities, "Set Up Water Account",
+                    "Set up the water account: " + name + " (" + number + ")");
+            else if (result == WaterAccountSaveResult.Updated || result == WaterAccountSaveResult.Replaced)
+                AuditLogger.Log(AuditLogger.ModuleUtilities, "Edit Water Account",
+                    (_current != null ? _current.AccountName + " (" + _current.AccountNumber + ")" : "-") +
+                    " → " + name + " (" + number + ")" +
+                    (result == WaterAccountSaveResult.Replaced
+                        ? "; the old account is kept on past water bills" : ""));
+
             MessageBox.Show("Water account saved.", "Saved",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             DialogResult = DialogResult.OK;

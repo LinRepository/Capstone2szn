@@ -354,7 +354,10 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
                         FROM   BillTenants bt
                         JOIN   Bills b ON b.BillId = bt.BillId
                         WHERE  bt.TenantId = t.TenantId
-                          AND  b.BillingPeriodStart >= tn.MoveInDate
+                          -- AND  b.BillingPeriodStart >= tn.MoveInDate   -- ORIGINAL: hid a water bill whose month began before move-in
+                          -- NEW (7-day water rule): a month's water bill belongs to this stay if the tenant moved in on or before that month's end
+                          AND  (b.BillingPeriodStart >= tn.MoveInDate
+                                OR (b.BillCategory = 'Water' AND b.BillingPeriodEnd >= tn.MoveInDate))
                     ) x
                     WHERE x.Unpaid > 0
                 ) debt

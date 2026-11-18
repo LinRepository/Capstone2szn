@@ -42,6 +42,7 @@ namespace Capstoneszn.UserControls
                 AuditLogger.ModuleTenants,
                 AuditLogger.ModulePayments,
                 AuditLogger.ModuleMaintenance,
+                AuditLogger.ModuleUtilities,   // NEW (Nov 18, 2026): Utilities entries
                 AuditLogger.ModuleEmployee,
                 AuditLogger.ModuleSettings
             });

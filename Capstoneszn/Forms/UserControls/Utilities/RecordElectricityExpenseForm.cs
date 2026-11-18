@@ -140,6 +140,12 @@ namespace Capstoneszn.Forms.UserControls.Utilities
                         cmd.ExecuteNonQuery();
                     }
 
+                    // NEW (Nov 18, 2026, Audit Logs): same transaction - paid, expense and log together
+                    AuditLogger.Log(conn, tran, AuditLogger.ModuleUtilities, "Record Electricity Expense",
+                        "Owner's " + _billMonth.ToString("MMMM yyyy") + " electricity bill: PHP " +
+                        amount.ToString("N2") + ", paid " + paymentDate.ToString("MMM dd, yyyy") +
+                        " (recorded as a Utilities expense; bill now locked)");
+
                     // 6. Both steps succeeded — save for real
                     tran.Commit();
                 }

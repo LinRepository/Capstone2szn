@@ -17,6 +17,9 @@ namespace Capstoneszn.UserControls
         public HomeControl()
         {
             InitializeComponent();
+
+            // NEW (UI improvement): dark Notification list - see HomeControl.Theme.cs.
+            StyleNotificationList();
         }
 
         private void HomeControl_Load(object sender, EventArgs e)
@@ -70,7 +73,11 @@ namespace Capstoneszn.UserControls
                     var item = new ListViewItem(n.KeyDueDate.ToString("MMM dd, yyyy"));
                     item.SubItems.Add(n.ShortText);                 // Room 202 - Overdue (5 days)
                     item.ToolTipText = n.Title + "\n" + n.Description;
-                    item.ForeColor = n.IsOverdue ? Color.DarkRed : Color.Black;
+                    // ORIGINAL: item.ForeColor = n.IsOverdue ? Color.DarkRed : Color.Black;
+                    // NEW (UI improvement): lighter colours, readable on the dark list.
+                    item.ForeColor = n.IsOverdue
+                        ? Capstoneszn.Forms.UserControls.Notification.NotificationColors.OverdueText
+                        : Capstoneszn.Forms.UserControls.Notification.NotificationColors.DueSoonText;
                     lv.Items.Add(item);
                 }
 
@@ -90,6 +97,11 @@ namespace Capstoneszn.UserControls
             finally
             {
                 lv.EndUpdate();
+
+                // NEW (UI improvement): -2 = fill the rest of the width. Done
+                // after the rows are in, so a scrollbar is already counted;
+                // otherwise a light, undrawn strip shows right of the header.
+                Description.Width = -2;
             }
         }
 
