@@ -623,6 +623,20 @@ namespace Capstoneszn.UserControls
                 return;
             }
 
+            // NEW (Nov 19, 2026, Audit Logs): a room's amount was saved.
+            // Same wording as the owner's entry in AdminElectricityAccount.
+            // -1 = locked (returned above), 0 = nothing saved. Logged after success, never throws.
+            if (result > 0)
+            {
+                string number = data["AccountNumber"].ToString() ?? "";
+                AuditLogger.Log(AuditLogger.ModuleUtilities, "Set Electricity Amount",
+                    "Room " + data["Room"] + "'s account" +
+                    (number.Length > 0 && number != "—" ? " (" + number + ")" : "") + ", " +
+                    ElectricityMonthStart.ToString("MMMM yyyy") + ": " +
+                    (_amountBeforeEdit is decimal before ? "PHP " + before.ToString("N2") : "no amount") + " → " +
+                    (amount.HasValue ? "PHP " + amount.Value.ToString("N2") : "no amount"));
+            }
+
             // update the row after the grid has finished its edit
             BeginInvoke(new Action(() =>
             {
@@ -701,6 +715,14 @@ namespace Capstoneszn.UserControls
                    AND Status = 'Unpaid'
                    AND Amount IS NOT NULL;";
 
+            // NEW (Nov 19, 2026, Audit Logs): room and amount of each charge, for the log entry.
+            var chargeInfo = new Dictionary<int, (string Room, decimal Amount)>();
+            if (dgvElectricity.DataSource is DataTable grid)
+                foreach (DataRow r in grid.Rows)
+                    if (r["ChargeId"] != DBNull.Value && r["Amount"] != DBNull.Value)
+                        chargeInfo[Convert.ToInt32(r["ChargeId"])] =
+                            (r["Room"].ToString() ?? "", Convert.ToDecimal(r["Amount"]));
+
             try
             {
                 using SqlConnection conn = DatabaseHelper.GetConnection();
@@ -708,14 +730,42 @@ namespace Capstoneszn.UserControls
                 using SqlTransaction tran = conn.BeginTransaction();
                 try
                 {
+                    var marked = new List<int>();   // NEW (Audit Logs): charges actually set to Paid
                     foreach (int id in ids)
                     {
                         using var cmd = new SqlCommand(sql, conn, tran);
                         cmd.Parameters.Add("@Today", SqlDbType.Date).Value = DateTime.Today;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = Session.UserId;
                         cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-                        cmd.ExecuteNonQuery();
+                        // ORIGINAL (Nov 19): cmd.ExecuteNonQuery();
+                        if (cmd.ExecuteNonQuery() == 1) marked.Add(id);   // NEW: 0 = was no longer Unpaid
                     }
+
+                    // NEW (Nov 19, 2026, Audit Logs): same transaction - the Paid status and
+                    // the log entry save together or not at all. Lists only the charges
+                    // this save actually marked, with their total.
+                    if (marked.Count > 0)
+                    {
+                        decimal markedTotal = 0m;
+                        var parts = new List<string>();
+                        foreach (int id in marked)
+                        {
+                            if (chargeInfo.TryGetValue(id, out var info))
+                            {
+                                parts.Add("Room " + info.Room + " (PHP " + info.Amount.ToString("N2") + ")");
+                                markedTotal += info.Amount;
+                            }
+                            else
+                            {
+                                parts.Add("Charge #" + id);
+                            }
+                        }
+
+                        AuditLogger.Log(conn, tran, AuditLogger.ModuleUtilities, "Mark Electricity Paid",
+                            ElectricityMonthStart.ToString("MMMM yyyy") + " electricity marked paid: " +
+                            string.Join(", ", parts) + "; total PHP " + markedTotal.ToString("N2"));
+                    }
+
                     tran.Commit();
                 }
                 catch

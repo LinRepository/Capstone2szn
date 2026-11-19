@@ -16,6 +16,11 @@ namespace Capstoneszn.Forms.BuildingForms
         public BuildingSelection()
         {
             InitializeComponent();
+
+            // NEW (Nov 19, Audit Logs): closing this picker quits the app (signed in,
+            // but no building opened yet), so it records a Logout too. Skipped when
+            // MainForm already logged it, or when Logout was used.
+            this.FormClosed += (s, e) => AuditLogger.LogAppClosed(e.CloseReason);
         }
 
         private void BuildingSelection_Load(object sender, EventArgs e)

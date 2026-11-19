@@ -118,7 +118,7 @@
             pnlAddRoomActions.Location = new Point(0, 553);
             pnlAddRoomActions.Name = "pnlAddRoomActions";
             pnlAddRoomActions.Size = new Size(457, 50);
-            pnlAddRoomActions.TabIndex = 1;
+            pnlAddRoomActions.TabIndex = 2;
             // 
             // btnAddRoom
             // 
@@ -151,7 +151,7 @@
             pnlAddRoomContent.Location = new Point(0, 65);
             pnlAddRoomContent.Name = "pnlAddRoomContent";
             pnlAddRoomContent.Size = new Size(457, 488);
-            pnlAddRoomContent.TabIndex = 2;
+            pnlAddRoomContent.TabIndex = 1;
             // 
             // pnlElectricityAddRoom
             // 
@@ -164,7 +164,7 @@
             pnlElectricityAddRoom.Location = new Point(0, 240);
             pnlElectricityAddRoom.Name = "pnlElectricityAddRoom";
             pnlElectricityAddRoom.Size = new Size(457, 248);
-            pnlElectricityAddRoom.TabIndex = 39;
+            pnlElectricityAddRoom.TabIndex = 4;
             // 
             // panel4
             // 
@@ -176,7 +176,7 @@
             panel4.Name = "panel4";
             panel4.Padding = new Padding(10);
             panel4.Size = new Size(455, 60);
-            panel4.TabIndex = 2;
+            panel4.TabIndex = 3;
             // 
             // textBox2
             // 
@@ -185,7 +185,7 @@
             textBox2.Location = new Point(190, 10);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(254, 37);
-            textBox2.TabIndex = 30;
+            textBox2.TabIndex = 7;
             // 
             // lblElectricityAccountNumber
             // 
@@ -211,7 +211,7 @@
             panel3.Name = "panel3";
             panel3.Padding = new Padding(10);
             panel3.Size = new Size(455, 60);
-            panel3.TabIndex = 1;
+            panel3.TabIndex = 2;
             // 
             // textBox1
             // 
@@ -220,7 +220,7 @@
             textBox1.Location = new Point(190, 10);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(254, 37);
-            textBox1.TabIndex = 29;
+            textBox1.TabIndex = 6;
             // 
             // lblElectricityAccountName
             // 
@@ -245,7 +245,7 @@
             panel2.Name = "panel2";
             panel2.Padding = new Padding(10);
             panel2.Size = new Size(455, 54);
-            panel2.TabIndex = 4;
+            panel2.TabIndex = 1;
             // 
             // lblElectricity
             // 
@@ -270,7 +270,7 @@
             panel1.Name = "panel1";
             panel1.Padding = new Padding(10);
             panel1.Size = new Size(455, 60);
-            panel1.TabIndex = 3;
+            panel1.TabIndex = 0;
             // 
             // txtSetCapacity
             // 
@@ -279,7 +279,7 @@
             txtSetCapacity.Location = new Point(190, 10);
             txtSetCapacity.Name = "txtSetCapacity";
             txtSetCapacity.Size = new Size(253, 37);
-            txtSetCapacity.TabIndex = 36;
+            txtSetCapacity.TabIndex = 5;
             // 
             // lblSetCapacity
             // 
@@ -305,7 +305,7 @@
             pnlRoomPrice.Name = "pnlRoomPrice";
             pnlRoomPrice.Padding = new Padding(10);
             pnlRoomPrice.Size = new Size(457, 60);
-            pnlRoomPrice.TabIndex = 38;
+            pnlRoomPrice.TabIndex = 3;
             // 
             // txtRoomPrice
             // 
@@ -315,7 +315,7 @@
             txtRoomPrice.Name = "txtRoomPrice";
             txtRoomPrice.PlaceholderText = "₱0.00";
             txtRoomPrice.Size = new Size(255, 37);
-            txtRoomPrice.TabIndex = 35;
+            txtRoomPrice.TabIndex = 0;
             // 
             // lblRoomPrice
             // 
@@ -327,7 +327,7 @@
             lblRoomPrice.Margin = new Padding(0);
             lblRoomPrice.Name = "lblRoomPrice";
             lblRoomPrice.Size = new Size(180, 38);
-            lblRoomPrice.TabIndex = 34;
+            lblRoomPrice.TabIndex = 1;
             lblRoomPrice.Text = "Room Price";
             lblRoomPrice.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -341,7 +341,7 @@
             pnlRoomType.Name = "pnlRoomType";
             pnlRoomType.Padding = new Padding(10);
             pnlRoomType.Size = new Size(457, 60);
-            pnlRoomType.TabIndex = 37;
+            pnlRoomType.TabIndex = 2;
             // 
             // lblRoomType
             // 
@@ -353,7 +353,7 @@
             lblRoomType.Margin = new Padding(0);
             lblRoomType.Name = "lblRoomType";
             lblRoomType.Size = new Size(180, 38);
-            lblRoomType.TabIndex = 31;
+            lblRoomType.TabIndex = 1;
             lblRoomType.Text = "Room Type";
             lblRoomType.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -365,7 +365,7 @@
             cboRoomType.Location = new Point(190, 11);
             cboRoomType.Name = "cboRoomType";
             cboRoomType.Size = new Size(255, 36);
-            cboRoomType.TabIndex = 31;
+            cboRoomType.TabIndex = 0;
             // 
             // pnlRoomNumber
             // 
@@ -377,7 +377,7 @@
             pnlRoomNumber.Name = "pnlRoomNumber";
             pnlRoomNumber.Padding = new Padding(10);
             pnlRoomNumber.Size = new Size(457, 60);
-            pnlRoomNumber.TabIndex = 36;
+            pnlRoomNumber.TabIndex = 1;
             // 
             // txtRoomNumber
             // 
@@ -387,7 +387,7 @@
             txtRoomNumber.Name = "txtRoomNumber";
             txtRoomNumber.PlaceholderText = "e.g 202";
             txtRoomNumber.Size = new Size(255, 37);
-            txtRoomNumber.TabIndex = 35;
+            txtRoomNumber.TabIndex = 0;
             // 
             // lblRoomNumber
             // 
@@ -398,7 +398,7 @@
             lblRoomNumber.Location = new Point(10, 10);
             lblRoomNumber.Name = "lblRoomNumber";
             lblRoomNumber.Size = new Size(180, 38);
-            lblRoomNumber.TabIndex = 28;
+            lblRoomNumber.TabIndex = 1;
             lblRoomNumber.Text = "Room Number";
             lblRoomNumber.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -412,7 +412,7 @@
             pnlFloor.Name = "pnlFloor";
             pnlFloor.Padding = new Padding(10);
             pnlFloor.Size = new Size(457, 60);
-            pnlFloor.TabIndex = 35;
+            pnlFloor.TabIndex = 0;
             // 
             // lblFloor
             // 
@@ -424,7 +424,7 @@
             lblFloor.Margin = new Padding(0);
             lblFloor.Name = "lblFloor";
             lblFloor.Size = new Size(180, 38);
-            lblFloor.TabIndex = 27;
+            lblFloor.TabIndex = 1;
             lblFloor.Text = "Floor";
             lblFloor.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -436,7 +436,7 @@
             cboFloor.Location = new Point(190, 11);
             cboFloor.Name = "cboFloor";
             cboFloor.Size = new Size(255, 36);
-            cboFloor.TabIndex = 28;
+            cboFloor.TabIndex = 0;
             // 
             // AddRoomForm
             // 

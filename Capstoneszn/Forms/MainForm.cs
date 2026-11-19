@@ -39,6 +39,11 @@ namespace Capstoneszn
 
             checkbuildingId = buildingId; //ROOMS MODULE
             currentBuildingName = buildingName;
+
+            // NEW (Nov 19, Audit Logs): closing the app without the Logout button
+            // (taskbar X, Close window, Alt+F4, Task Manager, Windows shutdown)
+            // now records a Logout. Skipped if Logout/lockout/restore already did.
+            this.FormClosed += (s, e) => AuditLogger.LogAppClosed(e.CloseReason);
         }
 
         //MAIN FORM 

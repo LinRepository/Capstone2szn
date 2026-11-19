@@ -83,7 +83,7 @@ namespace Capstoneszn.UserControls
         {
             tlpSummary.Controls.Clear();
             AddCard(0, "Rent Collected", _lblRent);
-            AddCard(1, "Utilities Collected", _lblUtilities);
+            AddCard(1, "Water Collected", _lblUtilities);
             AddCard(2, "Maintenance Collected", _lblMaintenance);
             AddCard(3, "Expenses", _lblExpenses);
             AddCard(4, "Net Income", _lblNet);
@@ -213,8 +213,7 @@ namespace Capstoneszn.UserControls
             // ---- Summary --------------------------------------------------
             _rent = _received.Where(r => r.Category == "Rent").Sum(r => r.Amount);
             _maintenance = _received.Where(r => r.Category == "Maintenance").Sum(r => r.Amount);
-            _utilities = _received.Where(r => r.Category == "Water" || r.Category == "Electricity"
-                                           || r.Category == "Other").Sum(r => r.Amount);
+            _utilities = _received.Where(r => r.Category == "Water").Sum(r => r.Amount);
             _expenseTotal = _expenses.Sum(x => x.Amount);
             _netShown = room == null;
 
@@ -286,6 +285,7 @@ namespace Capstoneszn.UserControls
             using (var preview = new PrintPreviewDialog())
             {
                 doc.DocumentName = "Report " + _from.ToString("yyyy-MM-dd") + " to " + _to.ToString("yyyy-MM-dd");
+                doc.DefaultPageSettings.Landscape = true;   // NEW (Nov 19): wide tables need the page's long side
                 doc.BeginPrint += (s, e) => _printIndex = 0;   // preview renders, then printing starts over
                 doc.PrintPage += Doc_PrintPage;
 
@@ -313,7 +313,7 @@ namespace Capstoneszn.UserControls
 
             L.Add(new PrintLine { Text = "SUMMARY", Bold = true, SpaceBefore = 10 });
             L.Add(Row(new[] { "Rent Collected", Peso(_rent) }, new[] { 0.6f, 0.4f }));
-            L.Add(Row(new[] { "Utilities Collected (reimbursement)", Peso(_utilities) }, new[] { 0.6f, 0.4f }));
+            L.Add(Row(new[] { "Water Collected (reimbursement)", Peso(_utilities) }, new[] { 0.6f, 0.4f }));
             L.Add(Row(new[] { "Maintenance Collected (reimbursement)", Peso(_maintenance) }, new[] { 0.6f, 0.4f }));
             L.Add(Row(new[] { "Expenses", Peso(_expenseTotal) }, new[] { 0.6f, 0.4f }));
             if (_netShown)
@@ -368,12 +368,26 @@ namespace Capstoneszn.UserControls
             using (var big = new Font("Segoe UI", 15F, FontStyle.Bold))
             using (var right = new StringFormat { Alignment = StringAlignment.Far, Trimming = StringTrimming.EllipsisCharacter })
             using (var plain = new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
+            using (var wrapLeft = new StringFormat())                                       // NEW (Nov 19): table cells wrap
+            using (var wrapRight = new StringFormat { Alignment = StringAlignment.Far })    // NEW (Nov 19): amounts wrap, right-aligned
             {
                 while (_printIndex < _printLines.Count)
                 {
                     PrintLine line = _printLines[_printIndex];
                     Font font = line.Big ? big : line.Bold ? bold : normal;
                     float h = font.GetHeight(g) + 4;
+
+                    // NEW (Nov 19): a table row is as tall as its tallest cell,
+                    // so a long name or description goes to a 2nd line instead of "..."
+                    if (line.Cells != null)
+                    {
+                        for (int i = 0; i < line.Cells.Length; i++)
+                        {
+                            float cw = width * line.Widths![i] - 4;
+                            float cellH = g.MeasureString(line.Cells[i], font, new SizeF(cw, 1000f), wrapLeft).Height + 4;
+                            if (cellH > h) h = cellH;
+                        }
+                    }
 
                     if (y + line.SpaceBefore + h > bottom)
                     {
@@ -394,8 +408,10 @@ namespace Capstoneszn.UserControls
                         {
                             float w = width * line.Widths![i];
                             bool isLast = i == line.Cells.Length - 1;
+                            // ORIGINAL: g.DrawString(line.Cells[i], font, Brushes.Black,
+                            //                        new RectangleF(x, y, w - 4, h), isLast ? right : plain);
                             g.DrawString(line.Cells[i], font, Brushes.Black,
-                                         new RectangleF(x, y, w - 4, h), isLast ? right : plain);
+                                         new RectangleF(x, y, w - 4, h), isLast ? wrapRight : wrapLeft);   // NEW (Nov 19): wraps
                             x += w;
                         }
                     }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using System.Windows.Forms;   // NEW (Nov 19): CloseReason for LogAppClosed
 
 namespace Capstoneszn
 {
@@ -112,6 +113,33 @@ namespace Capstoneszn
         /// (userId) with no building, like login entries, so it shows in every
         /// building's Audit Logs. Never throws, same as Log(...).
         /// </summary>
+        /// <summary>
+        /// NEW (Nov 19, 2026): records a Logout when the app is closed WITHOUT the
+        /// Logout button - taskbar X, right-click > Close window, Alt+F4, Task
+        /// Manager, or Windows shutting down. Called from the FormClosed event of
+        /// MainForm and BuildingSelection.
+        ///
+        /// Skipped when the sign-out was already handled: the Logout button, a
+        /// lockout and the restore all call Session.Clear() (and set LoggingOut)
+        /// before closing, so UserId is 0 here and nothing is logged twice.
+        /// After logging, the session is cleared so the next window that closes
+        /// on the way out (BuildingSelection after MainForm) doesn't log it again.
+        /// Never throws. If the app is killed (power loss, End process) no event
+        /// runs, so nothing can be logged - a known limit.
+        /// </summary>
+        public static void LogAppClosed(CloseReason reason)
+        {
+            if (Session.LoggingOut || Session.UserId <= 0) return;
+
+            string how =
+                reason == CloseReason.WindowsShutDown    ? "Windows shut down" :
+                reason == CloseReason.TaskManagerClosing ? "closed from Task Manager" :
+                                                           "app closed";
+
+            Log(ModuleLogin, "Logout", "Signed out (" + how + ")");
+            Session.Clear();   // logged once - the other windows closing after this skip it
+        }
+
         public static void LogForUser(int userId, string module, string action, string description)
         {
             if (userId <= 0) return;

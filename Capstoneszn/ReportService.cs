@@ -118,6 +118,7 @@ namespace Capstoneszn
                 JOIN   Rooms   r ON r.RoomId   = p.RoomId
                 WHERE  r.BuildingId = @bid
                   AND  p.IsVoided = 0
+                  AND  a.IsVoided = 0   -- NEW (Nov 19): skip voided lines too, same as the other screens
                   AND  p.PaymentDate >= @from
                   AND  p.PaymentDate <  @to
                   AND  (@rid IS NULL OR p.RoomId = @rid)
