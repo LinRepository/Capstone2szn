@@ -869,9 +869,12 @@ namespace Capstoneszn
         /// </summary>
         public static void AddMaterial(int issueId, string materialName, int quantity, decimal unitPrice)
         {
-            // NEW (Step 4): PHP 0 (free) or at least PHP 1.00 - no centavo-only prices.
-            if (unitPrice < 0m || (unitPrice > 0m && unitPrice < 1m))
-                throw new InvalidOperationException("Unit price must be 0.00 (free) or at least 1.00.");
+            // ORIGINAL (Step 4): PHP 0 (free) or at least PHP 1.00 - no centavo-only prices.
+            // ORIGINAL (Step 4): if (unitPrice < 0m || (unitPrice > 0m && unitPrice < 1m))
+            // ORIGINAL (Step 4):     throw new InvalidOperationException("Unit price must be 0.00 (free) or at least 1.00.");
+            // NEW (Nov 18): minimum PHP 1.00, no free materials.
+            if (unitPrice < 1m)
+                throw new InvalidOperationException("Unit price must be at least 1.00.");
 
             string sql = @"
                 INSERT INTO MaintenanceMaterials (IssueId, MaterialName, Quantity, UnitPrice)
@@ -1591,6 +1594,117 @@ namespace Capstoneszn
 
             result.SharePerTenant = share / 100m;
             if (tenants.Count > 0) result.DueDate = due;
+        }
+
+        /* =================================================================
+           NEW (Nov 19): WRITTEN-OFF MAINTENANCE -> BUILDING EXPENSE
+           ================================================================= */
+
+        /// <summary>
+        /// NEW (Nov 19): called by Move Out, inside Move Out's transaction, right
+        /// after the leaving tenant's unpaid balances are written off.
+        ///
+        /// A maintenance share is money the landlord already spent on materials.
+        /// When the tenant leaves without paying it (after Repair Done), that money
+        /// is lost, so each unpaid share becomes a building expense dated on the
+        /// move-out day - one expense per issue, linked to the issue
+        /// (CK_Expenses_MaintLink). The remaining charged tenants do NOT take it over.
+        ///
+        /// Same rule as the write-off (BillingHelper.GetTotalOutstanding): only
+        /// bills from THIS stay (period starts on or after the stay's move-in).
+        /// If that rule ever changes for maintenance bills, change it here too.
+        /// The stay is found by TenancyId, so this still works after Move Out
+        /// has already marked the tenancy Inactive.
+        ///
+        /// Example: San Pedro escapes owing PHP 1,500 for the CR door
+        ///   -> expense "Room 101 - CR door (written off: San Pedro)", PHP 1,500.
+        /// Example: owner shared the cost -> PHP 750 owner expense at Repair Done
+        ///   + PHP 750 here = PHP 1,500 (needs Migration_2026-11-19: several
+        ///   expenses per issue).
+        ///
+        /// Returns the total recorded (0 when no maintenance was owed).
+        /// </summary>
+        public static decimal RecordWrittenOffMaintenance(
+            SqlConnection conn, SqlTransaction tx,
+            int tenantId, int tenancyId, DateTime writeOffDate, int userId)
+        {
+            // 1. Unpaid maintenance shares of this stay, per issue.
+            var owed = new List<(int IssueId, int BuildingId, decimal Amount)>();
+
+            using (var cmd = new SqlCommand(@"
+                SELECT b.MaintenanceIssueId, mi.BuildingId,
+                       SUM(bt.Share - ISNULL(pay.Paid, 0)) AS Owing
+                FROM   BillTenants bt
+                JOIN   Bills b              ON b.BillId     = bt.BillId
+                JOIN   MaintenanceIssues mi ON mi.IssueId   = b.MaintenanceIssueId
+                JOIN   Tenancies tn         ON tn.TenancyId = @tn
+                                           AND tn.TenantId  = bt.TenantId
+                OUTER APPLY (SELECT SUM(a.Amount) AS Paid
+                             FROM   PaymentAllocations a
+                             JOIN   Payments p ON p.PaymentId = a.PaymentId
+                             WHERE  a.BillId   = bt.BillId
+                               AND  a.TenantId = bt.TenantId
+                               AND  a.IsVoided = 0
+                               AND  p.IsVoided = 0) pay
+                WHERE  bt.TenantId          = @tid
+                  AND  b.BillCategory       = 'Maintenance'
+                  AND  b.BillingPeriodStart >= tn.MoveInDate
+                  AND  bt.Share - ISNULL(pay.Paid, 0) > 0
+                GROUP BY b.MaintenanceIssueId, mi.BuildingId
+                ORDER BY b.MaintenanceIssueId;", conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@tid", tenantId);
+                cmd.Parameters.AddWithValue("@tn", tenancyId);
+                using (var rd = cmd.ExecuteReader())
+                    while (rd.Read())
+                        owed.Add((rd.GetInt32(0), rd.GetInt32(1), rd.GetDecimal(2)));
+            }
+
+            if (owed.Count == 0) return 0m;
+
+            // 2. One building expense per issue, dated on the move-out day.
+            string name = AuditLogger.TenantName(conn, tx, tenantId);
+            decimal total = 0m;
+
+            foreach (var o in owed)
+            {
+                string label = IssueLabel(conn, tx, o.IssueId);   // read BEFORE the insert
+                string desc = Trim255(label + " (written off: " + name + ")");
+
+                try
+                {
+                    using (var cmd = new SqlCommand(@"
+                        INSERT INTO Expenses (BuildingId, ExpenseCategory, Description, Amount,
+                                              ExpenseDate, MaintenanceIssueId, RecordedBy)
+                        VALUES (@bid, 'Maintenance', @desc, @amt, @date, @iid, @by);", conn, tx))
+                    {
+                        cmd.Parameters.AddWithValue("@bid", o.BuildingId);
+                        cmd.Parameters.AddWithValue("@desc", desc);
+                        cmd.Parameters.AddWithValue("@amt", o.Amount);
+                        cmd.Parameters.AddWithValue("@date", writeOffDate.Date);
+                        cmd.Parameters.AddWithValue("@iid", o.IssueId);
+                        cmd.Parameters.AddWithValue("@by", userId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
+                {
+                    // The old one-expense-per-issue index (UX_Expenses_MaintIssue) is
+                    // still in this database. Move Out shows this and saves nothing.
+                    throw new InvalidOperationException(
+                        "This move out needs a database update first " +
+                        "(Migration_2026-11-19_MaintenanceWriteOffExpense.sql): " +
+                        "the issue \"" + label + "\" already has an expense, " +
+                        "and the old database rule allows only one.");
+                }
+
+                AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Write-off Expense",
+                    desc + ": PHP " + o.Amount.ToString("N2") + " unpaid share recorded as building expense");
+
+                total += o.Amount;
+            }
+
+            return total;
         }
 
         /// <summary>

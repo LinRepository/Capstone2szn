@@ -97,7 +97,7 @@
             // btnRemoveMaterial
             // 
             btnRemoveMaterial.Cursor = Cursors.Hand;
-            btnRemoveMaterial.Location = new Point(124, 9);
+            btnRemoveMaterial.Location = new Point(123, 9);
             btnRemoveMaterial.Name = "btnRemoveMaterial";
             btnRemoveMaterial.Size = new Size(140, 29);
             btnRemoveMaterial.TabIndex = 2;
@@ -107,7 +107,8 @@
             // 
             // btnClose
             // 
-            btnClose.Location = new Point(285, 9);
+            btnClose.Cursor = Cursors.Hand;
+            btnClose.Location = new Point(440, 9);
             btnClose.Name = "btnClose";
             btnClose.Size = new Size(130, 29);
             btnClose.TabIndex = 1;
@@ -117,7 +118,8 @@
             // 
             // btnAddMaterial
             // 
-            btnAddMaterial.Location = new Point(440, 9);
+            btnAddMaterial.Cursor = Cursors.Hand;
+            btnAddMaterial.Location = new Point(286, 9);
             btnAddMaterial.Name = "btnAddMaterial";
             btnAddMaterial.Size = new Size(130, 29);
             btnAddMaterial.TabIndex = 0;

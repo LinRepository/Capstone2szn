@@ -1213,7 +1213,7 @@ namespace Capstoneszn
             // OLD: Block tHead = TableRow(ts, new[] { "Tenant", "Prev. Bal.", "Rent", "Water", "Maint.",
             // OLD:                                    "Payments", "Adjust.", "Amount Due" }, f.Bold, true);
             // NEW (Nov 13): + Credit column (kept apart from Amount Due)
-            float[] ts = { 0.16f, 0.10f, 0.10f, 0.09f, 0.09f, 0.10f, 0.10f, 0.13f, 0.13f };   // adds up to 1
+            float[] ts = { 0.15f, 0.11f, 0.10f, 0.09f, 0.09f, 0.10f, 0.10f, 0.13f, 0.13f };   // adds up to 1
             Block tHead = TableRow(ts, new[] { "Tenant", "Prev. Bal.", "Rent", "Water", "Maint.",
                                                "Payments", "Adjust.", "Amount Due", "Credit" }, f.Bold, true);
             b.Add(tHead);

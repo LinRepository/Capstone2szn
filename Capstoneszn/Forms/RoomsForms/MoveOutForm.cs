@@ -1277,7 +1277,16 @@ namespace Capstoneszn.UserControls
                             foreach (var x in now.Credit)
                                 InsertAdjustmentForStay(conn, tx, p, x.Key, AdjustmentForfeit, x.Value, ForfeitReasonValue, today);
 
+                            // ADDED (Nov 19, Maintenance write-off expense): a maintenance share written
+                            // off above was money the landlord already spent on materials. Record it as
+                            // a building expense, in this same save (all or nothing with the move out).
+                            // Needs Migration_2026-11-19_MaintenanceWriteOffExpense.sql.
+                            if (now.Outstanding.TryGetValue("Maintenance", out decimal maintOwed) && maintOwed > 0m)
+                                MaintenanceService.RecordWrittenOffMaintenance(
+                                    conn, tx, p.TenantId, p.TenancyId, today, Session.UserId);
+
                             // Leaves any repair not done yet (no bill exists for it yet).
+                            int repairsLeft;   // ADDED (I2 retest): how many pending repairs they left, for the audit line
                             using (SqlCommand cmd = new SqlCommand(@"
                                 DELETE mat
                                 FROM   MaintenanceAffectedTenants mat
@@ -1285,12 +1294,16 @@ namespace Capstoneszn.UserControls
                                 WHERE  mat.TenantId = @tid AND mi.Status = 'Pending' AND mi.IsDeleted = 0;", conn, tx))
                             {
                                 cmd.Parameters.Add("@tid", SqlDbType.Int).Value = p.TenantId;
-                                cmd.ExecuteNonQuery();
+                                // OLD: cmd.ExecuteNonQuery();
+                                repairsLeft = cmd.ExecuteNonQuery();
                             }
 
                             string money = (now.TotalOwed > 0m ? $", wrote off {now.TotalOwed:N2} ({reason?.Trim()})" : "") +
                                            (now.TotalCredit > 0m ? $", forfeited {now.TotalCredit:N2}" : "");
-                            log.Add(p.Name + (depsClosed > 0 ? $" + {depsClosed} dependent(s)" : "") + money);
+                            // ADDED (I2 retest)
+                            string repairs = repairsLeft > 0 ? $", removed from {repairsLeft} pending repair(s)" : "";
+                            // OLD: log.Add(p.Name + (depsClosed > 0 ? $" + {depsClosed} dependent(s)" : "") + money);
+                            log.Add(p.Name + (depsClosed > 0 ? $" + {depsClosed} dependent(s)" : "") + money + repairs);
                         }
 
                         // 3. Dependents leaving on their own (their head stays).

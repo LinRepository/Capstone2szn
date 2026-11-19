@@ -57,10 +57,17 @@ namespace Capstoneszn.Forms
             }
 
             _isPending = header.IsPending;
-            lblMaterialsContext.Text = "Room " + header.RoomNumber + " - " + header.IssueTitle;
+            // ORIGINAL: lblMaterialsContext.Text = "Room " + header.RoomNumber + " - " + header.IssueTitle;
+            // NEW (Nov 19): a Building issue has no room ("Room Building" -> "Building").
+            lblMaterialsContext.Text = (header.RoomNumber == "Building" ? "Building" : "Room " + header.RoomNumber)
+                                     + " - " + header.IssueTitle;
 
             btnAddMaterial.Enabled = _isPending;
             btnRemoveMaterial.Enabled = _isPending;
+            // NEW (Nov 19): after Repair Done the materials are locked, so hide the
+            // buttons instead of only greying them out (they looked clickable).
+            btnAddMaterial.Visible = _isPending;
+            btnRemoveMaterial.Visible = _isPending;
 
             LoadMaterials();
         }
@@ -98,6 +105,9 @@ namespace Capstoneszn.Forms
             lblMaterialsTitle.Text = materials.Count == 0
                 ? "Materials - none added yet"
                 : "Materials - Total " + Peso(total);
+            // NEW (Nov 19): tell the user why Add/Remove Material are gone.
+            if (!_isPending)
+                lblMaterialsTitle.Text += " (locked after Repair Done)";
 
             btnRemoveMaterial.Enabled = _isPending && materials.Count > 0;
         }
@@ -109,7 +119,8 @@ namespace Capstoneszn.Forms
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            btnClose.Click += (s, e) => Close();
+            // ORIGINAL: btnClose.Click += (s, e) => Close();
+            Close();   // NEW (Nov 19): the old line only added another Close handler on every click
         }
 
         private void btnAddMaterial_Click(object sender, EventArgs e)

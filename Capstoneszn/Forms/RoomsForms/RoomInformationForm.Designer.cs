@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             pnlRoomHeader = new Panel();
             lblRoomHeaderInfo = new Label();
             lblRoomTitle = new Label();
@@ -96,15 +96,15 @@
             btnCancel = new Button();
             pnlCurrentTenants = new Panel();
             dgvCurrentTenants = new DataGridView();
+            lblBalanceNote = new Label();
+            pnlCurrentTenantsHeader = new Panel();
+            lblCurrentTenantsTitle = new Label();
             colOccId = new DataGridViewTextBoxColumn();
             colOccName = new DataGridViewTextBoxColumn();
             colOccType = new DataGridViewTextBoxColumn();
             colOccContact = new DataGridViewTextBoxColumn();
             colOccMovedIn = new DataGridViewTextBoxColumn();
             colOccBalance = new DataGridViewTextBoxColumn();
-            lblBalanceNote = new Label();
-            pnlCurrentTenantsHeader = new Panel();
-            lblCurrentTenantsTitle = new Label();
             pnlRoomHeader.SuspendLayout();
             pnlRoomStatus.SuspendLayout();
             panel8.SuspendLayout();
@@ -143,7 +143,7 @@
             pnlRoomHeader.Dock = DockStyle.Top;
             pnlRoomHeader.Location = new Point(0, 0);
             pnlRoomHeader.Name = "pnlRoomHeader";
-            pnlRoomHeader.Size = new Size(1282, 50);
+            pnlRoomHeader.Size = new Size(1332, 50);
             pnlRoomHeader.TabIndex = 0;
             // 
             // lblRoomHeaderInfo
@@ -151,7 +151,7 @@
             lblRoomHeaderInfo.Dock = DockStyle.Right;
             lblRoomHeaderInfo.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRoomHeaderInfo.ForeColor = Color.Silver;
-            lblRoomHeaderInfo.Location = new Point(980, 0);
+            lblRoomHeaderInfo.Location = new Point(1030, 0);
             lblRoomHeaderInfo.Margin = new Padding(0);
             lblRoomHeaderInfo.Name = "lblRoomHeaderInfo";
             lblRoomHeaderInfo.Padding = new Padding(0, 0, 15, 0);
@@ -178,7 +178,7 @@
             // 
             btnMoveOut.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnMoveOut.Cursor = Cursors.Hand;
-            btnMoveOut.Location = new Point(1172, 20);
+            btnMoveOut.Location = new Point(1222, 20);
             btnMoveOut.Name = "btnMoveOut";
             btnMoveOut.Size = new Size(94, 40);
             btnMoveOut.TabIndex = 1;
@@ -191,7 +191,7 @@
             // 
             btnMoveIn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnMoveIn.Cursor = Cursors.Hand;
-            btnMoveIn.Location = new Point(1064, 20);
+            btnMoveIn.Location = new Point(1114, 20);
             btnMoveIn.Name = "btnMoveIn";
             btnMoveIn.Size = new Size(94, 40);
             btnMoveIn.TabIndex = 0;
@@ -213,7 +213,7 @@
             pnlRoomStatus.Dock = DockStyle.Top;
             pnlRoomStatus.Location = new Point(0, 50);
             pnlRoomStatus.Name = "pnlRoomStatus";
-            pnlRoomStatus.Size = new Size(1282, 80);
+            pnlRoomStatus.Size = new Size(1332, 80);
             pnlRoomStatus.TabIndex = 1;
             // 
             // lblEditingNotice
@@ -232,7 +232,7 @@
             // 
             btnTransfer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnTransfer.Cursor = Cursors.Hand;
-            btnTransfer.Location = new Point(956, 20);
+            btnTransfer.Location = new Point(1006, 20);
             btnTransfer.Name = "btnTransfer";
             btnTransfer.Size = new Size(94, 40);
             btnTransfer.TabIndex = 34;
@@ -294,7 +294,7 @@
             pnlRoomDetails.Dock = DockStyle.Fill;
             pnlRoomDetails.Location = new Point(0, 130);
             pnlRoomDetails.Name = "pnlRoomDetails";
-            pnlRoomDetails.Size = new Size(1282, 623);
+            pnlRoomDetails.Size = new Size(1332, 623);
             pnlRoomDetails.TabIndex = 2;
             // 
             // tblRoomDetails
@@ -309,7 +309,7 @@
             tblRoomDetails.Name = "tblRoomDetails";
             tblRoomDetails.RowCount = 1;
             tblRoomDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tblRoomDetails.Size = new Size(1282, 623);
+            tblRoomDetails.Size = new Size(1332, 623);
             tblRoomDetails.TabIndex = 0;
             // 
             // pnlRoomInformation
@@ -935,7 +935,7 @@
             pnlCurrentTenants.Dock = DockStyle.Fill;
             pnlCurrentTenants.Location = new Point(443, 3);
             pnlCurrentTenants.Name = "pnlCurrentTenants";
-            pnlCurrentTenants.Size = new Size(836, 617);
+            pnlCurrentTenants.Size = new Size(886, 617);
             pnlCurrentTenants.TabIndex = 1;
             // 
             // dgvCurrentTenants
@@ -954,9 +954,46 @@
             dgvCurrentTenants.RowHeadersVisible = false;
             dgvCurrentTenants.RowHeadersWidth = 51;
             dgvCurrentTenants.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCurrentTenants.Size = new Size(836, 542);
+            dgvCurrentTenants.Size = new Size(886, 542);
             dgvCurrentTenants.TabIndex = 30;
             dgvCurrentTenants.CellContentClick += dgvCurrentTenants_CellContentClick;
+            // 
+            // lblBalanceNote
+            // 
+            lblBalanceNote.Dock = DockStyle.Bottom;
+            lblBalanceNote.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblBalanceNote.ForeColor = Color.Silver;
+            lblBalanceNote.Location = new Point(0, 587);
+            lblBalanceNote.Name = "lblBalanceNote";
+            lblBalanceNote.Padding = new Padding(8, 0, 0, 0);
+            lblBalanceNote.Size = new Size(886, 30);
+            lblBalanceNote.TabIndex = 31;
+            lblBalanceNote.Text = "Balance is rent only · negative = owing, positive = advance · dependents have no balance";
+            lblBalanceNote.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // pnlCurrentTenantsHeader
+            // 
+            pnlCurrentTenantsHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlCurrentTenantsHeader.Controls.Add(lblCurrentTenantsTitle);
+            pnlCurrentTenantsHeader.Dock = DockStyle.Top;
+            pnlCurrentTenantsHeader.Location = new Point(0, 0);
+            pnlCurrentTenantsHeader.Name = "pnlCurrentTenantsHeader";
+            pnlCurrentTenantsHeader.Size = new Size(886, 45);
+            pnlCurrentTenantsHeader.TabIndex = 29;
+            // 
+            // lblCurrentTenantsTitle
+            // 
+            lblCurrentTenantsTitle.Dock = DockStyle.Fill;
+            lblCurrentTenantsTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCurrentTenantsTitle.ForeColor = Color.White;
+            lblCurrentTenantsTitle.ImageAlign = ContentAlignment.MiddleRight;
+            lblCurrentTenantsTitle.Location = new Point(0, 0);
+            lblCurrentTenantsTitle.Margin = new Padding(0);
+            lblCurrentTenantsTitle.Name = "lblCurrentTenantsTitle";
+            lblCurrentTenantsTitle.Size = new Size(884, 43);
+            lblCurrentTenantsTitle.TabIndex = 28;
+            lblCurrentTenantsTitle.Text = "Current Occupants";
+            lblCurrentTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // colOccId
             // 
@@ -979,7 +1016,7 @@
             // colOccType
             // 
             colOccType.DataPropertyName = "OccupantType";
-            colOccType.FillWeight = 110F;
+            colOccType.FillWeight = 140F;
             colOccType.HeaderText = "Type";
             colOccType.MinimumWidth = 6;
             colOccType.Name = "colOccType";
@@ -997,8 +1034,8 @@
             // colOccMovedIn
             // 
             colOccMovedIn.DataPropertyName = "MoveInDate";
-            dataGridViewCellStyle1.Format = "MMM d, yyyy";
-            colOccMovedIn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Format = "MMM d, yyyy";
+            colOccMovedIn.DefaultCellStyle = dataGridViewCellStyle3;
             colOccMovedIn.HeaderText = "Moved In";
             colOccMovedIn.MinimumWidth = 6;
             colOccMovedIn.Name = "colOccMovedIn";
@@ -1007,50 +1044,13 @@
             // colOccBalance
             // 
             colOccBalance.DataPropertyName = "BalanceText";
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            colOccBalance.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
+            colOccBalance.DefaultCellStyle = dataGridViewCellStyle4;
             colOccBalance.FillWeight = 95F;
             colOccBalance.HeaderText = "Balance";
             colOccBalance.MinimumWidth = 6;
             colOccBalance.Name = "colOccBalance";
             colOccBalance.ReadOnly = true;
-            // 
-            // lblBalanceNote
-            // 
-            lblBalanceNote.Dock = DockStyle.Bottom;
-            lblBalanceNote.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblBalanceNote.ForeColor = Color.Silver;
-            lblBalanceNote.Location = new Point(0, 587);
-            lblBalanceNote.Name = "lblBalanceNote";
-            lblBalanceNote.Padding = new Padding(8, 0, 0, 0);
-            lblBalanceNote.Size = new Size(836, 30);
-            lblBalanceNote.TabIndex = 31;
-            lblBalanceNote.Text = "Balance is rent only · negative = owing, positive = advance · dependents have no balance";
-            lblBalanceNote.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // pnlCurrentTenantsHeader
-            // 
-            pnlCurrentTenantsHeader.BorderStyle = BorderStyle.FixedSingle;
-            pnlCurrentTenantsHeader.Controls.Add(lblCurrentTenantsTitle);
-            pnlCurrentTenantsHeader.Dock = DockStyle.Top;
-            pnlCurrentTenantsHeader.Location = new Point(0, 0);
-            pnlCurrentTenantsHeader.Name = "pnlCurrentTenantsHeader";
-            pnlCurrentTenantsHeader.Size = new Size(836, 45);
-            pnlCurrentTenantsHeader.TabIndex = 29;
-            // 
-            // lblCurrentTenantsTitle
-            // 
-            lblCurrentTenantsTitle.Dock = DockStyle.Fill;
-            lblCurrentTenantsTitle.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCurrentTenantsTitle.ForeColor = Color.White;
-            lblCurrentTenantsTitle.ImageAlign = ContentAlignment.MiddleRight;
-            lblCurrentTenantsTitle.Location = new Point(0, 0);
-            lblCurrentTenantsTitle.Margin = new Padding(0);
-            lblCurrentTenantsTitle.Name = "lblCurrentTenantsTitle";
-            lblCurrentTenantsTitle.Size = new Size(834, 43);
-            lblCurrentTenantsTitle.TabIndex = 28;
-            lblCurrentTenantsTitle.Text = "Current Occupants";
-            lblCurrentTenantsTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // RoomInformationForm
             // 
@@ -1058,7 +1058,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = Color.FromArgb(25, 25, 70);
-            ClientSize = new Size(1282, 753);
+            ClientSize = new Size(1332, 753);
             Controls.Add(pnlRoomDetails);
             Controls.Add(pnlRoomStatus);
             Controls.Add(pnlRoomHeader);
@@ -1121,12 +1121,6 @@
         private Label lblCurrentTenantsTitle;
         private Panel pnlCurrentTenantsHeader;
         private DataGridView dgvCurrentTenants;
-        private DataGridViewTextBoxColumn colOccId;
-        private DataGridViewTextBoxColumn colOccName;
-        private DataGridViewTextBoxColumn colOccType;
-        private DataGridViewTextBoxColumn colOccContact;
-        private DataGridViewTextBoxColumn colOccMovedIn;
-        private DataGridViewTextBoxColumn colOccBalance;
         private Label lblBalanceNote;
         private Button btnEdit;
         private Panel panel8;
@@ -1186,5 +1180,11 @@
         private TextBox txtSetElecNumber;
         private Label lblSetElecNumber;
         private Button btnTransfer;
+        private DataGridViewTextBoxColumn colOccId;
+        private DataGridViewTextBoxColumn colOccName;
+        private DataGridViewTextBoxColumn colOccType;
+        private DataGridViewTextBoxColumn colOccContact;
+        private DataGridViewTextBoxColumn colOccMovedIn;
+        private DataGridViewTextBoxColumn colOccBalance;
     }
 }

@@ -444,7 +444,7 @@
             lblShareCaption.Name = "lblShareCaption";
             lblShareCaption.Size = new Size(147, 29);
             lblShareCaption.TabIndex = 2;
-            lblShareCaption.Text = "Share per paying tenant";
+            lblShareCaption.Text = "Share per payer";
             lblShareCaption.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lblShare

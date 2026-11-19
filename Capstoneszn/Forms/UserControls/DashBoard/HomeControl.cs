@@ -231,7 +231,9 @@ namespace Capstoneszn.UserControls
                 using (SqlCommand cmd = new SqlCommand(@"
                     SELECT v.RoomNumber,
                            v.Status,
-                           v.ActiveTenants,
+                           -- OLD: paying tenants only, so dependents were not counted on the tile
+                           -- v.ActiveTenants,
+                           v.Occupants,          -- I1 retest: payers + dependents, same as the Rooms cards
                            ISNULL(v.Capacity, 0) AS Capacity
                     FROM   vwRoomStatus v
                     WHERE  v.BuildingId = @bid
@@ -312,13 +314,27 @@ namespace Capstoneszn.UserControls
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 using (SqlCommand cmd = new SqlCommand(@"
-                    SELECT r.RoomNumber, mi.IssueTitle, mi.Status
+                    -- ORIGINAL (Nov 19): SELECT r.RoomNumber, mi.IssueTitle, mi.Status
+                    -- ORIGINAL (Nov 19): FROM   MaintenanceIssues mi
+                    -- ORIGINAL (Nov 19): JOIN   Rooms r ON r.RoomId = mi.RoomId
+                    -- ORIGINAL (Nov 19): WHERE  r.BuildingId = @bid
+                    -- ORIGINAL (Nov 19):   AND  mi.IsDeleted = 0
+                    -- ORIGINAL (Nov 19): ORDER BY CASE WHEN mi.Status = 'Pending' THEN 0 ELSE 1 END,
+                    -- ORIGINAL (Nov 19):          mi.DateReported DESC;
+                    -- NEW (Nov 19): Building issues included; Status = what the Maintenance
+                    -- module shows (Pending / For Payment / Complete).
+                    SELECT CASE WHEN mi.RoomId IS NULL THEN N'Building'
+                                ELSE CAST(r.RoomNumber AS NVARCHAR(10)) END AS RoomNumber,
+                           mi.IssueTitle,
+                           vs.DisplayStatus AS Status
                     FROM   MaintenanceIssues mi
-                    JOIN   Rooms r ON r.RoomId = mi.RoomId
-                    WHERE  r.BuildingId = @bid
+                    JOIN   vwMaintenanceIssueStatus vs ON vs.IssueId = mi.IssueId
+                    LEFT JOIN Rooms r ON r.RoomId = mi.RoomId
+                    WHERE  mi.BuildingId = @bid
                       AND  mi.IsDeleted = 0
-                    ORDER BY CASE WHEN mi.Status = 'Pending' THEN 0 ELSE 1 END,
-                             mi.DateReported DESC;", conn))
+                    ORDER BY CASE vs.DisplayStatus WHEN 'Pending' THEN 0
+                                                   WHEN 'For Payment' THEN 1 ELSE 2 END,
+                             mi.DateReported DESC, mi.IssueId DESC;", conn))
                 {
                     cmd.Parameters.Add("@bid", SqlDbType.Int).Value = Session.BuildingId;
 

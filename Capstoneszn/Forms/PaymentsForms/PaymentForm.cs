@@ -645,7 +645,7 @@ namespace Capstoneszn.Forms
             lblDependents.Visible = dependents > 0;
             lblDependents.Text = "Dependents (no billing): " + string.Join(", ", _data.Dependents.Select(d =>
                 d.FullName + (d.HeadIndex >= 0 && d.HeadIndex < payers
-                    ? " (of " + _data.Payers[d.HeadIndex].FirstName + ")"
+                    ? " (of " + _data.Payers[d.HeadIndex].FullName + ")"
                     : "")));
         }
         /// <summary>NEW: "₱3,000.00", or "₱333.34 / ₱333.33" when rounding makes the shares differ.</summary>
