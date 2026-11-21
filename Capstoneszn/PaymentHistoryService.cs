@@ -685,7 +685,8 @@ namespace Capstoneszn
                 p.PaymentId, p.PaymentDate, p.RecordedAt, p.ReceiptNo,
                 " + NameSql("t") + @" AS TenantName,
                 r.RoomNumber,
-                COALESCE(cat.Categories, p.PaymentCategory) AS Categories,
+                -- ORIGINAL: COALESCE(cat.Categories, p.PaymentCategory) AS Categories,
+                cat.Categories AS Categories,   -- NEW (Nov 21, duplication fix)
                 COALESCE(p.PaymentType, cat.LineTypes)      AS PaymentType,
                 p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
                 p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
@@ -1155,11 +1156,13 @@ namespace Capstoneszn
                                                         SELECT 'Receipt ' + p.ReceiptNo + ': PHP ' + FORMAT(p.Amount, 'N2') + ' ' +
                                    -- ORIGINAL: p.PaymentCategory + ' from ' + t.FirstName + ' ' + t.LastName +
                                    -- ORIGINAL: ', Room ' + r.RoomNumber
-                                   COALESCE(p.PaymentCategory,
-                                            (SELECT STRING_AGG(c.Category, ', ')
-                                             FROM (SELECT DISTINCT a.Category
-                                                   FROM PaymentAllocations a
-                                                   WHERE a.PaymentId = p.PaymentId) c))
+                                   -- ORIGINAL: COALESCE(p.PaymentCategory,
+                                   -- ORIGINAL:          (SELECT STRING_AGG(...) ... c))
+                                   -- NEW (Nov 21, duplication fix): categories from the lines only
+                                   (SELECT STRING_AGG(c.Category, ', ')
+                                    FROM (SELECT DISTINCT a.Category
+                                          FROM PaymentAllocations a
+                                          WHERE a.PaymentId = p.PaymentId) c)
                                    + ' from ' + t.FirstName + ' ' + t.LastName +
                                    ', Room ' + CAST(r.RoomNumber AS NVARCHAR(10))
                             FROM   Payments p
@@ -1205,7 +1208,8 @@ namespace Capstoneszn
                        t.FirstName + ' ' + t.LastName AS TenantName,
                        -- ORIGINAL: r.RoomNumber, p.PaymentCategory, p.PaymentType,
                        r.RoomNumber,
-                       COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+                       -- ORIGINAL: COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+                       cat.Categories AS PaymentCategory,   -- NEW (Nov 21, duplication fix)
                        COALESCE(p.PaymentType,     cat.PaymentTypes) AS PaymentType,
                        p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
                        p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,
@@ -1335,7 +1339,8 @@ namespace Capstoneszn
                            t.FirstName + ' ' + t.LastName AS TenantName,
                            -- ORIGINAL: r.RoomNumber, p.PaymentCategory, p.PaymentType,
                            r.RoomNumber,
-                           COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+                           -- ORIGINAL: COALESCE(p.PaymentCategory, cat.Categories) AS PaymentCategory,
+                           cat.Categories AS PaymentCategory,   -- NEW (Nov 21, duplication fix)
                            COALESCE(p.PaymentType,     cat.PaymentTypes) AS PaymentType,
                            p.PaymentMethod, p.ReferenceNo, p.Amount, p.CoversRoom,
                            p.IsVoided, p.VoidReason, p.VoidedAt, vu.Name AS VoidedByName,

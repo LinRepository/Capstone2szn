@@ -388,7 +388,8 @@
             dgvTenantPayments.Size = new Size(1276, 518);
             dgvTenantPayments.TabIndex = 1;
             dgvTenantPayments.CellContentClick += dgvTenantPayments_CellContentClick;
-            dgvTenantPayments.CellDoubleClick += dgvTenantPayments_CellDoubleClick;
+            // ORIGINAL: dgvTenantPayments.CellDoubleClick += dgvTenantPayments_CellDoubleClick;
+            // NEW (Nov 21): double-click no longer opens TenantBillingForm (form disregarded)
             dgvTenantPayments.CellFormatting += dgvTenantPayments_CellFormatting;
             // 
             // colTenantName

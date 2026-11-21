@@ -211,14 +211,19 @@ namespace Capstoneszn.Forms.TenantForms
                     //    Categorised by the payment they came from, since a
                     //    credit row has no bill to take a category from.
                     using (SqlCommand cmd = new SqlCommand(@"
-                        SELECT p.PaymentCategory, SUM(a.Amount) AS Credit
+                        -- ORIGINAL: SELECT p.PaymentCategory, SUM(a.Amount) AS Credit
+                        -- NEW (Nov 21, duplication fix): the line's own category. The header
+                        -- category was NULL on multi-category receipts, which
+                        -- broke this credit total.
+                        SELECT a.Category, SUM(a.Amount) AS Credit
                         FROM   PaymentAllocations a
                         JOIN   Payments p ON p.PaymentId = a.PaymentId
                         WHERE  a.TenantId = @tid
                           AND  a.BillId IS NULL
                           AND  a.IsVoided = 0
                           AND  p.IsVoided = 0
-                        GROUP BY p.PaymentCategory;", conn))
+                        -- ORIGINAL: GROUP BY p.PaymentCategory;
+                        GROUP BY a.Category;", conn))
                     {
                         cmd.Parameters.Add("@tid", SqlDbType.Int).Value = _tenantId;
 

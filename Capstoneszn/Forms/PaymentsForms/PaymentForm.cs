@@ -448,11 +448,13 @@ namespace Capstoneszn.Forms
                         int paymentId;
                         string paySql = @"
                     INSERT INTO Payments
-                        (TenantId, RoomId, ReceiptNo, PaymentCategory,
+                        -- ORIGINAL: (TenantId, RoomId, ReceiptNo, PaymentCategory,
+                        (TenantId, RoomId, ReceiptNo,
                          PaymentType, Amount, PaymentMethod, ReferenceNo,
                          PaymentDate, CoversRoom, RecordedBy)
                     OUTPUT INSERTED.PaymentId
-                    VALUES (@tid, @rid, @rcpt, @cat,
+                    -- ORIGINAL: VALUES (@tid, @rid, @rcpt, @cat,
+                    VALUES (@tid, @rid, @rcpt,
                             @type, @amt, @method, @ref,
                             @pdate, 0, @by);";
 
@@ -461,7 +463,8 @@ namespace Capstoneszn.Forms
                             cmd.Parameters.Add("@tid", SqlDbType.Int).Value = newTenantId;
                             cmd.Parameters.Add("@rid", SqlDbType.Int).Value = _data.RoomId;
                             cmd.Parameters.Add("@rcpt", SqlDbType.NVarChar, 50).Value = receiptNo;
-                            cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = cboPaymentCategory.Text;
+                            // ORIGINAL: cmd.Parameters.Add("@cat", SqlDbType.NVarChar, 20).Value = cboPaymentCategory.Text;
+                            // NEW (Nov 21, duplication fix): Payments.PaymentCategory dropped
                             cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = "Full";
                             cmd.Parameters.Add("@amt", SqlDbType.Decimal).Value = amount;
                             cmd.Parameters["@amt"].Precision = 18;

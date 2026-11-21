@@ -642,18 +642,22 @@ namespace Capstoneszn.Forms.UserControls.BillingManagement
             }
         }
 
-        private void dgvTenantPayments_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // The button column has its own action; a double-click there must
-            // not also open the history.
-            if (e.RowIndex < 0 || e.ColumnIndex == colPayment.Index) return;
-
-            DataRowView row = dgvTenantPayments.Rows[e.RowIndex].DataBoundItem as DataRowView;
-            if (row == null) return;
-
-            using (TenantBillingForm history = new TenantBillingForm(Convert.ToInt32(row["TenantId"])))
-                history.ShowDialog(this.FindForm());
-        }
+        // NEW (Nov 21): the Billing Summary window (TenantBillingForm) is disregarded.
+        // The double-click that opened it is unhooked in the Designer; the old
+        // handler is kept below as a comment.
+        // ORIGINAL:
+        //private void dgvTenantPayments_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    // The button column has its own action; a double-click there must
+        //    // not also open the history.
+        //    if (e.RowIndex < 0 || e.ColumnIndex == colPayment.Index) return;
+        //
+        //    DataRowView row = dgvTenantPayments.Rows[e.RowIndex].DataBoundItem as DataRowView;
+        //    if (row == null) return;
+        //
+        //    using (TenantBillingForm history = new TenantBillingForm(Convert.ToInt32(row["TenantId"])))
+        //        history.ShowDialog(this.FindForm());
+        //}
 
         /* =================================================================
           NAVIGATION

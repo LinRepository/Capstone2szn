@@ -121,12 +121,16 @@ namespace Capstoneszn
             // ---- 1. The money received -------------------------------------
             int paymentId;
 
+            // NEW (Nov 21, duplication fix): Payments.PaymentCategory is dropped - the
+            // category lives on each line (PaymentAllocations.Category).
             string paySql = @"
                 INSERT INTO Payments
-                    (TenantId, RoomId, ReceiptNo, PaymentCategory, PaymentType,
+                    -- ORIGINAL: (TenantId, RoomId, ReceiptNo, PaymentCategory, PaymentType,
+                    (TenantId, RoomId, ReceiptNo, PaymentType,
                      Amount, PaymentMethod, ReferenceNo, PaymentDate,
                      CoversRoom, RecordedBy)
-                VALUES (@tid, @rid, @rcpt, @cat, @type,
+                -- ORIGINAL: VALUES (@tid, @rid, @rcpt, @cat, @type,
+                VALUES (@tid, @rid, @rcpt, @type,
                         @amt, @method, @ref, @pdate,
                         @covers, @by);
                 SELECT CAST(SCOPE_IDENTITY() AS INT);";
@@ -136,7 +140,7 @@ namespace Capstoneszn
                 cmd.Parameters.AddWithValue("@tid", payingTenantId);
                 cmd.Parameters.AddWithValue("@rid", roomId);
                 cmd.Parameters.AddWithValue("@rcpt", receiptNo);
-                cmd.Parameters.AddWithValue("@cat", category);
+                // ORIGINAL: cmd.Parameters.AddWithValue("@cat", category);
                 cmd.Parameters.AddWithValue("@type", paymentType);
                 cmd.Parameters.AddWithValue("@amt", amount);
                 cmd.Parameters.AddWithValue("@method", method);
@@ -282,14 +286,19 @@ namespace Capstoneszn
             // ---- 1. Header: the money received (one receipt) -----------------
             //  One category  -> also stored on the header (older screens show it)
             //  Several       -> NULL on the header; the lines say what was paid
+            // NEW (Nov 21, duplication fix): only PaymentType stays on the header - it
+            // records how the receipt was paid on the day (a transfer can later
+            // turn a line into Advance credit). The category is on the lines only.
             int paymentId;
 
             string paySql = @"
                 INSERT INTO Payments
-                    (TenantId, RoomId, ReceiptNo, PaymentCategory, PaymentType,
+                    -- ORIGINAL: (TenantId, RoomId, ReceiptNo, PaymentCategory, PaymentType,
+                    (TenantId, RoomId, ReceiptNo, PaymentType,
                      Amount, PaymentMethod, ReferenceNo, PaymentDate,
                      CoversRoom, RecordedBy)
-                VALUES (@tid, @rid, @rcpt, @cat, @type,
+                -- ORIGINAL: VALUES (@tid, @rid, @rcpt, @cat, @type,
+                VALUES (@tid, @rid, @rcpt, @type,
                         @amt, @method, @ref, @pdate,
                         @covers, @by);
                 SELECT CAST(SCOPE_IDENTITY() AS INT);";
@@ -299,7 +308,7 @@ namespace Capstoneszn
                 cmd.Parameters.AddWithValue("@tid", payingTenantId);
                 cmd.Parameters.AddWithValue("@rid", roomId);
                 cmd.Parameters.AddWithValue("@rcpt", receiptNo);
-                cmd.Parameters.AddWithValue("@cat", singleLine ? (object)lines[0].Category : DBNull.Value);
+                // ORIGINAL: cmd.Parameters.AddWithValue("@cat", singleLine ? (object)lines[0].Category : DBNull.Value);
                 cmd.Parameters.AddWithValue("@type", singleLine ? (object)lines[0].PaymentType : DBNull.Value);
                 cmd.Parameters.AddWithValue("@amt", total);
                 cmd.Parameters.AddWithValue("@method", method);
