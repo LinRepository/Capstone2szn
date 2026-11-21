@@ -11,11 +11,16 @@ using System.Windows.Forms;
 namespace Capstoneszn.Forms
 {
     /// <summary>
-    /// Read-only view of one maintenance issue, opened by clicking a card.
-    /// Shows no money (decision G) - costs live in View Materials.
+    /// Read-only view of one maintenance issue, opened by double-clicking a
+    /// row in the Maintenance grid. Shows no money (decision G) - costs live
+    /// in View Materials.
+    ///
+    /// NEW (Nov 21, step 3): Description removed. Its controls are gone from
+    /// the designer and MaintenanceService.GetIssueDetails no longer returns it.
+    ///
+    /// NEW (Nov 21): Assigned To removed the same way (pnlResponsible and
+    /// MaintenanceIssueDetails.Responsible are gone).
     /// </summary>
-    /// 
-
     public partial class MaintenanceIssueDetailsForm : Form
     {
         private readonly int _issueId;
@@ -35,9 +40,13 @@ namespace Capstoneszn.Forms
 
         /// <summary>
         /// The designer places each title/value pair at fixed positions with
-        /// AutoSize on, so a long tenant list or description runs off the form.
+        /// AutoSize on, so a long tenant list runs off the form.
         /// Docking the title to the top and the value to fill each panel keeps
         /// every value inside its box, whatever its length.
+        ///
+        /// NOTE: not called (see the constructor). Kept per the team rule, and
+        /// still has to compile - so the Description and Assigned To lines below
+        /// are commented out.
         /// </summary>
         private void ArrangeLayout()
         {
@@ -45,12 +54,11 @@ namespace Capstoneszn.Forms
             Arrange(lblDateTitle, lblDateValue, ContentAlignment.MiddleCenter);
             // lblAffectedTenantsValue was replaced by dgvAffectedTenants.
             // Arrange(lblAffectedTenantsTitle, lblAffectedTenantsValue, ContentAlignment.MiddleCenter);
-            Arrange(lblResponsibleTitle, lblResponsibleValue, ContentAlignment.MiddleCenter);
+            // ORIGINAL (Nov 21): Arrange(lblResponsibleTitle, lblResponsibleValue, ContentAlignment.MiddleCenter);
             Arrange(lblIssueTitle, lblIssueValue, ContentAlignment.MiddleCenter);
             Arrange(lblStatusTitle, lblStatusValue, ContentAlignment.MiddleCenter);
-            Arrange(lblDescriptionTitle, lblDescriptionValue, ContentAlignment.TopLeft);
-
-            lblDescriptionValue.Padding = new Padding(15, 5, 15, 5);
+            // ORIGINAL (Nov 21): Arrange(lblDescriptionTitle, lblDescriptionValue, ContentAlignment.TopLeft);
+            // ORIGINAL (Nov 21): lblDescriptionValue.Padding = new Padding(15, 5, 15, 5);
         }
 
         private static void Arrange(Label title, Label value, ContentAlignment valueAlign)
@@ -102,7 +110,7 @@ namespace Capstoneszn.Forms
             //     ? "None (building expense)"
             //     : d.AffectedTenants;
 
-            lblResponsibleValue.Text = d.Responsible;
+            // ORIGINAL (Nov 21): lblResponsibleValue.Text = d.Responsible;   <- Assigned To removed
             lblIssueValue.Text = d.IssueTitle;
 
             // The completed date now has its own label, so Status shows the status only.
@@ -120,14 +128,15 @@ namespace Capstoneszn.Forms
                 ? d.CompletedAt.Value.ToString("MMM dd, yyyy")
                 : "-";
 
-            lblDescriptionValue.Text = string.IsNullOrWhiteSpace(d.Description)
-                ? "-" : d.Description;
+            // ORIGINAL (Nov 21): Description was removed.
+            // lblDescriptionValue.Text = string.IsNullOrWhiteSpace(d.Description)
+            //     ? "-" : d.Description;
 
             LoadGrids();
         }
 
         /// <summary>
-        /// Fills the Affected Tenants and Materials grids. Materials show the
+        /// Fills the Charged Tenants and Materials grids. Materials show the
         /// name and quantity only - no money on this form (decision G).
         /// </summary>
         private void LoadGrids()

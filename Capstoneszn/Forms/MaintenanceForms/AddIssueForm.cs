@@ -15,21 +15,34 @@ namespace Capstoneszn.Forms
     /// <summary>
     /// Creates a maintenance issue. The new issue is always Pending.
     ///
-    /// Affected Tenants = who will be CHARGED when the issue is completed.
-    /// Responsible      = who handles the work (owner and/or caretakers).
+    /// Charged Tenants = who will be CHARGED when the repair is done.
     ///
     /// After a successful save the form closes with DialogResult.OK and
     /// exposes NewIssueId and MaterialsNeeded, so MaintenanceControl can
     /// refresh the list and, when "Yes" was picked, open the materials form.
+    ///
+    /// NEW (Nov 21):
+    ///   - Description removed from the form and from both service calls.
+    ///   - Charged Tenants now defaults to None, so a landlord issue
+    ///     (building expense) saves without a validation error first.
+    ///   - Because None is the default, saving with nobody charged now asks
+    ///     for confirmation, so the building never quietly pays by accident.
+    ///
+    /// NEW (Nov 21, Assigned To removed):
+    ///   - The Assigned To group (rdoResponsible*, clbResponsible) is gone from
+    ///     the designer. Every line that used it below is commented out, and
+    ///     MaintenanceService.AddIssue / AddBuildingIssue no longer take the
+    ///     ownerResponsible / responsibleEmployeeIds arguments.
+    ///   - Assigned To never affected the cost split (since Nov 10), so no
+    ///     billing rule changes. "Owner shares the cost" lives in EditIssueForm
+    ///     and is NOT part of Assigned To.
     /// </summary>
-    /// 
-
     public partial class AddIssueForm : Form
     {
         public int NewIssueId { get; private set; }
         public bool MaterialsNeeded { get; private set; }
 
-        private List<ResponsibleOption> _responsibleOptions = new List<ResponsibleOption>();
+        // ORIGINAL (Nov 21): private List<ResponsibleOption> _responsibleOptions = new List<ResponsibleOption>();
 
         public AddIssueForm()
         {
@@ -38,7 +51,7 @@ namespace Capstoneszn.Forms
             // Each radio sits in its own panel, so WinForms doesn't group them.
             // Link each set so only one in the group can be selected.
             RadioGroupHelper.Link(rdoTenantAll, rdoTenantSpecify, rdoTenantNone);
-            RadioGroupHelper.Link(rdoResponsibleAll, rdoResponsibleSpecify, rdoResponsibleNone);
+            // ORIGINAL (Nov 21): RadioGroupHelper.Link(rdoResponsibleAll, rdoResponsibleSpecify, rdoResponsibleNone);
             RadioGroupHelper.Link(rdoMaterialsYes, rdoMaterialsNo);
             // Wired here only - the designer has no handlers on these.
             cboRoom.SelectedIndexChanged += cboRoom_SelectedIndexChanged;
@@ -50,18 +63,23 @@ namespace Capstoneszn.Forms
             rdoTenantSpecify.CheckedChanged += TenantOption_CheckedChanged;
             rdoTenantNone.CheckedChanged += TenantOption_CheckedChanged;
 
-            rdoResponsibleAll.CheckedChanged += ResponsibleOption_CheckedChanged;
-            rdoResponsibleSpecify.CheckedChanged += ResponsibleOption_CheckedChanged;
-            rdoResponsibleNone.CheckedChanged += ResponsibleOption_CheckedChanged;
+            // ORIGINAL (Nov 21): rdoResponsibleAll.CheckedChanged += ResponsibleOption_CheckedChanged;
+            // ORIGINAL (Nov 21): rdoResponsibleSpecify.CheckedChanged += ResponsibleOption_CheckedChanged;
+            // ORIGINAL (Nov 21): rdoResponsibleNone.CheckedChanged += ResponsibleOption_CheckedChanged;
 
             CancelButton = btnCancelIssue;
         }
 
         private void AddIssueForm_Load(object sender, EventArgs e)
         {
-            // Lists start hidden; they only appear when "Specify" is picked.
+            // List starts hidden; it only appears when "Specify" is picked.
             clbAffectedTenants.Visible = false;
-            clbResponsible.Visible = false;
+            // ORIGINAL (Nov 21): clbResponsible.Visible = false;
+
+            // NEW (Nov 21): Room is checked in the designer, so IssueType_CheckedChanged
+            // never runs on open and the designer's old hint stayed. Same text as
+            // the Room branch of IssueType_CheckedChanged.
+            lblTenantHint.Text = "They pay; split equally. None = the building pays it.";
 
             // An issue cannot be reported for a future date.
             dtpIssueDate.MaxDate = DateTime.Today;
@@ -80,19 +98,24 @@ namespace Capstoneszn.Forms
             // No tenant group choice until a room is picked.
             SetTenantOptionsEnabled(false);
 
+            // ORIGINAL (Nov 21): Assigned To defaulted to None here.
+            // rdoResponsibleNone.Checked = true;
+
             try
             {
                 cboRoom.DataSource = MaintenanceService.GetRoomsForIssue(Session.BuildingId);
                 cboRoom.SelectedIndex = -1;   // force the user to choose a room
 
-                _responsibleOptions = MaintenanceService.GetResponsibleOptions(Session.BuildingId);
-                clbResponsible.Items.Clear();
-                foreach (ResponsibleOption option in _responsibleOptions)
-                    clbResponsible.Items.Add(option);
+                // ORIGINAL (Nov 21): Assigned To options are no longer loaded.
+                // _responsibleOptions = MaintenanceService.GetResponsibleOptions(Session.BuildingId);
+                // clbResponsible.Items.Clear();
+                // foreach (ResponsibleOption option in _responsibleOptions)
+                //     clbResponsible.Items.Add(option);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to load rooms or staff.\n\n" + ex.Message,
+                // ORIGINAL (Nov 21): MessageBox.Show("Unable to load rooms or staff.\n\n" + ex.Message,
+                MessageBox.Show("Unable to load rooms.\n\n" + ex.Message,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnAddIssue.Enabled = false;
                 return;
@@ -145,6 +168,9 @@ namespace Capstoneszn.Forms
             else
             {
                 SetTenantOptionsEnabled(true);
+                // NEW (Nov 21): default to None. The three radios were cleared
+                // above, so this has to be set after the list is rebuilt.
+                rdoTenantNone.Checked = true;
             }
         }
 
@@ -167,9 +193,11 @@ namespace Capstoneszn.Forms
             // ORIGINAL: lblTenantHint.Text = building
             // ORIGINAL:     ? "Optional. Building tenants who will pay (billed to their own room)."
             // ORIGINAL:     : "Optional. Tenants of the selected room who will pay.";
-            lblTenantHint.Text = building   // NEW (Nov 10): short enough to fit on one line
-                ? "Optional. Split equally; each billed in their own room."
-                : "Optional. They pay; the cost is split equally.";
+            // ORIGINAL (Nov 10): "Optional. Split equally; each billed in their own room."
+            // ORIGINAL (Nov 10): "Optional. They pay; the cost is split equally."
+            lblTenantHint.Text = building   // NEW (Nov 21): None is now the default, so the hint says what None means
+                ? "Split equally, each billed in their own room."
+                : "They pay; split equally. None = the building pays it.";
 
             if (building)
                 LoadBuildingTenants();
@@ -211,6 +239,7 @@ namespace Capstoneszn.Forms
             else
             {
                 SetTenantOptionsEnabled(true);
+                rdoTenantNone.Checked = true;   // NEW (Nov 21): same default as a Room issue
             }
         }
 
@@ -223,10 +252,11 @@ namespace Capstoneszn.Forms
             clbAffectedTenants.Visible = rdoTenantSpecify.Checked;
         }
 
-        private void ResponsibleOption_CheckedChanged(object sender, EventArgs e)
-        {
-            clbResponsible.Visible = rdoResponsibleSpecify.Checked;
-        }
+        // ORIGINAL (Nov 21): Assigned To removed.
+        // private void ResponsibleOption_CheckedChanged(object sender, EventArgs e)
+        // {
+        //     clbResponsible.Visible = rdoResponsibleSpecify.Checked;
+        // }
 
 
         private void btnCancelIssue_Click(object sender, EventArgs e)
@@ -254,7 +284,7 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            // ---- Affected tenants ------------------------------------------
+            // ---- Charged tenants -------------------------------------------
             List<int> tenantIds;
             if (rdoTenantAll.Checked)
             {
@@ -281,6 +311,7 @@ namespace Capstoneszn.Forms
                 return;
             }
 
+            /* ORIGINAL (Nov 21): Assigned To removed.
             // ---- Responsible -----------------------------------------------
             List<ResponsibleOption> responsible;
             if (rdoResponsibleAll.Checked)
@@ -307,6 +338,7 @@ namespace Capstoneszn.Forms
                 Warn("Choose who is assigned: All, Specify, or None.", rdoResponsibleAll);   // NEW (Nov 10)
                 return;
             }
+            */
 
             if (dtpIssueDate.Value.Date > DateTime.Today)
             {
@@ -314,34 +346,51 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            bool ownerResponsible = responsible.Any(r => r.IsOwner);
-            List<int> employeeIds = responsible
-                .Where(r => !r.IsOwner && r.EmployeeId.HasValue)
-                .Select(r => r.EmployeeId.Value)
-                .ToList();
+            // NEW (Nov 21): Charged Tenants now defaults to None, so a hurried
+            // save would quietly make the building pay. Confirm it once.
+            // Delete this block if the prompt becomes noise.
+            if (tenantIds.Count == 0)
+            {
+                DialogResult choice = MessageBox.Show(
+                    "No tenant will be charged for this issue.\n\n" +
+                    "When the repair is done, the materials cost is recorded as a " +
+                    "building expense. Continue?",
+                    "No Tenant Charged", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (choice != DialogResult.Yes)
+                    return;
+            }
+
+            // ORIGINAL (Nov 21): Assigned To removed.
+            // bool ownerResponsible = responsible.Any(r => r.IsOwner);
+            // List<int> employeeIds = responsible
+            //     .Where(r => !r.IsOwner && r.EmployeeId.HasValue)
+            //     .Select(r => r.EmployeeId.Value)
+            //     .ToList();
 
             try
             {
                 // NEW (Maintenance v2): Building issue -> AddBuildingIssue; Room issue -> AddIssue (unchanged)
+                // NEW (Nov 21): the description and Assigned To arguments are gone from both.
                 if (buildingIssue)
                     NewIssueId = MaintenanceService.AddBuildingIssue(
                         Session.BuildingId,
                         title,
-                        txtDescription.Text.Trim(),
+                        // ORIGINAL: txtDescription.Text.Trim(),
                         dtpIssueDate.Value.Date,
                         tenantIds,
-                        ownerResponsible,
-                        employeeIds,
+                        // ORIGINAL (Nov 21): ownerResponsible,
+                        // ORIGINAL (Nov 21): employeeIds,
                         Session.UserId);
                 else
                     NewIssueId = MaintenanceService.AddIssue(
                         room.Id,
                         title,
-                        txtDescription.Text.Trim(),
+                        // ORIGINAL: txtDescription.Text.Trim(),
                         dtpIssueDate.Value.Date,
                         tenantIds,
-                        ownerResponsible,
-                        employeeIds,
+                        // ORIGINAL (Nov 21): ownerResponsible,
+                        // ORIGINAL (Nov 21): employeeIds,
                         Session.UserId);
             }
             catch (InvalidOperationException ex)

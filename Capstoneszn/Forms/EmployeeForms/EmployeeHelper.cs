@@ -920,13 +920,16 @@ namespace Capstoneszn.Forms.EmployeeForms
 
         // =====================================================================
         // PART 5 — Archive (STEP 6)
-        //   - warns (does not block) about Pending maintenance issues
+        //   - ORIGINAL (Nov 21): warns (does not block) about Pending maintenance issues
+        //     (removed with Assigned To - employees are no longer assigned to issues)
         //   - the employee can no longer log in (LoginForm checks ArchivedAt)
         //   - OLD: the salary stops: the final days of this month are recorded now
         //   - REVISED Nov 5, 2026: the paid days end on the archive day (not paid);
         //     the days before it are recorded at the next cutoff (15th / month end)
         // =====================================================================
 
+        /* ORIGINAL (Nov 21): Assigned To (MaintenanceResponsible) was removed,
+           so an employee can no longer be "assigned" to an issue.
         /// <summary>Pending (repair not done), non-deleted issues this employee is Responsible for.</summary>
         public static int CountPendingIssues(int employeeId)
         {
@@ -944,6 +947,7 @@ namespace Capstoneszn.Forms.EmployeeForms
                 return (int)cmd.ExecuteScalar();
             }
         }
+        */
 
         /// <summary>Archives the employee. Returns the final salary amount recorded.</summary>
         public static decimal Archive(int employeeId, int userId)

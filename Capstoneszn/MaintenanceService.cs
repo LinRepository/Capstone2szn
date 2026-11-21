@@ -17,11 +17,12 @@ namespace Capstoneszn
         public int RoomId { get; set; }
         public string RoomNumber { get; set; }
         public string IssueTitle { get; set; }
-        public string Description { get; set; }
+        // ORIGINAL (Nov 21): public string Description { get; set; }   <- Description removed
         public DateTime DateReported { get; set; }
         public string Status { get; set; }
-        public string Responsible { get; set; }
+        // ORIGINAL (Nov 21): public string Responsible { get; set; }   <- Assigned To removed
         public string BuildingName { get; set; }                 // NEW (Maintenance v2)
+        public string ChargedTenants { get; set; }               // NEW (Nov 20): grid column
         public bool IsBuildingIssue => RoomId == 0;              // NEW: Building issue = no room
 
         public bool IsPending => Status == MaintenanceService.StatusPending;
@@ -45,6 +46,7 @@ namespace Capstoneszn
         public override string ToString() => Text;
     }
 
+    /* ORIGINAL (Nov 21): Assigned To removed - only AddIssueForm used this.
     /// <summary>
     /// One person who can be Responsible: the owner (no Employees row)
     /// or a caretaker. Matches CK_MaintResp_Who.
@@ -64,6 +66,7 @@ namespace Capstoneszn
 
         public override string ToString() => IsOwner ? "Owner" : Name;
     }
+    */
 
     /// <summary>
     /// The few facts a form needs about one issue: where it is, what it is,
@@ -88,12 +91,12 @@ namespace Capstoneszn
         public int IssueId { get; set; }
         public string RoomNumber { get; set; }
         public string IssueTitle { get; set; }
-        public string Description { get; set; }
+        // ORIGINAL (Nov 21): public string Description { get; set; }   <- Description removed
         public DateTime DateReported { get; set; }
         public string Status { get; set; }
         public DateTime? CompletedAt { get; set; }
         public string AffectedTenants { get; set; }
-        public string Responsible { get; set; }
+        // ORIGINAL (Nov 21): public string Responsible { get; set; }   <- Assigned To removed
 
 
 
@@ -109,7 +112,7 @@ namespace Capstoneszn
         public int RoomId { get; set; }
         public string RoomNumber { get; set; }
         public string IssueTitle { get; set; }
-        public string Description { get; set; }
+        // ORIGINAL (Nov 21): public string Description { get; set; }
         public DateTime DateReported { get; set; }
         public string Status { get; set; }
 
@@ -131,6 +134,7 @@ namespace Capstoneszn
         public override string ToString() => IsCurrent ? Name : Name + " (moved out)";
     }
 
+    /* ORIGINAL (Nov 21): Assigned To removed - only EditIssueForm used this.
     /// <summary>
     /// A responsible person shown in EditIssueForm's checklist. A caretaker
     /// already on the issue who is now inactive or archived stays listed
@@ -147,6 +151,7 @@ namespace Capstoneszn
         public override string ToString() =>
             IsOwner ? "Owner" : (IsActive ? Name : Name + " (inactive)");
     }
+    */
 
     /// <summary>
     /// What happened when an issue was saved. When Completed is true, exactly
@@ -196,6 +201,12 @@ namespace Capstoneszn
     ///   - Building scope: an issue belongs to the building of its room.
     ///   - Status values match CK_MaintIssues_Status exactly:
     ///     'Pending' and 'Complete' (not "Completed").
+    ///
+    /// NEW (Nov 21): nothing in this class reads or writes
+    /// MaintenanceIssues.Description or the MaintenanceResponsible table
+    /// any more. Both are dropped by Migration_2026-11-21 AFTER this code is
+    /// built and tested - never before, or every query here would still work
+    /// but the OLD build would crash.
     /// </summary>
     public static class MaintenanceService
     {
@@ -240,6 +251,8 @@ namespace Capstoneszn
             // (Pending / For Payment / Complete), so the card and the filter
             // follow payments and voids automatically.
             // LEFT JOIN Rooms + mi.BuildingId: ready for Building issues (no room).
+            /* ORIGINAL (Nov 21): column 4 was mi.Description and column 7 was
+               Responsible (from MaintenanceResponsible). Both removed.
             string sql = @"
                 SELECT mi.IssueId, mi.RoomId, r.RoomNumber, mi.IssueTitle,
                        mi.Description, mi.DateReported, vs.DisplayStatus,
@@ -250,10 +263,32 @@ namespace Capstoneszn
                                FROM   MaintenanceResponsible mr
                                LEFT JOIN Employees e ON e.EmployeeId = mr.EmployeeId
                                WHERE  mr.IssueId = mi.IssueId), N'None') AS Responsible,
-                       bd.BuildingName                                              -- NEW, column 8
+                       bd.BuildingName,                                             -- column 8
+                       ISNULL((SELECT STRING_AGG(t.FirstName + N' ' + t.LastName, N', ')
+                                      WITHIN GROUP (ORDER BY t.LastName, t.FirstName)
+                               FROM   MaintenanceAffectedTenants mat
+                               JOIN   Tenants t ON t.TenantId = mat.TenantId
+                               WHERE  mat.IssueId = mi.IssueId), N'') AS ChargedTenants
+                FROM   ...same FROM / WHERE / ORDER BY as below...";
+            */
+            string sql = @"
+                SELECT mi.IssueId,                                                  -- 0
+                       mi.RoomId,                                                   -- 1
+                       r.RoomNumber,                                                -- 2
+                       mi.IssueTitle,                                               -- 3
+                       mi.DateReported,                                             -- 4
+                       vs.DisplayStatus,                                            -- 5
+                       bd.BuildingName,                                             -- 6
+                       -- NEW (Nov 20): who is charged for this issue.
+                       -- Same subquery GetIssueDetails uses for AffectedTenants.
+                       ISNULL((SELECT STRING_AGG(t.FirstName + N' ' + t.LastName, N', ')
+                                      WITHIN GROUP (ORDER BY t.LastName, t.FirstName)
+                               FROM   MaintenanceAffectedTenants mat
+                               JOIN   Tenants t ON t.TenantId = mat.TenantId
+                               WHERE  mat.IssueId = mi.IssueId), N'') AS ChargedTenants   -- 7
                 FROM   MaintenanceIssues mi
                 JOIN   vwMaintenanceIssueStatus vs ON vs.IssueId = mi.IssueId
-                JOIN   Buildings bd ON bd.BuildingId = mi.BuildingId                -- NEW
+                JOIN   Buildings bd ON bd.BuildingId = mi.BuildingId
                 LEFT JOIN Rooms r ON r.RoomId = mi.RoomId
                 WHERE  mi.BuildingId = @bid
                   AND  mi.IsDeleted = 0
@@ -283,11 +318,16 @@ namespace Capstoneszn
                             // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(2)) ?? "",
                             RoomNumber = rd.IsDBNull(2) ? "Building" : Convert.ToString(rd.GetValue(2)) ?? "",   // NEW
                             IssueTitle = rd.GetString(3),
-                            Description = rd.IsDBNull(4) ? "" : rd.GetString(4),
-                            DateReported = rd.GetDateTime(5),
-                            Status = rd.GetString(6),
-                            Responsible = rd.GetString(7),
-                            BuildingName = rd.GetString(8)        // NEW (Maintenance v2)
+                            // ORIGINAL (Nov 21): Description = rd.IsDBNull(4) ? "" : rd.GetString(4),
+                            // ORIGINAL (Nov 21): DateReported = rd.GetDateTime(5),
+                            // ORIGINAL (Nov 21): Status = rd.GetString(6),
+                            // ORIGINAL (Nov 21): Responsible = rd.GetString(7),
+                            // ORIGINAL (Nov 21): BuildingName = rd.GetString(8),
+                            // ORIGINAL (Nov 21): ChargedTenants = rd.IsDBNull(9) ? "" : rd.GetString(9),
+                            DateReported = rd.GetDateTime(4),                          // NEW (Nov 21): indexes shifted
+                            Status = rd.GetString(5),
+                            BuildingName = rd.GetString(6),                            // NEW (Maintenance v2)
+                            ChargedTenants = rd.IsDBNull(7) ? "" : rd.GetString(7),    // NEW (Nov 20)
                         });
                     }
                 }
@@ -400,6 +440,7 @@ namespace Capstoneszn
             return list;
         }
 
+        /* ORIGINAL (Nov 21): Assigned To removed - only AddIssueForm called this.
         /// <summary>
         /// The owner first, then the building's Active, non-archived caretakers.
         /// "All" in the Responsible group means exactly this list.
@@ -433,21 +474,22 @@ namespace Capstoneszn
 
             return list;
         }
+        */
 
         /// <summary>
-        /// Saves a new issue with its affected tenants and responsible people
-        /// in ONE transaction - all of it lands, or none of it does.
+        /// Saves a new issue with its charged tenants in ONE transaction -
+        /// all of it lands, or none of it does.
         /// Status starts as Pending, which turns the room grey (vwRoomStatus).
         /// Returns the new IssueId.
         /// </summary>
         public static int AddIssue(
             int roomId,
             string issueTitle,
-            string description,
+            // ORIGINAL (Nov 21): string description,
             DateTime dateReported,
             IList<int> affectedTenantIds,
-            bool ownerResponsible,
-            IList<int> responsibleEmployeeIds,
+            // ORIGINAL (Nov 21): bool ownerResponsible,               <- Assigned To removed
+            // ORIGINAL (Nov 21): IList<int> responsibleEmployeeIds,   <- Assigned To removed
             int createdBy)
         {
             using (SqlConnection conn = DatabaseHelper.GetConnection())
@@ -468,9 +510,9 @@ namespace Capstoneszn
                         //     VALUES (@rid, @title, @desc, @date, @status, @by);";
                         string issueSql = @"
                             INSERT INTO MaintenanceIssues
-                                (RoomId, BuildingId, IssueTitle, Description, DateReported, Status, CreatedBy)
+                                (RoomId, BuildingId, IssueTitle, DateReported, Status, CreatedBy)
                             OUTPUT INSERTED.IssueId
-                            SELECT r.RoomId, r.BuildingId, @title, @desc, @date, @status, @by
+                            SELECT r.RoomId, r.BuildingId, @title, @date, @status, @by
                             FROM   Rooms r
                             WHERE  r.RoomId = @rid;";
 
@@ -478,9 +520,10 @@ namespace Capstoneszn
                         {
                             cmd.Parameters.AddWithValue("@rid", roomId);
                             cmd.Parameters.AddWithValue("@title", issueTitle);
-                            cmd.Parameters.AddWithValue("@desc",
-                                string.IsNullOrWhiteSpace(description)
-                                    ? (object)DBNull.Value : description);
+                            // ORIGINAL (Nov 21):
+                            // cmd.Parameters.AddWithValue("@desc",
+                            //     string.IsNullOrWhiteSpace(description)
+                            //         ? (object)DBNull.Value : description);
                             cmd.Parameters.AddWithValue("@date", dateReported.Date);
                             cmd.Parameters.AddWithValue("@status", StatusPending);
                             cmd.Parameters.AddWithValue("@by", createdBy);
@@ -521,6 +564,7 @@ namespace Capstoneszn
                             }
                         }
 
+                        /* ORIGINAL (Nov 21): Assigned To removed.
                         // ---- 3. Responsible --------------------------------
                         string respSql = @"
                             INSERT INTO MaintenanceResponsible (IssueId, EmployeeId, IsOwner)
@@ -547,6 +591,7 @@ namespace Capstoneszn
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        */
 
                         AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Add Issue",
                             "Room " + GetRoomNumber(conn, tx, roomId) + " - " + issueTitle +
@@ -575,11 +620,11 @@ namespace Capstoneszn
         public static int AddBuildingIssue(
             int buildingId,
             string issueTitle,
-            string description,
+            //string description,
             DateTime dateReported,
             IList<int> affectedTenantIds,
-            bool ownerResponsible,
-            IList<int> responsibleEmployeeIds,
+            // ORIGINAL (Nov 21): bool ownerResponsible,               <- Assigned To removed
+            // ORIGINAL (Nov 21): IList<int> responsibleEmployeeIds,   <- Assigned To removed
             int createdBy)
         {
             using (SqlConnection conn = DatabaseHelper.GetConnection())
@@ -593,14 +638,14 @@ namespace Capstoneszn
                         int issueId;
                         using (var cmd = new SqlCommand(@"
                             INSERT INTO MaintenanceIssues
-                                (RoomId, BuildingId, IssueTitle, Description, DateReported, Status, CreatedBy)
+                                (RoomId, BuildingId, IssueTitle, DateReported, Status, CreatedBy)
                             OUTPUT INSERTED.IssueId
-                            VALUES (NULL, @bid, @title, @desc, @date, @status, @by);", conn, tx))
+                            VALUES (NULL, @bid, @title, @date, @status, @by);", conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@bid", buildingId);
                             cmd.Parameters.AddWithValue("@title", issueTitle);
-                            cmd.Parameters.AddWithValue("@desc",
-                                string.IsNullOrWhiteSpace(description) ? (object)DBNull.Value : description);
+                            //cmd.Parameters.AddWithValue("@desc",
+                            //    string.IsNullOrWhiteSpace(description) ? (object)DBNull.Value : description);
                             cmd.Parameters.AddWithValue("@date", dateReported.Date);
                             cmd.Parameters.AddWithValue("@status", StatusPending);
                             cmd.Parameters.AddWithValue("@by", createdBy);
@@ -632,6 +677,7 @@ namespace Capstoneszn
                             }
                         }
 
+                        /* ORIGINAL (Nov 21): Assigned To removed.
                         // ---- 3. Responsible (same as a Room issue) ---------
                         string respSql = @"
                             INSERT INTO MaintenanceResponsible (IssueId, EmployeeId, IsOwner)
@@ -657,6 +703,7 @@ namespace Capstoneszn
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        */
 
                         AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Add Issue",
                             // ORIGINAL: "Building - " + issueTitle + " (" + affectedTenantIds.Count + " affected tenant(s))");
@@ -720,18 +767,15 @@ namespace Capstoneszn
         /// </summary>
         public static MaintenanceIssueDetails GetIssueDetails(int issueId)
         {
+            /* ORIGINAL (Nov 21): column 3 was mi.Description and column 8 was
+               Responsible (from MaintenanceResponsible). Both removed.
             string sql = @"
                 SELECT mi.IssueId, r.RoomNumber, mi.IssueTitle, mi.Description,
-                                              -- ORIGINAL: mi.DateReported, mi.Status, mi.CompletedAt,
                        mi.DateReported,
                        (SELECT vs.DisplayStatus FROM vwMaintenanceIssueStatus vs
-                        WHERE vs.IssueId = mi.IssueId) AS Status,   -- NEW (Maintenance v2)
+                        WHERE vs.IssueId = mi.IssueId) AS Status,
                        mi.CompletedAt,
-                       ISNULL((SELECT STRING_AGG(t.FirstName + N' ' + t.LastName, N', ')
-                                      WITHIN GROUP (ORDER BY t.LastName, t.FirstName)
-                               FROM   MaintenanceAffectedTenants mat
-                               JOIN   Tenants t ON t.TenantId = mat.TenantId
-                               WHERE  mat.IssueId = mi.IssueId), N'') AS AffectedTenants,
+                       ...AffectedTenants...,
                        ISNULL((SELECT STRING_AGG(CASE WHEN mr.IsOwner = 1
                                                       THEN N'Owner'
                                                       ELSE e.FullName END, N', ')
@@ -739,7 +783,23 @@ namespace Capstoneszn
                                FROM   MaintenanceResponsible mr
                                LEFT JOIN Employees e ON e.EmployeeId = mr.EmployeeId
                                WHERE  mr.IssueId = mi.IssueId), N'None') AS Responsible
-                                FROM   MaintenanceIssues mi
+                FROM ...same as below...";
+            */
+            string sql = @"
+                SELECT mi.IssueId,                                                  -- 0
+                       r.RoomNumber,                                                -- 1
+                       mi.IssueTitle,                                               -- 2
+                                              -- ORIGINAL: mi.DateReported, mi.Status, mi.CompletedAt,
+                       mi.DateReported,                                             -- 3
+                       (SELECT vs.DisplayStatus FROM vwMaintenanceIssueStatus vs
+                        WHERE vs.IssueId = mi.IssueId) AS Status,   -- 4  NEW (Maintenance v2)
+                       mi.CompletedAt,                                              -- 5
+                       ISNULL((SELECT STRING_AGG(t.FirstName + N' ' + t.LastName, N', ')
+                                      WITHIN GROUP (ORDER BY t.LastName, t.FirstName)
+                               FROM   MaintenanceAffectedTenants mat
+                               JOIN   Tenants t ON t.TenantId = mat.TenantId
+                               WHERE  mat.IssueId = mi.IssueId), N'') AS AffectedTenants   -- 6
+                FROM   MaintenanceIssues mi
                 -- ORIGINAL: JOIN   Rooms r ON r.RoomId = mi.RoomId
                 LEFT JOIN Rooms r ON r.RoomId = mi.RoomId   -- NEW: Building issue has no room
                 WHERE  mi.IssueId = @iid
@@ -761,12 +821,16 @@ namespace Capstoneszn
                         // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(1)) ?? "",
                         RoomNumber = rd.IsDBNull(1) ? "Building" : Convert.ToString(rd.GetValue(1)) ?? "",   // NEW
                         IssueTitle = rd.GetString(2),
-                        Description = rd.IsDBNull(3) ? "" : rd.GetString(3),
-                        DateReported = rd.GetDateTime(4),
-                        Status = rd.GetString(5),
-                        CompletedAt = rd.IsDBNull(6) ? (DateTime?)null : rd.GetDateTime(6),
-                        AffectedTenants = rd.GetString(7),
-                        Responsible = rd.GetString(8)
+                        // ORIGINAL (Nov 21): Description = rd.IsDBNull(3) ? "" : rd.GetString(3),
+                        // ORIGINAL (Nov 21): DateReported = rd.GetDateTime(4),
+                        // ORIGINAL (Nov 21): Status = rd.GetString(5),
+                        // ORIGINAL (Nov 21): CompletedAt = rd.IsDBNull(6) ? (DateTime?)null : rd.GetDateTime(6),
+                        // ORIGINAL (Nov 21): AffectedTenants = rd.GetString(7),
+                        // ORIGINAL (Nov 21): Responsible = rd.GetString(8)
+                        DateReported = rd.GetDateTime(3),                                     // NEW (Nov 21): indexes shifted
+                        Status = rd.GetString(4),
+                        CompletedAt = rd.IsDBNull(5) ? (DateTime?)null : rd.GetDateTime(5),
+                        AffectedTenants = rd.GetString(6)
                     };
                 }
             }
@@ -984,8 +1048,8 @@ namespace Capstoneszn
 
         /// <summary>
         /// Soft-deletes a Pending issue (IsDeleted = 1). Nothing is removed
-        /// from the database: its materials, tenants and responsible rows
-        /// stay for the record. Once deleted it no longer shows in the list
+        /// from the database: its materials and charged-tenant rows stay for
+        /// the record. Once deleted it no longer shows in the list
         /// and no longer turns the room grey in vwRoomStatus.
         ///
         /// The Pending check is in the WHERE clause, so a Complete issue
@@ -1052,9 +1116,17 @@ namespace Capstoneszn
 
         public static MaintenanceIssueEdit GetIssueForEdit(int issueId)
         {
+            // ORIGINAL (Nov 21): mi.Description was column 4.
+            // string sql = @"
+            //     SELECT mi.IssueId, mi.RoomId, r.RoomNumber, mi.IssueTitle,
+            //                                   mi.Description, mi.DateReported, mi.Status
+            //     FROM   MaintenanceIssues mi
+            //     LEFT JOIN Rooms r ON r.RoomId = mi.RoomId
+            //     WHERE  mi.IssueId = @iid
+            //       AND  mi.IsDeleted = 0;";
             string sql = @"
                 SELECT mi.IssueId, mi.RoomId, r.RoomNumber, mi.IssueTitle,
-                                              mi.Description, mi.DateReported, mi.Status
+                                              mi.DateReported, mi.Status
                 FROM   MaintenanceIssues mi
                 -- ORIGINAL: JOIN   Rooms r ON r.RoomId = mi.RoomId
                 LEFT JOIN Rooms r ON r.RoomId = mi.RoomId   -- NEW: Building issue has no room
@@ -1078,9 +1150,11 @@ namespace Capstoneszn
                         // ORIGINAL (INT fix): RoomNumber = Convert.ToString(rd.GetValue(2)) ?? "",
                         RoomNumber = rd.IsDBNull(2) ? "Building" : Convert.ToString(rd.GetValue(2)) ?? "",   // NEW
                         IssueTitle = rd.GetString(3),
-                        Description = rd.IsDBNull(4) ? "" : rd.GetString(4),
-                        DateReported = rd.GetDateTime(5),
-                        Status = rd.GetString(6)
+                        // ORIGINAL (Nov 21): Description = rd.IsDBNull(4) ? "" : rd.GetString(4),
+                        // ORIGINAL (Nov 21): DateReported = rd.GetDateTime(5),
+                        // ORIGINAL (Nov 21): Status = rd.GetString(6)
+                        DateReported = rd.GetDateTime(4),   // NEW: shifted down one
+                        Status = rd.GetString(5)            // NEW: shifted down one
                     };
                 }
             }
@@ -1147,6 +1221,7 @@ namespace Capstoneszn
             return list;
         }
 
+        /* ORIGINAL (Nov 21): Assigned To removed - only EditIssueForm called this.
         /// <summary>
         /// Owner first, then the building's active caretakers, plus any
         /// caretaker already on the issue who is now inactive or archived.
@@ -1208,6 +1283,7 @@ namespace Capstoneszn
 
             return list;
         }
+        */
 
         /// <summary>
         /// Saves the edited issue in ONE transaction. When markComplete is
@@ -1225,11 +1301,11 @@ namespace Capstoneszn
         public static IssueSaveResult SaveIssueEdit(
             int issueId,
             string issueTitle,
-            string description,
+            // ORIGINAL (Nov 21): string description,
             DateTime dateReported,
             IList<int> affectedTenantIds,
-            bool ownerResponsible,
-            IList<int> responsibleEmployeeIds,
+            // ORIGINAL (Nov 21): bool ownerResponsible,               <- Assigned To removed
+            // ORIGINAL (Nov 21): IList<int> responsibleEmployeeIds,   <- Assigned To removed
             bool markComplete,
             // ORIGINAL: int userId)
             int userId,
@@ -1265,16 +1341,18 @@ namespace Capstoneszn
                         }
 
                         // ---- 2. The issue's own fields ---------------------
+                        // ORIGINAL (Nov 21): SET IssueTitle = @title, Description = @desc, DateReported = @date
                         using (var cmd = new SqlCommand(@"
                             UPDATE MaintenanceIssues
-                            SET    IssueTitle = @title, Description = @desc, DateReported = @date
+                            SET    IssueTitle = @title, DateReported = @date
                             WHERE  IssueId = @iid;", conn, tx))
                         {
                             cmd.Parameters.AddWithValue("@iid", issueId);
                             cmd.Parameters.AddWithValue("@title", issueTitle);
-                            cmd.Parameters.AddWithValue("@desc",
-                                string.IsNullOrWhiteSpace(description)
-                                    ? (object)DBNull.Value : description);
+                            // ORIGINAL (Nov 21):
+                            // cmd.Parameters.AddWithValue("@desc",
+                            //     string.IsNullOrWhiteSpace(description)
+                            //         ? (object)DBNull.Value : description);
                             cmd.Parameters.AddWithValue("@date", dateReported.Date);
                             cmd.ExecuteNonQuery();
                         }
@@ -1328,6 +1406,7 @@ namespace Capstoneszn
                             }
                         }
 
+                        /* ORIGINAL (Nov 21): Assigned To removed.
                         // ---- 4. Responsible: replace the set ---------------
                         Exec(conn, tx, "DELETE FROM MaintenanceResponsible WHERE IssueId = @iid;",
                              "@iid", issueId);
@@ -1356,25 +1435,28 @@ namespace Capstoneszn
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        */
 
                         // NEW (Nov 18, Audit Logs coverage): a plain edit (not Repair Done).
-                        // Records the issue as SAVED - title, date, charged tenants, assigned
-                        // to - in this same transaction. Repair Done logs its own entry below.
+                        // Records the issue as SAVED - title, date, charged tenants - in this
+                        // same transaction. Repair Done logs its own entry below.
                         if (!markComplete)
                         {
                             var charged = affectedTenantIds
                                 .Select(id => AuditLogger.TenantName(conn, tx, id)).ToList();
-                            var assigned = new List<string>();
-                            if (ownerResponsible) assigned.Add("Owner");
-                            foreach (int employeeId in responsibleEmployeeIds)
-                                assigned.Add(EmployeeName(conn, tx, employeeId));
+                            // ORIGINAL (Nov 21): Assigned To removed from the log entry.
+                            // var assigned = new List<string>();
+                            // if (ownerResponsible) assigned.Add("Owner");
+                            // foreach (int employeeId in responsibleEmployeeIds)
+                            //     assigned.Add(EmployeeName(conn, tx, employeeId));
 
                             AuditLogger.Log(conn, tx, AuditLogger.ModuleMaintenance, "Edit Issue",
                                 (roomId == 0 ? "Building" : "Room " + GetRoomNumber(conn, tx, roomId)) +
                                 " - " + issueTitle +
                                 ": reported " + dateReported.ToString("MMM dd, yyyy") +
-                                "; charged: " + (charged.Count == 0 ? "none" : string.Join(", ", charged)) +
-                                "; assigned to: " + (assigned.Count == 0 ? "none" : string.Join(", ", assigned)));
+                                // ORIGINAL (Nov 21): "; charged: " + (charged.Count == 0 ? "none" : string.Join(", ", charged)) +
+                                // ORIGINAL (Nov 21): "; assigned to: " + (assigned.Count == 0 ? "none" : string.Join(", ", assigned)));
+                                "; charged: " + (charged.Count == 0 ? "none" : string.Join(", ", charged)));
                         }
 
                         // ---- 5. Complete -----------------------------------
@@ -1473,7 +1555,7 @@ namespace Capstoneszn
         ///      and any rounding centavos - is ONE building expense.
         ///   5. A share under PHP 1.00 is not allowed.
         ///
-        /// Example: PHP 1,200 door, Ben only, caretaker assigned -> Ben PHP 1,200, no expense.
+        /// Example: PHP 1,200 door, Ben only -> Ben PHP 1,200, no expense.
         /// Example: PHP 1,200, Ben + owner shares -> PHP 600 each; PHP 600 building expense.
         /// Example: PHP 1,000, 3 tenants -> PHP 333.33 each; PHP 0.01 building expense (rounding).
         /// </summary>
@@ -1512,6 +1594,7 @@ namespace Capstoneszn
             // repair and never affects the split. Only the OWNER can be an extra head,
             // and only when the landlord ticks "Owner shares the cost". An employee is
             // never a head and nothing is deducted from any salary.
+            // NOTE (Nov 21): Assigned To / MaintenanceResponsible is now removed entirely.
             int ownerHeads = ownerSharesCost ? 1 : 0;
 
             long cents = (long)Math.Round(total * 100m);
@@ -1565,7 +1648,7 @@ namespace Capstoneszn
                 }
             }
 
-            // What the tenants do not pay: Responsible shares + rounding.
+            // What the tenants do not pay: the owner's share + rounding.
             long expenseCents = cents - share * tenants.Count;
             if (expenseCents > 0)
             {
@@ -1981,6 +2064,7 @@ namespace Capstoneszn
             }
         }
 
+        /* ORIGINAL (Nov 21): only the "assigned to" part of the Edit Issue log used this.
         /// <summary>Employee's full name for the "assigned to" part of a log entry.</summary>
         private static string EmployeeName(SqlConnection conn, SqlTransaction tx, int employeeId)
         {
@@ -1991,6 +2075,7 @@ namespace Capstoneszn
                 return cmd.ExecuteScalar()?.ToString() ?? "Employee #" + employeeId;
             }
         }
+        */
 
         /// <summary>"Hinge x2 @ PHP 150.00 (PHP 300.00)"</summary>
         private static string MaterialText(string name, int quantity, decimal unitPrice)

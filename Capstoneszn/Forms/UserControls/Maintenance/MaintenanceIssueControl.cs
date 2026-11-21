@@ -19,6 +19,7 @@ namespace Capstoneszn.Forms.UserControls
 
     public partial class MaintenanceIssueControl : UserControl
     {
+        /*
         public int IssueId { get; private set; }
         public bool IsPending { get; private set; }
 
@@ -109,10 +110,13 @@ namespace Capstoneszn.Forms.UserControls
             lblStatusTitle.Width = pnlStatus.Width * 200 / 425;
             pnlIssueDate.Width = Width * 325 / 850;
         }
+        */
 
+        
         private void btnEditIssue_Click(object sender, EventArgs e)
         {
 
         }
+        
     }
 }
