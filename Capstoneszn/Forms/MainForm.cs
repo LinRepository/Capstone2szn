@@ -11,6 +11,8 @@ using Capstoneszn.Forms;
 using Capstoneszn.UserControls;
 using Microsoft.Data.SqlClient;
 using Capstoneszn.Forms.BuildingForms; // for SystemClockForm
+using Capstoneszn.Forms.SettingsForms;            // NEW (Nov 21): FirstTimeNameForm, FirstRunSetup
+using Capstoneszn.Forms.UserControls.Settings;     // NEW (Nov 21): ProfileManagementControl
 
 namespace Capstoneszn
 {
@@ -26,6 +28,11 @@ namespace Capstoneszn
 
 
         private string currentBuildingName = "";
+
+        // NEW (Nov 21, 2026 - first-run setup): true after "Yes" on the credentials
+        // notice. The backup reminder then waits until the landlord leaves
+        // Profile Management instead of covering it right away.
+        private bool _backupReminderDeferred;
 
 
         // 1. The NEW Constructor used for db
@@ -112,6 +119,183 @@ namespace Capstoneszn
 
         }
 
+        // CHANGED (Nov 21, 2026 - first-run setup of the default landlord account).
+        // The old version (only the backup reminder) is kept commented out below.
+        // Landlord only. Each step waits for the one before it:
+        //   1. FirstTimeNameForm  - while Users.Name is blank (mandatory; closing it = back to Login)
+        //   2. Credentials notice - while the default username OR password is in use;
+        //                           Yes = Settings > Profile Management (changed Nov 21)
+        //   3. Backup reminder    - no backup today; Yes = Settings > Backup & Restore
+        private async void MainForm_Shown(object? sender, EventArgs e)
+        {
+            // Caretakers: their name comes from the Employee record, and they
+            // can't access Backup and Restore - nothing to show.
+            if (!Session.IsLandlord) return;
+
+            // 1. Name (mandatory)
+            if (!RunFirstTimeNameStep()) return;          // signed out
+
+            // 2. Default username/password notice (optional)
+            if (!RunDefaultCredentialsNotice()) return;   // signed out by a lockout in Edit Profile
+
+            // 3. Daily backup reminder
+            // CHANGED (Nov 21, 2026): after "Yes" on the credentials notice the reminder
+            // waits until the landlord leaves Profile Management (OnProfileManagementLeft).
+            if (_backupReminderDeferred) return;
+            await RunBackupReminderAsync();
+        }
+
+        // Step 1. Returns false if the landlord backed out (signed out to Login).
+        private bool RunFirstTimeNameStep()
+        {
+            bool needsName;
+            try
+            {
+                needsName = FirstRunSetup.NeedsName(Session.UserId);
+            }
+            catch (Exception ex)
+            {
+                // A failed check is not worth blocking the user with an error box.
+                System.Diagnostics.Debug.WriteLine(ex);
+                return true;
+            }
+
+            if (!needsName) return true;
+
+            using (var nameForm = new FirstTimeNameForm(Session.UserId))
+            {
+                if (nameForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    // MainForm_Load already showed the username here - show the real name now.
+                    Session.Name = nameForm.SavedName;
+                    lblCurrentUser.Text = Session.Name;
+                    return true;
+                }
+            }
+
+            // Closed without a name: the setup is not finished, so the login does not
+            // complete (same rule as the forced security questions setup).
+            AuditLogger.Log(AuditLogger.ModuleLogin, "Logout", "Signed out (first-time name not entered)");
+            Session.Clear();
+            Session.LoggingOut = true;
+            this.Close();
+            return false;
+        }
+
+        // Step 2. Returns false if the landlord got signed out (lockout in Edit Profile).
+        private bool RunDefaultCredentialsNotice()
+        {
+            bool usingDefaults;
+            try
+            {
+                usingDefaults = FirstRunSetup.IsUsingDefaultCredentials(Session.UserId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return true;
+            }
+
+            if (!usingDefaults) return true;
+
+            DialogResult go = MessageBox.Show(
+                "You are still using the default username or password.\n\n" +
+                "For your security, change your username (Edit Profile) and your " +
+                "password (Change Password) in Settings > Profile Management.\n\n" +
+                "Go to Profile Management now?",
+                "Secure Your Account", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (go != DialogResult.Yes) return true;   // optional - "No" means later
+
+            // CHANGED (Nov 21, 2026): "Yes" only opens Settings > Profile Management.
+            // The landlord clicks Edit Profile / Change Password there themselves.
+            // was: // Settings > Profile Management, then Edit Profile opens on top of it.
+            var settings = new SettingsControl();
+            LoadControl(settings);
+            // was: settings.OpenProfileManagement();
+            ProfileManagementControl profileScreen = settings.OpenProfileManagement();
+
+            // NEW (Nov 21, 2026): show the backup reminder once the landlord LEAVES
+            // Profile Management - the back arrow, any sidebar button, the bell, or any
+            // other navigation. All of them dispose this screen, so Disposed covers them all.
+            _backupReminderDeferred = true;
+            profileScreen.Disposed += OnProfileManagementLeft;
+            // was: ProfileManagementControl profile = settings.OpenProfileManagement();
+            // was: profile.OpenEditProfile();
+            // was:
+            // was: // 3 wrong passwords in Edit Profile = ForceLogout (Session cleared, MainForm closing).
+            // was: return Session.UserId > 0;
+            return true;   // no form opens here, so no lockout can happen at this step
+        }
+
+        // NEW (Nov 21, 2026): the landlord left Profile Management (opened from the
+        // credentials notice) - now show the deferred backup reminder, once.
+        private void OnProfileManagementLeft(object? sender, EventArgs e)
+        {
+            if (!_backupReminderDeferred) return;
+            _backupReminderDeferred = false;
+
+            // Logout, lockout, restore and closing the app all clear the session first,
+            // so no reminder appears on the way out.
+            if (Session.UserId <= 0 || this.IsDisposed || this.Disposing || !this.IsHandleCreated) return;
+
+            // Posted instead of shown here: Disposed fires in the middle of LoadControl
+            // (the old screen is still being removed). BeginInvoke waits until the new
+            // screen is in place, so the reminder appears on top of it.
+            try
+            {
+                BeginInvoke(new Action(async () =>
+                {
+                    if (Session.UserId <= 0 || this.IsDisposed) return;
+                    await RunBackupReminderAsync();
+                }));
+            }
+            catch (InvalidOperationException)
+            {
+                // The window is closing - nothing to show.
+            }
+        }
+
+        // Step 3. Same rule as before; "Yes" now lands on the Backup & Restore sub-module.
+        private async Task RunBackupReminderAsync()
+        {
+            bool hasBackupToday;
+            try
+            {
+                hasBackupToday = await BackupService.HasBackupTodayAsync();
+            }
+            catch
+            {
+                return;   // if the check fails, don't block the user with an error
+            }
+
+            if (hasBackupToday) return;
+            if (Session.UserId <= 0 || this.IsDisposed) return;   // signed out meanwhile
+
+            DialogResult go = MessageBox.Show(
+                "No backup has been made today.\n\nGo to Backup and Restore now?",
+                "Daily Backup Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            if (go == DialogResult.Yes)
+            {
+                // was: LoadControl(new SettingsControl());   // opened the Settings landing page only
+                var settings = new SettingsControl();
+                LoadControl(settings);
+                settings.OpenBackupRestore();
+            }
+        }
+
+        // NEW (Nov 21, 2026): Edit Profile calls this after a save, so the header
+        // (and the "Prepared by" name on reports) shows the new name right away.
+        public void RefreshCurrentUser(string name, string username)
+        {
+            Session.Name = string.IsNullOrWhiteSpace(name) ? username : name;
+            Session.Username = username;
+            lblCurrentUser.Text = Session.Name;
+        }
+
+        /* OLD MainForm_Shown (before Nov 21, 2026 first-run setup) - kept per team rule
+
         // NEW method in MainForm.cs
         private async void MainForm_Shown(object? sender, EventArgs e)
         {
@@ -139,6 +323,8 @@ namespace Capstoneszn
                 LoadControl(new SettingsControl());   // opens the Settings screen
             }
         }
+
+        */
 
 
         // Single helper method to keep code clean and maintainable

@@ -72,5 +72,26 @@ namespace Capstoneszn.UserControls
             pnlSettingsContent.Controls.Add(profileCtrl);
             profileCtrl.BringToFront();
         }
+
+        // NEW (Nov 21, 2026 - first-run setup): let MainForm open a sub-module
+        // directly instead of the Settings landing page.
+
+        // Daily backup reminder "Yes" -> Backup & Restore (same as clicking its card).
+        public void OpenBackupRestore()
+        {
+            lblBackupRestore_Click(this, EventArgs.Empty);
+        }
+
+        // Credentials notice "Yes" -> Profile Management (same as clicking its card).
+        // Returns the control so MainForm can open Edit Profile on it.
+        public ProfileManagementControl OpenProfileManagement()
+        {
+            ProfileManagementControl profileCtrl = new ProfileManagementControl();
+            profileCtrl.Dock = DockStyle.Fill;
+
+            pnlSettingsContent.Controls.Add(profileCtrl);
+            profileCtrl.BringToFront();
+            return profileCtrl;
+        }
     }
 }

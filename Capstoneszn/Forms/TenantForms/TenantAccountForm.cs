@@ -190,7 +190,7 @@ namespace Capstoneszn.Forms.TenantForms
             decimal credit = rentCredit + waterCredit;
             lblCardCreditValue.Text = Peso(credit);
             lblCardCreditValue.ForeColor = credit > 0m ? Color.PaleGreen : Color.White;
-            lblCardCreditNote.Text = credit > 0m ? "applied to the next bills" : "rent + water credit";
+            lblCardCreditNote.Text = credit > 0m ? "applied to the next (rent) bills" : "rent + water credit";
         }
 
         private void SetOwedCard(Label value, Label note, decimal owed, string category)

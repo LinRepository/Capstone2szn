@@ -273,7 +273,7 @@
             btnEditConfirm.Name = "btnEditConfirm";
             btnEditConfirm.Size = new Size(94, 29);
             btnEditConfirm.TabIndex = 0;
-            btnEditConfirm.Text = "Confirm";
+            btnEditConfirm.Text = "Update";
             btnEditConfirm.UseVisualStyleBackColor = true;
             btnEditConfirm.Click += btnEditConfirm_Click;
             // 

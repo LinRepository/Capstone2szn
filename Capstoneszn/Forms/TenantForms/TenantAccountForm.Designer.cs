@@ -661,7 +661,7 @@
             // 
             colPayAmount.DataPropertyName = "Amount";
             colPayAmount.FillWeight = 90F;
-            colPayAmount.HeaderText = "Amount (your part)";
+            colPayAmount.HeaderText = "Amount";
             colPayAmount.MinimumWidth = 6;
             colPayAmount.Name = "colPayAmount";
             colPayAmount.ReadOnly = true;

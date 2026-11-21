@@ -56,6 +56,10 @@ namespace Capstoneszn.Forms.UserControls.Settings
                 if (result == DialogResult.OK)
                 {
                     LoadUsername();
+
+                    // NEW (Nov 21, 2026): update the MainForm header right away too.
+                    if (this.FindForm() is MainForm mainForm)
+                        mainForm.RefreshCurrentUser(lblProfileNameValue.Text, lblProfileUsernameValue.Text);
                 }
                 else if (result == DialogResult.Abort)
                 {
@@ -66,6 +70,14 @@ namespace Capstoneszn.Forms.UserControls.Settings
                     }
                 }
             }
+        }
+
+        // NEW (Nov 21, 2026 - first-run setup): MainForm's credentials notice opens
+        // Edit Profile directly. Same code path as clicking the Edit Profile button,
+        // so validation, the password check and the lockout logout stay identical.
+        public void OpenEditProfile()
+        {
+            btnEditProfile_Click(this, EventArgs.Empty);
         }
 
         private void ProfileManagementControl_Load(object sender, EventArgs e)

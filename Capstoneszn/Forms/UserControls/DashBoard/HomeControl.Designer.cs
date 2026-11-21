@@ -428,9 +428,9 @@
             lblMaintenance.Location = new Point(617, 12);
             lblMaintenance.Margin = new Padding(0);
             lblMaintenance.Name = "lblMaintenance";
-            lblMaintenance.Size = new Size(112, 25);
+            lblMaintenance.Size = new Size(165, 25);
             lblMaintenance.TabIndex = 15;
-            lblMaintenance.Text = "Maintenance";
+            lblMaintenance.Text = "Under Maintenance";
             lblMaintenance.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblOccupied

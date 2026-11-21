@@ -73,11 +73,11 @@
             // 
             // lblCurrentSalary
             // 
-            lblCurrentSalary.AutoSize = true;
+            lblCurrentSalary.Dock = DockStyle.Top;
             lblCurrentSalary.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCurrentSalary.Location = new Point(198, 28);
+            lblCurrentSalary.Location = new Point(0, 0);
             lblCurrentSalary.Name = "lblCurrentSalary";
-            lblCurrentSalary.Size = new Size(118, 28);
+            lblCurrentSalary.Size = new Size(529, 50);
             lblCurrentSalary.TabIndex = 3;
             lblCurrentSalary.Text = "Daily Salary:";
             lblCurrentSalary.TextAlign = ContentAlignment.MiddleCenter;
@@ -107,11 +107,11 @@
             // 
             // lblSalaryPerPeriod
             // 
-            lblSalaryPerPeriod.AutoSize = true;
+            lblSalaryPerPeriod.Dock = DockStyle.Top;
             lblSalaryPerPeriod.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSalaryPerPeriod.Location = new Point(131, 56);
+            lblSalaryPerPeriod.Location = new Point(0, 50);
             lblSalaryPerPeriod.Name = "lblSalaryPerPeriod";
-            lblSalaryPerPeriod.Size = new Size(160, 28);
+            lblSalaryPerPeriod.Size = new Size(529, 50);
             lblSalaryPerPeriod.TabIndex = 3;
             lblSalaryPerPeriod.Text = "[SalaryPerPeriod]";
             lblSalaryPerPeriod.TextAlign = ContentAlignment.MiddleCenter;

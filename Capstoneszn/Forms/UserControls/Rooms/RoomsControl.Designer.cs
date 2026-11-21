@@ -145,7 +145,7 @@
             panel3.Dock = DockStyle.Left;
             panel3.Location = new Point(410, 5);
             panel3.Name = "panel3";
-            panel3.Size = new Size(200, 58);
+            panel3.Size = new Size(250, 58);
             panel3.TabIndex = 32;
             // 
             // lblLegendMaintenance
@@ -157,9 +157,9 @@
             lblLegendMaintenance.Location = new Point(62, 17);
             lblLegendMaintenance.Margin = new Padding(0);
             lblLegendMaintenance.Name = "lblLegendMaintenance";
-            lblLegendMaintenance.Size = new Size(112, 25);
+            lblLegendMaintenance.Size = new Size(165, 25);
             lblLegendMaintenance.TabIndex = 28;
-            lblLegendMaintenance.Text = "Maintenance";
+            lblLegendMaintenance.Text = "Under Maintenance";
             lblLegendMaintenance.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlLegendMaintenance
