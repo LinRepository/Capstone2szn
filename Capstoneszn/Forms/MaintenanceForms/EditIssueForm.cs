@@ -15,21 +15,28 @@ namespace Capstoneszn.Forms
     /// Edits a Pending issue, and is where an issue gets Completed.
     ///
     /// Completing is final: the materials total becomes a Maintenance bill
-    /// for the affected tenants (due Complete + 7 days), or a building
+    /// for the charged tenants (due Repair Done + 7 days), or a building
     /// expense when nobody is charged, or nothing when there are no
     /// materials. After that the issue is locked.
     ///
     /// Closes with DialogResult.OK after a save so MaintenanceControl
     /// reloads the list.
+    ///
+    /// NEW (Nov 21, step 2): Description is gone from this form and from
+    /// MaintenanceService.SaveIssueEdit.
+    ///
+    /// NEW (Nov 21, Assigned To removed): the Assigned To group is gone from
+    /// the designer, and SaveIssueEdit no longer takes ownerResponsible /
+    /// responsibleEmployeeIds. "Owner shares the cost" (chkOwnerSharesCost)
+    /// STAYS - it is a cost-split choice made at Repair Done, not Assigned To.
     /// </summary>
-    /// 
     public partial class EditIssueForm : Form
     {
 
         private readonly int _issueId;
         private MaintenanceIssueEdit _issue;
         private List<TenantChoice> _tenantChoices = new List<TenantChoice>();
-        private List<ResponsibleChoice> _responsibleChoices = new List<ResponsibleChoice>();
+        // ORIGINAL (Nov 21): private List<ResponsibleChoice> _responsibleChoices = new List<ResponsibleChoice>();
 
         // NEW (Maintenance v2): true only while the Repair Done button is saving.
         // Replaces the old "Status: Complete" dropdown.
@@ -43,15 +50,16 @@ namespace Capstoneszn.Forms
 
             // Each radio sits in its own panel, so WinForms doesn't group them.
             RadioGroupHelper.Link(rdoTenantAll, rdoTenantSpecify, rdoTenantNone);
-            RadioGroupHelper.Link(rdoResponsibleAll, rdoResponsibleSpecify, rdoResponsibleNone);
+            // ORIGINAL (Nov 21): RadioGroupHelper.Link(rdoResponsibleAll, rdoResponsibleSpecify, rdoResponsibleNone);
 
             rdoTenantAll.CheckedChanged += (s, e) => clbAffectedTenants.Visible = rdoTenantSpecify.Checked;
             rdoTenantSpecify.CheckedChanged += (s, e) => clbAffectedTenants.Visible = rdoTenantSpecify.Checked;
             rdoTenantNone.CheckedChanged += (s, e) => clbAffectedTenants.Visible = rdoTenantSpecify.Checked;
 
-            rdoResponsibleAll.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
-            rdoResponsibleSpecify.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
-            rdoResponsibleNone.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
+            // ORIGINAL (Nov 21): Assigned To removed.
+            // rdoResponsibleAll.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
+            // rdoResponsibleSpecify.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
+            // rdoResponsibleNone.CheckedChanged += (s, e) => clbResponsible.Visible = rdoResponsibleSpecify.Checked;
 
             // NEW (Maintenance v2): Repair Done saves the edits AND marks the
             // repair done, through the same save code as Save Changes.
@@ -78,7 +86,7 @@ namespace Capstoneszn.Forms
                 {
                     // ORIGINAL: _tenantChoices = MaintenanceService.GetTenantChoicesForIssue(_issueId, _issue.RoomId);
                     _tenantChoices = MaintenanceService.GetTenantChoicesForIssue(_issueId, _issue.RoomId, Session.BuildingId);   // NEW
-                    _responsibleChoices = MaintenanceService.GetResponsibleChoicesForIssue(_issueId, Session.BuildingId);
+                    // ORIGINAL (Nov 21): _responsibleChoices = MaintenanceService.GetResponsibleChoicesForIssue(_issueId, Session.BuildingId);
                 }
             }
             catch (Exception ex)
@@ -113,11 +121,13 @@ namespace Capstoneszn.Forms
             lblIssueTypeValue.Text = buildingIssue ? "Building" : "Room";
             if (buildingIssue)
                 // ORIGINAL: lblTenantHint.Text = "Optional. Building tenants who will pay (billed to their own room).";
-                lblTenantHint.Text = "Optional. Split equally; each billed in their own room.";   // NEW (Nov 10)
+                // ORIGINAL (Nov 10): lblTenantHint.Text = "Optional. Split equally; each billed in their own room.";
+                lblTenantHint.Text = "Split equally, each billed in their own room.";   // NEW (Nov 21): matches Add Issue
 
             UpdateMaterialsCount();
             txtIssue.Text = _issue.IssueTitle;
-            txtDescription.Text = _issue.Description;
+            // ORIGINAL (Nov 21): txtDescription.Text = _issue.Description;
+            // Description was removed from this form; the service no longer returns it.
 
             dtpIssueDate.MaxDate = DateTime.Today;
             dtpIssueDate.Value = _issue.DateReported > DateTime.Today ? DateTime.Today : _issue.DateReported;
@@ -128,7 +138,7 @@ namespace Capstoneszn.Forms
             pnlIssueStatus.Visible = false;
 
             LoadTenantSection();
-            LoadResponsibleSection();
+            // ORIGINAL (Nov 21): LoadResponsibleSection();
 
             // NEW (Nov 10): only the landlord decides whether the owner shares the cost.
             chkOwnerSharesCost.Checked = false;
@@ -139,6 +149,10 @@ namespace Capstoneszn.Forms
         /// Fills the tenant checklist and picks the radio that matches what
         /// is saved: nobody -> None; every current tenant (and no one who
         /// moved out) -> All; anything else -> Specify.
+        ///
+        /// NOTE (Nov 21): unlike Add Issue, this does NOT default to None.
+        /// An edit must show what the issue already has, or saving would
+        /// silently drop the tenants already charged.
         /// </summary>
         private void LoadTenantSection()
         {
@@ -164,6 +178,7 @@ namespace Capstoneszn.Forms
             clbAffectedTenants.Visible = rdoTenantSpecify.Checked;
         }
 
+        /* ORIGINAL (Nov 21): Assigned To removed.
         /// <summary>
         /// Same idea for Responsible: nobody -> None; owner plus every active
         /// caretaker (and no inactive one) -> All; anything else -> Specify.
@@ -186,6 +201,7 @@ namespace Capstoneszn.Forms
 
             clbResponsible.Visible = rdoResponsibleSpecify.Checked;
         }
+        */
 
         /* ------------------------------------------------------------------
            Save
@@ -200,7 +216,7 @@ namespace Capstoneszn.Forms
                 return;
             }
 
-            // ---- Affected tenants ------------------------------------------
+            // ---- Charged tenants -------------------------------------------
             List<TenantChoice> tenants;
             if (rdoTenantAll.Checked)
                 tenants = _tenantChoices.Where(t => t.IsCurrent).ToList();
@@ -233,6 +249,7 @@ namespace Capstoneszn.Forms
                 return;
             }
 
+            /* ORIGINAL (Nov 21): Assigned To removed.
             // ---- Responsible -----------------------------------------------
             List<ResponsibleChoice> responsible;
             if (rdoResponsibleAll.Checked)
@@ -255,6 +272,7 @@ namespace Capstoneszn.Forms
                 Warn("Choose who is assigned: All, Specify, or None.", rdoResponsibleAll);   // NEW (Nov 10)
                 return;
             }
+            */
 
             if (dtpIssueDate.Value.Date > DateTime.Today)
             {
@@ -279,12 +297,13 @@ namespace Capstoneszn.Forms
                 result = MaintenanceService.SaveIssueEdit(
                     _issueId,
                     title,
-                    txtDescription.Text.Trim(),
+                    //txtDescription.Text.Trim(),
                     dtpIssueDate.Value.Date,
                     tenants.Select(t => t.TenantId).ToList(),
-                    responsible.Any(r => r.IsOwner),
-                    responsible.Where(r => !r.IsOwner && r.EmployeeId.HasValue)
-                               .Select(r => r.EmployeeId.Value).ToList(),
+                    // ORIGINAL (Nov 21): Assigned To removed.
+                    // responsible.Any(r => r.IsOwner),
+                    // responsible.Where(r => !r.IsOwner && r.EmployeeId.HasValue)
+                    //            .Select(r => r.EmployeeId.Value).ToList(),
                     markComplete,
                     // ORIGINAL: Session.UserId);
                     Session.UserId,

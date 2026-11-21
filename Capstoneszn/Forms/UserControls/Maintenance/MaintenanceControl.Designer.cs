@@ -34,10 +34,11 @@
             cboMaintenanceStatus = new ComboBox();
             btnAddIssue = new Button();
             pnlMaintenanceContent = new Panel();
-            flpMaintenanceIssues = new FlowLayoutPanel();
+            dgvMaintenanceIssues = new DataGridView();
             pnlMaintenanceHeader.SuspendLayout();
             pnlMaintenanceHeaderContent.SuspendLayout();
             pnlMaintenanceContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvMaintenanceIssues).BeginInit();
             SuspendLayout();
             // 
             // pnlMaintenanceHeader
@@ -101,20 +102,22 @@
             // pnlMaintenanceContent
             // 
             pnlMaintenanceContent.BorderStyle = BorderStyle.FixedSingle;
-            pnlMaintenanceContent.Controls.Add(flpMaintenanceIssues);
+            pnlMaintenanceContent.Controls.Add(dgvMaintenanceIssues);
             pnlMaintenanceContent.Dock = DockStyle.Fill;
             pnlMaintenanceContent.Location = new Point(10, 145);
             pnlMaintenanceContent.Name = "pnlMaintenanceContent";
             pnlMaintenanceContent.Size = new Size(1280, 595);
             pnlMaintenanceContent.TabIndex = 2;
             // 
-            // flpMaintenanceIssues
+            // dgvMaintenanceIssues
             // 
-            flpMaintenanceIssues.Dock = DockStyle.Fill;
-            flpMaintenanceIssues.Location = new Point(0, 0);
-            flpMaintenanceIssues.Name = "flpMaintenanceIssues";
-            flpMaintenanceIssues.Size = new Size(1278, 593);
-            flpMaintenanceIssues.TabIndex = 0;
+            dgvMaintenanceIssues.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvMaintenanceIssues.Dock = DockStyle.Fill;
+            dgvMaintenanceIssues.Location = new Point(0, 0);
+            dgvMaintenanceIssues.Name = "dgvMaintenanceIssues";
+            dgvMaintenanceIssues.RowHeadersWidth = 51;
+            dgvMaintenanceIssues.Size = new Size(1278, 593);
+            dgvMaintenanceIssues.TabIndex = 0;
             // 
             // MaintenanceControl
             // 
@@ -130,6 +133,7 @@
             pnlMaintenanceHeader.ResumeLayout(false);
             pnlMaintenanceHeaderContent.ResumeLayout(false);
             pnlMaintenanceContent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvMaintenanceIssues).EndInit();
             ResumeLayout(false);
         }
 
@@ -138,9 +142,9 @@
         private Panel pnlMaintenanceHeader;
         private Panel pnlMaintenanceHeaderContent;
         private Panel pnlMaintenanceContent;
-        private FlowLayoutPanel flpMaintenanceIssues;
         private ComboBox cboMaintenanceStatus;
         private Button btnAddIssue;
         private Label lblMaintenanceTitle;
+        private DataGridView dgvMaintenanceIssues;
     }
 }

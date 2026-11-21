@@ -232,6 +232,8 @@ namespace Capstoneszn.UserControls
         {
             try
             {
+                /* ORIGINAL (Nov 21): Assigned To removed - employees are no longer
+                   assigned to maintenance issues, so there is nothing to warn about.
                 // 6a. Warn (do not block) about pending maintenance issues
                 int pending = EmployeeHelper.CountPendingIssues(employeeId);
                 if (pending > 0 &&
@@ -241,6 +243,7 @@ namespace Capstoneszn.UserControls
                     "Pending Maintenance", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
                 != DialogResult.Yes)
                     return;
+                */
 
                 // 6b. Confirm
                 if (MessageBox.Show(
